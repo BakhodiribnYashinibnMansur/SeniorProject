@@ -1,4 +1,4 @@
-# Go Roadmap — Universal Template
+# Golang Roadmap — Universal Template
 
 > **A comprehensive template system for generating Go roadmap content across all skill levels.**
 
@@ -8,7 +8,7 @@
 
 | | Description |
 |---|---|
-| **Purpose** | Universal template for all Go roadmap topics |
+| **Purpose** | Universal template for all Golang roadmap topics |
 | **Files per topic** | 8 files: `junior.md`, `middle.md`, `senior.md`, `professional.md`, `interview.md`, `tasks.md`, `find-bug.md`, `optimize.md` |
 | **Language** | All content must be generated in **English** |
 | **Table of Contents** | **Optional** — include only if relevant to the topic. For theory/practice files (`tasks.md`, `find-bug.md`, `optimize.md`) it is NOT required |
@@ -26,6 +26,22 @@ XX-topic-name/
 ├── find-bug.md        ← Find and fix bugs in code (10+ exercises)
 └── optimize.md        ← Optimize slow/inefficient code (10+ exercises)
 ```
+
+### Golang Roadmap Topics (from roadmap.sh)
+
+**Language Basics:** Introduction to Go, Setting up the Environment, Why use Go, History of Go, Variables & Constants, Data Types, var vs :=, Zero Values, const and iota, Scope and Shadowing, Hello World in Go, `go` command, Numeric Types
+
+**Composite Types:** Arrays, Slices (Capacity and Growth, make(), Slice/Array Conversions), Strings, Maps, Structs (Embedding, Tags & JSON)
+
+**Control Flow:** if/if-else, switch, Functions Basics, Variadic Functions, Multiple Return Values, Anonymous Functions, Closures, Named Return Values, Call by Value
+
+**Generics:** Why Generics?, Generic Functions
+
+**Advanced Topics:** Memory Management, Escape Analysis, Reflection, Unsafe Package, Build Constraints & Tags, CGO Basics, Compiler & Linker Flags, Plugins & Dynamic Loading
+
+**Performance and Debugging:** pprof, trace, Race Detector
+
+**Deployment & Tooling:** go build, go install, go fmt, go mod, go test, go clean, go doc, go vet, goimports, golangci-lint, revive, staticcheck, govulncheck, go generate, Cross-compilation, Build Tags
 
 ---
 
@@ -138,8 +154,8 @@ Everyday analogies to help you understand {{TOPIC_NAME}} intuitively:
 
 | Concept | Analogy |
 |---------|--------|
-| **{{Concept 1}}** | {{Analogy — e.g., \"A stack is like a pile of plates — you always take from the top\"}} |
-| **{{Concept 2}}** | {{Analogy — e.g., \"A hash map is like a library catalog — find any book instantly by its code\"}} |
+| **{{Concept 1}}** | {{Analogy — e.g., "A stack is like a pile of plates — you always take from the top"}} |
+| **{{Concept 2}}** | {{Analogy — e.g., "A hash map is like a library catalog — find any book instantly by its code"}} |
 | **{{Concept 3}}** | {{Analogy}} |
 
 > 2-4 analogies. Use everyday objects and situations.
@@ -223,31 +239,38 @@ func main() {
 
 ## Coding Patterns
 
-Common patterns beginners encounter when working with {{TOPIC_NAME}}:
+Common Go patterns beginners encounter when working with {{TOPIC_NAME}}:
 
-### Pattern 1: {{Basic pattern name}}
+### Pattern 1: {{Basic Go idiom — e.g., error as last return, defer, zero value}}
 
-**Intent:** {{One sentence — what problem does this pattern solve?}}
-**When to use:** {{Simple scenario where this pattern applies}}
+**Intent:** {{One sentence — what problem this Go idiom solves}}
+**When to use:** {{Simple scenario}}
 
 ```go
-// Pattern implementation — keep it simple and well-commented
+// Pattern implementation — beginner-friendly with comments
+package main
+
+func main() {
+    // {{pattern usage example}}
+}
 ```
 
 **Diagram:**
 
 ```mermaid
 graph TD
-    A[Input] --> B[{{TOPIC_NAME}} Pattern]
-    B --> C[Output]
-    B --> D[Side Effect / State Change]
+    A[Call function] --> B{Error?}
+    B -->|nil| C[Use result]
+    B -->|non-nil| D[Handle error]
+    C --> E[Continue]
+    D --> E
 ```
 
-**Remember:** {{One key takeaway for junior developers}}
+**Remember:** {{One key Go idiom takeaway for beginners}}
 
 ---
 
-### Pattern 2: {{Another basic pattern}}
+### Pattern 2: {{Another basic Go pattern — e.g., functional options, init pattern}}
 
 **Intent:** {{What it solves}}
 
@@ -259,80 +282,72 @@ graph TD
 
 ```mermaid
 sequenceDiagram
-    participant Caller
+    participant main
     participant {{TOPIC_NAME}}
-    participant Result
-    Caller->>{{TOPIC_NAME}}: call with input
-    {{TOPIC_NAME}}-->>Result: produces output
-    Result-->>Caller: returns
+    participant result
+    main->>{{TOPIC_NAME}}: call with args
+    {{TOPIC_NAME}}-->>result: return value, error
+    result-->>main: use result
 ```
 
-> Include 2-3 patterns at this level. Keep diagrams simple — flowcharts and sequence diagrams only.
-> Focus on patterns the beginner WILL encounter, not advanced ones.
+> Include 2-3 patterns. Focus on Go idioms the beginner WILL encounter (error handling, defer, zero values, short variable declaration).
+> Keep diagrams simple — flowcharts and sequence diagrams only.
 
 ---
 
 ## Clean Code
 
-Basic clean code principles when working with {{TOPIC_NAME}}:
+Basic clean code principles when working with {{TOPIC_NAME}} in Go:
 
-### Naming
+### Naming (Go conventions)
 
 ```go
-// ❌ Bad naming
+// ❌ Bad
 func d(x int) int { return x * 2 }
 var t = getData()
+var Userdata struct{}  // exported but unclear
 
-// ✅ Clean naming
+// ✅ Clean Go naming
 func doubleValue(n int) int { return n * 2 }
 var userList = getUsers()
+var UserProfile struct{}  // exported, clear purpose
 ```
 
-**Rules:**
-- Variables: describe WHAT they hold (`userCount`, not `n`, `x`, `tmp`)
-- Functions: describe WHAT they do (`calculateTotal`, not `calc`, `doStuff`)
-- Booleans: use `is`, `has`, `can` prefix (`isValid`, `hasPermission`)
+**Go naming rules:**
+- Package names: lowercase, single word (`http`, `fmt`, not `httpUtils`)
+- Variables: camelCase (`userCount`, `isValid`)
+- Exported types: PascalCase (`UserService`, `HTTPClient`)
+- Acronyms: all caps or all lower (`userID`, `HTTPServer`, not `userId`, `HttpServer`)
 
 ---
 
-### Functions
+### Short Functions
 
 ```go
-// ❌ Too long, does too many things
-func process(data []byte) error {
-    // 80+ lines doing parse, validate, save, notify...
-}
+// ❌ Too long — parse + validate + save in one function
+func processUser(data []byte) error { /* 60 lines */ }
 
-// ✅ Single responsibility
-func parseInput(data []byte) (Input, error) { ... }
-func validateInput(in Input) error          { ... }
-func saveInput(in Input) error              { ... }
+// ✅ Each function does one thing
+func parseUser(data []byte) (User, error)     { ... }
+func validateUser(u User) error               { ... }
+func saveUser(ctx context.Context, u User) error { ... }
 ```
-
-**Rule:** If you need to scroll to see a function — it does too much. Aim for **≤ 20 lines**.
 
 ---
 
 ### Comments
 
 ```go
-// ❌ Noise comment (states the obvious)
-// increment i by 1
-i++
+// ❌ Noise — states the obvious
+// increment counter
+count++
 
-// ❌ Outdated comment (lies)
-// returns user by email (actually returns by ID now)
-func getUser(id int) User { ... }
-
-// ✅ Explains WHY, not WHAT
-// Retry up to 3 times — downstream service has transient failures
-for attempt := 0; attempt < 3; attempt++ { ... }
+// ✅ Explains WHY
+// Skip deleted users — soft-delete means IsDeleted=true, not removed from DB
+if u.IsDeleted { continue }
 ```
 
-**Rule:** Good code explains itself. Comments explain **why**, not **what**.
-
-> Focus on the 3 fundamentals: naming, function size, comments.
-> Each rule should have a ❌ bad / ✅ good example.
+> Show Go-specific naming conventions (camelCase, PascalCase, acronyms). Keep examples simple.
 
 ---
 
@@ -541,7 +556,6 @@ Things people often believe about {{TOPIC_NAME}} that aren't true:
 
 > 2-4 misconceptions. Directly address false beliefs.
 > These are NOT code mistakes — they are conceptual misunderstandings.
-> Example: "People think recursion is always slower than iteration" or "Many assume more threads = faster execution"
 
 ---
 
@@ -1005,13 +1019,13 @@ Real-world, production scenarios:
 
 ## Coding Patterns
 
-Design patterns and idiomatic patterns for {{TOPIC_NAME}} in production code:
+GoF and Go-specific design patterns for {{TOPIC_NAME}}:
 
-### Pattern 1: {{GoF or language-specific pattern name}}
+### Pattern 1: {{GoF or Go-specific pattern — e.g., Functional Options, Strategy via interface, Observer via channels}}
 
-**Category:** Creational / Structural / Behavioral / Concurrency / Idiomatic
-**Intent:** {{What problem this pattern solves at the design level}}
-**When to use:** {{Specific scenario — e.g., "when you need to decouple X from Y"}}
+**Category:** Creational / Structural / Behavioral / Go-idiomatic
+**Intent:** {{What design problem this solves}}
+**When to use:** {{Specific Go scenario}}
 **When NOT to use:** {{Counter-indication}}
 
 **Structure diagram:**
@@ -1020,13 +1034,13 @@ Design patterns and idiomatic patterns for {{TOPIC_NAME}} in production code:
 classDiagram
     class {{Interface}} {
         <<interface>>
-        +{{method()}} {{ReturnType}}
+        +{{Method()}} {{ReturnType}}
     }
     class {{ConcreteA}} {
-        +{{method()}} {{ReturnType}}
+        +{{Method()}} {{ReturnType}}
     }
     class {{ConcreteB}} {
-        +{{method()}} {{ReturnType}}
+        +{{Method()}} {{ReturnType}}
     }
     class {{Client}} {
         -{{Interface}} dep
@@ -1040,7 +1054,8 @@ classDiagram
 **Implementation:**
 
 ```go
-// Pattern implementation with real {{TOPIC_NAME}} usage
+// Go implementation of {{pattern name}}
+// Use interfaces, not inheritance
 ```
 
 **Trade-offs:**
@@ -1052,137 +1067,152 @@ classDiagram
 
 ---
 
-### Pattern 2: {{Another pattern}}
+### Pattern 2: {{Concurrency pattern — e.g., Worker Pool, Pipeline, Fan-out/Fan-in}}
 
-**Category:** Creational / Structural / Behavioral
-**Intent:** {{What it solves}}
+**Category:** Concurrency / Go-idiomatic
+**Intent:** {{What concurrency problem it solves}}
 
 **Flow diagram:**
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant {{PatternComponent1}}
-    participant {{PatternComponent2}}
-    Client->>{{PatternComponent1}}: request
-    {{PatternComponent1}}->>{{PatternComponent2}}: delegate
-    {{PatternComponent2}}-->>{{PatternComponent1}}: result
-    {{PatternComponent1}}-->>Client: response
+    participant main
+    participant goroutine1
+    participant goroutine2
+    participant channel
+    main->>goroutine1: go func()
+    main->>goroutine2: go func()
+    goroutine1-->>channel: send result
+    goroutine2-->>channel: send result
+    channel-->>main: receive results
 ```
 
 ```go
-// Implementation
+// Go concurrency pattern with channels and goroutines
 ```
 
 ---
 
-### Pattern 3: {{Idiomatic / language-specific pattern}}
+### Pattern 3: {{Go idiomatic pattern — e.g., Table-driven tests, Embed, Functional options}}
 
-**Intent:** {{Language-specific idiom or best practice}}
+**Intent:** {{Go-specific idiom}}
 
 ```mermaid
 graph LR
-    A[{{Input}}] -->|transform| B[{{TOPIC_NAME}} idiom]
-    B -->|result| C[{{Output}}]
-    B -.->|avoids| D[❌ Common mistake]
+    A[{{Input}}] -->|Go idiom| B[{{TOPIC_NAME}} pattern]
+    B --> C[✅ Idiomatic]
+    B -.->|avoids| D[❌ Non-Go approach]
 ```
 
 ```go
-// ❌ Non-idiomatic
+// ❌ Non-idiomatic (other language style)
 ...
 
-// ✅ Idiomatic pattern
+// ✅ Go-idiomatic pattern
 ...
 ```
 
-> Include 3-5 patterns. Mix GoF patterns (if applicable) with language/framework-specific idioms.
-> Each pattern MUST have a diagram — use classDiagram for structural patterns, sequenceDiagram for behavioral, graph for data-flow patterns.
+> Include 3-5 patterns. Mix GoF patterns adapted for Go's interface system with Go-specific idioms (channels, goroutines, functional options, table-driven tests).
+> Every pattern MUST have a diagram — classDiagram for structure, sequenceDiagram for goroutine flows, graph for data-flow patterns.
 
 ---
 
 ## Clean Code
 
-Production-level clean code principles for {{TOPIC_NAME}}:
+Production-level clean code for {{TOPIC_NAME}} in Go:
 
 ### Naming & Readability
 
 ```go
-// ❌ Cryptic
+// ❌ Cryptic Go function
 func proc(d []byte, f bool) ([]byte, error)
 
 // ✅ Self-documenting
-func compressData(input []byte, includeHeader bool) ([]byte, error)
+func compressPayload(input []byte, includeChecksum bool) ([]byte, error)
 ```
 
-| Element | Rule | Example |
-|---------|------|---------|
-| Functions | Verb + noun, describes action | `fetchUserByID`, `validateEmail` |
-| Variables | Noun, describes content | `activeConnections`, `retryCount` |
-| Booleans | `is/has/can` prefix | `isExpired`, `hasPermission` |
-| Constants | SCREAMING_SNAKE or descriptive | `MaxRetries`, `DefaultTimeout` |
+| Element | Go Rule | Example |
+|---------|---------|---------|
+| Functions | Verb + noun | `fetchUserByID`, `validateToken` |
+| Interfaces | Noun (what it IS) | `Reader`, `Stringer`, `UserStore` |
+| Errors | `Err` prefix | `ErrNotFound`, `ErrTimeout` |
+| Booleans | `is/has/can` | `isExpired`, `canRetry` |
 
 ---
 
-### SOLID in Practice
+### SOLID in Go
 
-**Single Responsibility:**
+**Single Responsibility (via small interfaces):**
 ```go
-// ❌ One struct doing everything
-type UserService struct { /* handles auth + DB + email + logging */ }
+// ❌ Fat interface
+type UserStore interface {
+    Save(User) error
+    FindByID(int) (User, error)
+    SendEmail(User, string) error  // wrong! email != storage
+    GenerateReport() []byte        // wrong! reporting != storage
+}
 
-// ✅ Each type has one reason to change
-type UserRepository interface { FindByID(id int) (User, error) }
-type UserNotifier   interface { SendWelcomeEmail(u User) error }
-type UserAuthService struct { repo UserRepository }
+// ✅ Interface segregation — Go style
+type UserWriter interface { Save(User) error }
+type UserReader interface { FindByID(int) (User, error) }
+type UserStore  interface { UserWriter; UserReader }
 ```
 
-**Open/Closed:**
+**Dependency Inversion:**
 ```go
-// ❌ Switch on type — breaks on every new type
-func process(t string) { switch t { case "A": ... case "B": ... } }
+// ❌ Depends on concrete type
+type Service struct { db *postgres.DB }
 
-// ✅ Open for extension, closed for modification
-type Processor interface { Process() error }
-// Add new types without changing existing code
+// ✅ Depends on interface
+type Service struct { store UserStore }
 ```
 
 ---
 
-### DRY vs WET
+### DRY in Go
 
 ```go
-// ❌ WET (Write Everything Twice)
-func validateEmail(s string) bool    { return len(s) > 0 && strings.Contains(s, "@") }
-func validateUsername(s string) bool { return len(s) > 0 && strings.Contains(s, "@") }
+// ❌ Repeated validation logic
+func createUser(name, email string) error {
+    if name == "" { return errors.New("name required") }
+    if email == "" { return errors.New("email required") }
+    ...
+}
+func updateUser(name, email string) error {
+    if name == "" { return errors.New("name required") }   // copy-paste
+    if email == "" { return errors.New("email required") }  // copy-paste
+    ...
+}
 
-// ✅ DRY — extract common logic
-func containsAt(s string) bool { return len(s) > 0 && strings.Contains(s, "@") }
+// ✅ Extract validation
+func validateUserInput(name, email string) error {
+    if name == "" { return errors.New("name required") }
+    if email == "" { return errors.New("email required") }
+    return nil
+}
 ```
-
-**Rule:** 3 strikes → refactor. If you copy-paste the same code 3 times, extract it.
 
 ---
 
-### Function Design
-
-| Signal | Smell | Fix |
-|--------|-------|-----|
-| > 20 lines | Does too much | Split into smaller functions |
-| > 3 parameters | Complex signature | Use options struct or builder |
-| Deep nesting (> 3 levels) | Spaghetti logic | Early returns, extract helpers |
-| Boolean parameter | Flags a violation | Split into two functions |
+### Go-Specific Cleanliness
 
 ```go
-// ❌ Flag argument (boolean parameter)
-func render(fast bool) { if fast { ... } else { ... } }
+// ❌ Ignoring errors
+data, _ := json.Marshal(obj)
 
-// ✅ Two explicit functions
-func renderFast()    { ... }
-func renderDetailed() { ... }
+// ✅ Always handle errors
+data, err := json.Marshal(obj)
+if err != nil {
+    return fmt.Errorf("marshal user: %w", err)
+}
+
+// ❌ Naked return (confusing in long functions)
+func split(sum int) (x, y int) { x = sum * 4/9; y = sum - x; return }
+
+// ✅ Named returns only for short functions with clear documentation
 ```
 
-> Cover: naming, SOLID principles, DRY, function design.
-> Show ❌ bad / ✅ good for each principle. Keep examples concise.
+> Focus on Go-specific: interface design, error handling, SOLID via interfaces.
 
 ---
 
@@ -1402,8 +1432,10 @@ How to debug common issues related to {{TOPIC_NAME}}:
 
 | Tool | Command | What it shows |
 |------|---------|---------------|
-| {{tool 1}} | `{{command}}` | {{description}} |
-| {{tool 2}} | `{{command}}` | {{description}} |
+| `go tool pprof` | `go test -bench=. -cpuprofile=cpu.prof` | CPU hotspots |
+| `go build -race` | `go run -race main.go` | Data races |
+| `delve` | `dlv debug main.go` | Step-by-step debugging |
+| `go tool trace` | `go test -trace=trace.out` | Goroutine traces |
 
 > 2-4 debugging scenarios with concrete steps.
 > Include relevant tools: delve, pprof, trace, race detector, etc.
@@ -1823,6 +1855,8 @@ For developers who:
 - Mentor junior/middle developers
 - Review and improve codebases
 
+> Senior Go topics include: JVM tuning equivalents (Go runtime tuning: GOGC, GOMAXPROCS), distributed systems patterns, advanced concurrency (sync primitives, memory model), and compiler internals.
+
 ---
 
 ## Core Concepts
@@ -1924,14 +1958,13 @@ Architectural and system-level scenarios:
 
 ## Coding Patterns
 
-Architectural and advanced patterns for {{TOPIC_NAME}} in production systems:
+Architectural and advanced Go patterns for {{TOPIC_NAME}} in production systems:
 
-### Pattern 1: {{Architectural pattern — e.g., CQRS, Saga, Circuit Breaker, Event Sourcing}}
+### Pattern 1: {{Architectural pattern — e.g., CQRS, Saga, Circuit Breaker, Event Sourcing, Outbox}}
 
-**Category:** Architectural / Distributed Systems / Resilience / Data
-**Intent:** {{The system-level problem this pattern solves}}
-**Problem it solves:** {{Concrete scenario — e.g., "high read/write ratio causing DB bottleneck"}}
-**Trade-offs:** {{What you gain vs what complexity you add}}
+**Category:** Architectural / Distributed Systems / Resilience
+**Intent:** {{System-level problem this pattern solves}}
+**Problem it solves:** {{Concrete Go production scenario}}
 
 **Architecture diagram:**
 
@@ -1940,228 +1973,258 @@ graph TD
     subgraph "{{Pattern Name}}"
         A[{{Component 1}}] -->|{{action}}| B[{{Component 2}}]
         B -->|{{action}}| C[{{Component 3}}]
-        C -.->|async| D[{{Component 4}}]
+        C -.->|async via channel/queue| D[{{Component 4}}]
     end
-    E[Client] -->|request| A
-    D -->|event| F[{{Downstream}}]
+    E[HTTP Handler] -->|request| A
+    D -->|event| F[{{Downstream Service}}]
 ```
 
-**Implementation:**
+**Go implementation:**
 
 ```go
-// Senior-level implementation
-// Full pattern with error handling, observability, graceful degradation
+// Senior-level Go implementation
+// Full pattern with context propagation, graceful shutdown, observability
 ```
 
 **When this pattern wins:**
-- {{Scenario 1 where it excels}}
+- {{Scenario 1 where it excels in Go microservices}}
 - {{Scenario 2}}
 
 **When to avoid:**
-- {{Scenario where it adds unnecessary complexity}}
+- {{Over-engineering scenario}}
 
 ---
 
-### Pattern 2: {{Concurrency / Performance pattern}}
+### Pattern 2: {{Go concurrency/performance pattern — e.g., errgroup, singleflight, context propagation}}
 
 **Category:** Concurrency / Performance / Resource Management
-**Intent:** {{What it optimizes}}
+**Intent:** {{What it optimizes in production Go code}}
 
 **Flow diagram:**
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant {{PatternEntry}}
-    participant Worker1
-    participant Worker2
-    participant {{PatternExit}}
-    Client->>{{PatternEntry}}: submit work
-    par Parallel execution
-        {{PatternEntry}}->>Worker1: task A
-        {{PatternEntry}}->>Worker2: task B
+    participant Handler
+    participant errgroup
+    participant Goroutine1
+    participant Goroutine2
+    participant DB
+    Handler->>errgroup: eg.Go(func1)
+    Handler->>errgroup: eg.Go(func2)
+    par Parallel
+        errgroup->>Goroutine1: execute
+        errgroup->>Goroutine2: execute
     end
-    Worker1-->>{{PatternExit}}: result A
-    Worker2-->>{{PatternExit}}: result B
-    {{PatternExit}}-->>Client: combined result
+    Goroutine1->>DB: query A
+    Goroutine2->>DB: query B
+    DB-->>errgroup: results
+    errgroup-->>Handler: first error or nil
 ```
 
 ```go
-// Implementation with proper resource management
+// Production Go concurrency pattern
+// errgroup, singleflight, sync.Pool, sync.Once
 ```
 
 ---
 
-### Pattern 3: {{Resilience / Fault tolerance pattern}}
+### Pattern 3: {{Resilience pattern — Circuit Breaker, Retry with backoff, Bulkhead}}
 
 **Category:** Resilience / Reliability
-**Intent:** {{How it improves system reliability}}
+**Intent:** {{How it improves Go service reliability}}
 
 **State diagram:**
 
 ```mermaid
 stateDiagram-v2
     [*] --> Closed
-    Closed --> Open : failure threshold exceeded
-    Open --> HalfOpen : timeout elapsed
-    HalfOpen --> Closed : success
-    HalfOpen --> Open : failure
+    Closed --> Open : consecutive failures > threshold
+    Open --> HalfOpen : after reset timeout
+    HalfOpen --> Closed : probe request succeeds
+    HalfOpen --> Open : probe request fails
 ```
 
 ```go
-// Production implementation with metrics and observability
+// Production circuit breaker in Go
+// With metrics export to Prometheus
 ```
 
 **Metrics to track:**
-- {{Metric 1}} — why it matters
-- {{Metric 2}} — alert threshold
+- `circuit_breaker_state` — current state (0=closed, 1=open, 2=half-open)
+- `circuit_breaker_requests_total` — by state and outcome
 
 ---
 
 ### Pattern Comparison Matrix
 
-| Pattern | Use When | Avoid When | Complexity |
+| Pattern | Use When | Avoid When | Go Package |
 |---------|----------|------------|------------|
-| {{Pattern 1}} | {{condition}} | {{condition}} | Low/Med/High |
-| {{Pattern 2}} | {{condition}} | {{condition}} | Low/Med/High |
-| {{Pattern 3}} | {{condition}} | {{condition}} | Low/Med/High |
+| {{Pattern 1}} | {{condition}} | {{condition}} | `{{pkg}}` |
+| {{Pattern 2}} | {{condition}} | {{condition}} | `{{pkg}}` |
+| {{Pattern 3}} | {{condition}} | {{condition}} | `{{pkg}}` |
 
-> Include 3-5 architectural/advanced patterns relevant to {{TOPIC_NAME}}.
-> Every pattern MUST have a diagram — use graph for architecture, sequenceDiagram for flows, stateDiagram for state machines, classDiagram for structure.
-> Include a comparison matrix at the end so senior engineers can quickly choose the right pattern.
+> Include 3-5 architectural patterns relevant to production Go services.
+> Every pattern MUST have a diagram — graph for architecture, sequenceDiagram for goroutine/service flows, stateDiagram for state machines, classDiagram for interface structure.
+> Include a Go-specific package/tool reference in the comparison matrix.
 
 ---
 
 ## Clean Code
 
-Senior-level clean code: architecture, maintainability, and team standards for {{TOPIC_NAME}}:
+Senior-level clean code — architecture and team standards for {{TOPIC_NAME}} in Go:
 
-### Clean Architecture Boundaries
+### Clean Architecture in Go
 
 ```go
-// ❌ Layering violation — business logic calls infrastructure
-type OrderService struct { db *sql.DB } // direct DB dependency
+// ❌ Handler directly calls DB
+func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
+    row := h.db.QueryRow("SELECT * FROM users WHERE id = $1", id)
+    ...
+}
 
-// ✅ Dependency inversion — depend on abstractions
-type OrderRepository interface { Save(Order) error }
-type OrderService    struct    { repo OrderRepository }
+// ✅ Clean layer separation
+type UserRepository interface { FindByID(ctx context.Context, id int) (User, error) }
+type UserService    struct    { repo UserRepository }
+type UserHandler    struct    { svc *UserService }
 ```
 
-**Dependency flow must be:**
 ```mermaid
 graph LR
-    A[HTTP Handler] -->|depends on| B[Use Case / Service]
-    B -->|depends on| C[Repository Interface]
-    D[DB Adapter] -->|implements| C
+    A[HTTP Handler] -->|calls| B[UserService]
+    B -->|calls interface| C[UserRepository]
+    D[PostgresRepo] -->|implements| C
     style C fill:#f9f,stroke:#333
-```
-**Rule:** Dependencies point inward. Infrastructure depends on domain, never the reverse.
-
----
-
-### Code Smells at Senior Level
-
-| Smell | Symptom | Refactoring |
-|-------|---------|-------------|
-| **God Object** | One struct with 20+ methods | Split by responsibility |
-| **Primitive Obsession** | `string` for email, `int` for money | Wrap in value objects |
-| **Shotgun Surgery** | Change 1 feature → edit 10 files | Move cohesive logic together |
-| **Feature Envy** | Method uses another type's data more than its own | Move method to that type |
-| **Data Clumps** | Same 3+ fields always appear together | Extract into a struct |
-
----
-
-### Maintainability Rules
-
-**Package / Module cohesion:**
-```go
-// ❌ Package with mixed concerns
-package util   // contains: string helpers, DB utils, HTTP middleware, math functions
-
-// ✅ Cohesive packages
-package stringutil  // only string operations
-package middleware  // only HTTP middleware
-```
-
-**Test coverage as documentation:**
-```go
-// ✅ Test names describe behaviour, not implementation
-func TestOrderService_PlaceOrder_RejectsExpiredCoupons(t *testing.T) { ... }
-func TestOrderService_PlaceOrder_SendsConfirmationEmail(t *testing.T) { ... }
+    style B fill:#bbf,stroke:#333
 ```
 
 ---
 
-### Code Review Checklist (Senior)
+### Go Code Smells
 
-- [ ] No business logic in HTTP handlers or DB adapters
-- [ ] All public interfaces are documented
-- [ ] No global mutable state
-- [ ] Error messages include enough context to debug without a debugger
-- [ ] No magic numbers/strings — all constants named and documented
-- [ ] Functions have single responsibility — can be named without "and"
-- [ ] Test coverage on all non-trivial paths
+| Smell | Go Example | Fix |
+|-------|-----------|-----|
+| **init() abuse** | Global state in `init()` | Explicit constructor/DI |
+| **Goroutine leak** | `go func()` with no cancel | Use `context.WithCancel` |
+| **Interface pollution** | Interface with 10+ methods | Split into focused interfaces |
+| **Error swallowing** | `if err != nil { return }` without logging | Log or wrap with context |
+| **Naked mutex** | `mu sync.Mutex` as a field used widely | Encapsulate in type |
 
-> Senior clean code focuses on architecture boundaries, coupling, and cohesion — not just formatting.
-> Include a code review checklist tailored to {{TOPIC_NAME}}.
+---
+
+### Package Design Rules
+
+```
+// ❌ Dumping ground package
+package utils    // 2000 lines: strings, DB, HTTP, math, time helpers
+
+// ✅ Cohesive, focused packages
+package stringutil   // string manipulation only
+package timeutil     // time helpers only
+package httputil     // HTTP helpers only
+```
+
+**Go package rules:**
+- Package name = its purpose (not `common`, `util`, `misc`)
+- Avoid circular imports — symptom of poor boundaries
+- Internal packages (`internal/`) hide implementation details
+
+---
+
+### Code Review Checklist (Go Senior)
+
+- [ ] No business logic in HTTP handlers
+- [ ] All goroutines have a clear owner and lifecycle
+- [ ] Context is propagated throughout call chain
+- [ ] Errors wrapped with `fmt.Errorf("context: %w", err)`
+- [ ] No global mutable state outside of `sync.Once` / `sync.RWMutex`
+- [ ] Interfaces defined at point of USE, not point of creation
+- [ ] All exported symbols have godoc comments
 
 ---
 
 ## Best Practices
 
-Production best practices for {{TOPIC_NAME}} — battle-tested rules from engineering teams at scale:
+Go best practices for {{TOPIC_NAME}} — from production Go codebases at scale:
 
 ### Must Do ✅
 
-1. **{{Best practice 1}}** — why it matters in production
+1. **Always check errors** — Go errors are values, ignoring them hides bugs
    ```go
-   // Example demonstrating the practice
+   data, err := doSomething()
+   if err != nil {
+       return fmt.Errorf("operation context: %w", err)
+   }
    ```
 
-2. **{{Best practice 2}}** — impact on maintainability/performance
+2. **Use context for cancellation and deadlines**
    ```go
-   // Example
+   ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+   defer cancel()
+   result, err := externalCall(ctx)
    ```
 
-3. **{{Best practice 3}}**
+3. **Prefer table-driven tests**
    ```go
-   // Example
+   tests := []struct{ input string; want int }{
+       {"hello", 5}, {"", 0}, {"a", 1},
+   }
+   for _, tt := range tests {
+       t.Run(tt.input, func(t *testing.T) {
+           got := len(tt.input)
+           if got != tt.want { t.Errorf("got %d, want %d", got, tt.want) }
+       })
+   }
    ```
+
+4. **Use `defer` for resource cleanup**
+   ```go
+   f, err := os.Open(filename)
+   if err != nil { return err }
+   defer f.Close()
+   ```
+
+5. **Prefer channels for ownership transfer, mutexes for shared state**
 
 ### Never Do ❌
 
-1. **{{Anti-practice 1}}** — what goes wrong when ignored
+1. **Never ignore errors with `_`** in production code
    ```go
-   // ❌ What NOT to do
-   // ✅ What to do instead
+   // ❌ Silent failure
+   data, _ := json.Marshal(obj)
+
+   // ✅
+   data, err := json.Marshal(obj)
+   if err != nil { return fmt.Errorf("marshal: %w", err) }
    ```
 
-2. **{{Anti-practice 2}}**
+2. **Never use `init()` for complex initialization** — makes testing impossible
 
-3. **{{Anti-practice 3}}**
+3. **Never copy a `sync.Mutex`** — pass pointers or embed in struct
+
+4. **Never start goroutines in `init()` or package-level code**
 
 ### Project-Level Best Practices
 
 | Area | Rule | Reason |
 |------|------|--------|
-| **Code organization** | {{rule}} | {{why}} |
-| **Error handling** | {{rule}} | {{why}} |
-| **Testing** | {{rule}} | {{why}} |
-| **Performance** | {{rule}} | {{why}} |
-| **Security** | {{rule}} | {{why}} |
-| **Observability** | {{rule}} | {{why}} |
+| **Code organization** | Standard layout (`cmd/`, `internal/`, `pkg/`) | Predictable, idiomatic |
+| **Error handling** | Wrap with context at every layer | Debuggable stack of context |
+| **Testing** | Table-driven + testify assertions | Readable, exhaustive |
+| **Performance** | Profile before optimizing | Avoid premature optimization |
+| **Concurrency** | Document goroutine ownership | Prevent leaks |
+| **Dependencies** | Depend on interfaces, not concrete types | Testable, flexible |
 
-### Checklist for Production Readiness
+### Go Production Checklist
 
-- [ ] {{TOPIC_NAME}} has proper error handling and logging
-- [ ] All edge cases tested (empty input, nil, overflow, concurrent access)
-- [ ] Performance profiled under realistic load
-- [ ] Security: no sensitive data in logs, inputs validated, secrets from env
-- [ ] Graceful degradation when dependencies fail
-- [ ] Documentation up to date (README, inline comments, API docs)
+- [ ] All errors handled and wrapped with context
+- [ ] All goroutines have proper lifecycle management (context cancel)
+- [ ] `go vet` and `staticcheck` pass with zero warnings
+- [ ] Benchmarks written for performance-critical paths
+- [ ] No data races (`go test -race ./...` passes)
+- [ ] All secrets come from environment, not hardcoded
+- [ ] Structured logging with `slog` or `zerolog`
 
-> This section captures "things the team learned the hard way." Be specific.
-> Tailor every bullet to {{TOPIC_NAME}} — no generic advice.
+> Every best practice must be {{TOPIC_NAME}}-specific, not generic.
 
 ---
 
@@ -2217,7 +2280,6 @@ func (e *DomainError) Unwrap() error { return e.Err }
 func (s *Service) Process(ctx context.Context, req Request) error {
     result, err := s.repo.Get(ctx, req.ID)
     if err != nil {
-        // Structured logging for observability
         s.logger.Error("process failed",
             "request_id", req.ID,
             "error", err,
@@ -2279,7 +2341,7 @@ Security architecture for {{TOPIC_NAME}} at scale:
 - [ ] **Secrets management** — no hardcoded credentials
 - [ ] **Audit logging** — track security-relevant events
 - [ ] **Rate limiting** — prevent abuse
-- [ ] **Dependency scanning** — check for vulnerable dependencies
+- [ ] **Dependency scanning** — check for vulnerable dependencies with `govulncheck`
 
 ### Threat Model
 
@@ -2378,14 +2440,6 @@ Observability architecture and SLO design for {{TOPIC_NAME}}:
 | {{metric at threshold}} | {{what it means}} | Optimize algorithm |
 | {{metric spike pattern}} | {{what it means}} | Add rate limiting |
 
-### Business vs Technical Metrics
-
-| Layer | Metric | Owner |
-|-------|--------|-------|
-| **Business** | {{e.g., revenue per request}} | Product |
-| **Application** | {{e.g., requests/sec, error rate}} | Engineering |
-| **Infrastructure** | {{e.g., CPU, memory, GC pause}} | Platform |
-
 > Every alert must be actionable — if you can't do anything about it, don't alert on it.
 > Define SLO burn rate alerts, not just threshold alerts.
 
@@ -2401,9 +2455,9 @@ Advanced debugging techniques for {{TOPIC_NAME}} at scale:
 
 **Diagnostic steps:**
 ```bash
-# Advanced diagnostic commands
-go tool pprof ...
-go tool trace ...
+go tool pprof http://localhost:6060/debug/pprof/heap
+go tool trace trace.out
+go run -race main.go
 ```
 
 **Root cause analysis:** Deep explanation.
@@ -2422,6 +2476,7 @@ go tool trace ...
 | `go tool trace` | Execution tracing | Concurrency issues |
 | `go build -race` | Race detection | Data race debugging |
 | `delve` | Step-by-step debugging | Complex logic bugs |
+| `GOSSAFUNC=<fn> go build` | View SSA IR | Compiler optimization analysis |
 
 > Focus on production debugging scenarios.
 > Include monitoring and observability considerations.
@@ -2510,7 +2565,6 @@ Architecture-level misconceptions about {{TOPIC_NAME}}:
 
 > 2-3 misconceptions. Focus on architecture and performance misconceptions.
 > Include benchmarks, specs, or real-world case studies as proof.
-> These are beliefs that lead to bad architecture decisions.
 
 ---
 
@@ -2542,6 +2596,7 @@ Deep architectural comparison:
 
 - **Go vs Rust:** {{Go chose simplicity/GC, Rust chose zero-cost abstractions — impact on this topic}}
 - **Go vs Java:** {{Go chose X, Java chose Y — performance and design implications}}
+- **Go vs Python:** {{Go's static typing and compiled nature vs Python's dynamism}}
 
 ### When Go's approach wins:
 - {{scenario where Go's design is ideal}}
@@ -2639,23 +2694,20 @@ System design thought experiments:
 
 | Optimization | When to apply | Expected improvement |
 |-------------|---------------|---------------------|
-| {{optimization 1}} | {{condition}} | {{improvement}} |
-| {{optimization 2}} | {{condition}} | {{improvement}} |
+| `sync.Pool` | Object churn in hot paths | 2-10x throughput |
+| `strings.Builder` | String concatenation loops | 10-100x |
+| Pre-allocated slices | Known-size collections | 2-5x |
 
 ### Heuristics & Rules of Thumb
 
-Quick mental rules for architectural decisions:
-
 - **The {{Name}} Rule:** Always use {{approach}} when {{metric}} exceeds {{threshold}}.
 - **The {{Name}} Heuristic:** If {{condition}}, then {{trade-off}} is worth it.
-
-> 3-5 heuristics. Numbers, thresholds, and strict rules that seniors use to make fast, reliable decisions without overthinking.
 
 ### Code Review Checklist
 
 - [ ] {{Check 1}} — why it matters
 - [ ] {{Check 2}} — why it matters
-- [ ] {{Check 3}} — why it matters
+- [ ] Escape analysis reviewed with `go build -gcflags="-m"`
 
 > Include decision matrices and checklists that seniors can use in daily work.
 
@@ -2678,7 +2730,7 @@ Check your senior-level mastery of {{TOPIC_NAME}}:
 - [ ] Debug production issues related to this topic
 
 ### I can optimize:
-- [ ] Profile and identify bottlenecks
+- [ ] Profile and identify bottlenecks using `go tool pprof`
 - [ ] Optimize with measurable improvements (benchmarks)
 - [ ] Know when NOT to optimize
 
@@ -2708,16 +2760,10 @@ With senior-level mastery of {{TOPIC_NAME}}, you can:
 - **{{Project 1}}** — contribute to {{specific area}}
 - **Go standard library** — understand and contribute to {{relevant package}}
 
-### Technologies and platforms:
-- **{{Platform 1}}** — architect solutions using {{TOPIC_NAME}} at scale
-- **{{Platform 2}}** — this knowledge is directly applicable
-
 ### Career impact:
 - **Staff/Principal Engineer** — system design interviews require this depth
 - **Tech Lead** — mentor others on {{TOPIC_NAME}} architectural decisions
 - **Open Source Maintainer** — contribute to Go ecosystem
-
-> Focus on leadership, architecture, and career-defining opportunities.
 
 ---
 
@@ -2755,47 +2801,15 @@ With senior-level mastery of {{TOPIC_NAME}}, you can:
 | **ASCII Diagram** | Memory layouts, stack/heap | Box-drawing characters |
 | **Comparison Table** | Feature comparisons, trade-offs | Markdown table |
 
-### Example — Flowchart
+### Example — Architecture Diagram
 
 ```mermaid
 graph TD
-    A[Input] --> B{Decision}
-    B -->|Yes| C[Process A]
-    B -->|No| D[Process B]
-    C --> E[Output]
+    A[Client] --> B[Load Balancer]
+    B --> C[Service A]
+    B --> D[Service B]
+    C --> E[(Database)]
     D --> E
-```
-
-### Example — Sequence Diagram
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Server
-    participant DB
-    Client->>Server: Request
-    Server->>DB: Query
-    DB-->>Server: Result
-    Server-->>Client: Response
-```
-
-### Example — ASCII Memory Layout
-
-```
-+------------------+
-|   Stack Frame    |
-|------------------|
-| local_var1: 42   |  <- 8 bytes
-| local_var2: &obj |  <- 8 bytes (pointer)
-+------------------+
-        |
-        v
-+------------------+
-|   Heap Object    |
-|------------------|
-| field1: "hello"  |
-| field2: 3.14     |
-+------------------+
 ```
 
 </details>
@@ -2897,11 +2911,14 @@ type {{internalStruct}} struct {
 What the Go compiler does with this feature:
 
 ```bash
-# View compiler decisions
+# View compiler decisions (escape analysis, inlining)
 go build -gcflags="-m -m" main.go
 
-# View SSA
+# View SSA intermediate representation
 GOSSAFUNC=main go build main.go
+
+# View final assembly
+go build -gcflags="-S" main.go
 ```
 
 **Compiler optimizations applied:**
@@ -2940,8 +2957,11 @@ fmt.Println(unsafe.Alignof(x))   // alignment
 What system calls are involved:
 
 ```bash
-# Trace syscalls
+# Trace syscalls on Linux
 strace -f ./myprogram
+
+# Trace syscalls on macOS
+dtruss ./myprogram
 ```
 
 **Key syscalls:**
@@ -3052,20 +3072,6 @@ metrics.Read(samples)
 | `/sched/goroutines:goroutines` | Goroutine count | {{how this feature affects it}} |
 | `/sched/latencies:seconds` | Goroutine schedule delay | {{how this feature affects it}} |
 
-### Exporting Runtime Metrics to Prometheus
-
-```go
-import goruntime "github.com/prometheus/client_golang/prometheus/collectors"
-
-prometheus.MustRegister(
-    goruntime.NewGoCollector(
-        goruntime.WithGoCollectorRuntimeMetrics(
-            goruntime.GoRuntimeMetricsRule{Matcher: regexp.MustCompile(`/.*`)},
-        ),
-    ),
-)
-```
-
 > Runtime metrics are sampled, not pushed — call `metrics.Read()` periodically.
 > `runtime.ReadMemStats()` causes STW (stop-the-world) — avoid in hot paths.
 
@@ -3144,7 +3150,7 @@ Check your professional-level understanding of {{TOPIC_NAME}}:
 ### I can prove:
 - [ ] Back claims with benchmarks and profiling evidence
 - [ ] Reference language specification or runtime source code
-- [ ] Demonstrate internal behavior with diagnostic tools
+- [ ] Demonstrate internal behavior with `GOSSAFUNC`, `go build -gcflags="-S"`, `go tool objdump`
 
 > This is the deepest level of understanding. Not all developers need this,
 > but it separates those who USE the language from those who truly UNDERSTAND it.
@@ -3180,37 +3186,24 @@ Check your professional-level understanding of {{TOPIC_NAME}}:
 
 | Visual Type | Best For | Syntax |
 |:----------:|:--------:|:------:|
-| **Mermaid Flowchart** | Processes, workflows, decision trees | `graph TD` / `graph LR` |
-| **Mermaid Sequence** | Request/response flows, lifecycle | `sequenceDiagram` |
-| **Mermaid Class** | Type relationships, interfaces | `classDiagram` |
-| **ASCII Diagram** | Memory layouts, stack/heap | Box-drawing characters |
-| **Comparison Table** | Feature comparisons, trade-offs | Markdown table |
+| **Mermaid Flowchart** | Compiler/runtime pipelines | `graph TD` / `graph LR` |
+| **ASCII Diagram** | Memory layouts, struct sizes | Box-drawing characters |
+| **Assembly annotations** | Instruction-level analysis | Code block with comments |
 
-### Example — Flowchart
+### Example — Compiler Pipeline
 
 ```mermaid
-graph TD
-    A[Input] --> B{Decision}
-    B -->|Yes| C[Process A]
-    B -->|No| D[Process B]
-    C --> E[Output]
-    D --> E
+flowchart TD
+    A[Source Code] --> B[Lexer/Parser]
+    B --> C[AST]
+    C --> D[Type Checking]
+    D --> E[SSA Generation]
+    E --> F[Optimization Passes]
+    F --> G[Machine Code]
+    G --> H[Runtime Execution]
 ```
 
-### Example — Sequence Diagram
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Server
-    participant DB
-    Client->>Server: Request
-    Server->>DB: Query
-    DB-->>Server: Result
-    Server-->>Client: Response
-```
-
-### Example — ASCII Memory Layout
+### Example — Memory Layout
 
 ```
 +------------------+
@@ -3273,6 +3266,10 @@ Clear, concise explanation that a junior should be able to give.
 
 **Answer:**
 ...with code example if needed.
+
+```go
+// Simple illustrative example
+```
 
 ---
 
@@ -3519,12 +3516,12 @@ graph TD
 
 **Goal:** {{What design skill this builds — e.g., API design, database schema, system architecture}}
 
-**Scenario:** {{Brief context — e.g., "Design the API for a user management service..."}}
+**Scenario:** {{Brief context}}
 
 **Requirements:**
-- [ ] {{Design requirement 1 — e.g., Draw a system architecture diagram}}
-- [ ] {{Design requirement 2 — e.g., Define API endpoints with request/response}}
-- [ ] {{Design requirement 3 — e.g., Document trade-offs of your design}}
+- [ ] {{Design requirement 1}}
+- [ ] {{Design requirement 2}}
+- [ ] {{Design requirement 3}}
 
 **Deliverable:**
 - Architecture diagram (Mermaid or ASCII)
@@ -3546,7 +3543,6 @@ graph TD
 ---
 
 > 2-3 middle tasks. Mix of 💻 Code and 🎨 Design tasks.
-> Design tasks: API design, database schema, architecture diagrams, etc.
 > Code tasks: less guidance, real-world scenarios, must write tests.
 
 ---
@@ -3559,7 +3555,7 @@ graph TD
 
 **Goal:** {{What architectural/leadership skill this practices}}
 
-**Scenario:** {{Complex real-world problem — e.g., "Your service handles 50K rps and is experiencing..."}}
+**Scenario:** {{Complex real-world problem}}
 
 **Requirements:**
 - [ ] {{High-level requirement 1}}
@@ -3588,19 +3584,18 @@ graph TD
 
 **Goal:** {{What system design / architecture skill this practices}}
 
-**Scenario:** {{Complex design problem — e.g., "Design a distributed cache that handles 100K rps..."}}
+**Scenario:** {{Complex design problem}}
 
 **Requirements:**
-- [ ] {{Design requirement 1 — e.g., Create a full system architecture diagram}}
-- [ ] {{Design requirement 2 — e.g., Define component interactions and data flow}}
-- [ ] {{Design requirement 3 — e.g., Plan for failure scenarios and recovery}}
+- [ ] Create a full system architecture diagram
+- [ ] Define component interactions and data flow
+- [ ] Plan for failure scenarios and recovery
 - [ ] Document all trade-offs and alternative approaches considered
 - [ ] Include capacity planning and scalability analysis
 
 **Deliverable:**
 - System architecture diagram (Mermaid, ASCII, or both)
 - Component interaction diagrams (sequence diagrams)
-- Data flow diagrams
 - Written design document with trade-off analysis
 
 **Evaluation criteria:**
@@ -3608,7 +3603,6 @@ graph TD
 - [ ] Failure scenarios are addressed
 - [ ] Trade-offs are clearly documented
 - [ ] Alternative approaches are considered and compared
-- [ ] Design is production-ready and maintainable
 
 ---
 
@@ -3619,8 +3613,6 @@ graph TD
 ---
 
 > 2-3 senior tasks. Mix of 💻 Code and 🎨 Design tasks.
-> Design tasks: full system design, architecture review, scalability analysis, etc.
-> Code tasks: open-ended, architecture-focused, require documentation and benchmarks.
 
 ---
 
@@ -3725,6 +3717,17 @@ Build a {{description}} that uses {{TOPIC_NAME}} concepts.
 | 🟢 | **Easy** — Common beginner mistakes, syntax-level bugs |
 | 🟡 | **Medium** — Logic errors, subtle behavior, concurrency issues |
 | 🔴 | **Hard** — Race conditions, memory issues, compiler/runtime edge cases |
+
+---
+
+> **Language-specific bugs for Golang topics:**
+> - Goroutine leak (missing context cancellation, blocked channel)
+> - Nil pointer dereference (nil interface, nil map write)
+> - Data race (concurrent map access, shared state without mutex)
+> - Wrong error handling (ignoring errors, not using errors.Is/errors.As)
+> - Loop variable capture in goroutines (classic Go closure bug)
+> - Slice append aliasing (unexpected shared backing array)
+> - defer in loop (defers accumulate, resource exhaustion)
 
 ---
 
@@ -4174,7 +4177,7 @@ Track your progress:
 > - Every bug must be **related to {{TOPIC_NAME}}** — not generic Go mistakes
 > - Buggy code must **compile** (no syntax errors) — the bug is in logic/behavior
 > - Include expected vs actual output for every bug
-> - Hard bugs should involve: race conditions, memory leaks, goroutine leaks, deadlocks, or compiler/runtime edge cases
+> - Hard bugs should involve: goroutine leaks, nil pointer dereference, data races, wrong error handling
 
 </details>
 
@@ -4217,6 +4220,18 @@ Track your progress:
 | **CPU** | ⚡ | Better algorithms, fewer operations, cache efficiency |
 | **Concurrency** | 🔄 | Better parallelism, reduce contention, avoid locks |
 | **I/O** | 💾 | Batch operations, buffering, connection reuse |
+
+---
+
+> **Golang-specific optimization techniques to cover:**
+> - `sync.Pool` for object reuse (reduce GC pressure)
+> - `strings.Builder` instead of string concatenation
+> - Escape analysis: keep allocations on the stack
+> - Pre-allocate slices/maps with known capacity
+> - `bufio` for I/O buffering
+> - `sync.RWMutex` vs `sync.Mutex` for read-heavy workloads
+> - Cache-line alignment for struct fields
+> - Avoid interface boxing in hot paths
 
 ---
 
