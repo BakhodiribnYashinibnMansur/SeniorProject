@@ -11,6 +11,7 @@
 | **Purpose** | Universal template for all Go roadmap topics |
 | **Files per topic** | 8 files: `junior.md`, `middle.md`, `senior.md`, `professional.md`, `interview.md`, `tasks.md`, `find-bug.md`, `optimize.md` |
 | **Language** | All content must be generated in **English** |
+| **Table of Contents** | **Optional** — include only if relevant to the topic. For theory/practice files (`tasks.md`, `find-bug.md`, `optimize.md`) it is NOT required |
 
 ### Topic Structure
 
@@ -47,6 +48,8 @@ XX-topic-name/
 
 # {{TOPIC_NAME}} — Junior Level
 
+<!-- Table of Contents is OPTIONAL. Include only if the topic has many sections and it helps navigation. Remove this section entirely if not needed. -->
+
 ## Table of Contents
 
 1. [Introduction](#introduction)
@@ -60,18 +63,19 @@ XX-topic-name/
 9. [Error Handling](#error-handling)
 10. [Security Considerations](#security-considerations)
 11. [Performance Tips](#performance-tips)
-12. [Best Practices](#best-practices)
-13. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
-14. [Common Mistakes](#common-mistakes)
-15. [Tricky Points](#tricky-points)
-16. [Test](#test)
-17. [Tricky Questions](#tricky-questions)
-18. [Cheat Sheet](#cheat-sheet)
-19. [Summary](#summary)
-20. [What You Can Build](#what-you-can-build)
-21. [Further Reading](#further-reading)
-22. [Related Topics](#related-topics)
-23. [Diagrams & Visual Aids](#diagrams--visual-aids)
+12. [Metrics & Analytics](#metrics--analytics)
+13. [Best Practices](#best-practices)
+14. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+15. [Common Mistakes](#common-mistakes)
+16. [Tricky Points](#tricky-points)
+17. [Test](#test)
+18. [Tricky Questions](#tricky-questions)
+19. [Cheat Sheet](#cheat-sheet)
+20. [Summary](#summary)
+21. [What You Can Build](#what-you-can-build)
+22. [Further Reading](#further-reading)
+23. [Related Topics](#related-topics)
+24. [Diagrams & Visual Aids](#diagrams--visual-aids)
 
 ---
 
@@ -125,6 +129,34 @@ Simple explanation with analogy if helpful.
 > - Each concept should be explained in 3-5 sentences max.
 > - Use bullet points for lists.
 > - Include small code snippets inline where needed.
+
+---
+
+## Real-World Analogies
+
+Everyday analogies to help you understand {{TOPIC_NAME}} intuitively:
+
+| Concept | Analogy |
+|---------|--------|
+| **{{Concept 1}}** | {{Analogy — e.g., \"A stack is like a pile of plates — you always take from the top\"}} |
+| **{{Concept 2}}** | {{Analogy — e.g., \"A hash map is like a library catalog — find any book instantly by its code\"}} |
+| **{{Concept 3}}** | {{Analogy}} |
+
+> 2-4 analogies. Use everyday objects and situations.
+> Good analogies make complex concepts click instantly.
+> Avoid over-stretching analogies — mention where the analogy breaks down.
+
+---
+
+## Mental Models
+
+How to picture {{TOPIC_NAME}} in your head:
+
+**The intuition:** {{A simple mental model — e.g., "Think of a variable as a box with a label containing data."}}
+
+**Why this model helps:** {{Why visualizing it this way prevents common mistakes}}
+
+> 1-2 mental models. Strong mental models help juniors write code intuitively rather than memorizing syntax.
 
 ---
 
@@ -301,6 +333,36 @@ Basic performance considerations for {{TOPIC_NAME}}:
 
 ---
 
+## Metrics & Analytics
+
+Key metrics to track when using {{TOPIC_NAME}}:
+
+### What to Measure
+
+| Metric | Why it matters | Tool |
+|--------|---------------|------|
+| **{{metric 1}}** | {{reason}} | `expvar`, `pprof` |
+| **{{metric 2}}** | {{reason}} | `expvar`, `pprof` |
+
+### Basic Instrumentation
+
+```go
+import "expvar"
+
+var (
+    {{metricName}}Count  = expvar.NewInt("{{topic}}.count")
+    {{metricName}}Errors = expvar.NewInt("{{topic}}.errors")
+)
+
+// Increment in your code:
+{{metricName}}Count.Add(1)
+```
+
+> **What to expose:** count, errors, latency (ms).
+> Keep it simple — 2-3 metrics that tell you "is it working?".
+
+---
+
 ## Best Practices
 
 - **Do this:** Explanation
@@ -345,6 +407,26 @@ Basic performance considerations for {{TOPIC_NAME}}:
 ...
 
 > 3-5 mistakes that juniors commonly make with this topic.
+
+---
+
+## Common Misconceptions
+
+Things people often believe about {{TOPIC_NAME}} that aren't true:
+
+### Misconception 1: "{{False belief}}"
+
+**Reality:** {{What's actually true}}
+
+**Why people think this:** {{Why this misconception is common}}
+
+### Misconception 2: "{{Another false belief}}"
+
+**Reality:** {{What's actually true}}
+
+> 2-4 misconceptions. Directly address false beliefs.
+> These are NOT code mistakes — they are conceptual misunderstandings.
+> Example: "People think recursion is always slower than iteration" or "Many assume more threads = faster execution"
 
 ---
 
@@ -410,6 +492,22 @@ Explanation: ...
 
 ---
 
+## "What If?" Scenarios
+
+Thought experiments to test your understanding:
+
+**What if {{Unexpected situation}}?**
+- **You might think:** {{Intuitive but wrong answer}}
+- **But actually:** {{Correct behavior and why}}
+
+**What if {{Another scenario}}?**
+- **You might think:** ...
+- **But actually:** ...
+
+> 2-3 "What If?" scenarios. Pose hypothetical situations that test edge cases and conceptual limits.
+
+---
+
 ## Tricky Questions
 
 Questions designed to confuse — with misleading options:
@@ -446,6 +544,31 @@ Quick reference for this topic:
 
 > Keep it to 5-10 rows. This should fit on one screen.
 > Useful for quick review before interviews or during coding.
+
+---
+
+## Self-Assessment Checklist
+
+Check your understanding of {{TOPIC_NAME}}:
+
+### I can explain:
+- [ ] What {{TOPIC_NAME}} is and why it exists
+- [ ] When to use it and when NOT to use it
+- [ ] {{Specific concept 1}} in my own words
+- [ ] {{Specific concept 2}} in my own words
+
+### I can do:
+- [ ] Write a basic example from scratch (without looking)
+- [ ] Read and understand code that uses {{TOPIC_NAME}}
+- [ ] Debug simple errors related to this topic
+- [ ] {{Topic-specific practical skill}}
+
+### I can answer:
+- [ ] All multiple choice questions in this document
+- [ ] "What's the output?" questions correctly
+
+> Adjust checklist items to match the topic.
+> If you can't check all boxes, revisit the sections you're unsure about.
 
 ---
 
@@ -517,6 +640,27 @@ Topics to explore next or that connect to this one:
 
 > Include **at least 2-3 visual aids** per document.
 
+### Mind Map
+
+Visual overview of how key concepts in {{TOPIC_NAME}} connect:
+
+```mermaid
+mindmap
+  root(({{TOPIC_NAME}}))
+    Core Concept 1
+      Sub-concept A
+      Sub-concept B
+    Core Concept 2
+      Sub-concept C
+      Sub-concept D
+    Related Topics
+      {{Related 1}}
+      {{Related 2}}
+```
+
+> Create a mind map that shows the relationship between concepts.
+> This helps learners see the "big picture" before diving into details.
+
 ### Visual Type Reference
 
 | Visual Type | Best For | Syntax |
@@ -524,6 +668,7 @@ Topics to explore next or that connect to this one:
 | **Mermaid Flowchart** | Processes, workflows, decision trees | `graph TD` / `graph LR` |
 | **Mermaid Sequence** | Request/response flows, lifecycle | `sequenceDiagram` |
 | **Mermaid Class** | Type relationships, interfaces | `classDiagram` |
+| **Mermaid Mind Map** | Topic overview, concept connections | `mindmap` |
 | **ASCII Diagram** | Memory layouts, stack/heap | Box-drawing characters |
 | **Comparison Table** | Feature comparisons, trade-offs | Markdown table |
 
@@ -582,6 +727,8 @@ sequenceDiagram
 
 # {{TOPIC_NAME}} — Middle Level
 
+<!-- Table of Contents is OPTIONAL. Include only if the topic has many sections and it helps navigation. Remove this section entirely if not needed. -->
+
 ## Table of Contents
 
 1. [Introduction](#introduction)
@@ -593,20 +740,21 @@ sequenceDiagram
 7. [Error Handling](#error-handling)
 8. [Security Considerations](#security-considerations)
 9. [Performance Optimization](#performance-optimization)
-10. [Debugging Guide](#debugging-guide)
-11. [Best Practices](#best-practices)
-12. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
-13. [Common Mistakes](#common-mistakes)
-14. [Tricky Points](#tricky-points)
-15. [Comparison with Other Languages](#comparison-with-other-languages)
-16. [Test](#test)
-17. [Tricky Questions](#tricky-questions)
-18. [Cheat Sheet](#cheat-sheet)
-19. [Summary](#summary)
-20. [What You Can Build](#what-you-can-build)
-21. [Further Reading](#further-reading)
-22. [Related Topics](#related-topics)
-23. [Diagrams & Visual Aids](#diagrams--visual-aids)
+10. [Metrics & Analytics](#metrics--analytics)
+11. [Debugging Guide](#debugging-guide)
+12. [Best Practices](#best-practices)
+13. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+14. [Common Mistakes](#common-mistakes)
+15. [Tricky Points](#tricky-points)
+16. [Comparison with Other Languages](#comparison-with-other-languages)
+17. [Test](#test)
+18. [Tricky Questions](#tricky-questions)
+19. [Cheat Sheet](#cheat-sheet)
+20. [Summary](#summary)
+21. [What You Can Build](#what-you-can-build)
+22. [Further Reading](#further-reading)
+23. [Related Topics](#related-topics)
+24. [Diagrams & Visual Aids](#diagrams--visual-aids)
 
 ---
 
@@ -645,6 +793,22 @@ flowchart LR
 
 ---
 
+## Evolution & Historical Context
+
+Why does {{TOPIC_NAME}} exist? What problem does it solve?
+
+**Before {{TOPIC_NAME}}:**
+- How developers solved this problem previously
+- The pain points and limitations of the old approach
+
+**How {{TOPIC_NAME}} changed things:**
+- The architectural shift it introduced
+- Why it became the standard
+
+> Understanding the history helps developers appreciate *why* things are designed the way they are, preventing them from repeating historical mistakes.
+
+---
+
 ## Pros & Cons
 
 | Pros | Cons |
@@ -667,6 +831,19 @@ flowchart LR
 
 > More nuanced than junior — include trade-off analysis and alternative comparison.
 > Help middle developers make informed architectural decisions.
+
+---
+
+## Alternative Approaches (Plan B)
+
+If you couldn't use {{TOPIC_NAME}} for some reason, how else could you solve the problem?
+
+| Alternative | How it works | When you might be forced to use it |
+|-------------|--------------|------------------------------------|
+| **{{Alternative 1}}** | {{Brief explanation}} | {{e.g., "If memory is strictly constrained"}} |
+| **{{Alternative 2}}** | {{Brief explanation}} | {{e.g., "If you need absolute atomic consistency"}} |
+
+> 1-2 alternatives. Helps break the habit of "when you have a hammer, everything looks like a nail."
 
 ---
 
@@ -854,6 +1031,55 @@ BenchmarkFast-8    500000     2041 ns/op       0 B/op     0 allocs/op
 
 ---
 
+## Metrics & Analytics
+
+Production-grade metrics and observability for {{TOPIC_NAME}}:
+
+### Key Metrics
+
+| Metric | Type | Description | Alert threshold |
+|--------|------|-------------|-----------------|
+| **{{metric 1}}** | Counter | {{what it counts}} | — |
+| **{{metric 2}}** | Gauge | {{what it measures}} | > {{threshold}} |
+| **{{metric 3}}** | Histogram | {{latency/size distribution}} | p99 > {{threshold}} |
+
+### Prometheus Instrumentation
+
+```go
+import "github.com/prometheus/client_golang/prometheus"
+
+var (
+    {{topic}}Ops = prometheus.NewCounterVec(
+        prometheus.CounterOpts{
+            Name: "{{topic}}_operations_total",
+            Help: "Total number of {{topic}} operations",
+        },
+        []string{"status"},
+    )
+    {{topic}}Duration = prometheus.NewHistogramVec(
+        prometheus.HistogramOpts{
+            Name:    "{{topic}}_duration_seconds",
+            Help:    "Duration of {{topic}} operations",
+            Buckets: prometheus.DefBuckets,
+        },
+        []string{"operation"},
+    )
+)
+```
+
+### Dashboard Panels (Grafana)
+
+| Panel | Query | Visualization |
+|-------|-------|---------------|
+| Operations/sec | `rate({{topic}}_operations_total[5m])` | Time series |
+| Error rate | `rate({{topic}}_operations_total{status="error"}[5m])` | Stat |
+| p99 latency | `histogram_quantile(0.99, {{topic}}_duration_seconds_bucket)` | Gauge |
+
+> Instrument before you optimize — you can't fix what you can't measure.
+> Use labels sparingly — high cardinality labels cause Prometheus performance issues.
+
+---
+
 ## Debugging Guide
 
 How to debug common issues related to {{TOPIC_NAME}}:
@@ -932,6 +1158,54 @@ How to debug common issues related to {{TOPIC_NAME}}:
 **Why it's wrong:** Explanation of subtle issue.
 
 > Mistakes that pass code review but fail in production.
+
+---
+
+## Common Misconceptions
+
+Things even experienced developers get wrong about {{TOPIC_NAME}}:
+
+### Misconception 1: "{{False belief}}"
+
+**Reality:** {{What's actually true}}
+
+**Evidence:**
+```go
+// Code or benchmark that proves the misconception wrong
+```
+
+### Misconception 2: "{{Another false belief}}"
+
+**Reality:** {{What's actually true}}
+
+**Why this matters:** {{Production impact of this misconception}}
+
+> 2-4 misconceptions. More nuanced than junior level.
+> Include evidence (code, benchmarks, specs) to disprove each misconception.
+> Focus on misconceptions that cause real production issues.
+
+---
+
+## Anti-Patterns
+
+Practices that seem like a good idea but create technical debt over time:
+
+### Anti-Pattern 1: {{Name of anti-pattern}}
+
+```go
+// ❌ The Anti-Pattern (looks clean, but scales poorly)
+...
+```
+
+**Why it's bad:** How it causes pain later (coupling, testing difficulty, memory leaks).
+**The refactoring:** What to use instead.
+
+### Anti-Pattern 2: {{Another anti-pattern}}
+
+...
+
+> 2-3 anti-patterns. These are architectural or design flaws, not just simple code mistakes.
+> Often these are things that work fine in small projects but fail as the codebase grows.
 
 ---
 
@@ -1053,6 +1327,32 @@ Quick reference for production use:
 | {{need 2}} | {{approach}} | {{reason}} |
 
 > Include a decision matrix for choosing between approaches.
+
+---
+
+## Self-Assessment Checklist
+
+Check your middle-level understanding of {{TOPIC_NAME}}:
+
+### I can explain:
+- [ ] Why {{TOPIC_NAME}} is designed this way (not just how to use it)
+- [ ] Trade-offs between different approaches
+- [ ] How this topic interacts with {{related topic 1}}
+- [ ] Performance implications of different patterns
+
+### I can do:
+- [ ] Write production-quality code using {{TOPIC_NAME}}
+- [ ] Choose the right approach based on requirements
+- [ ] Debug issues related to this topic
+- [ ] Write tests covering edge cases
+- [ ] Review code and identify problems
+
+### I can answer:
+- [ ] "Why?" questions about design decisions
+- [ ] "What happens if?" scenario questions
+- [ ] Compare approaches with trade-offs
+
+> If you can check all boxes, you're ready for Senior level.
 
 ---
 
@@ -1184,6 +1484,8 @@ sequenceDiagram
 
 # {{TOPIC_NAME}} — Senior Level
 
+<!-- Table of Contents is OPTIONAL. Include only if the topic has many sections and it helps navigation. Remove this section entirely if not needed. -->
+
 ## Table of Contents
 
 1. [Introduction](#introduction)
@@ -1195,20 +1497,21 @@ sequenceDiagram
 7. [Error Handling](#error-handling)
 8. [Security Considerations](#security-considerations)
 9. [Performance Optimization](#performance-optimization)
-10. [Debugging Guide](#debugging-guide)
-11. [Best Practices](#best-practices)
-12. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
-13. [Common Mistakes](#common-mistakes)
-14. [Tricky Points](#tricky-points)
-15. [Comparison with Other Languages](#comparison-with-other-languages)
-16. [Test](#test)
-17. [Tricky Questions](#tricky-questions)
-18. [Cheat Sheet](#cheat-sheet)
-19. [Summary](#summary)
-20. [What You Can Build](#what-you-can-build)
-21. [Further Reading](#further-reading)
-22. [Related Topics](#related-topics)
-23. [Diagrams & Visual Aids](#diagrams--visual-aids)
+10. [Metrics & Analytics](#metrics--analytics)
+11. [Debugging Guide](#debugging-guide)
+12. [Best Practices](#best-practices)
+13. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+14. [Common Mistakes](#common-mistakes)
+15. [Tricky Points](#tricky-points)
+16. [Comparison with Other Languages](#comparison-with-other-languages)
+17. [Test](#test)
+18. [Tricky Questions](#tricky-questions)
+19. [Cheat Sheet](#cheat-sheet)
+20. [Summary](#summary)
+21. [What You Can Build](#what-you-can-build)
+22. [Further Reading](#further-reading)
+23. [Related Topics](#related-topics)
+24. [Diagrams & Visual Aids](#diagrams--visual-aids)
 
 ---
 
@@ -1500,6 +1803,53 @@ BenchmarkFast-8    500000     3041 ns/op     256 B/op     1 allocs/op
 
 ---
 
+## Metrics & Analytics
+
+Observability architecture and SLO design for {{TOPIC_NAME}}:
+
+### SLO / SLA Definition
+
+| SLI | SLO Target | Measurement window | Consequence if breached |
+|-----|-----------|-------------------|------------------------|
+| **{{availability}}** | 99.9% | 30 days | PagerDuty alert |
+| **{{latency p99}}** | < {{Xms}} | 5 min rolling | Warning alert |
+| **{{error rate}}** | < {{X%}} | 1 hour | Incident created |
+
+### Metrics Architecture
+
+```
+[{{TOPIC_NAME}} service]
+        │
+        ├── /metrics (Prometheus scrape endpoint)
+        │       ├── {{topic}}_requests_total (counter, labels: method, status)
+        │       ├── {{topic}}_duration_seconds (histogram)
+        │       └── {{topic}}_active_connections (gauge)
+        │
+        └── Structured logs → Loki / ELK
+                └── trace_id → Jaeger / Tempo
+```
+
+### Capacity Planning Metrics
+
+| Signal | Indicates | Action |
+|--------|-----------|--------|
+| {{metric trending up}} | {{what it means}} | Scale horizontally |
+| {{metric at threshold}} | {{what it means}} | Optimize algorithm |
+| {{metric spike pattern}} | {{what it means}} | Add rate limiting |
+
+### Business vs Technical Metrics
+
+| Layer | Metric | Owner |
+|-------|--------|-------|
+| **Business** | {{e.g., revenue per request}} | Product |
+| **Application** | {{e.g., requests/sec, error rate}} | Engineering |
+| **Infrastructure** | {{e.g., CPU, memory, GC pause}} | Platform |
+
+> Every alert must be actionable — if you can't do anything about it, don't alert on it.
+> Define SLO burn rate alerts, not just threshold alerts.
+
+---
+
 ## Debugging Guide
 
 Advanced debugging techniques for {{TOPIC_NAME}} at scale:
@@ -1564,6 +1914,23 @@ go tool trace ...
 
 ---
 
+## Postmortems & System Failures
+
+Real-world examples of how misunderstanding {{TOPIC_NAME}} caused production outages:
+
+### The {{Company/System}} Outage
+
+- **The goal:** {{What they were trying to achieve}}
+- **The mistake:** {{How they misused this topic/feature}}
+- **The impact:** {{Downtime, data loss, degraded performance}}
+- **The fix:** {{How they solved it permanently}}
+
+**Key takeaway:** {{Architectural lesson learned}}
+
+> 1-2 postmortem summaries. Senior developers learn best from spectacular failures. Use real industry examples if available.
+
+---
+
 ## Common Mistakes
 
 ### Mistake 1: {{Architectural anti-pattern}}
@@ -1578,6 +1945,31 @@ go tool trace ...
 
 **Why seniors still make this mistake:** Context.
 **How to prevent:** Code review checklist item, linter rule, etc.
+
+---
+
+## Common Misconceptions
+
+Architecture-level misconceptions about {{TOPIC_NAME}}:
+
+### Misconception 1: "{{False belief about performance/architecture}}"
+
+**Reality:** {{What's actually true}}
+
+**Proof:**
+```
+// Benchmark, profiling output, or architectural analysis that disproves this
+```
+
+**Real-world impact:** {{What happens when teams make decisions based on this misconception}}
+
+### Misconception 2: "{{Another false belief}}"
+
+**Reality:** {{What's actually true}}
+
+> 2-3 misconceptions. Focus on architecture and performance misconceptions.
+> Include benchmarks, specs, or real-world case studies as proof.
+> These are beliefs that lead to bad architecture decisions.
 
 ---
 
@@ -1676,7 +2068,20 @@ Issue 1: ... Issue 2: ... Issue 3: ...
 Detailed explanation with Go spec reference and benchmark proof.
 </details>
 
-> 5-7 questions. Should stump most developers. Require deep Go knowledge.
+> 5-7 questions. Should stump most developers. Require deep knowledge.
+
+---
+
+## "What If?" Scenarios (Architecture)
+
+System design thought experiments:
+
+**What if {{Disaster scenario — e.g., "The network partitions while this transaction is processing"}}?**
+- **Expected failure mode:** {{How the system should ideally degrade}}
+- **Worst-case scenario:** {{What usually happens if poorly designed}}
+- **Mitigation:** {{How to handle it}}
+
+> 2-3 advanced "What if" scenarios focusing on faults, scaling limits, and distributed systems.
 
 ---
 
@@ -1696,6 +2101,15 @@ Detailed explanation with Go spec reference and benchmark proof.
 | {{optimization 1}} | {{condition}} | {{improvement}} |
 | {{optimization 2}} | {{condition}} | {{improvement}} |
 
+### Heuristics & Rules of Thumb
+
+Quick mental rules for architectural decisions:
+
+- **The {{Name}} Rule:** Always use {{approach}} when {{metric}} exceeds {{threshold}}.
+- **The {{Name}} Heuristic:** If {{condition}}, then {{trade-off}} is worth it.
+
+> 3-5 heuristics. Numbers, thresholds, and strict rules that seniors use to make fast, reliable decisions without overthinking.
+
 ### Code Review Checklist
 
 - [ ] {{Check 1}} — why it matters
@@ -1703,6 +2117,31 @@ Detailed explanation with Go spec reference and benchmark proof.
 - [ ] {{Check 3}} — why it matters
 
 > Include decision matrices and checklists that seniors can use in daily work.
+
+---
+
+## Self-Assessment Checklist
+
+Check your senior-level mastery of {{TOPIC_NAME}}:
+
+### I can architect:
+- [ ] Design systems that use {{TOPIC_NAME}} at scale
+- [ ] Choose the right approach based on requirements, constraints, and team capabilities
+- [ ] Evaluate trade-offs and document decisions
+- [ ] Identify when {{TOPIC_NAME}} is NOT the right solution
+
+### I can lead:
+- [ ] Mentor juniors and middles on this topic
+- [ ] Conduct code reviews focusing on {{TOPIC_NAME}} patterns
+- [ ] Create coding guidelines for the team
+- [ ] Debug production issues related to this topic
+
+### I can optimize:
+- [ ] Profile and identify bottlenecks
+- [ ] Optimize with measurable improvements (benchmarks)
+- [ ] Know when NOT to optimize
+
+> If you can check all boxes, you have senior-level mastery.
 
 ---
 
@@ -1829,6 +2268,8 @@ sequenceDiagram
 <summary><strong>Template Content</strong></summary>
 
 # {{TOPIC_NAME}} — Under the Hood
+
+<!-- Table of Contents is OPTIONAL. Include only if the topic has many sections and it helps navigation. Remove this section entirely if not needed. -->
 
 ## Table of Contents
 
@@ -2037,6 +2478,58 @@ go tool pprof cpu.prof
 
 ---
 
+## Metrics & Analytics (Runtime Level)
+
+### Go Runtime Metrics for {{TOPIC_NAME}}
+
+```go
+import (
+    "runtime"
+    "runtime/metrics"
+)
+
+// Read runtime memory stats
+var ms runtime.MemStats
+runtime.ReadMemStats(&ms)
+// Relevant fields: ms.HeapAlloc, ms.NumGC, ms.PauseTotalNs
+
+// New API (Go 1.16+): runtime/metrics
+samples := []metrics.Sample{
+    {Name: "/memory/classes/heap/objects:bytes"},
+    {Name: "/gc/cycles/total:gc-cycles"},
+    {Name: "/sched/goroutines:goroutines"},
+}
+metrics.Read(samples)
+```
+
+### Key Runtime Metrics for This Feature
+
+| Metric path | What it measures | Impact of {{TOPIC_NAME}} |
+|-------------|-----------------|--------------------------|
+| `/memory/classes/heap/objects:bytes` | Live heap objects | {{how this feature affects it}} |
+| `/gc/cycles/total:gc-cycles` | GC frequency | {{how this feature affects it}} |
+| `/sched/goroutines:goroutines` | Goroutine count | {{how this feature affects it}} |
+| `/sched/latencies:seconds` | Goroutine schedule delay | {{how this feature affects it}} |
+
+### Exporting Runtime Metrics to Prometheus
+
+```go
+import goruntime "github.com/prometheus/client_golang/prometheus/collectors"
+
+prometheus.MustRegister(
+    goruntime.NewGoCollector(
+        goruntime.WithGoCollectorRuntimeMetrics(
+            goruntime.GoRuntimeMetricsRule{Matcher: regexp.MustCompile(`/.*`)},
+        ),
+    ),
+)
+```
+
+> Runtime metrics are sampled, not pushed — call `metrics.Read()` periodically.
+> `runtime.ReadMemStats()` causes STW (stop-the-world) — avoid in hot paths.
+
+---
+
 ## Edge Cases at the Lowest Level
 
 ### Edge Case 1: {{name}}
@@ -2088,6 +2581,32 @@ Explanation with proof (benchmark, assembly output, or runtime source reference)
 </details>
 
 > 3-5 questions. Should require reading Go source code to answer definitively.
+
+---
+
+## Self-Assessment Checklist
+
+Check your professional-level understanding of {{TOPIC_NAME}}:
+
+### I can explain internals:
+- [ ] What happens at the compiler level when this feature is used
+- [ ] How the runtime manages this feature
+- [ ] Memory layout and allocation behavior
+- [ ] Relevant system calls and OS-level interactions
+
+### I can analyze:
+- [ ] Read and understand assembly output for this feature
+- [ ] Interpret profiling data (pprof, trace)
+- [ ] Identify performance characteristics from source code
+- [ ] Predict behavior under extreme conditions
+
+### I can prove:
+- [ ] Back claims with benchmarks and profiling evidence
+- [ ] Reference language specification or runtime source code
+- [ ] Demonstrate internal behavior with diagnostic tools
+
+> This is the deepest level of understanding. Not all developers need this,
+> but it separates those who USE the language from those who truly UNDERSTAND it.
 
 ---
 
@@ -2180,6 +2699,8 @@ sequenceDiagram
 <summary><strong>Template Content</strong></summary>
 
 # {{TOPIC_NAME}} — Interview Questions
+
+<!-- Table of Contents is OPTIONAL. Include only if the topic has many sections and it helps navigation. Remove this section entirely if not needed. -->
 
 ## Table of Contents
 
@@ -2346,7 +2867,9 @@ Frequently asked questions about {{TOPIC_NAME}} in interviews:
 
 ## Junior Tasks
 
-### Task 1: {{Simple task title}}
+### Task 1: {{Simple coding task title}}
+
+**Type:** 💻 Code
 
 **Goal:** {{What skill this practices}}
 
@@ -2375,19 +2898,50 @@ package main
 
 ---
 
-### Task 2: {{Another simple task}}
+### Task 2: {{Simple design task title}}
+
+**Type:** 🎨 Design
+
+**Goal:** {{What design skill this practices — e.g., data modeling, diagram drawing, API design}}
+
+**Instructions:**
+1. ...
+2. ...
+3. ...
+
+**Deliverable:** {{What to produce — e.g., diagram, schema, flowchart, API specification}}
+
+**Example format:**
+```mermaid
+graph TD
+    A[Start] --> B[Step 1]
+    B --> C[Step 2]
+```
+
+**Evaluation criteria:**
+- [ ] Design is clear and readable
+- [ ] All required components are present
+- [ ] {{Specific design check}}
+
+---
+
+### Task 3: {{Another simple task — code or design}}
 
 ...
 
 ---
 
-> 3-4 junior tasks. Simple, guided, with starter code and clear expected output.
+> 3-4 junior tasks. Mix of 💻 Code and 🎨 Design tasks.
+> Design tasks: diagrams, flowcharts, data models, API sketches, etc.
+> Code tasks: simple, guided, with starter code and clear expected output.
 
 ---
 
 ## Middle Tasks
 
-### Task 3: {{Production-oriented task}}
+### Task 4: {{Production-oriented coding task}}
+
+**Type:** 💻 Code
 
 **Goal:** {{What real-world skill this builds}}
 
@@ -2418,19 +2972,49 @@ package main
 
 ---
 
-### Task 4: {{Another middle task}}
+### Task 5: {{System/API design task}}
+
+**Type:** 🎨 Design
+
+**Goal:** {{What design skill this builds — e.g., API design, database schema, system architecture}}
+
+**Scenario:** {{Brief context — e.g., "Design the API for a user management service..."}}
+
+**Requirements:**
+- [ ] {{Design requirement 1 — e.g., Draw a system architecture diagram}}
+- [ ] {{Design requirement 2 — e.g., Define API endpoints with request/response}}
+- [ ] {{Design requirement 3 — e.g., Document trade-offs of your design}}
+
+**Deliverable:**
+- Architecture diagram (Mermaid or ASCII)
+- API specification or data model
+- Written explanation of design decisions
+
+**Evaluation criteria:**
+- [ ] Design covers all requirements
+- [ ] Trade-offs are clearly documented
+- [ ] Design is scalable and maintainable
+- [ ] Follows Go and general software design best practices
+
+---
+
+### Task 6: {{Another middle task — code or design}}
 
 ...
 
 ---
 
-> 2-3 middle tasks. Less guidance, real-world scenarios, must write tests.
+> 2-3 middle tasks. Mix of 💻 Code and 🎨 Design tasks.
+> Design tasks: API design, database schema, architecture diagrams, etc.
+> Code tasks: less guidance, real-world scenarios, must write tests.
 
 ---
 
 ## Senior Tasks
 
-### Task 5: {{Architecture/optimization task}}
+### Task 7: {{Architecture/optimization coding task}}
+
+**Type:** 💻 Code
 
 **Goal:** {{What architectural/leadership skill this practices}}
 
@@ -2457,13 +3041,45 @@ package main
 
 ---
 
-### Task 6: {{System design task}}
+### Task 8: {{Full system design task}}
+
+**Type:** 🎨 Design
+
+**Goal:** {{What system design / architecture skill this practices}}
+
+**Scenario:** {{Complex design problem — e.g., "Design a distributed cache that handles 100K rps..."}}
+
+**Requirements:**
+- [ ] {{Design requirement 1 — e.g., Create a full system architecture diagram}}
+- [ ] {{Design requirement 2 — e.g., Define component interactions and data flow}}
+- [ ] {{Design requirement 3 — e.g., Plan for failure scenarios and recovery}}
+- [ ] Document all trade-offs and alternative approaches considered
+- [ ] Include capacity planning and scalability analysis
+
+**Deliverable:**
+- System architecture diagram (Mermaid, ASCII, or both)
+- Component interaction diagrams (sequence diagrams)
+- Data flow diagrams
+- Written design document with trade-off analysis
+
+**Evaluation criteria:**
+- [ ] Architecture handles the described scale
+- [ ] Failure scenarios are addressed
+- [ ] Trade-offs are clearly documented
+- [ ] Alternative approaches are considered and compared
+- [ ] Design is production-ready and maintainable
+
+---
+
+### Task 9: {{Another senior task — code or design}}
 
 ...
 
 ---
 
-> 2-3 senior tasks. Open-ended, architecture-focused, require documentation and benchmarks.
+> 2-3 senior tasks. Mix of 💻 Code and 🎨 Design tasks.
+> Design tasks: full system design, architecture review, scalability analysis, etc.
+> Code tasks: open-ended, architecture-focused, require documentation and benchmarks.
 
 ---
 
