@@ -43,24 +43,39 @@ class Solution:
 
 if __name__ == "__main__":
     sol = Solution()
+    passed = failed = 0
+
+    def test(name: str, got, expected):
+        global passed, failed
+        if got == expected:
+            print(f"✅ PASS: {name}")
+            passed += 1
+        else:
+            print(f"❌ FAIL: {name}")
+            print(f"  Got:      {got}")
+            print(f"  Expected: {expected}")
+            failed += 1
 
     # Test 1: Basic case — birinchi juftlikda topiladi
-    print(sol.twoSum([2, 7, 11, 15], 9))  # Expected: [0, 1]
+    test("Basic case", sol.twoSum([2, 7, 11, 15], 9), [0, 1])
 
     # Test 2: O'rtada topiladi
-    print(sol.twoSum([3, 2, 4], 6))  # Expected: [1, 2]
+    test("O'rtada topiladi", sol.twoSum([3, 2, 4], 6), [1, 2])
 
     # Test 3: Dublikat qiymatlar
-    print(sol.twoSum([3, 3], 6))  # Expected: [0, 1]
+    test("Dublikat qiymatlar", sol.twoSum([3, 3], 6), [0, 1])
 
     # Test 4: Salbiy sonlar
-    print(sol.twoSum([-1, -2, -3, -4, -5], -8))  # Expected: [2, 4]
+    test("Salbiy sonlar", sol.twoSum([-1, -2, -3, -4, -5], -8), [2, 4])
 
     # Test 5: Aralash sonlar (manfiy + musbat)
-    print(sol.twoSum([-3, 4, 3, 90], 0))  # Expected: [0, 2]
+    test("Aralash sonlar", sol.twoSum([-3, 4, 3, 90], 0), [0, 2])
 
     # Test 6: Nol qiymatlar
-    print(sol.twoSum([0, 4, 3, 0], 0))  # Expected: [0, 3]
+    test("Nol qiymatlar", sol.twoSum([0, 4, 3, 0], 0), [0, 3])
 
     # Test 7: Katta qiymatlar
-    print(sol.twoSum([1000000000, -1000000000], 0))  # Expected: [0, 1]
+    test("Katta qiymatlar", sol.twoSum([1000000000, -1000000000], 0), [0, 1])
+
+    # Natija
+    print(f"\n📊 Natija: {passed} passed, {failed} failed, {passed + failed} total")

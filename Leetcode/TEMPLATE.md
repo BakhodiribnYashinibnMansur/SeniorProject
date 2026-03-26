@@ -1292,10 +1292,55 @@ if __name__ == "__main__":
         /* ============================================================
            RESPONSIVE
            ============================================================ */
+        @media (max-width: 1024px) {
+            .container { padding: 16px; }
+        }
+
         @media (max-width: 768px) {
-            .info-panel { grid-template-columns: 1fr; }
-            .comparison { grid-template-columns: 1fr; }
+            body { padding: 10px; }
             .header h1 { font-size: 1.4rem; }
+            .header { margin-bottom: 16px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .comparison { grid-template-columns: 1fr; }
+            .container { padding: 14px; }
+            .tab { padding: 8px 14px; font-size: 0.8rem; }
+            .btn { padding: 7px 12px; font-size: 0.8rem; }
+            .input-section { gap: 6px; }
+            .input-section input { padding: 6px 10px; font-size: 0.8rem; }
+            .array-element { width: 2.8rem; height: 2.8rem; font-size: 1rem; border-radius: 8px; }
+            .step-description { padding: 10px 12px; font-size: 0.82rem; }
+            .viz-area { padding: 14px; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 6px; }
+            .header h1 { font-size: 1.1rem; }
+            .header p { font-size: 0.8rem; }
+            .header { margin-bottom: 10px; }
+            .tabs { gap: 2px; margin-bottom: 12px; }
+            .tab { padding: 6px 10px; font-size: 0.72rem; }
+            .container { padding: 10px; border-radius: 8px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .info-box { padding: 8px; }
+            .info-box h3 { font-size: 0.6rem; }
+            .info-box .value { font-size: 0.9rem; }
+            .input-section { flex-direction: column; align-items: stretch; }
+            .input-section input { width: 100%; }
+            .controls { gap: 6px; }
+            .btn { padding: 6px 10px; font-size: 0.75rem; }
+            .speed-control { width: 100%; justify-content: center; }
+            .step-description { padding: 8px 10px; font-size: 0.78rem; min-height: 40px; }
+            .viz-area { padding: 10px; min-height: 150px; }
+            .array-element { width: 2.4rem; height: 2.4rem; font-size: 0.85rem; border-radius: 6px; }
+            .idx-label { font-size: 0.6rem; }
+            .ptr-label { font-size: 0.65rem; }
+            .array-container { gap: 4px; }
+            .hashmap-entry { padding: 6px 8px; min-width: 50px; }
+            .hashmap-grid { gap: 4px; }
+            .calc-box { padding: 8px 12px; font-size: 0.9rem; }
+            .legend { gap: 8px; margin-top: 10px; }
+            .legend-item { font-size: 0.7rem; gap: 4px; }
+            .legend-color { width: 12px; height: 12px; }
         }
     </style>
 </head>
