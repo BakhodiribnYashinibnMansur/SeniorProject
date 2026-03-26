@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * 0001. Two Sum
@@ -45,35 +46,45 @@ class Solution {
     // Test Cases
     // ============================================================
 
+    static int passed = 0, failed = 0;
+
+    static void test(String name, int[] got, int[] expected) {
+        if (Arrays.equals(got, expected)) {
+            System.out.printf("✅ PASS: %s%n", name);
+            passed++;
+        } else {
+            System.out.printf("❌ FAIL: %s%n  Got:      %s%n  Expected: %s%n",
+                name, Arrays.toString(got), Arrays.toString(expected));
+            failed++;
+        }
+    }
+
     public static void main(String[] args) {
         Solution sol = new Solution();
 
         // Test 1: Basic case — birinchi juftlikda topiladi
-        System.out.println(Arrays.toString(sol.twoSum(new int[]{2, 7, 11, 15}, 9)));
-        // Expected: [0, 1]
+        test("Basic case", sol.twoSum(new int[]{2, 7, 11, 15}, 9), new int[]{0, 1});
 
         // Test 2: O'rtada topiladi
-        System.out.println(Arrays.toString(sol.twoSum(new int[]{3, 2, 4}, 6)));
-        // Expected: [1, 2]
+        test("O'rtada topiladi", sol.twoSum(new int[]{3, 2, 4}, 6), new int[]{1, 2});
 
         // Test 3: Dublikat qiymatlar
-        System.out.println(Arrays.toString(sol.twoSum(new int[]{3, 3}, 6)));
-        // Expected: [0, 1]
+        test("Dublikat qiymatlar", sol.twoSum(new int[]{3, 3}, 6), new int[]{0, 1});
 
         // Test 4: Salbiy sonlar
-        System.out.println(Arrays.toString(sol.twoSum(new int[]{-1, -2, -3, -4, -5}, -8)));
-        // Expected: [2, 4]
+        test("Salbiy sonlar", sol.twoSum(new int[]{-1, -2, -3, -4, -5}, -8), new int[]{2, 4});
 
         // Test 5: Aralash sonlar (manfiy + musbat)
-        System.out.println(Arrays.toString(sol.twoSum(new int[]{-3, 4, 3, 90}, 0)));
-        // Expected: [0, 2]
+        test("Aralash sonlar", sol.twoSum(new int[]{-3, 4, 3, 90}, 0), new int[]{0, 2});
 
         // Test 6: Nol qiymatlar
-        System.out.println(Arrays.toString(sol.twoSum(new int[]{0, 4, 3, 0}, 0)));
-        // Expected: [0, 3]
+        test("Nol qiymatlar", sol.twoSum(new int[]{0, 4, 3, 0}, 0), new int[]{0, 3});
 
         // Test 7: Katta qiymatlar
-        System.out.println(Arrays.toString(sol.twoSum(new int[]{1000000000, -1000000000}, 0)));
-        // Expected: [0, 1]
+        test("Katta qiymatlar", sol.twoSum(new int[]{1000000000, -1000000000}, 0), new int[]{0, 1});
+
+        // Natija
+        System.out.printf("%n📊 Natija: %d passed, %d failed, %d total%n",
+            passed, failed, passed + failed);
     }
 }
