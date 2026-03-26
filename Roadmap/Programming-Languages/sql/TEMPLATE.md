@@ -1664,9 +1664,297 @@ UPDATE STATISTICS orders;
 
 ---
 
+## Best Practices
+
+### Must Do ✅
+
+- **Always run `EXPLAIN ANALYZE` before deploying a new query to production** — estimated plans lie; actual plans reveal the truth
+- **Index every foreign key column on the referencing table** — FK constraint checks require a lookup; without an index, every parent DELETE/UPDATE causes a full scan of the child table
+- **Use partial indexes for low-cardinality filter conditions** — `CREATE INDEX ON orders (created_at) WHERE status = 'pending'` is far smaller and faster than a full index
+- **Align partition key with your most common filter column** — if 90% of queries filter by `order_date`, partition by `order_date`; otherwise partition pruning never fires
+- **Keep statistics fresh after large bulk loads** — run `ANALYZE` (PostgreSQL/MySQL) or `UPDATE STATISTICS` (SQL Server) after loading millions of rows; autovacuum may not catch up fast enough
+- **Use covering indexes (`INCLUDE`) for high-frequency read-only queries** — eliminate heap fetches by putting all `SELECT`ed columns in the index
+- **Set `random_page_cost = 1.1` on SSD-backed PostgreSQL servers** — the default of 4.0 was designed for spinning disk; SSDs make random I/O nearly as fast as sequential, so the planner should prefer index scans more often
+- **Monitor and tune autovacuum on high-churn tables (PostgreSQL)** — default autovacuum thresholds are conservative; tables with high UPDATE/DELETE rates need more aggressive settings
+- **Test index changes on production-sized data before deploying** — selectivity and plan choice can differ dramatically between a 10K-row dev table and a 100M-row production table
+- **Use connection pooling (PgBouncer / ProxySQL) in production** — direct DB connections have significant overhead; pool them
+
+### Never Do ❌
+
+- **Never create an index on every column "just in case"** — each index adds write overhead; index unused by any query is pure cost
+- **Never use `LIKE '%keyword%'` and expect an index** — leading wildcard prevents B-tree index use; use full-text search (GIN index with `tsvector` in PostgreSQL, `FULLTEXT` in MySQL) instead
+- **Never ignore `Rows Removed by Filter` in EXPLAIN output** — a high number means an index could push that filter down, eliminating work
+- **Never apply a function to an indexed column in a WHERE clause** — `WHERE DATE(created_at) = '2024-01-01'` kills index use; use `WHERE created_at >= '2024-01-01' AND created_at < '2024-01-02'` instead
+- **Never drop and recreate indexes on a live production table without `CONCURRENTLY`** — use `CREATE INDEX CONCURRENTLY` (PostgreSQL) or the online index rebuild option (SQL Server) to avoid table locks
+- **Never use `SELECT *` in a production ORM or application query** — schema changes will silently add columns that the application must then transfer, parse, and store unnecessarily
+- **Never leave a transaction open longer than necessary** — long-running transactions hold locks (PostgreSQL also prevent VACUUM from cleaning dead tuples via their xmin horizon)
+- **Never tune queries on a dev/staging database with a small dataset** — the planner makes different choices for 1K rows vs. 100M rows; always validate on production-representative data
+
+### Production Deployment Checklist
+
+Before deploying a schema change or new index to production:
+
+- [ ] Tested on production-sized data (row count and data distribution)
+- [ ] `EXPLAIN ANALYZE` run before and after — verified improvement
+- [ ] Index created with `CONCURRENTLY` option (or equivalent) to avoid table lock
+- [ ] Foreign key index exists on referencing side for any new FK constraint
+- [ ] `ANALYZE` run after bulk data load to refresh statistics
+- [ ] Rollback plan documented (DROP INDEX, revert migration)
+- [ ] Connection pool sized for expected concurrent queries
+- [ ] Monitoring alert set for query duration and sequential scan count on affected tables
+- [ ] Autovacuum settings reviewed for tables with high write volume
+
+---
+
+## Coding Patterns
+
+### Pattern 1: Index Strategy Flowchart
+
+**Intent:** Decide which index type to create based on the query access pattern.
+
+```mermaid
+flowchart TD
+    Q[Query access pattern?] --> EQ{Equality only?\ne.g., WHERE id = ?}
+    Q --> RNG{Range / ORDER BY?\ne.g., WHERE date BETWEEN}
+    Q --> FTS{Full-text search?\ne.g., WHERE body LIKE}
+    Q --> GEO{Geometric / PostGIS?\ne.g., ST_Within}
+
+    EQ -->|Yes| HASH[Hash index\nPostgreSQL / Memory tables]
+    EQ -->|Also range| BTREE[B-tree index\nDefault — all RDBMS]
+    RNG --> BTREE
+    RNG -->|Large append-only time-series| BRIN[BRIN index\nPostgreSQL only\nVery small, range scans]
+    FTS -->|PostgreSQL| GIN[GIN index\ntsvector column]
+    FTS -->|MySQL| FTEXT[FULLTEXT index\nMySQL / MariaDB]
+    GEO --> GIST[GiST index\nPostgreSQL PostGIS]
+
+    BTREE --> PARTIAL{Filter to subset?}
+    PARTIAL -->|Yes| PIDX[Partial index\nWHERE status = 'active']
+    PARTIAL -->|No| CIDX[Composite index\nColumn order = selectivity desc]
+    CIDX --> COVER{All SELECT cols in index?}
+    COVER -->|Yes| COVIX[Covering index\nINCLUDE clause]
+    COVER -->|No| REGULAR[Regular composite index]
+```
+
+---
+
+### Pattern 2: Partition Pruning Verification
+
+**Intent:** Confirm that partition pruning is active before deploying a partitioned table.
+
+```sql
+-- Create partitioned table
+CREATE TABLE events (
+    event_id    BIGSERIAL,
+    event_date  DATE NOT NULL,
+    event_type  TEXT,
+    payload     JSONB
+) PARTITION BY RANGE (event_date);
+
+-- Create monthly partitions
+CREATE TABLE events_2024_01 PARTITION OF events
+    FOR VALUES FROM ('2024-01-01') TO ('2024-02-01');
+CREATE TABLE events_2024_02 PARTITION OF events
+    FOR VALUES FROM ('2024-02-01') TO ('2024-03-01');
+
+-- Verify partition pruning: EXPLAIN should show only one partition scanned
+EXPLAIN (ANALYZE, VERBOSE)
+SELECT event_id, event_type
+FROM events
+WHERE event_date BETWEEN '2024-01-01' AND '2024-01-31';
+
+-- Expected: "Partitions scanned: 1 (events_2024_01)"
+-- If you see ALL partitions scanned, the partition key is not in the WHERE clause
+```
+
+---
+
+### Pattern 3: Schema Migration Safety Pattern
+
+**Intent:** Apply schema changes to production without downtime or data loss.
+
+```sql
+-- Step 1: Add column as nullable (instant — no table rewrite)
+ALTER TABLE orders ADD COLUMN delivery_fee NUMERIC(10,2);
+
+-- Step 2: Backfill in batches (avoid locking the whole table)
+-- PostgreSQL: update in chunks to avoid long-running transaction
+DO $$
+DECLARE
+    batch_size INT := 10000;
+    offset_val INT := 0;
+    rows_updated INT;
+BEGIN
+    LOOP
+        UPDATE orders
+        SET delivery_fee = 0.00
+        WHERE order_id IN (
+            SELECT order_id FROM orders
+            WHERE delivery_fee IS NULL
+            ORDER BY order_id
+            LIMIT batch_size
+        );
+        GET DIAGNOSTICS rows_updated = ROW_COUNT;
+        EXIT WHEN rows_updated = 0;
+        PERFORM pg_sleep(0.1);  -- brief pause between batches
+    END LOOP;
+END;
+$$;
+
+-- Step 3: Add NOT NULL constraint with DEFAULT (after backfill complete)
+ALTER TABLE orders ALTER COLUMN delivery_fee SET NOT NULL;
+ALTER TABLE orders ALTER COLUMN delivery_fee SET DEFAULT 0.00;
+```
+
+---
+
+## Tricky Questions
+
+**1. You add an index on `orders(customer_id)` but `EXPLAIN ANALYZE` still shows a sequential scan. What are 3 possible reasons?**
+
+<details>
+<summary>Answer</summary>
+
+1. **The query matches too many rows** — if the predicate returns > ~5-20% of the table, the planner considers a sequential scan cheaper than random index lookups. The threshold depends on `random_page_cost` setting and table size.
+2. **Statistics are stale** — the planner's row estimate is wrong because `ANALYZE` hasn't run since a bulk load; run `ANALYZE orders` to refresh.
+3. **The table is small** — for tables with < ~100 pages, a sequential scan is always faster than an index scan regardless of selectivity. This is correct behavior, not a bug.
+4. **The column is wrapped in a function** — `WHERE LOWER(customer_name) = 'x'` won't use an index on `customer_name`; a functional index on `LOWER(customer_name)` is needed.
+
+</details>
+
+---
+
+**2. What is a "covering index" and when does it provide the most speedup?**
+
+<details>
+<summary>Answer</summary>
+
+A covering index includes all columns needed by the query (both the filter columns and the SELECT columns) so the database can serve the entire query from the index without touching the data table (heap). This is called an "Index-Only Scan" in PostgreSQL.
+
+Maximum speedup occurs when:
+- The data table is very wide (many columns, large rows) — heap fetches are expensive
+- The query is highly selective (few rows match) — each heap fetch is a random I/O
+- The table is large (doesn't fit in buffer cache) — avoiding heap means avoiding disk reads
+
+Example: `CREATE INDEX ON orders (customer_id) INCLUDE (order_date, amount, status)` allows `SELECT order_date, amount, status FROM orders WHERE customer_id = 42` to be served entirely from the index.
+</details>
+
+---
+
+**3. You are designing a table for 5 years of IoT sensor data — approximately 500 million rows. The most common query is `WHERE sensor_id = ? AND reading_time BETWEEN ? AND ?`. What is the best indexing/partitioning strategy?**
+
+<details>
+<summary>Answer</summary>
+
+**Partition by time range (monthly or quarterly):**
+- Partition key: `reading_time` — aligns with the most common filter
+- Partition pruning eliminates irrelevant months from every query
+- Old partitions can be detached and archived without DELETE (instant operation)
+
+**Index strategy per partition:**
+- Composite index `(sensor_id, reading_time)` on each partition — handles the equality on `sensor_id` and range on `reading_time` efficiently
+- `sensor_id` first in the composite index because the equality filter (`=`) is more selective than the range filter (`BETWEEN`)
+
+**Alternative:** BRIN index on `reading_time` — extremely small (milliseconds to create, kilobytes in size), good for time-ordered append data. But for queries filtered by both `sensor_id` AND `reading_time`, the composite B-tree per partition is usually faster.
+
+**Avoid:** A single global B-tree index on 500M rows — maintenance (VACUUM, index rebuild) becomes prohibitively slow without partitioning.
+</details>
+
+---
+
+**4. What is a HOT update in PostgreSQL and why does it matter for schema design?**
+
+<details>
+<summary>Answer</summary>
+
+HOT (Heap-Only Tuple) is a PostgreSQL optimization: if an UPDATE only modifies columns that are NOT indexed, PostgreSQL can write the new row version in the same heap page as the old version and link them with a HOT chain, without updating any indexes.
+
+**Why it matters:**
+- HOT updates are significantly faster (no index writes, no index bloat)
+- Adding unnecessary indexes on frequently-updated columns disables HOT, increasing write amplification
+
+**Design implication:** Only index columns that are actually queried in WHERE clauses, JOIN conditions, or ORDER BY. Every index on a frequently-updated column adds write cost and blocks HOT optimization. This is especially important for high-churn tables like `sessions`, `events`, or `queue`.
+</details>
+
+---
+
 ## Summary
 
 At the senior level, {{TOPIC_NAME}} is about owning schema and index design as a performance discipline: understand when the planner will use an index, use partitioning for large time-series tables, read execution plans to find the real bottleneck, and keep statistics fresh.
+
+---
+
+## Related Topics
+
+- **[Performance & Optimization](../08-performance/)** — EXPLAIN ANALYZE, index types, query plan reading — the diagnostic layer above schema design
+- **[Partitioning](../10-advanced/partitioning/)** — range, list, and hash partitioning strategies with partition pruning verification
+- **[Indexes](../06-indexes/)** — B-tree, Hash, GIN, GiST, BRIN — when each type applies
+- **[Transactions & Concurrency](../07-transactions/)** — isolation levels and locking affect schema design decisions (HOT, row versioning, lock contention)
+- **[Database Administration](../11-admin/)** — VACUUM, autovacuum tuning, ANALYZE scheduling, replication topology
+- **[Professional Level](./professional.md)** — query engine internals: cost model, MVCC, WAL — the "why" behind senior-level observations
+
+---
+
+## Diagrams & Visual Aids
+
+### Index Decision Tree
+
+```mermaid
+flowchart TD
+    Q[New slow query to optimize] --> EP[Run EXPLAIN ANALYZE\nCheck actual vs estimated rows]
+    EP --> SS{Sequential Scan\non large table?}
+    SS -->|No — plan looks correct| STATS[Check statistics staleness\nRun ANALYZE]
+    SS -->|Yes| SEL{Selectivity?\nWhat % of rows match?}
+    SEL -->|High > 20%| OK[Seq scan is correct\nNo index helps here]
+    SEL -->|Low < 5%| IDX[Add index on filter column]
+    IDX --> FUNC{Column wrapped\nin a function?}
+    FUNC -->|Yes| FIDX[Functional index\nCREATE INDEX ON t LOWER col]
+    FUNC -->|No| PIDX{Filter to subset\nof rows?}
+    PIDX -->|Yes| PART[Partial index\nWHERE condition]
+    PIDX -->|No| COMP{Multiple filter\ncolumns?}
+    COMP -->|Yes| CIDX[Composite index\nHighest selectivity column first]
+    COMP -->|No| SIDX[Single-column index]
+    SIDX --> COVI{All SELECT cols\nin index?}
+    CIDX --> COVI
+    COVI -->|Yes| COVIX[Covering index\nAdd INCLUDE clause]
+    COVI -->|No| DONE[Deploy and re-check EXPLAIN]
+```
+
+### Partitioning — Partition Pruning Flow
+
+```mermaid
+flowchart LR
+    Q["SELECT * FROM events\nWHERE event_date\nBETWEEN '2024-01' AND '2024-03'"] --> PP[PostgreSQL Planner\nPartition Pruning Logic]
+    PP --> P1["events_2024_01\nScanned"]
+    PP --> P2["events_2024_02\nScanned"]
+    PP --> P3["events_2024_03\nScanned"]
+    PP -.->|Pruned — not scanned| P4["events_2023_12\nSKIPPED"]
+    PP -.->|Pruned — not scanned| P5["events_2024_04\nSKIPPED"]
+    PP -.->|Pruned — not scanned| P6["events_2024_05\nSKIPPED"]
+
+    style P4 fill:#ffcccc
+    style P5 fill:#ffcccc
+    style P6 fill:#ffcccc
+    style P1 fill:#ccffcc
+    style P2 fill:#ccffcc
+    style P3 fill:#ccffcc
+```
+
+### Normalization vs. Denormalization Decision
+
+```mermaid
+flowchart LR
+    NF[3NF Normalized\nNo redundancy\nMore JOINs\nFast writes] -->|Read-heavy analytics\nFewer JOINs needed| DN[Denormalized\nFlat wide tables\nRedundant data\nFast reads]
+
+    NF --> OLTP[OLTP Systems\nTransactional\nHigh write rate\nData integrity critical]
+    DN --> OLAP[OLAP / Data Warehouse\nAnalytical\nHigh read rate\nFew writes]
+
+    subgraph Hybrid["Partial Denormalization"]
+        MC[Materialized view\nor summary table\nRefreshed periodically]
+    end
+
+    NF --> MC
+    MC --> MIX[Mixed OLTP + reporting\nFresh transactional data\nFast read on materialized]
+```
 
 </details>
 
@@ -2047,9 +2335,214 @@ LIMIT 20;
 
 ---
 
-## Summary
+## Best Practices at the Professional Level
 
-At the professional level, {{TOPIC_NAME}} internals show why the abstractions work: the cost model compares estimated I/O and CPU cost for each plan alternative; the planner uses column statistics to estimate row counts; MVCC eliminates read/write conflicts by maintaining multiple row versions; and write-ahead logging guarantees durability without requiring synchronous data file flushes. Understanding these internals — across PostgreSQL, MySQL, and SQL Server — turns query optimization from guesswork into a systematic diagnostic process: read the plan, check the estimates, fix the statistics, then tune cost parameters.
+### Must Do ✅ (Production / Internals)
+
+- **Set `random_page_cost = 1.1` for SSD-backed PostgreSQL** — the default 4.0 tells the planner random I/O is 4× slower than sequential; SSDs eliminate that gap, so lower this to encourage index scans
+- **Set `work_mem` per session for analytical queries, not globally** — globally increasing `work_mem` multiplies it by (connections × sort nodes per query); set it at the session or transaction level for known heavy analytical workloads
+- **Monitor `age(datfrozenxid)` for PostgreSQL transaction ID wraparound** — if `xid_age` exceeds 1.5 billion, emergency VACUUM FREEZE is needed; at 2 billion, PostgreSQL stops accepting writes
+- **Enable `pg_stat_statements` in production (PostgreSQL)** — this extension tracks query frequency, total time, and standard deviation; it is the first tool to reach for when diagnosing a performance regression
+- **Enable Performance Schema in MySQL production instances** — `events_statements_summary_by_digest` gives the same query analytics capability as `pg_stat_statements`
+- **Tune checkpoint settings under heavy write load** — `checkpoint_completion_target = 0.9` (PostgreSQL) spreads checkpoint I/O over 90% of the checkpoint interval, avoiding I/O spikes
+- **Use `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)` and visualize with explain.dalibo.com or pev2** — JSON format enables rich visualization tools that highlight the costliest nodes in complex plans
+
+### Never Do ❌ (Internals / Professional)
+
+- **Never set `fsync = off` in PostgreSQL production** — this trades durability for speed; a crash after `COMMIT` will corrupt the database. Acceptable only in ephemeral test environments
+- **Never increase `max_connections` without connection pooling** — each PostgreSQL backend is a separate OS process with its own memory; 500+ direct connections causes memory pressure, context switching, and shared memory contention. Use PgBouncer
+- **Never run `VACUUM FULL` on a live table without downtime planning** — `VACUUM FULL` acquires an exclusive lock and rewrites the entire table; use `pg_repack` (PostgreSQL) or `ALTER TABLE ... ENGINE=InnoDB` (MySQL) for online reclamation
+- **Never disable `autovacuum` on a high-churn PostgreSQL table** — dead tuples accumulate, table bloat grows, and eventually the planner gets wrong row estimates because statistics are stale
+- **Never ignore replication lag** — both PostgreSQL logical replication and MySQL binary log replication can lag under large transactions; reads from replicas can return stale data; monitor lag and route time-sensitive reads to primary
+
+### Professional Diagnostic Checklist
+
+When investigating a performance problem that can't be solved at the query level:
+
+- [ ] Run `EXPLAIN (ANALYZE, BUFFERS)` — compare estimated vs. actual rows at every node
+- [ ] Check `pg_stat_statements` (PostgreSQL) or `events_statements_summary_by_digest` (MySQL) for query frequency and total time
+- [ ] Check `pg_stat_user_tables.seq_scan` ratio — high sequential scans on large tables indicate missing indexes
+- [ ] Check `pg_stat_user_tables.n_dead_tup` (PostgreSQL) — high dead tuple count indicates autovacuum is falling behind
+- [ ] Run `ANALYZE` (or `UPDATE STATISTICS`) and re-run the plan — stale statistics are the most common cause of wrong plan choice
+- [ ] Check buffer cache hit ratio: `shared_blks_hit / (shared_blks_hit + shared_blks_read)` — below 95% indicates insufficient `shared_buffers` or working set doesn't fit in RAM
+- [ ] Check for lock waits: `pg_stat_activity` + `pg_locks` (PostgreSQL) or `SHOW PROCESSLIST` + `information_schema.INNODB_TRX` (MySQL)
+- [ ] Check transaction ID age (`age(datfrozenxid)`) — if approaching 1.5B, schedule emergency VACUUM FREEZE
+- [ ] Review `work_mem` and hash join batch count — `Batches: N > 1` means hash join spilled to disk; increase `work_mem` for the session
+
+---
+
+## Tricky Questions
+
+**1. `EXPLAIN` shows `rows=100000` but `EXPLAIN ANALYZE` shows `actual rows=3`. The query is slow. What do you do first and why?**
+
+<details>
+<summary>Answer</summary>
+
+Run `ANALYZE table_name` to refresh column statistics. The planner estimated 100,000 rows but only 3 exist — this is a statistics problem. With a bad estimate, the planner chose an execution strategy appropriate for 100K rows (e.g., Sequential Scan + HashJoin) instead of one appropriate for 3 rows (IndexScan + Nested Loop).
+
+After `ANALYZE`, re-run `EXPLAIN ANALYZE`. If estimates are now accurate, the plan should improve automatically. If estimates remain poor for correlated columns (e.g., predicates on both `region` and `city` where city distribution varies by region), create extended statistics: `CREATE STATISTICS ON region, city FROM orders`.
+</details>
+
+---
+
+**2. What is the difference between `shared_buffers` and `work_mem` in PostgreSQL, and what happens if `work_mem` is set too high?**
+
+<details>
+<summary>Answer</summary>
+
+- **`shared_buffers`:** The shared memory pool used by all PostgreSQL processes to cache data pages. Typically set to 25% of total RAM. Shared across all connections.
+- **`work_mem`:** Memory allocated per sort or hash operation *per query node*. Not shared — each operation gets its own `work_mem` allocation.
+
+**If `work_mem` is too high:** A single complex query with 10 sort/hash nodes uses `10 × work_mem`. With 200 connections each running such queries, peak memory usage is `200 × 10 × work_mem`. At `work_mem = 100MB`, that's 200GB — far exceeding available RAM, causing OOM kills or swap thrashing.
+
+**Best practice:** Keep `work_mem` at the default (4MB) globally and use `SET work_mem = '256MB'` at the session level only for known analytical workloads that need it.
+</details>
+
+---
+
+**3. Explain the "checkpoint I/O spike" problem in PostgreSQL and how to mitigate it.**
+
+<details>
+<summary>Answer</summary>
+
+PostgreSQL writes "dirty" data pages to disk periodically during checkpoints. By default, checkpoints happen every 5 minutes (`checkpoint_timeout`) or when WAL accumulates `max_wal_size`. At checkpoint time, the background writer flushes all dirty pages — this can cause a sudden spike in disk I/O that affects query latency.
+
+**Mitigation:**
+1. Set `checkpoint_completion_target = 0.9` — spreads the checkpoint flush over 90% of the checkpoint interval instead of doing it all at once
+2. Increase `max_wal_size` (e.g., to 4GB on systems with heavy writes) — spreads checkpoints further apart, giving more time to flush gradually
+3. Monitor with `pg_stat_bgwriter.checkpoints_timed` vs `checkpoints_req` — if `checkpoints_req` is high, WAL is filling up before the timeout; increase `max_wal_size`
+</details>
+
+---
+
+**4. A PostgreSQL replica is lagging 30 seconds behind the primary during a batch insert. What are the possible causes and how do you investigate?**
+
+<details>
+<summary>Answer</summary>
+
+**Possible causes:**
+1. **Large transaction:** Streaming replication waits until the transaction commits before applying. A 30-second batch `INSERT` is replayed as a single transaction on the replica — appears as 30 seconds of lag.
+2. **Network bandwidth saturation:** WAL records transferred faster than the network allows. Check `pg_stat_replication.sent_lsn` vs `write_lsn` — a gap indicates network bottleneck.
+3. **Replica I/O bound:** The replica's disk can't apply WAL as fast as it arrives. Check replica disk write latency and `pg_stat_replication.replay_lsn` vs `write_lsn`.
+4. **Logical replication decoder overhead:** For logical replication, the decoder on the primary must decode WAL into row changes — CPU intensive under heavy write load.
+
+**Investigation:**
+```sql
+-- Primary: check replication lag
+SELECT
+    client_addr,
+    application_name,
+    write_lag,
+    flush_lag,
+    replay_lag
+FROM pg_stat_replication;
+
+-- Replica: check how far behind we are
+SELECT NOW() - pg_last_xact_replay_timestamp() AS replication_delay;
+```
+</details>
+
+---
+
+## Related Topics
+
+- **[Senior Level](./senior.md)** — schema design, index strategy, partitioning, and EXPLAIN ANALYZE from a practitioner's perspective
+- **[Performance & Optimization](../08-performance/)** — the diagnostic tools (pg_stat_statements, EXPLAIN ANALYZE, buffer cache stats) used in this template
+- **[Transactions & Concurrency](../07-transactions/)** — MVCC, isolation levels, deadlocks — the application-visible effects of the internals described here
+- **[Database Administration](../11-admin/)** — VACUUM, autovacuum tuning, replication, backup/restore — operational consequences of WAL and MVCC
+- **[PostgreSQL Source Code](https://github.com/postgres/postgres)** — `src/backend/optimizer/` (planner), `src/backend/executor/` (execution nodes), `src/backend/storage/` (MVCC, buffers)
+- **[MySQL Internals Blog](https://mysqlserverteam.com/)** — InnoDB storage engine, optimizer internals, performance schema
+
+---
+
+## Diagrams & Visual Aids
+
+### Query Lifecycle — From SQL Text to Result
+
+```mermaid
+flowchart TD
+    SQL["SQL Text\nSELECT ..."] --> P[Parser\nLexer + grammar check\n→ Parse tree]
+    P --> A[Analyzer\nResolve names\nType checking\n→ Query tree]
+    A --> RW[Rewriter\nExpand views\nApply rules\n→ Modified query tree]
+    RW --> PL[Planner / Optimizer\nGenerate plan alternatives\nEstimate costs\nChoose cheapest plan\n→ Plan tree]
+    PL --> EX[Executor\nExecute plan tree\nFetch pages from buffer pool\n→ Result tuples]
+    EX --> RES[Result\nReturned to client]
+
+    style PL fill:#fff3cd
+    style EX fill:#d4edda
+```
+
+### MVCC — Row Version Visibility (PostgreSQL)
+
+```mermaid
+sequenceDiagram
+    participant T1 as Transaction 1 (xid=100)
+    participant T2 as Transaction 2 (xid=101)
+    participant Heap as Heap (Table Storage)
+
+    T1->>Heap: INSERT row (xmin=100, xmax=0)
+    T1->>T1: COMMIT
+
+    T2->>Heap: SELECT — sees row (xmin=100 committed, xmax=0)
+    Note over T2,Heap: Row is visible
+
+    T1->>Heap: UPDATE row (new xmin=102, xmax=102 on old)
+    Note over Heap: Old row version: xmin=100, xmax=102\nNew row version: xmin=102, xmax=0
+
+    T2->>Heap: SELECT (still in old snapshot) — sees xmin=100 version
+    Note over T2,Heap: T2 reads old version — no blocking
+
+    Note over Heap: VACUUM later removes dead version (xmax=102 committed)
+```
+
+### WAL — Write-Ahead Log Flow
+
+```mermaid
+sequenceDiagram
+    participant App as Application
+    participant PG as PostgreSQL Engine
+    participant WAL as WAL Buffer (memory)
+    participant WD as WAL File (disk)
+    participant DB as Data File (disk)
+
+    App->>PG: BEGIN; UPDATE orders ...; COMMIT;
+    PG->>WAL: Write WAL record for UPDATE
+    PG->>WAL: Write COMMIT record
+    WAL->>WD: fsync — flush to disk
+    PG-->>App: COMMIT acknowledged
+    Note over DB: Data page updated later by background writer
+    Note over DB: On crash: replay WAL from last checkpoint
+```
+
+### Cost Model — SeqScan vs. IndexScan Decision
+
+```
+SeqScan cost  = seq_page_cost × pages_in_table + cpu_tuple_cost × total_rows
+
+IndexScan cost = random_page_cost × pages_visited_via_index
+               + cpu_index_tuple_cost × index_rows_matched
+               + cpu_tuple_cost × rows_returned
+
+If IndexScan cost < SeqScan cost → planner uses IndexScan
+
+Key insight: random_page_cost default = 4.0 (spinning disk assumption)
+On SSD: set random_page_cost = 1.1 → IndexScan becomes more attractive
+```
+
+### Execution Node Type Reference
+
+| Node Type | Description | When Used | PostgreSQL Name |
+|-----------|-------------|-----------|----------------|
+| SeqScan | Reads all table pages sequentially | Large fraction of rows match or table fits in cache | `Seq Scan` |
+| IndexScan | Follows B-tree to row pointers, then fetches heap | Small fraction of rows match | `Index Scan` |
+| IndexOnlyScan | Returns data from index without heap access | All SELECT cols are in covering index | `Index Only Scan` |
+| BitmapIndexScan | Scans index to build bitmap of matching page IDs | Medium selectivity; multiple indexes combined | `Bitmap Index Scan` |
+| BitmapHeapScan | Fetches pages identified by bitmap scan | Follows BitmapIndexScan | `Bitmap Heap Scan` |
+| HashJoin | Builds hash table on smaller side; probes with larger | Large unsorted joins | `Hash Join` |
+| MergeJoin | Merges two sorted inputs | Both sides are pre-sorted on join key | `Merge Join` |
+| NestedLoop | Outer loop × inner loop with index | Small outer + indexed inner | `Nested Loop` |
+| HashAggregate | Group by using hash table | GROUP BY without useful index | `HashAggregate` |
+| Sort | Explicit sort step | ORDER BY or MergeJoin prerequisite | `Sort` |
 
 </details>
 
@@ -2127,11 +2620,113 @@ At the professional level, {{TOPIC_NAME}} internals show why the abstractions wo
 
 ---
 
+## Junior Questions (Extended)
+
+**Q6: What is the difference between `CHAR`, `VARCHAR`, and `TEXT` data types?**
+> `CHAR(n)` is fixed-length — always pads to n characters (wastes space for shorter values). `VARCHAR(n)` is variable-length up to n characters. `TEXT` is variable-length with no limit. In PostgreSQL, `TEXT` and `VARCHAR` without a length limit are equivalent in storage and performance. In MySQL, `TEXT` columns cannot have default values and behave differently in indexes.
+
+**Q7: What is a PRIMARY KEY and why does every table need one?**
+> A PRIMARY KEY is a column (or combination of columns) whose values uniquely identify each row and cannot be NULL. It enables: fast row lookups by ID, FK references from other tables, and clear data identity for UPDATE/DELETE. In MySQL InnoDB, the primary key IS the clustered index — the physical order of the table data. Without a PK, MySQL creates a hidden row ID; PostgreSQL has no natural cluster.
+
+**Q8: What does `DISTINCT` do and when is it a performance concern?**
+> `SELECT DISTINCT col FROM t` deduplicates the result set. Internally, the database sorts or hashes all rows to find and remove duplicates — O(N log N). On millions of rows, this can be very slow. If duplicates exist because of a missing JOIN condition (Cartesian product), fix the JOIN rather than using DISTINCT to mask the problem.
+
+**Q9: What is the difference between `LEFT JOIN` and `RIGHT JOIN`?**
+> Both preserve all rows from one table. `LEFT JOIN` preserves all rows from the left (first) table. `RIGHT JOIN` preserves all rows from the right (second) table. They are symmetric — `A LEFT JOIN B` is equivalent to `B RIGHT JOIN A`. In practice, RIGHT JOIN is rarely used because you can always rewrite as LEFT JOIN by swapping table order, which is more readable.
+
+**Q10: What happens if you run `DELETE FROM orders` without a WHERE clause?**
+> All rows in the table are deleted. The table structure (schema) remains but all data is gone. Unlike TRUNCATE, DELETE fires row-level triggers and is logged row-by-row. This means a large DELETE without WHERE can hold a transaction open for minutes, lock the table, and generate enormous WAL/binlog. Always use `SELECT COUNT(*) FROM orders` first to verify scope.
+
+---
+
+## Middle Questions (Extended)
+
+**Q5: What is the difference between `RANK()`, `DENSE_RANK()`, and `ROW_NUMBER()`?**
+> All three assign a number to each row within a window partition. `ROW_NUMBER()` assigns unique sequential numbers (ties broken arbitrarily). `RANK()` assigns the same number to tied rows and skips the next numbers (1, 1, 3, 4). `DENSE_RANK()` assigns the same number to tied rows but does not skip (1, 1, 2, 3). Use `ROW_NUMBER()` for pagination, `RANK()` for competition rankings where gaps matter, `DENSE_RANK()` for rankings where you need consecutive numbers.
+
+**Q6: What is the difference between a recursive CTE and a standard CTE?**
+> A standard CTE is a named subquery executed once. A recursive CTE has two parts joined by `UNION ALL`: an anchor (base case, no self-reference) and a recursive member (references the CTE itself). The database executes the anchor once, then iterates the recursive member until it produces no new rows. Use recursive CTEs for tree traversal (org charts, category hierarchies, bill of materials) and graph traversal. Without `UNION ALL` (i.e., with `UNION`), each iteration deduplicates — this is rarely needed and slower.
+
+**Q7: You have two approaches: a correlated subquery in SELECT vs. a LEFT JOIN with aggregation. When does each perform better?**
+> The correlated subquery executes the inner query once per outer row — O(N) executions. For a 100K-row outer table, this means 100K subquery executions. The LEFT JOIN + GROUP BY is set-based — one pass over both tables. The JOIN approach is almost always faster for large tables. Exception: if the outer result set is tiny (e.g., 5 rows) and the subquery is highly selective with a perfect index, the correlated subquery may be comparable. The JOIN is the default correct answer.
+
+**Q8: What is an index scan vs. a bitmap scan in PostgreSQL?**
+> An Index Scan follows the B-tree index pointer by pointer, fetching the corresponding heap page for each matching row. Efficient for very few rows but causes random I/O. A Bitmap Index Scan first builds an in-memory bitmap of all matching page IDs from the index, then fetches pages in order — converting random I/O into near-sequential I/O. Bitmap scans are better for medium selectivity (thousands of rows) where random I/O of a regular index scan would be expensive but a full sequential scan is wasteful.
+
+---
+
+## Senior Questions (Extended)
+
+**Q5: What is connection pooling and why is it critical at scale?**
+> Each PostgreSQL backend is a separate OS process with ~5-10MB of memory overhead. At 500 direct connections, that's 2.5-5GB just for process overhead, plus shared memory contention and OS context switching cost. A connection pooler (PgBouncer in transaction mode) maintains a small pool of actual database connections and multiplexes thousands of application connections onto them. PgBouncer with 50 DB connections can serve 5,000 application connections efficiently — the application "sees" immediate connection availability while the DB sees controlled concurrency.
+
+**Q6: What is WAL and how does it enable both durability and streaming replication?**
+> WAL (Write-Ahead Log) records every data modification before applying it. On COMMIT, the WAL record is flushed to disk before acknowledging to the client — this guarantees durability even on crash. The WAL stream is also the basis for streaming replication: the primary sends WAL records to standbys in real time; each standby replays the log, maintaining an identical data state. The same mechanism powers PITR (point-in-time recovery) — archive the WAL stream and you can replay to any second in history.
+
+**Q7: How do you design a schema for a multi-tenant SaaS application?**
+> Three main patterns: (1) **Shared schema** — add `tenant_id` to every table; easiest to implement, hardest to isolate. Every query must include `tenant_id` in WHERE; wrong results if forgotten. Requires row-level security (PostgreSQL RLS) or application-enforced filtering. (2) **Shared database, separate schemas** — each tenant gets their own schema with identical table structures. Good isolation, but migrations must run per-schema. (3) **Separate database per tenant** — maximum isolation, easiest for compliance and data deletion; most operationally complex. Choose based on tenant count, isolation requirements, and operational capacity.
+
+---
+
+## Professional / Internals Questions (Extended)
+
+**Q4: What is a "statistics target" in PostgreSQL and when would you increase it?**
+> The statistics target controls how many histogram buckets and most-common-values entries are collected for each column. Default is 100. Increase it (up to 10,000) for columns with highly skewed distributions or complex queries where the planner is making poor estimates. Example: a `status` column with 99% 'completed' and 1% 'pending' — at default target, the histogram may not capture the skew accurately for range predicates. `ALTER TABLE orders ALTER COLUMN status SET STATISTICS 500; ANALYZE orders;`. Monitor improvement with `EXPLAIN ANALYZE` before/after.
+
+**Q5: What is the "N+1 query problem" in the context of SQL and ORMs, and how do you diagnose it?**
+> The N+1 problem: an application fetches N parent records, then issues 1 separate query per record to fetch related child records — total: N+1 queries. Common in ORMs that use lazy loading (e.g., Django's `related_objects`, Rails' `has_many` without `includes`). Diagnosis: enable query logging; look for the same query executed many times with different ID parameters. Fix: use `SELECT * FROM children WHERE parent_id IN (list_of_parent_ids)` — one query instead of N. At the ORM level: `prefetch_related()` (Django), `includes()` (Rails), `joinedload()` (SQLAlchemy).
+
+---
+
 ## Behavioral / Situational Questions
 
 - Describe a time you diagnosed and fixed a slow query in production. Walk me through your process.
 - How do you decide whether to add a new index to a heavily written table?
 - You discover a query that worked fine for months is suddenly slow after a data migration. What do you investigate first?
+- Walk me through your process for reviewing a colleague's database schema PR. What do you look for?
+- A product manager says "just add an index" to fix a slow report query. How do you evaluate this and what do you tell them?
+- You need to add a NOT NULL column to a 500M-row production table during business hours. How do you do it safely?
+- Your monitoring shows a sudden 10× increase in `seq_scan` on the `orders` table. What happened and how do you respond?
+
+---
+
+## SQL Tricky Interview Scenarios
+
+### Scenario 1: Duplicate Rows
+
+```sql
+-- Table has 10,000 rows. You run:
+SELECT COUNT(*) FROM orders;          -- returns 12,843
+SELECT COUNT(DISTINCT order_id) FROM orders;  -- returns 10,000
+
+-- Why might these differ?
+```
+
+> The table has duplicate `order_id` values — either from a missing UNIQUE constraint or a bug in the data pipeline. `COUNT(*)` counts all rows; `COUNT(DISTINCT order_id)` counts unique values. Find duplicates: `SELECT order_id, COUNT(*) FROM orders GROUP BY order_id HAVING COUNT(*) > 1`.
+
+---
+
+### Scenario 2: The Mysterious NULL Join
+
+```sql
+SELECT * FROM a LEFT JOIN b ON a.id = b.a_id WHERE b.status = 'active';
+```
+
+> Even though this is a LEFT JOIN (which should keep all rows from `a`), filtering `WHERE b.status = 'active'` after the join turns it back into an INNER JOIN — rows from `a` with no matching `b` row have `b.status = NULL`, which fails the WHERE condition. Fix: `WHERE b.status = 'active' OR b.status IS NULL`.
+
+---
+
+### Scenario 3: GROUP BY Trap in MySQL
+
+```sql
+-- MySQL with ONLY_FULL_GROUP_BY disabled:
+SELECT customer_id, customer_name, SUM(amount)
+FROM orders
+GROUP BY customer_id;
+-- What is the value of customer_name for each group?
+```
+
+> When `ONLY_FULL_GROUP_BY` is disabled (MySQL default before 5.7), `customer_name` is not in GROUP BY and not aggregated — MySQL returns an arbitrary value from any row in the group. This can silently return wrong data. PostgreSQL and MySQL 5.7+ with `ONLY_FULL_GROUP_BY` raise an error instead. Fix: add `customer_name` to GROUP BY or use `ANY_VALUE(customer_name)` (MySQL 5.7+).
 
 </details>
 
@@ -2265,6 +2860,77 @@ At the professional level, {{TOPIC_NAME}} internals show why the abstractions wo
 - Partitioning for the largest table
 - EXPLAIN ANALYZE for the 3 most critical queries
 - Run ANALYZE and review statistics
+
+---
+
+## Task 11 — Upsert and Idempotent Data Loading 🟡
+
+**Goal:** Implement idempotent data loading using upsert patterns.
+
+**Requirements:**
+- Create an `inventory` table with `(product_id, warehouse_id)` as a composite unique key
+- Write an upsert that inserts new inventory records or updates `quantity` if the record already exists (PostgreSQL `ON CONFLICT DO UPDATE`, MySQL `ON DUPLICATE KEY UPDATE`)
+- Run the same upsert twice with the same data and verify the result is identical (idempotency)
+- Benchmark: compare UPSERT vs. DELETE + INSERT for 10,000 rows and explain the difference
+
+---
+
+## Task 12 — JSON Data Querying (PostgreSQL JSONB) 🟡
+
+**Goal:** Query and index semi-structured data stored in a JSONB column.
+
+**Requirements:**
+- Create a `user_events` table with an `event_data JSONB` column
+- Insert 1,000 rows with varied JSON payloads: `{"action": "click", "page": "/home", "user_id": 123}`
+- Query: find all events where `event_data->>'action' = 'purchase'`
+- Create a GIN index on the `event_data` column and verify it's used with `EXPLAIN ANALYZE`
+- Extract a nested field: `event_data->'metadata'->>'source'`
+
+---
+
+## Task 13 — Materialized View Refresh Strategy 🔴
+
+**Goal:** Use materialized views to pre-compute an expensive aggregation.
+
+**Requirements:**
+- Create a `monthly_sales` materialized view that aggregates `orders` by month and product category
+- Verify the materialized view is used for a dashboard query
+- Manually refresh: `REFRESH MATERIALIZED VIEW monthly_sales`
+- Implement `REFRESH MATERIALIZED VIEW CONCURRENTLY` (requires a unique index on the view) so refresh doesn't block reads
+- Measure query time before (on base table) vs. after (on materialized view)
+
+---
+
+## Task 14 — Deadlock Simulation and Resolution 🔴
+
+**Goal:** Deliberately create a deadlock and understand how the database handles it.
+
+**Requirements:**
+- In two concurrent sessions, update the same two rows in opposite order:
+  - Session 1: UPDATE row A, then UPDATE row B
+  - Session 2: UPDATE row B, then UPDATE row A
+- Observe the deadlock error: `ERROR: deadlock detected`
+- Explain which transaction was chosen as the "victim" and why
+- Rewrite the transactions to always lock rows in the same order, eliminating the deadlock
+- Set `deadlock_timeout = '100ms'` (PostgreSQL) to make deadlock detection faster for testing
+
+---
+
+## Task 15 — Full-Text Search 🔴
+
+**Goal:** Implement full-text search using database-native capabilities.
+
+**Requirements (PostgreSQL):**
+- Add a `search_vector tsvector` column to an `articles` table
+- Create a trigger that automatically updates `search_vector` when `title` or `body` changes
+- Create a GIN index on `search_vector`
+- Write a query using `to_tsquery()` and rank results with `ts_rank()`
+- Compare performance vs. `LIKE '%keyword%'` using `EXPLAIN ANALYZE`
+
+**Requirements (MySQL):**
+- Create a `FULLTEXT` index on `(title, body)` in an `articles` table
+- Write a full-text search query using `MATCH(title, body) AGAINST('keyword' IN BOOLEAN MODE)`
+- Add `+required -excluded` boolean operators to a search query
 
 </details>
 
@@ -2534,6 +3200,173 @@ FROM orders o
 JOIN products p ON o.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 GROUP BY c.category_name, p.product_name;
+```
+
+---
+
+## Exercise 11 — Transaction Not Rolled Back on Error
+
+**Buggy Code (application-level):**
+
+```sql
+-- Session 1: debit account A, credit account B (bank transfer)
+BEGIN;
+UPDATE accounts SET balance = balance - 100 WHERE account_id = 1;
+-- Application crashes here — never reaches the next UPDATE or COMMIT
+UPDATE accounts SET balance = balance + 100 WHERE account_id = 2;
+COMMIT;
+```
+
+**What's wrong?**
+> If the application crashes after the first UPDATE but before COMMIT, the transaction is automatically rolled back (PostgreSQL/MySQL both rollback open transactions when the connection closes). However, if error handling is missing and the application continues on the same connection after the first UPDATE fails, only some of the updates may be committed. Always wrap multi-step financial operations in a single transaction and handle errors with explicit ROLLBACK.
+
+**Fix:**
+```sql
+BEGIN;
+-- Step 1: Debit
+UPDATE accounts SET balance = balance - 100 WHERE account_id = 1;
+
+-- Step 2: Verify sufficient funds (check inside transaction to prevent race)
+DO $$
+BEGIN
+    IF (SELECT balance FROM accounts WHERE account_id = 1) < 0 THEN
+        RAISE EXCEPTION 'Insufficient funds';
+    END IF;
+END;
+$$;
+
+-- Step 3: Credit
+UPDATE accounts SET balance = balance + 100 WHERE account_id = 2;
+
+COMMIT;
+-- If any step fails, the entire transaction rolls back automatically
+```
+
+---
+
+## Exercise 12 — Window Function Used in WHERE Clause
+
+**Buggy Query:**
+
+```sql
+SELECT customer_id, order_date, amount,
+       ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC) AS rn
+FROM orders
+WHERE rn = 1;   -- BUG: window function not yet evaluated at WHERE stage
+```
+
+**What's wrong?**
+> Window functions are evaluated AFTER the WHERE clause in SQL's logical execution order. The alias `rn` does not exist when `WHERE` is evaluated, so this is a syntax error in all standard SQL databases.
+
+**Fix:**
+```sql
+-- Wrap in a subquery or CTE to filter after window function evaluation
+WITH ranked_orders AS (
+    SELECT
+        customer_id,
+        order_date,
+        amount,
+        ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC) AS rn
+    FROM orders
+)
+SELECT customer_id, order_date, amount
+FROM ranked_orders
+WHERE rn = 1;   -- Now rn exists and can be filtered
+```
+
+---
+
+## Exercise 13 — BETWEEN with Date/Timestamp Boundary Bug
+
+**Buggy Query:**
+
+```sql
+-- Intended: all orders placed on 2024-01-15
+SELECT * FROM orders
+WHERE order_date BETWEEN '2024-01-15' AND '2024-01-15';
+-- If order_date is TIMESTAMP type, this only matches midnight exactly!
+```
+
+**What's wrong?**
+> If `order_date` is a `TIMESTAMP` or `TIMESTAMPTZ`, the value `'2024-01-15'` is cast to `'2024-01-15 00:00:00'`. The BETWEEN condition only captures timestamps at exactly midnight. Orders placed at 09:30, 14:45, etc. are excluded.
+
+**Fix:**
+```sql
+-- Option 1: Use half-open interval (preferred)
+SELECT * FROM orders
+WHERE order_date >= '2024-01-15'
+  AND order_date <  '2024-01-16';
+
+-- Option 2: Truncate to date (but this prevents index use if order_date is indexed)
+SELECT * FROM orders
+WHERE DATE(order_date) = '2024-01-15';
+
+-- Option 3 (PostgreSQL): Cast to date explicitly
+SELECT * FROM orders
+WHERE order_date::DATE = '2024-01-15';
+-- Note: this requires a functional index: CREATE INDEX ON orders ((order_date::DATE))
+```
+
+---
+
+## Exercise 14 — Silent Data Loss from INNER JOIN on Optional Relationship
+
+**Buggy Query:**
+
+```sql
+-- Report: all products with their category name and total sales
+SELECT
+    p.product_name,
+    c.category_name,
+    COALESCE(SUM(oi.line_total), 0) AS total_sales
+FROM products p
+JOIN categories c ON p.category_id = c.category_id    -- BUG: INNER JOIN
+JOIN order_items oi ON p.product_id = oi.product_id   -- BUG: INNER JOIN
+GROUP BY p.product_name, c.category_name;
+```
+
+**What's wrong?**
+> Two issues: (1) Products without a category (`category_id IS NULL`) are excluded by the INNER JOIN to `categories`. (2) Products that have never been ordered (no row in `order_items`) are excluded. The report silently under-counts products.
+
+**Fix:**
+```sql
+SELECT
+    p.product_name,
+    COALESCE(c.category_name, 'Uncategorized') AS category_name,
+    COALESCE(SUM(oi.line_total), 0) AS total_sales
+FROM products p
+LEFT JOIN categories c  ON p.category_id = c.category_id   -- keep uncategorized products
+LEFT JOIN order_items oi ON p.product_id = oi.product_id   -- keep never-sold products
+GROUP BY p.product_name, c.category_name;
+```
+
+---
+
+## Exercise 15 — Using OR Instead of IN, Missing Index Benefit
+
+**Buggy Query:**
+
+```sql
+-- Find orders with specific status values (statuses column is indexed)
+SELECT order_id, amount FROM orders
+WHERE status = 'pending'
+   OR status = 'processing'
+   OR status = 'awaiting_payment';
+```
+
+**What's wrong?**
+> While this query is logically correct, expanding OR chains is verbose and hard to maintain. More importantly, some query planners handle long OR chains on a single column less efficiently than `IN()`. The `IN` form is cleaner and semantically identical.
+
+**Fix:**
+```sql
+-- Use IN() for multi-value equality on a single column
+SELECT order_id, amount FROM orders
+WHERE status IN ('pending', 'processing', 'awaiting_payment');
+
+-- Verify index is used with EXPLAIN ANALYZE
+EXPLAIN ANALYZE
+SELECT order_id, amount FROM orders
+WHERE status IN ('pending', 'processing', 'awaiting_payment');
 ```
 
 </details>
@@ -2859,5 +3692,306 @@ CREATE INDEX idx_customers_email_phone ON customers (email, phone);
 ```
 
 **Measurement:** Before: 450ms (Seq Scan) · After: 0.5ms (two Index Scans + UNION)
+
+---
+
+## Exercise 11 — Slow Aggregation from Missing Index on GROUP BY Column
+
+**Slow Query:**
+
+```sql
+-- Daily order count per sales rep — runs in 12 seconds
+SELECT
+    sales_rep_id,
+    DATE_TRUNC('day', order_date) AS order_day,
+    COUNT(*) AS order_count
+FROM orders
+GROUP BY sales_rep_id, DATE_TRUNC('day', order_date)
+ORDER BY sales_rep_id, order_day;
+```
+
+**Diagnosis:**
+
+```sql
+EXPLAIN ANALYZE SELECT sales_rep_id, DATE_TRUNC('day', order_date), COUNT(*)
+FROM orders GROUP BY sales_rep_id, DATE_TRUNC('day', order_date);
+
+-- HashAggregate  (actual time=11800..12200 ms rows=3650)
+--   ->  Seq Scan on orders (actual time=0.1..4200 ms rows=10000000)
+```
+
+**Problem:** Sequential scan over 10M rows for aggregation. `DATE_TRUNC` is applied to every row.
+
+**Fix:**
+
+```sql
+-- Option 1: Functional index on the truncated date + sales_rep_id
+CREATE INDEX idx_orders_rep_day
+    ON orders (sales_rep_id, DATE_TRUNC('day', order_date));
+
+-- Option 2: Pre-aggregate into a materialized view (if data is historical)
+CREATE MATERIALIZED VIEW daily_orders_by_rep AS
+SELECT
+    sales_rep_id,
+    DATE_TRUNC('day', order_date) AS order_day,
+    COUNT(*) AS order_count
+FROM orders
+GROUP BY sales_rep_id, DATE_TRUNC('day', order_date);
+
+CREATE INDEX idx_daily_orders_rep ON daily_orders_by_rep (sales_rep_id, order_day);
+
+-- Dashboard query becomes a fast index scan on the materialized view:
+SELECT sales_rep_id, order_day, order_count
+FROM daily_orders_by_rep
+ORDER BY sales_rep_id, order_day;
+
+-- Refresh nightly:
+REFRESH MATERIALIZED VIEW CONCURRENTLY daily_orders_by_rep;
+```
+
+**Speedup:** 12 seconds → 8ms (materialized view with index scan)
+
+---
+
+## Exercise 12 — Large DELETE Holding Table Lock
+
+**Slow / Problematic Query:**
+
+```sql
+-- Cleanup: delete events older than 90 days
+-- 50 million rows qualify; this runs for 30 minutes and holds an exclusive row lock
+DELETE FROM events WHERE created_at < NOW() - INTERVAL '90 days';
+```
+
+**Problem:** Deleting 50M rows in a single transaction:
+- Holds row locks for 30 minutes — blocking concurrent writes
+- Generates 50M WAL log records — large WAL surge
+- Causes autovacuum to run for hours afterward (dead tuples)
+- Fills `pg_wal` directory, potentially causing standby replication lag
+
+**Fix:**
+
+```sql
+-- Option 1: Batch deletion — delete in chunks with brief pauses
+DO $$
+DECLARE
+    deleted INT;
+BEGIN
+    LOOP
+        DELETE FROM events
+        WHERE event_id IN (
+            SELECT event_id FROM events
+            WHERE created_at < NOW() - INTERVAL '90 days'
+            LIMIT 10000
+        );
+        GET DIAGNOSTICS deleted = ROW_COUNT;
+        EXIT WHEN deleted = 0;
+        PERFORM pg_sleep(0.05);  -- 50ms pause between batches
+    END LOOP;
+END;
+$$;
+
+-- Option 2 (preferred for time-series): Use range partitioning
+-- then DROP the old partition — instant operation, zero WAL
+CREATE TABLE events (
+    event_id   BIGSERIAL,
+    created_at TIMESTAMPTZ NOT NULL,
+    payload    JSONB
+) PARTITION BY RANGE (created_at);
+
+-- Drop 90-day-old partition instantly:
+ALTER TABLE events DETACH PARTITION events_2024_01;
+DROP TABLE events_2024_01;  -- Instant — no row-by-row DELETE, no WAL, no vacuum needed
+```
+
+**Measurement:** 30 minutes (single DELETE) → ~2 seconds per 10K batch, ~30 minutes total but without lock contention · Partition drop: instant
+
+---
+
+## Exercise 13 — Slow Multi-JOIN Report from Missing Join Indexes
+
+**Slow Query:**
+
+```sql
+-- Sales report: 8-table join, takes 45 seconds
+SELECT
+    r.region_name,
+    m.manager_name,
+    s.rep_name,
+    p.product_name,
+    pc.category_name,
+    c.customer_name,
+    o.order_date,
+    oi.quantity,
+    oi.line_total
+FROM order_items oi
+JOIN orders o         ON oi.order_id = o.order_id
+JOIN customers c      ON o.customer_id = c.customer_id
+JOIN regions r        ON c.region_id = r.region_id
+JOIN sales_reps s     ON o.sales_rep_id = s.rep_id
+JOIN managers m       ON s.manager_id = m.manager_id
+JOIN products p       ON oi.product_id = p.product_id
+JOIN product_categories pc ON p.category_id = pc.category_id
+WHERE o.order_date >= '2024-01-01';
+```
+
+**Diagnosis steps:**
+
+```sql
+-- 1. Run EXPLAIN ANALYZE with timing per node
+EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT) <query above>;
+
+-- 2. Look for: Seq Scan on any large table, high "Rows Removed by Filter"
+-- 3. Check join columns — are FK columns indexed?
+
+-- Check missing FK indexes (PostgreSQL)
+SELECT
+    tc.table_name, kcu.column_name
+FROM information_schema.table_constraints tc
+JOIN information_schema.key_column_usage kcu
+    ON tc.constraint_name = kcu.constraint_name
+WHERE tc.constraint_type = 'FOREIGN KEY'
+  AND NOT EXISTS (
+    SELECT 1 FROM pg_indexes
+    WHERE tablename = tc.table_name
+      AND indexdef LIKE '%' || kcu.column_name || '%'
+  );
+```
+
+**Fix:**
+
+```sql
+-- Index every FK column on the referencing side
+CREATE INDEX IF NOT EXISTS idx_orders_customer_id    ON orders (customer_id);
+CREATE INDEX IF NOT EXISTS idx_orders_sales_rep_id   ON orders (sales_rep_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_order_id  ON order_items (order_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items (product_id);
+CREATE INDEX IF NOT EXISTS idx_customers_region_id   ON customers (region_id);
+CREATE INDEX IF NOT EXISTS idx_sales_reps_manager_id ON sales_reps (manager_id);
+CREATE INDEX IF NOT EXISTS idx_products_category_id  ON products (category_id);
+
+-- Add date filter index
+CREATE INDEX IF NOT EXISTS idx_orders_date ON orders (order_date);
+-- Partial index for recent data only:
+CREATE INDEX IF NOT EXISTS idx_orders_date_2024 ON orders (order_date)
+    WHERE order_date >= '2024-01-01';
+```
+
+**Speedup:** 45 seconds → 0.8 seconds (all joins use IndexScan on FK indexes)
+
+---
+
+## Exercise 14 — Recursive CTE Without Depth Limit Causing Infinite Loop
+
+**Slow / Buggy Query:**
+
+```sql
+-- Traverse employee hierarchy — accidentally has a cycle in the data
+WITH RECURSIVE org_tree AS (
+    -- Anchor: top-level employees
+    SELECT employee_id, manager_id, name, 1 AS depth
+    FROM employees
+    WHERE manager_id IS NULL
+
+    UNION ALL
+
+    -- Recursive: join children
+    SELECT e.employee_id, e.manager_id, e.name, ot.depth + 1
+    FROM employees e
+    JOIN org_tree ot ON e.manager_id = ot.employee_id
+    -- BUG: no depth limit, no cycle detection
+)
+SELECT * FROM org_tree;
+-- If data has a cycle (emp A manages emp B, B manages A), this runs forever
+```
+
+**Problem:** Cyclic data causes the recursive CTE to loop indefinitely, consuming CPU and memory until the query is killed or the database runs out of memory.
+
+**Fix:**
+
+```sql
+-- Fix 1: Add depth limit as a safety guardrail
+WITH RECURSIVE org_tree AS (
+    SELECT employee_id, manager_id, name, 1 AS depth,
+           ARRAY[employee_id] AS path  -- track visited IDs
+    FROM employees
+    WHERE manager_id IS NULL
+
+    UNION ALL
+
+    SELECT e.employee_id, e.manager_id, e.name, ot.depth + 1,
+           ot.path || e.employee_id
+    FROM employees e
+    JOIN org_tree ot ON e.manager_id = ot.employee_id
+    WHERE e.employee_id <> ALL(ot.path)  -- cycle detection: don't revisit
+      AND ot.depth < 50                   -- hard depth limit as extra safety
+)
+SELECT employee_id, name, depth, path
+FROM org_tree
+ORDER BY depth, name;
+
+-- Fix 2 (MySQL / SQL Server — no array support): Use depth limit only
+-- And fix the data: find cycles
+SELECT employee_id, manager_id
+FROM employees e
+WHERE e.manager_id = e.employee_id  -- self-reference
+UNION
+SELECT e1.employee_id, e2.manager_id
+FROM employees e1
+JOIN employees e2 ON e1.manager_id = e2.employee_id
+WHERE e2.manager_id = e1.employee_id;  -- 2-node cycle
+```
+
+---
+
+## Exercise 15 — Slow Window Function from Missing ORDER BY Index
+
+**Slow Query:**
+
+```sql
+-- Compute cumulative revenue by order date — takes 25 seconds
+SELECT
+    order_id,
+    order_date,
+    amount,
+    SUM(amount) OVER (ORDER BY order_date) AS running_total
+FROM orders;
+```
+
+**Diagnosis:**
+
+```sql
+EXPLAIN ANALYZE SELECT order_id, order_date, amount,
+    SUM(amount) OVER (ORDER BY order_date) AS running_total FROM orders;
+
+-- Sort  (cost=... actual time=24000..24800 ms rows=10000000)
+--   ->  Seq Scan on orders (actual time=0.1..4000 ms rows=10000000)
+-- WindowAgg (actual time=24800..29000 ms)
+```
+
+**Problem:** No index on `order_date` forces an explicit Sort of 10M rows before the window function can compute the running total.
+
+**Fix:**
+
+```sql
+-- Add index so the planner can use a pre-sorted access path
+CREATE INDEX idx_orders_order_date ON orders (order_date);
+
+-- For a covering index that also returns amount without heap access:
+CREATE INDEX idx_orders_date_amount ON orders (order_date)
+    INCLUDE (order_id, amount);
+
+-- After: planner uses Index Scan (already sorted) → no Sort node
+-- WindowAgg reads pre-sorted data → no sort overhead
+-- Time: 25 seconds → ~2 seconds (index scan + window agg on sorted stream)
+
+EXPLAIN ANALYZE SELECT order_id, order_date, amount,
+    SUM(amount) OVER (ORDER BY order_date) AS running_total
+FROM orders;
+-- Index Only Scan using idx_orders_date_amount
+-- WindowAgg (actual time=0.1..1800 ms)
+```
+
+**Note:** If the result set is for a specific date range, add a WHERE clause and use a partial index to further reduce the scanned data volume.
 
 </details>
