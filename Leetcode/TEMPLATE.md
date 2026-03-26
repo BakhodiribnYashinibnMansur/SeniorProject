@@ -709,7 +709,10 @@ class Solution:
 ```go
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"reflect"
+)
 
 // ============================================================
 // {{XXXX}}. {{Problem Name}}
@@ -740,20 +743,35 @@ func {{functionName}}({{params}}) {{returnType}} {
 // ============================================================
 
 func main() {
+	// Test yordamchi funksiya
+	passed, failed := 0, 0
+	test := func(name string, got, expected interface{}) {
+		if reflect.DeepEqual(got, expected) {
+			fmt.Printf("✅ PASS: %s\n", name)
+			passed++
+		} else {
+			fmt.Printf("❌ FAIL: %s\n  Got:      %v\n  Expected: %v\n", name, got, expected)
+			failed++
+		}
+	}
+
 	// Test 1: Basic case
-	fmt.Println({{functionName}}({{input1}})) // Expected: {{output1}}
+	test("Basic case", {{functionName}}({{input1}}), {{expected1}})
 
 	// Test 2: Edge case
-	fmt.Println({{functionName}}({{input2}})) // Expected: {{output2}}
+	test("Edge case", {{functionName}}({{input2}}), {{expected2}})
 
 	// Test 3: Large input
-	fmt.Println({{functionName}}({{input3}})) // Expected: {{output3}}
+	test("Large input", {{functionName}}({{input3}}), {{expected3}})
 
 	// Test 4: {{tavsif}}
-	fmt.Println({{functionName}}({{input4}})) // Expected: {{output4}}
+	test("{{tavsif}}", {{functionName}}({{input4}}), {{expected4}})
 
 	// Test 5: {{tavsif}}
-	fmt.Println({{functionName}}({{input5}})) // Expected: {{output5}}
+	test("{{tavsif}}", {{functionName}}({{input5}}), {{expected5}})
+
+	// Natija
+	fmt.Printf("\n📊 Natija: %d passed, %d failed, %d total\n", passed, failed, passed+failed)
 }
 ```
 
@@ -796,23 +814,53 @@ class Solution {
     // Test Cases
     // ============================================================
 
+    static int passed = 0, failed = 0;
+
+    // Test yordamchi metod — massivlar uchun
+    static void test(String name, int[] got, int[] expected) {
+        if (Arrays.equals(got, expected)) {
+            System.out.printf("✅ PASS: %s%n", name);
+            passed++;
+        } else {
+            System.out.printf("❌ FAIL: %s%n  Got:      %s%n  Expected: %s%n",
+                name, Arrays.toString(got), Arrays.toString(expected));
+            failed++;
+        }
+    }
+
+    // Test yordamchi metod — umumiy ob'ektlar uchun
+    static void test(String name, Object got, Object expected) {
+        if (Objects.equals(got, expected)) {
+            System.out.printf("✅ PASS: %s%n", name);
+            passed++;
+        } else {
+            System.out.printf("❌ FAIL: %s%n  Got:      %s%n  Expected: %s%n",
+                name, got, expected);
+            failed++;
+        }
+    }
+
     public static void main(String[] args) {
         Solution sol = new Solution();
 
         // Test 1: Basic case
-        System.out.println(sol.{{functionName}}({{input1}})); // Expected: {{output1}}
+        test("Basic case", sol.{{functionName}}({{input1}}), {{expected1}});
 
         // Test 2: Edge case
-        System.out.println(sol.{{functionName}}({{input2}})); // Expected: {{output2}}
+        test("Edge case", sol.{{functionName}}({{input2}}), {{expected2}});
 
         // Test 3: Large input
-        System.out.println(sol.{{functionName}}({{input3}})); // Expected: {{output3}}
+        test("Large input", sol.{{functionName}}({{input3}}), {{expected3}});
 
         // Test 4: {{tavsif}}
-        System.out.println(sol.{{functionName}}({{input4}})); // Expected: {{output4}}
+        test("{{tavsif}}", sol.{{functionName}}({{input4}}), {{expected4}});
 
         // Test 5: {{tavsif}}
-        System.out.println(sol.{{functionName}}({{input5}})); // Expected: {{output5}}
+        test("{{tavsif}}", sol.{{functionName}}({{input5}}), {{expected5}});
+
+        // Natija
+        System.out.printf("%n📊 Natija: %d passed, %d failed, %d total%n",
+            passed, failed, passed + failed);
     }
 }
 ```
@@ -859,21 +907,36 @@ class Solution:
 
 if __name__ == "__main__":
     sol = Solution()
+    passed = failed = 0
+
+    def test(name: str, got, expected):
+        global passed, failed
+        if got == expected:
+            print(f"✅ PASS: {name}")
+            passed += 1
+        else:
+            print(f"❌ FAIL: {name}")
+            print(f"  Got:      {got}")
+            print(f"  Expected: {expected}")
+            failed += 1
 
     # Test 1: Basic case
-    print(sol.{{function_name}}({{input1}}))  # Expected: {{output1}}
+    test("Basic case", sol.{{function_name}}({{input1}}), {{expected1}})
 
     # Test 2: Edge case
-    print(sol.{{function_name}}({{input2}}))  # Expected: {{output2}}
+    test("Edge case", sol.{{function_name}}({{input2}}), {{expected2}})
 
     # Test 3: Large input
-    print(sol.{{function_name}}({{input3}}))  # Expected: {{output3}}
+    test("Large input", sol.{{function_name}}({{input3}}), {{expected3}})
 
     # Test 4: {{tavsif}}
-    print(sol.{{function_name}}({{input4}}))  # Expected: {{output4}}
+    test("{{tavsif}}", sol.{{function_name}}({{input4}}), {{expected4}})
 
     # Test 5: {{tavsif}}
-    print(sol.{{function_name}}({{input5}}))  # Expected: {{output5}}
+    test("{{tavsif}}", sol.{{function_name}}({{input5}}), {{expected5}})
+
+    # Natija
+    print(f"\n📊 Natija: {passed} passed, {failed} failed, {passed + failed} total")
 ```
 
 ---
