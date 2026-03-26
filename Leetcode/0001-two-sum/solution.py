@@ -10,30 +10,30 @@ class Solution:
     def twoSum(self, nums: list[int], target: int) -> list[int]:
         """
         Optimal Solution (One-pass Hash Map)
-        Approach: Hash Map da complement ni qidirish
-        Time:  O(n) — massivni faqat 1 marta o'tamiz
-        Space: O(n) — Hash Map ga eng ko'pi bilan n ta element
+        Approach: Look up complement in Hash Map
+        Time:  O(n) — single pass through the array
+        Space: O(n) — Hash Map stores at most n elements
         """
-        # Hash Map: qiymat → indeks
-        # Har bir elementni ko'rganda, uning complementi (target - num)
-        # oldin ko'rilganmi tekshiramiz
+        # Hash Map: value → index
+        # For each element, check if its complement (target - num)
+        # has been seen before
         seen = {}
 
         for i, num in enumerate(nums):
-            # Complement ni hisoblash
+            # Calculate complement
             complement = target - num
 
-            # Complement Hash Map da bormi?
+            # Is complement in the Hash Map?
             if complement in seen:
-                # Topildi! complement ning indeksi seen[complement], hozirgi indeks i
+                # Found! complement's index is seen[complement], current index is i
                 return [seen[complement], i]
 
-            # Hozirgi elementni Hash Map ga qo'shish
-            # Keyingi elementlar uchun complement sifatida ishlatiladi
+            # Add current element to Hash Map
+            # It will serve as complement for future elements
             seen[num] = i
 
-        # Constraint bo'yicha har doim javob mavjud
-        # Bu yerga hech qachon kelmaydi
+        # Per constraints, a solution always exists
+        # This line is never reached
         return []
 
 
@@ -56,26 +56,26 @@ if __name__ == "__main__":
             print(f"  Expected: {expected}")
             failed += 1
 
-    # Test 1: Basic case — birinchi juftlikda topiladi
+    # Test 1: Basic case — found in first pair
     test("Basic case", sol.twoSum([2, 7, 11, 15], 9), [0, 1])
 
-    # Test 2: O'rtada topiladi
-    test("O'rtada topiladi", sol.twoSum([3, 2, 4], 6), [1, 2])
+    # Test 2: Found in the middle
+    test("Found in middle", sol.twoSum([3, 2, 4], 6), [1, 2])
 
-    # Test 3: Dublikat qiymatlar
-    test("Dublikat qiymatlar", sol.twoSum([3, 3], 6), [0, 1])
+    # Test 3: Duplicate values
+    test("Duplicate values", sol.twoSum([3, 3], 6), [0, 1])
 
-    # Test 4: Salbiy sonlar
-    test("Salbiy sonlar", sol.twoSum([-1, -2, -3, -4, -5], -8), [2, 4])
+    # Test 4: Negative numbers
+    test("Negative numbers", sol.twoSum([-1, -2, -3, -4, -5], -8), [2, 4])
 
-    # Test 5: Aralash sonlar (manfiy + musbat)
-    test("Aralash sonlar", sol.twoSum([-3, 4, 3, 90], 0), [0, 2])
+    # Test 5: Mixed numbers (negative + positive)
+    test("Mixed numbers", sol.twoSum([-3, 4, 3, 90], 0), [0, 2])
 
-    # Test 6: Nol qiymatlar
-    test("Nol qiymatlar", sol.twoSum([0, 4, 3, 0], 0), [0, 3])
+    # Test 6: Zero values
+    test("Zero values", sol.twoSum([0, 4, 3, 0], 0), [0, 3])
 
-    # Test 7: Katta qiymatlar
-    test("Katta qiymatlar", sol.twoSum([1000000000, -1000000000], 0), [0, 1])
+    # Test 7: Large values
+    test("Large values", sol.twoSum([1000000000, -1000000000], 0), [0, 1])
 
-    # Natija
-    print(f"\n📊 Natija: {passed} passed, {failed} failed, {passed + failed} total")
+    # Results
+    print(f"\n📊 Results: {passed} passed, {failed} failed, {passed + failed} total")
