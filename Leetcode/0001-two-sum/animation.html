@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0001. Two Sum — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        #arrInput { width: 200px; }
+        #targetInput { width: 100px; }
+
+        .btn-generate { background: #8b5cf6; color: white; }
+        .btn-generate:hover { background: #7c3aed; }
+
+        .gen-options {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .gen-options label { color: #94a3b8; font-size: 0.8rem; }
+
+        .gen-options select {
+            padding: 5px 8px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-pause:hover { background: #dc2626; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-reset:hover { background: #4b5563; }
+
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select {
+            padding: 6px 10px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 4px;
+        }
+
+        /* STEP DESCRIPTION */
+        .step-description {
+            background: #0f172a;
+            border-left: 3px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 50px;
+            white-space: pre-line;
+        }
+
+        /* VIZ AREA */
+        .viz-area {
+            min-height: 200px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        /* ARRAY */
+        .array-container {
+            display: flex;
+            gap: 6px;
+            justify-content: flex-start;
+            flex-wrap: nowrap;
+            margin-bottom: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .array-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .array-container::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+
+        .array-container::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+
+        .array-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .array-element {
+            width: 3.5rem;
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            transition: all 0.35s ease;
+            position: relative;
+        }
+
+        .idx-label {
+            font-size: 0.7rem;
+            color: #475569;
+        }
+
+        .ptr-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-height: 18px;
+        }
+
+        /* Colors */
+        .el-default { background: #334155; color: #e2e8f0; }
+        .el-active { background: #3b82f6; color: white; box-shadow: 0 0 16px rgba(59,130,246,0.5); transform: scale(1.08); }
+        .el-comparing { background: #f59e0b; color: #0f172a; box-shadow: 0 0 16px rgba(245,158,11,0.4); }
+        .el-found { background: #22c55e; color: white; box-shadow: 0 0 20px rgba(34,197,94,0.6); transform: scale(1.15); }
+        .el-visited { background: #6366f1; color: white; }
+        .el-discarded { background: #1e293b; color: #475569; opacity: 0.5; }
+
+        .ptr-i { color: #3b82f6; }
+        .ptr-j { color: #a78bfa; }
+        .ptr-left { color: #22c55e; }
+        .ptr-right { color: #ef4444; }
+
+        /* HASH MAP */
+        .hashmap-container {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #1e293b;
+        }
+
+        .hashmap-grid {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .hashmap-entry {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-align: center;
+            min-width: 60px;
+            transition: all 0.3s;
+        }
+
+        .hashmap-entry.new {
+            border-color: #22c55e;
+            box-shadow: 0 0 12px rgba(34,197,94,0.3);
+        }
+
+        .hashmap-entry.highlight {
+            border-color: #f59e0b;
+            box-shadow: 0 0 12px rgba(245,158,11,0.3);
+        }
+
+        .hm-key { font-size: 0.75rem; color: #94a3b8; }
+        .hm-val { font-size: 1.1rem; font-weight: 700; color: #e2e8f0; }
+        .hm-arrow { color: #475569; font-size: 0.7rem; }
+
+        /* CALC */
+        .calc-box {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            text-align: center;
+            font-size: 1.1rem;
+            border: 1px solid #334155;
+        }
+
+        .calc-box .formula { color: #94a3b8; }
+        .calc-box .result { font-weight: 700; margin-left: 8px; }
+        .result-match { color: #22c55e; }
+        .result-no { color: #ef4444; }
+
+        /* INFO PANEL */
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .info-box h3 {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .info-box .value { font-size: 1.1rem; font-weight: 700; }
+
+        /* COMPARISON */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .compare-side {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #334155;
+        }
+
+        .compare-side h3 {
+            text-align: center;
+            margin-bottom: 16px;
+            font-size: 1rem;
+        }
+
+        .compare-ops {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 16px 0;
+        }
+
+        .ops-brute { color: #ef4444; }
+        .ops-optimal { color: #22c55e; }
+
+        .compare-bar {
+            height: 24px;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            margin-top: 8px;
+        }
+
+        .bar-brute { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .bar-optimal { background: linear-gradient(90deg, #22c55e, #4ade80); }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .compare-grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>0001. Two Sum</h1>
+        <p>Easy — Array, Hash Table</p>
+    </div>
+
+    <div class="tabs" id="tabs">
+        <div class="tab active" data-tab="brute">Brute Force</div>
+        <div class="tab" data-tab="hashmap">Hash Map (Optimal)</div>
+        <div class="tab" data-tab="twoptr">Two Pointers</div>
+        <div class="tab" data-tab="compare">Compare All</div>
+    </div>
+
+    <div class="container">
+        <div class="input-section">
+            <input type="text" id="arrInput" placeholder="[2,7,11,15]" value="2,7,11,15">
+            <input type="text" id="targetInput" placeholder="target" value="9">
+            <button class="btn btn-step" onclick="applyInput()">Apply</button>
+            <button class="btn btn-generate" onclick="generateRandom()">&#127922; Generate</button>
+            <div class="gen-options">
+                <label>Size:</label>
+                <select id="genSize">
+                    <option value="4">4</option>
+                    <option value="6" selected>6</option>
+                    <option value="8">8</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                </select>
+                <label>Range:</label>
+                <select id="genRange">
+                    <option value="20">-20..20</option>
+                    <option value="50" selected>-50..50</option>
+                    <option value="100">-100..100</option>
+                    <option value="500">-500..500</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-play" onclick="play()">&#9654; Play</button>
+            <button class="btn btn-pause" onclick="pause()">&#9646;&#9646; Pause</button>
+            <button class="btn btn-step" onclick="stepForward()">&#9197; Step</button>
+            <button class="btn btn-reset" onclick="reset()">&#8634; Reset</button>
+            <div class="speed-control">
+                <label>Tezlik:</label>
+                <select id="speed" onchange="updateSpeed()">
+                    <option value="2000">Sekin</option>
+                    <option value="1000" selected>Normal</option>
+                    <option value="500">Tez</option>
+                    <option value="200">Juda tez</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="step-description" id="stepDesc">
+            &#9654; "Play" bosing yoki "Step" bilan qadam-baqadam ko'ring.
+        </div>
+
+        <div class="viz-area" id="vizArea"></div>
+
+        <div class="info-panel">
+            <div class="info-box">
+                <h3>Qadam</h3>
+                <div class="value" id="stepCounter">0 / 0</div>
+            </div>
+            <div class="info-box">
+                <h3>Operatsiyalar</h3>
+                <div class="value" id="opsCounter">0</div>
+            </div>
+            <div class="info-box">
+                <h3>Time</h3>
+                <div class="value" id="timeComp">—</div>
+            </div>
+            <div class="info-box">
+                <h3>Space</h3>
+                <div class="value" id="spaceComp">—</div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color" style="background:#334155;"></div><span>Default</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#3b82f6;"></div><span>Active</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#f59e0b;"></div><span>Comparing</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#22c55e;"></div><span>Found</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#6366f1;"></div><span>Visited</span></div>
+        </div>
+    </div>
+
+<script>
+// ============================================================
+// LOCAL STORAGE — state ni saqlash / yuklash
+// ============================================================
+const STORAGE_KEY = 'twosum_animation_state';
+
+function saveState() {
+    const state = { currentTab, currentStep, speed, nums, target };
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch(e) { return null; }
+}
+
+// ============================================================
+// STATE
+// ============================================================
+const saved = loadState();
+let currentTab = saved ? saved.currentTab : 'brute';
+let steps = [];
+let currentStep = saved ? saved.currentStep : 0;
+let isPlaying = false;
+let playInterval = null;
+let speed = saved ? saved.speed : 1000;
+let nums = saved ? saved.nums : [2, 7, 11, 15];
+let target = saved ? saved.target : 9;
+
+// ============================================================
+// TABS
+// ============================================================
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentTab = tab.dataset.tab;
+        reset();
+        generateSteps();
+        renderStep();
+        saveState();
+    });
+});
+
+// ============================================================
+// RANDOM GENERATOR
+// ============================================================
+function generateRandom() {
+    const size = parseInt(document.getElementById('genSize').value);
+    const range = parseInt(document.getElementById('genRange').value);
+
+    // Random massiv yaratish
+    const arr = [];
+    const usedValues = new Set();
+    for (let i = 0; i < size; i++) {
+        let val;
+        do {
+            val = Math.floor(Math.random() * (range * 2 + 1)) - range;
+        } while (usedValues.has(val) && usedValues.size < range * 2);
+        usedValues.add(val);
+        arr.push(val);
+    }
+
+    // Random ikkita indeks tanlab, ularning yig'indisini target qilish
+    // Bu har doim yechim mavjud bo'lishini kafolatlaydi
+    const idx1 = Math.floor(Math.random() * size);
+    let idx2;
+    do {
+        idx2 = Math.floor(Math.random() * size);
+    } while (idx2 === idx1);
+
+    const newTarget = arr[idx1] + arr[idx2];
+
+    // UI ni yangilash
+    nums = arr;
+    target = newTarget;
+    document.getElementById('arrInput').value = nums.join(',');
+    document.getElementById('targetInput').value = target;
+
+    // Animatsiyani qayta boshlash
+    reset();
+    generateSteps();
+    renderStep();
+    saveState();
+}
+
+// ============================================================
+// CONTROLS
+// ============================================================
+function play() {
+    if (isPlaying) return;
+    isPlaying = true;
+    playInterval = setInterval(() => {
+        if (currentStep < steps.length - 1) {
+            currentStep++;
+            renderStep();
+        } else {
+            pause();
+        }
+    }, speed);
+}
+
+function pause() {
+    isPlaying = false;
+    if (playInterval) clearInterval(playInterval);
+}
+
+function stepForward() {
+    pause();
+    if (currentStep < steps.length - 1) {
+        currentStep++;
+        renderStep();
+    }
+}
+
+function reset() {
+    pause();
+    currentStep = 0;
+    if (steps.length > 0) renderStep();
+}
+
+function applyInput() {
+    try {
+        const arrStr = document.getElementById('arrInput').value.replace(/[\[\]]/g, '');
+        nums = arrStr.split(',').map(s => parseInt(s.trim()));
+        target = parseInt(document.getElementById('targetInput').value.trim());
+        if (nums.some(isNaN) || isNaN(target)) throw new Error('Invalid');
+        reset();
+        generateSteps();
+        renderStep();
+        saveState();
+    } catch(e) {
+        document.getElementById('stepDesc').textContent = 'Xato format! Masalan: 2,7,11,15 va target: 9';
+    }
+}
+
+function updateSpeed() {
+    speed = parseInt(document.getElementById('speed').value);
+    if (isPlaying) { pause(); play(); }
+    saveState();
+}
+
+// ============================================================
+// GENERATE STEPS
+// ============================================================
+function generateSteps() {
+    steps = [];
+    if (currentTab === 'brute') generateBrute();
+    else if (currentTab === 'hashmap') generateHashMap();
+    else if (currentTab === 'twoptr') generateTwoPointers();
+    else if (currentTab === 'compare') generateCompare();
+}
+
+function generateBrute() {
+    const n = nums.length;
+    let ops = 0;
+
+    // Initial
+    steps.push({
+        arr: [...nums], hl: {}, ptrs: {},
+        desc: `Massiv: [${nums}], target = ${target}\nBrute Force: har bir juftlikni tekshiramiz (nested loop)`,
+        ops: 0, hashmap: null,
+        time: 'O(n\u00B2)', space: 'O(1)'
+    });
+
+    for (let i = 0; i < n; i++) {
+        // i pointer
+        steps.push({
+            arr: [...nums],
+            hl: {[i]: 'active'},
+            ptrs: {[i]: {label: 'i', cls: 'ptr-i'}},
+            desc: `i = ${i}, nums[${i}] = ${nums[i]}\nIchki loop boshlanadi: j = ${i+1} dan ${n-1} gacha`,
+            ops, hashmap: null,
+            time: 'O(n\u00B2)', space: 'O(1)',
+            calc: null
+        });
+
+        for (let j = i + 1; j < n; j++) {
+            ops++;
+            const sum = nums[i] + nums[j];
+            const found = sum === target;
+
+            steps.push({
+                arr: [...nums],
+                hl: {[i]: found ? 'found' : 'active', [j]: found ? 'found' : 'comparing'},
+                ptrs: {[i]: {label: 'i', cls: 'ptr-i'}, [j]: {label: 'j', cls: 'ptr-j'}},
+                desc: found
+                    ? `nums[${i}] + nums[${j}] = ${nums[i]} + ${nums[j]} = ${sum} == ${target} \u2705 TOPILDI!\nJavob: [${i}, ${j}]`
+                    : `nums[${i}] + nums[${j}] = ${nums[i]} + ${nums[j]} = ${sum} \u2260 ${target} \u274C`,
+                ops, hashmap: null,
+                time: 'O(n\u00B2)', space: 'O(1)',
+                calc: { a: nums[i], b: nums[j], sum, found }
+            });
+
+            if (found) return;
+        }
+    }
+}
+
+function generateHashMap() {
+    const n = nums.length;
+    let ops = 0;
+    const seen = {};
+
+    steps.push({
+        arr: [...nums], hl: {}, ptrs: {},
+        desc: `Massiv: [${nums}], target = ${target}\nOne-pass Hash Map: har bir element uchun complement ni qidiramiz`,
+        ops: 0, hashmap: {}, time: 'O(n)', space: 'O(n)', calc: null
+    });
+
+    for (let i = 0; i < n; i++) {
+        const complement = target - nums[i];
+        ops++;
+
+        // Check complement
+        if (complement in seen) {
+            const j = seen[complement];
+            steps.push({
+                arr: [...nums],
+                hl: {[j]: 'found', [i]: 'found'},
+                ptrs: {[i]: {label: 'i', cls: 'ptr-i'}},
+                desc: `i = ${i}, nums[${i}] = ${nums[i]}, complement = ${target} - ${nums[i]} = ${complement}\ncomplement ${complement} Hash Map da BOR! index = ${j} \u2705 TOPILDI!\nJavob: [${j}, ${i}]`,
+                ops, hashmap: {...seen, ['_hl']: complement},
+                time: 'O(n)', space: 'O(n)',
+                calc: { a: nums[j], b: nums[i], sum: target, found: true }
+            });
+            return;
+        }
+
+        // Not found — show checking
+        steps.push({
+            arr: [...nums],
+            hl: {[i]: 'active'},
+            ptrs: {[i]: {label: 'i', cls: 'ptr-i'}},
+            desc: `i = ${i}, nums[${i}] = ${nums[i]}, complement = ${target} - ${nums[i]} = ${complement}\ncomplement ${complement} Hash Map da yo'q \u274C\n\u2192 nums[${i}] = ${nums[i]} ni Hash Map ga qo'shamiz (key: ${nums[i]}, value: ${i})`,
+            ops, hashmap: {...seen, ['_new']: nums[i]},
+            time: 'O(n)', space: 'O(n)',
+            calc: { a: nums[i], complement, found: false }
+        });
+
+        seen[nums[i]] = i;
+
+        // Show updated hashmap
+        steps.push({
+            arr: [...nums],
+            hl: {[i]: 'visited'},
+            ptrs: {[i]: {label: 'i', cls: 'ptr-i'}},
+            desc: `Hash Map yangilandi: {${Object.entries(seen).map(([k,v]) => k+':'+v).join(', ')}}\nKeyingi elementga o'tamiz...`,
+            ops, hashmap: {...seen},
+            time: 'O(n)', space: 'O(n)',
+            calc: null
+        });
+    }
+}
+
+function generateTwoPointers() {
+    const n = nums.length;
+    let ops = 0;
+
+    const indexed = nums.map((v, i) => ({val: v, idx: i}));
+    const sorted = [...indexed].sort((a, b) => a.val - b.val);
+    const sortedVals = sorted.map(s => s.val);
+
+    steps.push({
+        arr: [...nums], hl: {}, ptrs: {},
+        desc: `Original: [${nums}], target = ${target}\nAvval sort qilamiz, keyin Two Pointers ishlatamiz`,
+        ops: 0, hashmap: null, isSorted: false,
+        time: 'O(n log n)', space: 'O(n)', calc: null
+    });
+
+    steps.push({
+        arr: sortedVals, hl: {}, ptrs: {},
+        desc: `Sorted: [${sortedVals}]\nOriginal indekslar: [${sorted.map(s => s.idx)}]\nleft = 0, right = ${n-1}`,
+        ops: 0, hashmap: null, isSorted: true,
+        time: 'O(n log n)', space: 'O(n)', calc: null,
+        origIdx: sorted.map(s => s.idx)
+    });
+
+    let left = 0, right = n - 1;
+
+    while (left < right) {
+        ops++;
+        const sum = sorted[left].val + sorted[right].val;
+        const found = sum === target;
+
+        let desc, nextAction;
+        if (found) {
+            const oi = sorted[left].idx, oj = sorted[right].idx;
+            desc = `left=${left} (val=${sorted[left].val}), right=${right} (val=${sorted[right].val})\nsum = ${sorted[left].val} + ${sorted[right].val} = ${sum} == ${target} \u2705 TOPILDI!\nOriginal indekslar: [${Math.min(oi,oj)}, ${Math.max(oi,oj)}]`;
+        } else if (sum < target) {
+            desc = `left=${left} (val=${sorted[left].val}), right=${right} (val=${sorted[right].val})\nsum = ${sorted[left].val} + ${sorted[right].val} = ${sum} < ${target} \u2192 left++`;
+        } else {
+            desc = `left=${left} (val=${sorted[left].val}), right=${right} (val=${sorted[right].val})\nsum = ${sorted[left].val} + ${sorted[right].val} = ${sum} > ${target} \u2192 right--`;
+        }
+
+        steps.push({
+            arr: sortedVals,
+            hl: {[left]: found ? 'found' : 'active', [right]: found ? 'found' : 'comparing'},
+            ptrs: {[left]: {label: 'L', cls: 'ptr-left'}, [right]: {label: 'R', cls: 'ptr-right'}},
+            desc, ops, hashmap: null, isSorted: true,
+            time: 'O(n log n)', space: 'O(n)',
+            calc: { a: sorted[left].val, b: sorted[right].val, sum, found },
+            origIdx: sorted.map(s => s.idx)
+        });
+
+        if (found) return;
+        if (sum < target) left++;
+        else right--;
+    }
+}
+
+function generateCompare() {
+    // Run brute force and hashmap, count ops
+    const n = nums.length;
+    let bruteOps = 0;
+    let hashOps = 0;
+    let bruteFound = false, hashFound = false;
+
+    // Brute force count
+    for (let i = 0; i < n && !bruteFound; i++) {
+        for (let j = i + 1; j < n && !bruteFound; j++) {
+            bruteOps++;
+            if (nums[i] + nums[j] === target) bruteFound = true;
+        }
+    }
+
+    // Hash map count
+    const seen = {};
+    for (let i = 0; i < n && !hashFound; i++) {
+        hashOps++;
+        const c = target - nums[i];
+        if (c in seen) { hashFound = true; }
+        else { seen[nums[i]] = i; }
+    }
+
+    // Worst case
+    const bruteWorst = n * (n - 1) / 2;
+    const hashWorst = n;
+
+    steps.push({
+        type: 'compare',
+        desc: `Massiv: [${nums}] (${n} ta element), target = ${target}\n\nBrute Force: ${bruteOps} operatsiya (worst case: ${bruteWorst})\nHash Map:    ${hashOps} operatsiya (worst case: ${hashWorst})\n\nHash Map ${bruteOps > hashOps ? Math.round(bruteOps/hashOps) + 'x' : ''} tez!`,
+        bruteOps, hashOps, bruteWorst, hashWorst, n,
+        ops: 0
+    });
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderStep() {
+    if (steps.length === 0) return;
+    // Qadam o'zgargan sari localStorage ga saqlaymiz
+    saveState();
+    const step = steps[currentStep];
+
+    document.getElementById('stepCounter').textContent = `${currentStep + 1} / ${steps.length}`;
+    document.getElementById('opsCounter').textContent = step.ops || 0;
+    document.getElementById('stepDesc').textContent = step.desc || '';
+    document.getElementById('timeComp').textContent = step.time || '—';
+    document.getElementById('spaceComp').textContent = step.space || '—';
+
+    const viz = document.getElementById('vizArea');
+
+    if (step.type === 'compare') {
+        renderCompare(viz, step);
+        return;
+    }
+
+    let html = '';
+
+    // Array
+    html += '<div class="section-label">Massiv</div>';
+    html += '<div class="array-container">';
+    step.arr.forEach((val, idx) => {
+        const cls = step.hl[idx] || 'default';
+        const ptr = step.ptrs[idx];
+        const origIdx = step.origIdx ? step.origIdx[idx] : idx;
+        html += `<div class="array-cell">
+            <div class="ptr-label ${ptr ? ptr.cls : ''}">${ptr ? ptr.label : ''}</div>
+            <div class="array-element el-${cls}">${val}</div>
+            <div class="idx-label">${step.isSorted ? 'orig:'+origIdx : 'i:'+idx}</div>
+        </div>`;
+    });
+    html += '</div>';
+
+    // Calculation
+    if (step.calc) {
+        html += '<div class="calc-box">';
+        if (step.calc.found !== undefined && step.calc.sum !== undefined) {
+            html += `<span class="formula">${step.calc.a} + ${step.calc.b} = ${step.calc.sum}</span>`;
+            html += step.calc.found
+                ? `<span class="result result-match"> = ${target} \u2705</span>`
+                : `<span class="result result-no"> \u2260 ${target} \u274C</span>`;
+        } else if (step.calc.complement !== undefined) {
+            html += `<span class="formula">complement = ${target} - ${step.calc.a} = ${step.calc.complement}</span>`;
+            html += `<span class="result result-no"> Hash Map da yo'q</span>`;
+        }
+        html += '</div>';
+    }
+
+    // Hash Map
+    if (step.hashmap !== null) {
+        const hm = step.hashmap;
+        const newKey = hm['_new'];
+        const hlKey = hm['_hl'];
+        html += '<div class="hashmap-container">';
+        html += '<div class="section-label">Hash Map (key: qiymat \u2192 value: indeks)</div>';
+        html += '<div class="hashmap-grid">';
+        const entries = Object.entries(hm).filter(([k]) => k !== '_new' && k !== '_hl');
+        if (entries.length === 0) {
+            html += '<div style="color:#475569;font-style:italic;">{ bo\'sh }</div>';
+        }
+        entries.forEach(([key, val]) => {
+            const isNew = parseInt(key) === newKey;
+            const isHl = parseInt(key) === hlKey;
+            const cls = isHl ? 'highlight' : (isNew ? 'new' : '');
+            html += `<div class="hashmap-entry ${cls}">
+                <div class="hm-key">key</div>
+                <div class="hm-val">${key}</div>
+                <div class="hm-arrow">\u2192</div>
+                <div class="hm-key">idx: ${val}</div>
+            </div>`;
+        });
+        html += '</div></div>';
+    }
+
+    viz.innerHTML = html;
+}
+
+function renderCompare(viz, step) {
+    const maxOps = Math.max(step.bruteWorst, 1);
+    const bruteW = Math.round((step.bruteOps / maxOps) * 100);
+    const hashW = Math.round((step.hashOps / maxOps) * 100);
+
+    viz.innerHTML = `
+        <div class="compare-grid">
+            <div class="compare-side">
+                <h3>Brute Force</h3>
+                <div style="color:#64748b;text-align:center;font-size:0.85rem;">O(n\u00B2)</div>
+                <div class="compare-ops ops-brute">${step.bruteOps}</div>
+                <div style="text-align:center;color:#94a3b8;font-size:0.85rem;">operatsiya</div>
+                <div style="background:#1e293b;border-radius:6px;height:24px;margin-top:12px;overflow:hidden;">
+                    <div class="compare-bar bar-brute" style="width:${Math.max(bruteW, 5)}%;height:100%;"></div>
+                </div>
+                <div style="text-align:center;color:#64748b;font-size:0.8rem;margin-top:4px;">Worst: ${step.bruteWorst}</div>
+            </div>
+            <div class="compare-side">
+                <h3>Hash Map</h3>
+                <div style="color:#64748b;text-align:center;font-size:0.85rem;">O(n)</div>
+                <div class="compare-ops ops-optimal">${step.hashOps}</div>
+                <div style="text-align:center;color:#94a3b8;font-size:0.85rem;">operatsiya</div>
+                <div style="background:#1e293b;border-radius:6px;height:24px;margin-top:12px;overflow:hidden;">
+                    <div class="compare-bar bar-optimal" style="width:${Math.max(hashW, 5)}%;height:100%;"></div>
+                </div>
+                <div style="text-align:center;color:#64748b;font-size:0.8rem;margin-top:4px;">Worst: ${step.hashWorst}</div>
+            </div>
+        </div>
+        <div style="text-align:center;margin-top:20px;padding:16px;background:#0f172a;border-radius:8px;">
+            <div style="font-size:1.2rem;font-weight:700;">
+                ${step.bruteOps > step.hashOps
+                    ? `Hash Map <span style="color:#22c55e">${Math.round(step.bruteOps/step.hashOps)}x</span> tez!`
+                    : `Bu input uchun deyarli teng`}
+            </div>
+            <div style="color:#94a3b8;margin-top:8px;font-size:0.85rem;">
+                n = ${step.n} | Brute worst = n(n-1)/2 = ${step.bruteWorst} | Hash worst = n = ${step.hashWorst}
+            </div>
+        </div>
+    `;
+}
+
+// ============================================================
+// INIT — localStorage dan state ni tiklash
+// ============================================================
+
+// Input maydonlarini tiklash
+document.getElementById('arrInput').value = nums.join(',');
+document.getElementById('targetInput').value = target;
+
+// Speed selectni tiklash
+document.getElementById('speed').value = speed;
+
+// Aktiv tab ni tiklash
+document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === currentTab);
+});
+
+// Steps generatsiya va renderStep
+generateSteps();
+
+// currentStep chegaradan chiqib ketmasin
+if (currentStep >= steps.length) currentStep = 0;
+
+renderStep();
+</script>
+
+</body>
+</html>
