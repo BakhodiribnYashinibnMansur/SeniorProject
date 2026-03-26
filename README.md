@@ -1,20 +1,20 @@
 # 🎓 Senior Project
 
-> Software engineer sifatida o'sish yo'lida zarur bilimlarni tizimlashtirish, mustahkamlash va bir joyga jamlash uchun yaratilgan shaxsiy loyiha.
+> A personal project for organizing, consolidating, and strengthening the essential knowledge needed to grow as a software engineer.
 
-## Maqsad
+## Purpose
 
-Zamonaviy dasturiy ta'minotni ishlab chiqishda kerak bo'ladigan bilimlar juda keng tarqalgan — turli bloglar, kurslar, dokumentatsiyalar bo'ylab. Bu loyiha shu bilimlarni **bir joyda**, **tizimli ravishda** jamlash uchun yaratilgan:
+The knowledge required for modern software development is scattered across countless blogs, courses, and documentation. This project brings it all together in **one place**, in a **structured way**:
 
-- **Roadmap'lar** — har bir yo'nalish bo'yicha nimani, qanday tartibda o'rganish kerakligini ko'rsatadi
-- **Leetcode yechimlari** — algoritmik fikrlashni rivojlantirish uchun masalalar va ularning vizual animatsiyalari
-- **System Design** — katta tizimlarni loyihalash bo'yicha materiallar
+- **Roadmaps** — step-by-step learning paths for each domain, covering what to learn and in what order
+- **Leetcode Solutions** — algorithmic problem solutions with visual animations to develop problem-solving skills
+- **System Design** — materials on designing large-scale systems
 
-## Loyiha tuzilishi
+## Project Structure
 
 ```
 📁 Senior Project
-├── 📂 Roadmap/                    # 267+ roadmap fayllari
+├── 📂 Roadmap/                    # 267+ roadmap files
 │   ├── 📂 AI-and-Data/            # AI, ML, Data Science, Prompt Engineering
 │   ├── 📂 Architecture/           # Software Architecture
 │   ├── 📂 Backend/                # Backend, PostgreSQL, MongoDB, Redis, API Design
@@ -25,36 +25,36 @@ Zamonaviy dasturiy ta'minotni ishlab chiqishda kerak bo'ladigan bilimlar juda ke
 │   ├── 📂 Security/               # Cybersecurity
 │   ├── 📂 Soft-Skills/            # Soft skills
 │   └── 📂 Tools-and-Platforms/    # Developer tools
-├── 📂 Leetcode/                   # Algoritmik masalalar yechimlari
-├── 📂 System Design/              # System design materiallari
-└── 📄 TEMPLATE.md                 # Roadmap shablon fayli
+├── 📂 Leetcode/                   # Algorithmic problem solutions
+├── 📂 System Design/              # System design materials
+└── 📄 TEMPLATE.md                 # Roadmap template file
 ```
 
-## Roadmap'lar
+## Roadmaps
 
-Har bir roadmap fayli aniq bir mavzuni qamrab oladi — tushunchalar, texnologiyalar, foydali resurslar va o'rganish tartibi bilan.
+Each roadmap file covers a specific topic — including concepts, technologies, useful resources, and a recommended learning order.
 
-| Yo'nalish | Mavzular |
-|-----------|----------|
-| **Backend** | Backend asoslari, PostgreSQL DBA, MongoDB, Redis, Elasticsearch, API Design, Full-Stack |
-| **Frontend** | Frontend asoslari, React, TypeScript, GraphQL, Design System |
+| Category | Topics |
+|----------|--------|
+| **Backend** | Backend Fundamentals, PostgreSQL DBA, MongoDB, Redis, Elasticsearch, API Design, Full-Stack |
+| **Frontend** | Frontend Fundamentals, React, TypeScript, GraphQL, Design System |
 | **DevOps** | DevOps, Docker, Kubernetes, Terraform, AWS, Cloudflare, Linux, MLOps |
 | **AI & Data** | AI Engineer, Machine Learning, Data Scientist, Data Analyst, BI Analyst, AI Agents, Prompt Engineering, DSA, Claude Code, Vibe Coding |
-| **Tillar** | Go, Java, Python, Rust, SQL |
-| **Boshqa** | Architecture, Mobile, Security, Soft Skills, Tools & Platforms |
+| **Languages** | Go, Java, Python, Rust, SQL |
+| **Other** | Architecture, Mobile, Security, Soft Skills, Tools & Platforms |
 
 ## Leetcode
 
-Har bir masala uchun alohida papka yaratilgan. Yechim fayllarida:
-- Masala tavsifi va murakkablik darajasi
-- Yechim kodi (bir nechta til va usulda)
-- Vaqt va xotira murakkabligi tahlili
-- Vizual animatsiya (`animation.html`)
+Each problem has its own directory containing:
+- Problem description and difficulty level
+- Solution code (in multiple languages and approaches)
+- Time and space complexity analysis
+- Visual animation (`animation.html`)
 
-## Kim uchun?
+## Who is this for?
 
-Bu loyiha birinchi navbatda shaxsiy foydalanish uchun yaratilgan, lekin software engineering yo'lida o'sishni xohlaydigan har bir kishi foydalanishi mumkin.
+This project was primarily created for personal use, but anyone looking to grow in the software engineering field is welcome to use it.
 
-## Litsenziya
+## License
 
 [MIT](LICENSE) — Bakhodir Yashin Mansur, 2026
