@@ -285,10 +285,10 @@ package main
 // {{FunctionName}} — Brute Force approach
 // Time: O({{...}}), Space: O({{...}})
 func {{functionName}}({{params}}) {{returnType}} {
-    // Qadam 1: {{tavsif}}
+    // Step 1: {{description}}
     {{code}}
 
-    // Qadam 2: {{tavsif}}
+    // Step 2: {{description}}
     {{code}}
 
     return {{result}}
@@ -302,10 +302,10 @@ class Solution {
     // {{functionName}} — Brute Force approach
     // Time: O({{...}}), Space: O({{...}})
     public {{returnType}} {{functionName}}({{params}}) {
-        // Qadam 1: {{tavsif}}
+        // Step 1: {{description}}
         {{code}}
 
-        // Qadam 2: {{tavsif}}
+        // Step 2: {{description}}
         {{code}}
 
         return {{result}};
@@ -322,10 +322,10 @@ class Solution:
         Brute Force approach
         Time: O({{...}}), Space: O({{...}})
         """
-        # Qadam 1: {{tavsif}}
+        # Step 1: {{description}}
         {{code}}
 
-        # Qadam 2: {{tavsif}}
+        # Step 2: {{description}}
         {{code}}
 
         return {{result}}
@@ -400,7 +400,7 @@ package main
 // {{FunctionName}} — Time Optimized approach
 // Time: O({{...}}), Space: O({{...}})
 func {{functionName}}({{params}}) {{returnType}} {
-    // Optimallashtirish: {{tavsif}}
+    // Optimization: {{description}}
     {{code}}
 
     return {{result}}
@@ -414,7 +414,7 @@ class Solution {
     // {{functionName}} — Time Optimized approach
     // Time: O({{...}}), Space: O({{...}})
     public {{returnType}} {{functionName}}({{params}}) {
-        // Optimallashtirish: {{tavsif}}
+        // Optimization: {{description}}
         {{code}}
 
         return {{result}};
@@ -431,7 +431,7 @@ class Solution:
         Time Optimized approach
         Time: O({{...}}), Space: O({{...}})
         """
-        # Optimallashtirish: {{tavsif}}
+        # Optimization: {{description}}
         {{code}}
 
         return {{result}}
@@ -511,7 +511,7 @@ package main
 // {{FunctionName}} — Space Optimized approach
 // Time: O({{...}}), Space: O({{...}})
 func {{functionName}}({{params}}) {{returnType}} {
-    // Xotira optimallashtirish: {{tavsif}}
+    // Space optimization: {{description}}
     {{code}}
 
     return {{result}}
@@ -525,7 +525,7 @@ class Solution {
     // {{functionName}} — Space Optimized approach
     // Time: O({{...}}), Space: O({{...}})
     public {{returnType}} {{functionName}}({{params}}) {
-        // Xotira optimallashtirish: {{tavsif}}
+        // Space optimization: {{description}}
         {{code}}
 
         return {{result}};
@@ -542,7 +542,7 @@ class Solution:
         Space Optimized approach
         Time: O({{...}}), Space: O({{...}})
         """
-        # Xotira optimallashtirish: {{tavsif}}
+        # Space optimization: {{description}}
         {{code}}
 
         return {{result}}
@@ -726,13 +726,13 @@ import (
 // Time:  O({{...}})
 // Space: O({{...}})
 func {{functionName}}({{params}}) {{returnType}} {
-	// Qadam 1: {{tavsif}}
+	// Step 1: {{description}}
 	{{code}}
 
-	// Qadam 2: {{tavsif}}
+	// Step 2: {{description}}
 	{{code}}
 
-	// Qadam 3: {{tavsif}}
+	// Step 3: {{description}}
 	{{code}}
 
 	return {{result}}
@@ -743,7 +743,7 @@ func {{functionName}}({{params}}) {{returnType}} {
 // ============================================================
 
 func main() {
-	// Test yordamchi funksiya
+	// Test helper function
 	passed, failed := 0, 0
 	test := func(name string, got, expected interface{}) {
 		if reflect.DeepEqual(got, expected) {
@@ -764,14 +764,14 @@ func main() {
 	// Test 3: Large input
 	test("Large input", {{functionName}}({{input3}}), {{expected3}})
 
-	// Test 4: {{tavsif}}
-	test("{{tavsif}}", {{functionName}}({{input4}}), {{expected4}})
+	// Test 4: {{description}}
+	test("{{description}}", {{functionName}}({{input4}}), {{expected4}})
 
-	// Test 5: {{tavsif}}
-	test("{{tavsif}}", {{functionName}}({{input5}}), {{expected5}})
+	// Test 5: {{description}}
+	test("{{description}}", {{functionName}}({{input5}}), {{expected5}})
 
-	// Natija
-	fmt.Printf("\n📊 Natija: %d passed, %d failed, %d total\n", passed, failed, passed+failed)
+	// Results
+	fmt.Printf("\n📊 Results: %d passed, %d failed, %d total\n", passed, failed, passed+failed)
 }
 ```
 
@@ -798,13 +798,13 @@ class Solution {
      * Space: O({{...}})
      */
     public {{returnType}} {{functionName}}({{params}}) {
-        // Qadam 1: {{tavsif}}
+        // Step 1: {{description}}
         {{code}}
 
-        // Qadam 2: {{tavsif}}
+        // Step 2: {{description}}
         {{code}}
 
-        // Qadam 3: {{tavsif}}
+        // Step 3: {{description}}
         {{code}}
 
         return {{result}};
@@ -816,7 +816,7 @@ class Solution {
 
     static int passed = 0, failed = 0;
 
-    // Test yordamchi metod — massivlar uchun
+    // Test helper method — for arrays
     static void test(String name, int[] got, int[] expected) {
         if (Arrays.equals(got, expected)) {
             System.out.printf("✅ PASS: %s%n", name);
@@ -828,7 +828,7 @@ class Solution {
         }
     }
 
-    // Test yordamchi metod — umumiy ob'ektlar uchun
+    // Test helper method — for general objects
     static void test(String name, Object got, Object expected) {
         if (Objects.equals(got, expected)) {
             System.out.printf("✅ PASS: %s%n", name);
@@ -852,14 +852,14 @@ class Solution {
         // Test 3: Large input
         test("Large input", sol.{{functionName}}({{input3}}), {{expected3}});
 
-        // Test 4: {{tavsif}}
-        test("{{tavsif}}", sol.{{functionName}}({{input4}}), {{expected4}});
+        // Test 4: {{description}}
+        test("{{description}}", sol.{{functionName}}({{input4}}), {{expected4}});
 
-        // Test 5: {{tavsif}}
-        test("{{tavsif}}", sol.{{functionName}}({{input5}}), {{expected5}});
+        // Test 5: {{description}}
+        test("{{description}}", sol.{{functionName}}({{input5}}), {{expected5}});
 
-        // Natija
-        System.out.printf("%n📊 Natija: %d passed, %d failed, %d total%n",
+        // Results
+        System.out.printf("%n📊 Results: %d passed, %d failed, %d total%n",
             passed, failed, passed + failed);
     }
 }
@@ -889,13 +889,13 @@ class Solution:
         Time:  O({{...}})
         Space: O({{...}})
         """
-        # Qadam 1: {{tavsif}}
+        # Step 1: {{description}}
         {{code}}
 
-        # Qadam 2: {{tavsif}}
+        # Step 2: {{description}}
         {{code}}
 
-        # Qadam 3: {{tavsif}}
+        # Step 3: {{description}}
         {{code}}
 
         return {{result}}
@@ -929,14 +929,14 @@ if __name__ == "__main__":
     # Test 3: Large input
     test("Large input", sol.{{function_name}}({{input3}}), {{expected3}})
 
-    # Test 4: {{tavsif}}
-    test("{{tavsif}}", sol.{{function_name}}({{input4}}), {{expected4}})
+    # Test 4: {{description}}
+    test("{{description}}", sol.{{function_name}}({{input4}}), {{expected4}})
 
-    # Test 5: {{tavsif}}
-    test("{{tavsif}}", sol.{{function_name}}({{input5}}), {{expected5}})
+    # Test 5: {{description}}
+    test("{{description}}", sol.{{function_name}}({{input5}}), {{expected5}})
 
-    # Natija
-    print(f"\n📊 Natija: {passed} passed, {failed} failed, {passed + failed} total")
+    # Results
+    print(f"\n📊 Results: {passed} passed, {failed} failed, {passed + failed} total")
 ```
 
 ---
@@ -1418,7 +1418,7 @@ if __name__ == "__main__":
         <!-- INFO PANEL -->
         <div class="info-panel">
             <div class="info-box">
-                <h3>Qadam</h3>
+                <h3>Step</h3>
                 <div class="value" id="stepCounter">0 / 0</div>
             </div>
             <div class="info-box">
