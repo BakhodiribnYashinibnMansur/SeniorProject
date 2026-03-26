@@ -1,6 +1,9 @@
 # Data Structures & Algorithms Roadmap — Universal Template
 
 > Guides content generation for **Data Structures & Algorithms** topics.
+> All algorithm implementations must be provided in **3 languages: Go, Java, Python**.
+> Algorithm/DS mavzulari uchun **HTML/CSS/JS visual animation** qo'shiladi.
+> Nazariy mavzular (Programming Fundamentals, etc.) uchun animation **kerak emas**.
 
 ## Overview
 
@@ -8,7 +11,9 @@
 |---|---|
 | **Purpose** | Universal template for all Data Structures & Algorithms roadmap topics |
 | **Files per topic** | 8 files: `junior.md`, `middle.md`, `senior.md`, `professional.md`, `interview.md`, `tasks.md`, `find-bug.md`, `optimize.md` |
-| **Code Fences** | `python` for implementations, `text` for pseudocode |
+| **Languages** | All code must be in **Go**, **Java**, **Python** (in that order) |
+| **Visualization** | `animation.html` — **Optional**. Recommended for algorithm/DS topics (sorting, searching, trees, graphs). Can be skipped for theory topics (syntax, pseudo code, OOP) |
+| **Code Fences** | `go`, `java`, `python` for implementations, `text` for pseudocode |
 | **Table of Contents** | Optional — omit for `tasks.md`, `find-bug.md`, `optimize.md` |
 
 ### Topic Structure
@@ -16,13 +21,14 @@
 ```
 XX-topic-name/
 ├── junior.md          ← "What?" and "How?" — basic DS + Big-O
-├── middle.md          ← "Why?" and "When?" — graphs, DP, advanced trees
+├── middle.md          ← "Why?" and "When?" — advanced patterns, comparisons
 ├── senior.md          ← system design with DS + distributed
 ├── professional.md    ← formal proofs, NP-completeness, amortized analysis
 ├── interview.md       ← interview prep across all levels
-├── tasks.md           ← hands-on practice tasks
-├── find-bug.md        ← find and fix bugs (10+ exercises)
-└── optimize.md        ← optimize slow/inefficient code (10+ exercises)
+├── tasks.md           ← hands-on practice tasks (3 languages)
+├── find-bug.md        ← find and fix bugs (10+ exercises, 3 languages)
+├── optimize.md        ← optimize slow/inefficient code (10+ exercises, 3 languages)
+└── animation.html     ← Optional: visual animation (recommended for algorithms/DS)
 ```
 
 ## Level Comparison Matrix
@@ -30,22 +36,80 @@ XX-topic-name/
 | Aspect | Junior | Middle | Senior | Professional |
 |:------:|:------:|:------:|:------:|:------------:|
 | **Depth** | Basic DS, Big-O intro | Graphs, DP, advanced trees | System design with DS, distributed | Formal proofs, NP-completeness, amortized analysis |
-| **Code** | Simple Python implementations | Production-ready, optimized | Scalable, concurrent | Correctness proofs |
+| **Code** | Simple implementations in 3 languages | Production-ready, optimized | Scalable, concurrent | Correctness proofs + pseudocode |
 | **Focus** | "What?" and "How?" | "Why?" and "When?" | "How to scale?" | "Is this provably correct?" |
 
+## Multi-Language Code Block Convention
+
+> **IMPORTANT:** Every code example MUST be provided in all 3 languages in this exact order:
+
+```
+### Example: {{title}}
+
+#### Go
+
+` ` `go
+// Go implementation
+` ` `
+
+#### Java
+
+` ` `java
+// Java implementation
+` ` `
+
+#### Python
+
+` ` `python
+# Python implementation
+` ` `
+```
+
+---
 ---
 
 # TEMPLATE 1 — `junior.md`
 
 # {{TOPIC_NAME}} — Junior Level
 
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [Prerequisites](#prerequisites)
+3. [Glossary](#glossary)
+4. [Core Concepts](#core-concepts)
+5. [Big-O Summary](#big-o-summary)
+6. [Real-World Analogies](#real-world-analogies)
+7. [Pros & Cons](#pros--cons)
+8. [Code Examples](#code-examples)
+9. [Coding Patterns](#coding-patterns)
+10. [Error Handling](#error-handling)
+11. [Performance Tips](#performance-tips)
+12. [Best Practices](#best-practices)
+13. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+14. [Common Mistakes](#common-mistakes)
+15. [Cheat Sheet](#cheat-sheet)
+16. [Visual Animation](#visual-animation)
+17. [Summary](#summary)
+18. [Further Reading](#further-reading)
+
+---
+
 ## Introduction
-Brief explanation of what {{TOPIC_NAME}} is. Assume basic Python knowledge, no prior algorithms background.
+
+> Focus: "What is it?" and "How to use it?"
+
+Brief explanation of what {{TOPIC_NAME}} is. Assume basic programming knowledge, no prior algorithms background.
+
+---
 
 ## Prerequisites
-- **Required:** Basic Python — loops, functions, lists
+
+- **Required:** Basic programming — loops, functions, arrays (in any of Go/Java/Python)
 - **Required:** Understanding of variables and memory
 - **Helpful:** Recursion basics
+
+---
 
 ## Glossary
 
@@ -56,12 +120,19 @@ Brief explanation of what {{TOPIC_NAME}} is. Assume basic Python knowledge, no p
 | **Time Complexity** | How long an algorithm takes relative to input size |
 | **Space Complexity** | How much memory an algorithm uses relative to input size |
 
+---
+
 ## Core Concepts
 
 ### Concept 1: {{name}}
 3-5 sentence explanation with analogy.
 
-### Big-O Summary
+### Concept 2: {{name}}
+3-5 sentence explanation.
+
+---
+
+## Big-O Summary
 
 | Operation | Complexity | Notes |
 |-----------|-----------|-------|
@@ -69,6 +140,8 @@ Brief explanation of what {{TOPIC_NAME}} is. Assume basic Python knowledge, no p
 | Search | O(?) | |
 | Insert | O(?) | |
 | Delete | O(?) | |
+
+---
 
 ## Real-World Analogies
 
@@ -78,6 +151,8 @@ Brief explanation of what {{TOPIC_NAME}} is. Assume basic Python knowledge, no p
 | **{{Concept 2}}** | Everyday analogy |
 
 > Note where each analogy breaks down.
+
+---
 
 ## Pros & Cons
 
@@ -89,26 +164,78 @@ Brief explanation of what {{TOPIC_NAME}} is. Assume basic Python knowledge, no p
 **When to use:** {{scenario}}
 **When NOT to use:** {{scenario}}
 
+---
+
 ## Code Examples
 
 ### Example 1: {{title}}
 
+#### Go
+
+```go
+package main
+
+import "fmt"
+
+func example(data []int) {
+    // Step 1: ...
+    fmt.Println(data)
+}
+
+func main() {
+    example([]int{1, 2, 3})
+}
+```
+
+#### Java
+
+```java
+public class Example {
+    public static void example(int[] data) {
+        // Step 1: ...
+        System.out.println(java.util.Arrays.toString(data));
+    }
+
+    public static void main(String[] args) {
+        example(new int[]{1, 2, 3});
+    }
+}
+```
+
+#### Python
+
 ```python
-# Full working example with comments
 def example(data):
     # Step 1: ...
-    pass
+    print(data)
 
 if __name__ == "__main__":
     example([1, 2, 3])
 ```
 
-**What it does:** Brief explanation. **Run:** `python example.py`
+**What it does:** Brief explanation.
+**Run:** `go run main.go` | `javac Example.java && java Example` | `python example.py`
+
+---
 
 ## Coding Patterns
 
 ### Pattern 1: {{name}}
 **Intent:** One sentence.
+
+#### Go
+
+```go
+// Pattern implementation — simple and commented
+```
+
+#### Java
+
+```java
+// Pattern implementation — simple and commented
+```
+
+#### Python
 
 ```python
 # Pattern implementation — simple and commented
@@ -121,25 +248,39 @@ graph TD
     B --> D[State Change]
 ```
 
+---
+
 ## Error Handling
 
 | Error | Cause | Fix |
 |-------|-------|-----|
-| `IndexError` | Accessing out-of-bounds index | Check bounds before access |
-| `RecursionError` | Missing base case | Define base case first |
+| Index out of bounds | Accessing beyond array length | Check bounds before access |
+| Stack overflow | Missing base case in recursion | Define base case first |
+| Null pointer | Accessing nil/null node | Check for nil/null before access |
+
+---
 
 ## Performance Tips
 - Know Big-O of every operation before choosing a structure
-- Prefer Python built-ins (`list`, `dict`, `set`) — C-optimized
+- Use language-specific optimized structures (Go: `container/heap`, Java: `java.util.*`, Python: `collections`)
+
+---
 
 ## Best Practices
 - Validate input, write brute-force first, test empty/single/large inputs
+- Implement from scratch at least once before using library
+
+---
 
 ## Edge Cases & Pitfalls
-- Empty structure, single element, duplicates, already-sorted input
+- Empty structure, single element, duplicates, already-sorted input, negative numbers
+
+---
 
 ## Common Mistakes
-- Off-by-one in indices, missing null case, mutating input during iteration
+- Off-by-one in indices, missing null/nil case, mutating input during iteration, integer overflow
+
+---
 
 ## Cheat Sheet
 
@@ -148,24 +289,63 @@ graph TD
 | {{op 1}} | O(?) | O(?) | |
 | {{op 2}} | O(?) | O(?) | |
 
+---
+
+## Visual Animation
+
+> See [`animation.html`](./animation.html) for an interactive visual animation of {{TOPIC_NAME}}.
+>
+> The animation demonstrates:
+> - Step-by-step execution of the algorithm
+> - Input/output state at each step
+> - Color-coded operations (compare, swap, insert, delete)
+> - Speed control (slow/medium/fast)
+> - Custom input support
+
+---
+
 ## Summary
 {{TOPIC_NAME}} is used for {{main purpose}}. Focus on basic operations and their complexities. Build working implementations before reaching for libraries.
 
+---
+
 ## Further Reading
 - *Introduction to Algorithms* (CLRS) — Chapter on {{TOPIC_NAME}}
-- Python docs: `collections`, `heapq`, `bisect`
+- Go: `container/heap`, `sort` package docs
+- Java: `java.util.Collections`, `java.util.PriorityQueue` docs
+- Python: `collections`, `heapq`, `bisect` docs
 - visualgo.net — interactive visualizations
 
+---
 ---
 
 # TEMPLATE 2 — `middle.md`
 
 # {{TOPIC_NAME}} — Middle Level
 
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [Deeper Concepts](#deeper-concepts)
+3. [Comparison with Alternatives](#comparison-with-alternatives)
+4. [Advanced Patterns](#advanced-patterns)
+5. [Graph and Tree Applications](#graph-and-tree-applications)
+6. [Dynamic Programming Integration](#dynamic-programming-integration)
+7. [Code Examples](#code-examples)
+8. [Error Handling](#error-handling)
+9. [Performance Analysis](#performance-analysis)
+10. [Best Practices](#best-practices)
+11. [Visual Animation](#visual-animation)
+12. [Summary](#summary)
+
+---
+
 ## Introduction
 > Focus: "Why does it work?" and "When should I choose this?"
 
 Understand the invariants that make {{TOPIC_NAME}} correct, when it degrades, and how it fits into larger algorithmic strategies.
+
+---
 
 ## Deeper Concepts
 
@@ -179,21 +359,54 @@ T(n) = aT(n/b) + f(n)
 By Master Theorem: T(n) = O(...)
 ```
 
-## Comparison with Alternative Algorithms / Data Structures
+---
+
+## Comparison with Alternatives
 
 | Attribute | {{TOPIC_NAME}} | {{Alternative 1}} | {{Alternative 2}} |
 |-----------|--------------|-----------------|-----------------|
 | Time (avg) | O(?) | O(?) | O(?) |
 | Time (worst) | O(?) | O(?) | O(?) |
 | Space | O(?) | O(?) | O(?) |
+| Stable? | Yes/No | Yes/No | Yes/No |
 | Best for | {{scenario}} | {{scenario}} | {{scenario}} |
 
 **Choose {{TOPIC_NAME}} when:** {{condition}}
 **Choose {{Alternative 1}} when:** {{condition}}
 
+---
+
 ## Advanced Patterns
 
 ### Pattern: Two-Pointer / Sliding Window
+
+#### Go
+
+```go
+func twoPointer(arr []int, target int) {
+    left, right := 0, len(arr)-1
+    for left < right {
+        // process arr[left] and arr[right]
+        left++
+        right--
+    }
+}
+```
+
+#### Java
+
+```java
+public static void twoPointer(int[] arr, int target) {
+    int left = 0, right = arr.length - 1;
+    while (left < right) {
+        // process arr[left] and arr[right]
+        left++;
+        right--;
+    }
+}
+```
+
+#### Python
 
 ```python
 def two_pointer(arr, target):
@@ -206,6 +419,34 @@ def two_pointer(arr, target):
 
 ### Pattern: Divide and Conquer
 
+#### Go
+
+```go
+func divideAndConquer(arr []int, low, high int) {
+    if low >= high {
+        return
+    }
+    mid := (low + high) / 2
+    divideAndConquer(arr, low, mid)
+    divideAndConquer(arr, mid+1, high)
+    // combine
+}
+```
+
+#### Java
+
+```java
+public static void divideAndConquer(int[] arr, int low, int high) {
+    if (low >= high) return;
+    int mid = low + (high - low) / 2;
+    divideAndConquer(arr, low, mid);
+    divideAndConquer(arr, mid + 1, high);
+    // combine
+}
+```
+
+#### Python
+
 ```python
 def divide_and_conquer(arr, low, high):
     if low >= high:
@@ -215,6 +456,8 @@ def divide_and_conquer(arr, low, high):
     divide_and_conquer(arr, mid + 1, high)
     # combine
 ```
+
+---
 
 ## Graph and Tree Applications
 
@@ -228,11 +471,52 @@ graph TD
 
 ### BFS with visited set
 
+#### Go
+
+```go
+func bfs(graph map[int][]int, start int) {
+    visited := map[int]bool{start: true}
+    queue := []int{start}
+    for len(queue) > 0 {
+        node := queue[0]
+        queue = queue[1:]
+        for _, neighbor := range graph[node] {
+            if !visited[neighbor] {
+                visited[neighbor] = true
+                queue = append(queue, neighbor)
+            }
+        }
+    }
+}
+```
+
+#### Java
+
+```java
+import java.util.*;
+
+public static void bfs(Map<Integer, List<Integer>> graph, int start) {
+    Set<Integer> visited = new HashSet<>(Set.of(start));
+    Queue<Integer> queue = new LinkedList<>(List.of(start));
+    while (!queue.isEmpty()) {
+        int node = queue.poll();
+        for (int neighbor : graph.getOrDefault(node, List.of())) {
+            if (!visited.contains(neighbor)) {
+                visited.add(neighbor);
+                queue.add(neighbor);
+            }
+        }
+    }
+}
+```
+
+#### Python
+
 ```python
 from collections import deque
 
 def bfs(graph, start):
-    visited = set([start])   # MUST have — prevents infinite loop on cycles
+    visited = set([start])
     queue = deque([start])
     while queue:
         node = queue.popleft()
@@ -242,7 +526,45 @@ def bfs(graph, start):
                 queue.append(neighbor)
 ```
 
+---
+
 ## Dynamic Programming Integration
+
+#### Go
+
+```go
+var memo = map[int]int{}
+
+func dp(state int) int {
+    if val, ok := memo[state]; ok {
+        return val
+    }
+    if baseCondition(state) {
+        return baseValue
+    }
+    result := /* min/max of subproblems */
+    memo[state] = result
+    return result
+}
+```
+
+#### Java
+
+```java
+import java.util.HashMap;
+
+static HashMap<Integer, Integer> memo = new HashMap<>();
+
+public static int dp(int state) {
+    if (memo.containsKey(state)) return memo.get(state);
+    if (baseCondition(state)) return baseValue;
+    int result = /* min/max of subproblems */;
+    memo.put(state, result);
+    return result;
+}
+```
+
+#### Python
 
 ```python
 from functools import lru_cache
@@ -254,10 +576,63 @@ def dp(state):
     return min(dp(s) for s in subproblems(state))
 ```
 
+---
+
 ## Code Examples
 
+### Full Implementation
+
+#### Go
+
+```go
+package main
+
+import "fmt"
+
+// {{TopicName}} implementation
+// Time: O(?) per operation. Space: O(n).
+type TopicName struct {
+    data []int
+}
+
+func (t *TopicName) Insert(value int) {
+    t.data = append(t.data, value)
+    // sift up or rebalance
+}
+
+func main() {
+    t := &TopicName{}
+    t.Insert(5)
+    fmt.Println(t.data)
+}
+```
+
+#### Java
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class TopicName {
+    private List<Integer> data = new ArrayList<>();
+
+    public void insert(int value) {
+        data.add(value);
+        // sift up or rebalance
+    }
+
+    public static void main(String[] args) {
+        TopicName t = new TopicName();
+        t.insert(5);
+        System.out.println(t.data);
+    }
+}
+```
+
+#### Python
+
 ```python
-class {{TopicName}}:
+class TopicName:
     """
     {{TOPIC_NAME}} implementation.
     Time: O(log n) per operation (average). Space: O(n).
@@ -268,7 +643,14 @@ class {{TopicName}}:
     def insert(self, value):
         self._data.append(value)
         self._sift_up(len(self._data) - 1)
+
+if __name__ == "__main__":
+    t = TopicName()
+    t.insert(5)
+    print(t._data)
 ```
+
+---
 
 ## Error Handling
 
@@ -276,39 +658,116 @@ class {{TopicName}}:
 |----------|----------------|-----------------|
 | Cycle without visited set | Infinite BFS loop | Always maintain `visited` |
 | Wrong DP base case | All subproblems wrong | Test base cases independently |
-| Off-by-one in binary search | Wrong index returned | Use `left + (right - left) // 2` |
+| Off-by-one in binary search | Wrong index returned | Use `mid = low + (high - low) / 2` |
+
+---
 
 ## Performance Analysis
+
+#### Go
+
+```go
+import (
+    "fmt"
+    "time"
+)
+
+func benchmark() {
+    sizes := []int{10, 100, 1000, 10000, 100000}
+    for _, n := range sizes {
+        data := make([]int, n)
+        for i := range data { data[i] = i }
+        start := time.Now()
+        for i := 0; i < 50; i++ {
+            yourAlgorithm(append([]int{}, data...))
+        }
+        elapsed := time.Since(start)
+        fmt.Printf("n=%7d: %.3f ms\n", n, float64(elapsed.Milliseconds())/50.0)
+    }
+}
+```
+
+#### Java
+
+```java
+public static void benchmark() {
+    int[] sizes = {10, 100, 1000, 10000, 100000};
+    for (int n : sizes) {
+        int[] data = java.util.stream.IntStream.range(0, n).toArray();
+        long start = System.nanoTime();
+        for (int i = 0; i < 50; i++) {
+            yourAlgorithm(data.clone());
+        }
+        long elapsed = System.nanoTime() - start;
+        System.out.printf("n=%7d: %.3f ms%n", n, elapsed / 50.0 / 1_000_000);
+    }
+}
+```
+
+#### Python
 
 ```python
 import timeit
 
-t = timeit.timeit(
-    "your_algorithm(data)",
-    setup="data = list(range(10_000))",
-    number=100
-)
-print(f"Average: {t / 100 * 1000:.2f} ms")
+sizes = [10, 100, 1_000, 10_000, 100_000]
+for n in sizes:
+    t = timeit.timeit(lambda: your_algorithm(list(range(n))), number=50)
+    print(f"n={n:>7}: {t/50*1000:.3f} ms")
 ```
+
+---
 
 ## Best Practices
 - Implement from scratch once; understand before using a library
-- Document time and space complexity in docstrings
-- Prefer iterative over recursive for large inputs in Python
+- Document time and space complexity in comments/docstrings
+- Prefer iterative over recursive for large inputs (especially in Python)
+- Go: use `sort.Slice`, `container/heap` for production code
+- Java: use `Collections.sort()`, `PriorityQueue` for production code
+
+---
+
+## Visual Animation
+
+> See [`animation.html`](./animation.html) for interactive visualization.
+>
+> Middle-level animation includes:
+> - Comparison with alternative algorithms (side-by-side)
+> - Invariant visualization (what holds true at each step)
+> - Worst-case vs best-case input demonstration
+> - Step counter and complexity display
+
+---
 
 ## Summary
 At the middle level, {{TOPIC_NAME}} is understood through its invariants, failure conditions, and role in graphs and DP. Master when to choose it over alternatives.
 
+---
 ---
 
 # TEMPLATE 3 — `senior.md`
 
 # {{TOPIC_NAME}} — Senior Level
 
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [System Design with {{TOPIC_NAME}}](#system-design)
+3. [Distributed Data Structures](#distributed-data-structures)
+4. [Comparison with Alternatives](#comparison-with-alternatives)
+5. [Architecture Patterns](#architecture-patterns)
+6. [Code Examples](#code-examples)
+7. [Observability](#observability)
+8. [Failure Modes](#failure-modes)
+9. [Summary](#summary)
+
+---
+
 ## Introduction
 > Focus: "How to architect systems around {{TOPIC_NAME}}?"
 
 Senior engineers choose data structures based on system constraints: latency SLAs, memory budgets, fault tolerance, and concurrency.
+
+---
 
 ## System Design with {{TOPIC_NAME}}
 
@@ -322,6 +781,8 @@ graph TD
     DS --> Storage[(Distributed Storage)]
 ```
 
+---
+
 ## Distributed Data Structures
 
 | Structure | Consistency | Use Case |
@@ -331,7 +792,9 @@ graph TD
 | LSM tree | Eventual | RocksDB, Cassandra writes |
 | Skip list | Strong (single node) | Redis sorted sets |
 
-## Comparison with Alternative Algorithms / Data Structures
+---
+
+## Comparison with Alternatives
 
 | Attribute | {{TOPIC_NAME}} | {{Alternative 1}} | {{Alternative 2}} |
 |-----------|--------------|-----------------|-----------------|
@@ -339,6 +802,8 @@ graph TD
 | Read latency p99 | | | |
 | Memory overhead | | | |
 | Production usage | {{e.g., Redis}} | | |
+
+---
 
 ## Architecture Patterns
 
@@ -357,20 +822,96 @@ sequenceDiagram
     end
 ```
 
+---
+
 ## Code Examples
+
+### Thread-Safe / Concurrent Implementation
+
+#### Go
+
+```go
+package main
+
+import "sync"
+
+type ThreadSafeDS struct {
+    mu   sync.RWMutex
+    data []int
+}
+
+func (t *ThreadSafeDS) Insert(value int) {
+    t.mu.Lock()
+    defer t.mu.Unlock()
+    t.data = append(t.data, value)
+    // rebalance
+}
+
+func (t *ThreadSafeDS) Search(value int) bool {
+    t.mu.RLock()
+    defer t.mu.RUnlock()
+    for _, v := range t.data {
+        if v == value {
+            return true
+        }
+    }
+    return false
+}
+```
+
+#### Java
+
+```java
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ThreadSafeDS {
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private final List<Integer> data = new ArrayList<>();
+
+    public void insert(int value) {
+        lock.writeLock().lock();
+        try {
+            data.add(value);
+            // rebalance
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    public boolean search(int value) {
+        lock.readLock().lock();
+        try {
+            return data.contains(value);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+}
+```
+
+#### Python
 
 ```python
 import threading
 
-class ThreadSafe{{TopicName}}:
+class ThreadSafeDS:
     def __init__(self):
         self._lock = threading.RLock()
         self._data = []
 
     def insert(self, value):
         with self._lock:
-            self._insert_impl(value)
+            self._data.append(value)
+            # rebalance
+
+    def search(self, value):
+        with self._lock:
+            return value in self._data
 ```
+
+---
 
 ## Observability
 
@@ -380,14 +921,19 @@ class ThreadSafe{{TopicName}}:
 | `memory_used_bytes` | > 80% of budget |
 | `cache_hit_ratio` | < 0.8 |
 
+---
+
 ## Failure Modes
 - **Hot partition:** one shard overloaded — use virtual nodes
 - **Memory exhaustion:** unbounded growth — add LRU/TTL eviction
 - **Thundering herd:** simultaneous cache misses — probabilistic early expiration
 
+---
+
 ## Summary
 At senior level, evaluate {{TOPIC_NAME}} against system-wide constraints. Complexity analysis expands to cache behavior, concurrency, and distribution.
 
+---
 ---
 
 # TEMPLATE 4 — `professional.md`
@@ -401,7 +947,7 @@ At senior level, evaluate {{TOPIC_NAME}} against system-wide constraints. Comple
 4. [NP-Completeness and Polynomial Reductions](#np-completeness)
 5. [Randomized Algorithm Probability Bounds](#randomized-algorithms)
 6. [Cache-Oblivious Analysis](#cache-oblivious-analysis)
-7. [Comparison with Alternative Algorithms / Data Structures](#comparison)
+7. [Comparison with Alternatives](#comparison)
 8. [Summary](#summary)
 
 ---
@@ -409,13 +955,15 @@ At senior level, evaluate {{TOPIC_NAME}} against system-wide constraints. Comple
 ## Formal Definition
 
 ```text
-Definition: A {{TOPIC_NAME}} is a tuple (S, Σ, δ, ...) where:
+Definition: A {{TOPIC_NAME}} is a tuple (S, Sigma, delta, ...) where:
   S = set of states/elements
-  Σ = key space
-  δ = operation function
+  Sigma = key space
+  delta = operation function
 
 Invariant I(S): [formal predicate true after every operation]
 ```
+
+---
 
 ## Correctness Proof — Loop Invariants
 
@@ -427,31 +975,35 @@ Invariant I: At the start of iteration k, {{property holds}}.
 Base case (k=0):   {{show I holds initially}}
 Inductive step:    Assume I at k. Show I at k+1: {{argument}}
 Termination:       {{var}} strictly {{increases/decreases}} by {{amount}},
-                   bounded by {{bound}} → terminates in O(n) iterations.
-Postcondition:     I holds and exit condition true → {{result}} holds. ∎
+                   bounded by {{bound}} -> terminates in O(n) iterations.
+Postcondition:     I holds and exit condition true -> {{result}} holds. QED
 ```
+
+---
 
 ## Amortized Analysis
 
 ### Aggregate Method
 
 ```text
-Total cost of n operations: Σ cost(opᵢ) ≤ O(f(n))
+Total cost of n operations: Sum cost(op_i) <= O(f(n))
 Amortized cost per op = O(f(n)/n)
 
-Dynamic array: n pushes cost n + (1+2+4+...+n) = O(n) → O(1) amortized
+Dynamic array: n pushes cost n + (1+2+4+...+n) = O(n) -> O(1) amortized
 ```
 
 ### Potential Method
 
 ```text
-Φ: states → ℝ≥0
+Phi: states -> R>=0
 
-Amortized cost: â_i = c_i + Φ(Dᵢ) - Φ(Dᵢ₋₁)
-Total actual:   Σ c_i ≤ Σ â_i + Φ(D₀)
+Amortized cost: a_i = c_i + Phi(D_i) - Phi(D_{i-1})
+Total actual:   Sum c_i <= Sum a_i + Phi(D_0)
 
-For {{TOPIC_NAME}}: Φ(D) = {{specific potential function and justification}}
+For {{TOPIC_NAME}}: Phi(D) = {{specific potential function and justification}}
 ```
+
+---
 
 ## NP-Completeness and Polynomial Reductions
 
@@ -460,20 +1012,24 @@ Problem: {{formal problem statement}}
 Theorem: {{Problem}} is NP-complete.
 Proof:   Reduction from {{known NP-complete problem}} in poly time:
   1. Given instance x, construct f(x) in O(poly(|x|))
-  2. x is YES ⟺ f(x) is YES   [construction + equivalence proof]
+  2. x is YES <=> f(x) is YES   [construction + equivalence proof]
 ```
+
+---
 
 ## Randomized Algorithm Probability Bounds
 
 ```text
 Theorem: Expected running time is O(f(n)).
 
-Let Xᵢ = indicator for event Eᵢ.  E[Xᵢ] = Pr[Eᵢ].
-By linearity of expectation: E[T(n)] = Σ E[Xᵢ] = O(f(n)). ∎
+Let X_i = indicator for event E_i.  E[X_i] = Pr[E_i].
+By linearity of expectation: E[T(n)] = Sum E[X_i] = O(f(n)). QED
 
 High-probability bound (Chernoff):
-  Pr[X ≥ (1+δ)μ] ≤ e^(-μδ²/3)  →  Pr[bad event] ≤ 1/n^c. ∎
+  Pr[X >= (1+delta)mu] <= e^(-mu*delta^2/3)  ->  Pr[bad event] <= 1/n^c. QED
 ```
+
+---
 
 ## Cache-Oblivious Analysis
 
@@ -481,14 +1037,16 @@ High-probability bound (Chernoff):
 Parameters: N = problem size, M = cache size, B = block size
 
 Naive I/Os: O(N)
-Cache-oblivious {{TOPIC_NAME}}: O(N/B · log_{M/B}(N/B))
+Cache-oblivious {{TOPIC_NAME}}: O(N/B * log_{M/B}(N/B))
 
 Van Emde Boas layout:
   Split tree at height h/2; store top and bottom subtrees contiguously.
   Cache misses: O((N/B) log log N)
 ```
 
-## Comparison with Alternative Algorithms / Data Structures
+---
+
+## Comparison with Alternatives
 
 | Attribute | {{TOPIC_NAME}} | {{Alternative 1}} | {{Alternative 2}} |
 |-----------|--------------|-----------------|-----------------|
@@ -496,9 +1054,12 @@ Van Emde Boas layout:
 | Cache I/Os | O(?) | O(?) | O(?) |
 | Deterministic? | Yes/No | Yes/No | Yes/No |
 
+---
+
 ## Summary
 At professional level, correctness is proven with loop invariants, efficiency justified with amortized methods, tractability boundaries set by NP-hardness, and hardware reality captured by cache-oblivious analysis.
 
+---
 ---
 
 # TEMPLATE 5 — `interview.md`
@@ -512,7 +1073,7 @@ At professional level, correctness is proven with loop invariants, efficiency ju
 | 1 | What is {{TOPIC_NAME}} and when would you use it? | Definition, use cases, Big-O |
 | 2 | What is the time complexity of [operation]? | Specific complexity with justification |
 | 3 | Difference between {{TOPIC_NAME}} and {{Alternative}}? | Key structural difference |
-| 4 | How do you spot an off-by-one in binary search? | Loop condition analysis |
+| 4 | How do you spot an off-by-one error? | Loop condition analysis |
 
 ## Middle Questions
 
@@ -535,72 +1096,199 @@ At professional level, correctness is proven with loop invariants, efficiency ju
 
 | # | Question | Expected Answer Focus |
 |---|----------|-----------------------|
-| 1 | Prove binary search correct with a loop invariant. | Invariant, induction, termination |
-| 2 | Prove comparison sort is Ω(n log n). | Decision tree argument |
-| 3 | Derive amortized cost of dynamic array push. | Potential function Φ = 2·size - capacity |
+| 1 | Prove correctness with a loop invariant. | Invariant, induction, termination |
+| 2 | Prove comparison sort is Omega(n log n). | Decision tree argument |
+| 3 | Derive amortized cost of dynamic array push. | Potential function |
 
-## Coding Patterns
+---
 
-```python
-# Binary search — canonical form
-def binary_search(arr, target):
-    left, right = 0, len(arr) - 1
-    while left <= right:
-        mid = left + (right - left) // 2  # avoids overflow
-        if arr[mid] == target:
-            return mid
-        elif arr[mid] < target:
-            left = mid + 1
-        else:
-            right = mid - 1
+## Coding Challenge (3 Languages)
+
+### Challenge: {{title}}
+
+> Solve the problem in all 3 languages. Each solution must pass all test cases.
+
+#### Go
+
+```go
+package main
+
+import "fmt"
+
+func solve(arr []int, target int) int {
+    // your solution
     return -1
+}
+
+func main() {
+    fmt.Println(solve([]int{1, 2, 3, 4, 5}, 3)) // expected: index or value
+}
 ```
 
+#### Java
+
+```java
+public class Solution {
+    public static int solve(int[] arr, int target) {
+        // your solution
+        return -1;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(solve(new int[]{1, 2, 3, 4, 5}, 3));
+    }
+}
+```
+
+#### Python
+
+```python
+def solve(arr, target):
+    # your solution
+    return -1
+
+if __name__ == "__main__":
+    print(solve([1, 2, 3, 4, 5], 3))
+```
+
+---
 ---
 
 # TEMPLATE 6 — `tasks.md`
 
 # {{TOPIC_NAME}} — Practice Tasks
 
+> All tasks must be solved in **Go**, **Java**, and **Python**.
+
 ## Beginner Tasks
 
 **Task 1:** Implement {{TOPIC_NAME}} from scratch without any library.
-- Constraints: correct Big-O, test with empty/single/duplicate inputs.
 
-**Task 2:** Find the k-th largest element using a heap. Constraint: O(n log k) time.
+#### Go
 
-**Task 3:** Implement a stack supporting `push`, `pop`, and `get_min` in O(1).
+```go
+// Starter code
+package main
 
-**Task 4:** Reverse a singly linked list iteratively and recursively.
+func main() {
+    // implement here
+}
+```
 
-**Task 5:** Check whether a binary tree is a valid BST.
+#### Java
+
+```java
+// Starter code
+public class Task1 {
+    public static void main(String[] args) {
+        // implement here
+    }
+}
+```
+
+#### Python
+
+```python
+# Starter code
+def main():
+    # implement here
+    pass
+
+if __name__ == "__main__":
+    main()
+```
+
+- **Constraints:** correct Big-O, test with empty/single/duplicate inputs.
+- **Expected Output:** {{expected}}
+- **Evaluation:** correctness, edge cases, complexity analysis
+
+**Task 2:** {{description}}
+- Provide starter code in all 3 languages.
+- Constraints: {{constraints}}
+
+**Task 3:** {{description}}
+
+**Task 4:** {{description}}
+
+**Task 5:** {{description}}
 
 ## Intermediate Tasks
 
-**Task 6:** Shortest path in an unweighted graph (BFS). Return the path or -1.
+**Task 6:** {{description}} — provide starter code in all 3 languages.
 
-**Task 7:** Longest Common Subsequence with DP. Optimize space to O(min(m,n)).
+**Task 7:** {{description}}
 
-**Task 8:** Dijkstra's algorithm with a priority queue. O((V+E) log V).
-Document what breaks with negative weights.
+**Task 8:** {{description}}
 
-**Task 9:** Merge overlapping intervals. Input: `[[1,3],[2,6],[8,10]]`.
+**Task 9:** {{description}}
 
-**Task 10:** Implement a Trie with `insert`, `search`, `starts_with`.
+**Task 10:** {{description}}
 
 ## Advanced Tasks
 
-**Task 11:** LRU cache with O(1) get and put — `dict` + doubly-linked list.
+**Task 11:** {{description}} — provide starter code in all 3 languages.
 
-**Task 12:** Strongly connected components (Kosaraju's or Tarjan's).
+**Task 12:** {{description}}
 
-**Task 13:** 0/1 knapsack with DP. Trace the optimal item selection.
+**Task 13:** {{description}}
 
-**Task 14:** Segment tree for range sum queries and point updates in O(log n).
+**Task 14:** {{description}}
 
-**Task 15:** Skip list with probabilistic balancing. Analyze expected search time.
+**Task 15:** {{description}}
 
 ## Benchmark Task
+
+> Compare performance across all 3 languages.
+
+#### Go
+
+```go
+package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    sizes := []int{10, 100, 1000, 10000, 100000}
+    for _, n := range sizes {
+        data := make([]int, n)
+        for i := range data { data[i] = i }
+        start := time.Now()
+        for i := 0; i < 50; i++ {
+            tmp := make([]int, n)
+            copy(tmp, data)
+            yourImplementation(tmp)
+        }
+        elapsed := time.Since(start)
+        fmt.Printf("n=%7d: %.3f ms\n", n, float64(elapsed.Milliseconds())/50.0)
+    }
+}
+```
+
+#### Java
+
+```java
+import java.util.stream.IntStream;
+
+public class Benchmark {
+    public static void main(String[] args) {
+        int[] sizes = {10, 100, 1000, 10000, 100000};
+        for (int n : sizes) {
+            int[] data = IntStream.range(0, n).toArray();
+            long start = System.nanoTime();
+            for (int i = 0; i < 50; i++) {
+                yourImplementation(data.clone());
+            }
+            long elapsed = System.nanoTime() - start;
+            System.out.printf("n=%7d: %.3f ms%n", n, elapsed / 50.0 / 1_000_000);
+        }
+    }
+}
+```
+
+#### Python
 
 ```python
 import timeit
@@ -612,21 +1300,58 @@ for n in sizes:
 ```
 
 ---
+---
 
 # TEMPLATE 7 — `find-bug.md`
 
 # {{TOPIC_NAME}} — Find the Bug
 
-> 10+ exercises. Each shows buggy code — find, explain, and fix.
+> 10+ exercises. Each shows buggy code in **all 3 languages** — find, explain, and fix.
 
 ---
 
-## Exercise 1: Off-by-One in Binary Search
+## Exercise 1: {{Bug Title}}
+
+### Go (Buggy)
+
+```go
+func buggyFunction(arr []int, target int) int {
+    left, right := 0, len(arr) // BUG: should be len(arr)-1
+    for left < right {         // BUG: should be <=
+        mid := (left + right) / 2
+        if arr[mid] == target {
+            return mid
+        } else if arr[mid] < target {
+            left = mid + 1
+        } else {
+            right = mid
+        }
+    }
+    return -1
+}
+```
+
+### Java (Buggy)
+
+```java
+public static int buggyFunction(int[] arr, int target) {
+    int left = 0, right = arr.length; // BUG: should be arr.length - 1
+    while (left < right) {            // BUG: should be <=
+        int mid = (left + right) / 2;
+        if (arr[mid] == target) return mid;
+        else if (arr[mid] < target) left = mid + 1;
+        else right = mid;
+    }
+    return -1;
+}
+```
+
+### Python (Buggy)
 
 ```python
-def binary_search(arr, target):
+def buggy_function(arr, target):
     left, right = 0, len(arr)      # BUG: should be len(arr) - 1
-    while left < right:            # BUG: should be <=
+    while left < right:             # BUG: should be <=
         mid = (left + right) // 2
         if arr[mid] == target:
             return mid
@@ -637,11 +1362,43 @@ def binary_search(arr, target):
     return -1
 ```
 
-**Bug:** `right = len(arr)` is one past the last valid index; `left < right` exits too early.
+**Bug:** `right` is one past the last valid index; loop exits too early.
 
-**Fix:**
+### Fix (all languages)
+
+#### Go
+
+```go
+func fixedFunction(arr []int, target int) int {
+    left, right := 0, len(arr)-1
+    for left <= right {
+        mid := left + (right-left)/2
+        if arr[mid] == target { return mid }
+        if arr[mid] < target { left = mid + 1 } else { right = mid - 1 }
+    }
+    return -1
+}
+```
+
+#### Java
+
+```java
+public static int fixedFunction(int[] arr, int target) {
+    int left = 0, right = arr.length - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (arr[mid] == target) return mid;
+        else if (arr[mid] < target) left = mid + 1;
+        else right = mid - 1;
+    }
+    return -1;
+}
+```
+
+#### Python
+
 ```python
-def binary_search(arr, target):
+def fixed_function(arr, target):
     left, right = 0, len(arr) - 1
     while left <= right:
         mid = left + (right - left) // 2
@@ -653,228 +1410,646 @@ def binary_search(arr, target):
 
 ---
 
-## Exercise 2: Missing Visited Set in BFS (Infinite Loop)
+## Exercise 2: {{Bug Title}}
 
-```python
-from collections import deque
+> Repeat the same 3-language pattern for each exercise.
+> Minimum 10 exercises required.
 
-def bfs(graph, start):
-    queue = deque([start])
-    while queue:
-        node = queue.popleft()
-        for neighbor in graph[node]:
-            queue.append(neighbor)   # BUG: no visited check — infinite loop on any cycle
-```
+## Exercise 3-10: {{Bug Titles}}
 
-**Fix:** Add `visited = set([start])` and guard with `if neighbor not in visited`.
+> Same structure: Buggy code in Go/Java/Python -> Explanation -> Fix in Go/Java/Python
 
 ---
-
-## Exercise 3: Wrong Base Case in Recursion
-
-```python
-def fibonacci(n):
-    if n == 0:
-        return 0
-    # BUG: missing n == 1 base case — fibonacci(-1) recurses forever
-    return fibonacci(n - 1) + fibonacci(n - 2)
-```
-
-**Fix:** Add `if n == 1: return 1` and `if n < 0: raise ValueError`.
-
----
-
-## Exercise 4: Integer Overflow Pattern (typed languages)
-
-```python
-# UNSAFE in Java/C++ — left + right can exceed INT_MAX:
-# mid = (left + right) / 2
-
-# SAFE pattern — always use this:
-mid = left + (right - left) // 2
-```
-
----
-
-## Exercise 5: Mutating a List While Iterating
-
-```python
-def remove_evens(arr):
-    for i in range(len(arr)):
-        if arr[i] % 2 == 0:
-            arr.pop(i)    # BUG: shifts indices, skips elements
-    return arr
-```
-
-**Fix:** `return [x for x in arr if x % 2 != 0]`
-
----
-
-## Exercise 6: Incorrect Cycle Detection (Directed Graph)
-
-```python
-def has_cycle(graph, node, visited):
-    visited.add(node)
-    for neighbor in graph[node]:
-        if neighbor in visited:
-            return True    # BUG: visited not cleaned on backtrack — false positives
-        if has_cycle(graph, neighbor, visited):
-            return True
-    return False
-```
-
-**Fix:** Use a separate `in_stack` set. Remove node from `in_stack` after the loop.
-
----
-
-## Exercise 7: Heap Push/Pop Order Confusion
-
-```python
-import heapq
-
-def kth_largest(nums, k):
-    heap = []
-    for n in nums:
-        heapq.heappush(heap, n)     # BUG: min-heap returns k-th smallest
-    for _ in range(k):
-        result = heapq.heappop(heap)
-    return result
-```
-
-**Fix:** Push `-n` to simulate a max-heap; return `-heapq.heappop(heap)`.
-
----
-
-## Exercise 8: DP Array Not Initialized Correctly
-
-```python
-def lis(nums):
-    dp = [0] * len(nums)    # BUG: should be [1] — each element alone has length 1
-    for i in range(1, len(nums)):
-        for j in range(i):
-            if nums[j] < nums[i]:
-                dp[i] = max(dp[i], dp[j] + 1)
-    return max(dp)
-```
-
-**Fix:** `dp = [1] * len(nums)`
-
 ---
 
 # TEMPLATE 8 — `optimize.md`
 
 # {{TOPIC_NAME}} — Optimize
 
-> 10+ exercises. Show before/after complexities and `timeit` benchmarks.
+> 10+ exercises. Show before/after in **all 3 languages** with complexity comparison and benchmarks.
 
 ---
 
-## Exercise 1: O(n²) → O(n log n) Sorting
+## Exercise 1: {{Optimization Title}} — O(n^2) to O(n log n)
 
-```python
-# BEFORE — O(n²)
-def bubble_sort(arr):
-    for i in range(len(arr)):
-        for j in range(len(arr) - i - 1):
-            if arr[j] > arr[j+1]:
-                arr[j], arr[j+1] = arr[j+1], arr[j]
+### Before (Slow)
+
+#### Go
+
+```go
+// O(n^2) — brute force
+func slowSolution(arr []int) []int {
+    // slow implementation
+    return arr
+}
 ```
 
-```python
-# AFTER — O(n log n)
-def merge_sort(arr):
-    if len(arr) <= 1: return arr
-    mid = len(arr) // 2
-    left, right = merge_sort(arr[:mid]), merge_sort(arr[mid:])
-    result, i, j = [], 0, 0
-    while i < len(left) and j < len(right):
-        if left[i] <= right[j]: result.append(left[i]); i += 1
-        else: result.append(right[j]); j += 1
-    return result + left[i:] + right[j:]
+#### Java
+
+```java
+// O(n^2) — brute force
+public static int[] slowSolution(int[] arr) {
+    // slow implementation
+    return arr;
+}
 ```
+
+#### Python
+
+```python
+# O(n^2) — brute force
+def slow_solution(arr):
+    # slow implementation
+    return arr
+```
+
+### After (Optimized)
+
+#### Go
+
+```go
+// O(n log n) — optimized
+func fastSolution(arr []int) []int {
+    // optimized implementation
+    return arr
+}
+```
+
+#### Java
+
+```java
+// O(n log n) — optimized
+public static int[] fastSolution(int[] arr) {
+    // optimized implementation
+    return arr;
+}
+```
+
+#### Python
+
+```python
+# O(n log n) — optimized
+def fast_solution(arr):
+    # optimized implementation
+    return arr
+```
+
+### Complexity Comparison
 
 | | Time | Space |
 |---|------|-------|
-| Before | O(n²) | O(1) |
+| Before | O(n^2) | O(1) |
 | After | O(n log n) | O(n) |
 
-```python
-import timeit, random
-data = random.sample(range(100_000), 10_000)
-print(timeit.timeit(lambda: bubble_sort(data[:]), number=5))
-print(timeit.timeit(lambda: merge_sort(data[:]), number=5))
-```
+### Benchmark
+
+> Run benchmarks in all 3 languages using the benchmark template from `tasks.md`.
 
 ---
 
-## Exercise 2: O(n²) Two-Sum → O(n)
+## Exercise 2-10: {{Optimization Titles}}
 
-```python
-# BEFORE — O(n²)
-def two_sum_slow(arr, target):
-    for i in range(len(arr)):
-        for j in range(i+1, len(arr)):
-            if arr[i] + arr[j] == target: return (i, j)
-```
-
-```python
-# AFTER — O(n)
-def two_sum_fast(arr, target):
-    seen = {}
-    for i, val in enumerate(arr):
-        if target - val in seen: return (seen[target - val], i)
-        seen[val] = i
-```
+> Same structure: Before/After in Go/Java/Python -> Complexity table -> Benchmark
 
 ---
-
-## Exercise 3: Exponential Fibonacci → O(n)
-
-```python
-# BEFORE — O(2ⁿ)
-def fib(n):
-    if n <= 1: return n
-    return fib(n-1) + fib(n-2)
-```
-
-```python
-# AFTER — O(n)
-from functools import lru_cache
-
-@lru_cache(maxsize=None)
-def fib(n):
-    if n <= 1: return n
-    return fib(n-1) + fib(n-2)
-```
-
----
-
-## Exercise 4: Linear Search → Binary Search (sorted input)
-
-```python
-# BEFORE — O(n)
-def find(arr, target):
-    for i, v in enumerate(arr):
-        if v == target: return i
-    return -1
-```
-
-```python
-# AFTER — O(log n)
-import bisect
-
-def find_sorted(arr, target):
-    idx = bisect.bisect_left(arr, target)
-    return idx if idx < len(arr) and arr[idx] == target else -1
-```
 
 ## Optimization Summary
 
 | Exercise | Before | After | Strategy |
 |----------|--------|-------|----------|
-| Sorting | O(n²) | O(n log n) | Divide and conquer |
-| Two-sum | O(n²) | O(n) | Hash map complement |
-| Fibonacci | O(2ⁿ) | O(n) | Memoization |
-| Search | O(n) | O(log n) | Binary search on sorted input |
+| 1 | O(n^2) | O(n log n) | Divide and conquer |
+| 2 | O(n^2) | O(n) | Hash map |
+| 3 | O(2^n) | O(n) | Memoization / DP |
+| ... | ... | ... | ... |
 
-> Additional exercises to add: DP space rolling array O(m×n)→O(n), sliding window max O(n·k)→O(n), string concat O(n²)→O(n) with `join`, membership test O(n²)→O(n) with `set`.
+---
+---
+
+# TEMPLATE 9 — `animation.html`
+
+> Standalone HTML file with embedded CSS and JavaScript.
+> No external dependencies — everything in one file.
+> Must work by opening the file directly in a browser.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TOPIC_NAME}} — Visual Animation</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0f23;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* ===== HEADER ===== */
+        h1 {
+            font-size: 2rem;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* ===== CONTROLS ===== */
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 24px;
+            border: 2px solid #00d4ff;
+            background: transparent;
+            color: #00d4ff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #00d4ff;
+            color: #0f0f23;
+        }
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        button.active {
+            background: #00d4ff;
+            color: #0f0f23;
+        }
+
+        /* ===== SPEED CONTROL ===== */
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .speed-control label { color: #888; }
+        .speed-control input[type="range"] {
+            width: 150px;
+            accent-color: #00d4ff;
+        }
+
+        /* ===== INPUT CONTROL ===== */
+        .input-control {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        input[type="text"] {
+            padding: 10px 16px;
+            border: 2px solid #333;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 300px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        /* ===== CANVAS / VISUALIZATION AREA ===== */
+        .canvas-container {
+            background: #1a1a2e;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 900px;
+            min-height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 4px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        /* ===== ARRAY BARS ===== */
+        .bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .bar-visual {
+            width: 40px;
+            border-radius: 6px 6px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .bar-label {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #888;
+            font-weight: 600;
+        }
+
+        /* ===== COLOR STATES ===== */
+        .bar-visual.default { background: #4a9eff; }
+        .bar-visual.comparing { background: #ff6b6b; }
+        .bar-visual.swapping { background: #ffd93d; }
+        .bar-visual.sorted { background: #6bcb77; }
+        .bar-visual.pivot { background: #c084fc; }
+        .bar-visual.active { background: #ff9f43; }
+
+        /* ===== INFO PANEL ===== */
+        .info-panel {
+            background: #1a1a2e;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 20px;
+        }
+        .info-panel h3 {
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+        .step-info {
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+        .step-info .highlight { color: #ffd93d; }
+
+        /* ===== LEGEND ===== */
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        /* ===== COMPLEXITY DISPLAY ===== */
+        .complexity {
+            background: #1a1a2e;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 15px 25px;
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .complexity-item {
+            text-align: center;
+        }
+        .complexity-label { color: #888; font-size: 0.8rem; }
+        .complexity-value { color: #00d4ff; font-size: 1.2rem; font-weight: bold; }
+
+        /* ===== STEP COUNTER ===== */
+        .step-counter {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{TOPIC_NAME}}</h1>
+    <p class="subtitle">Interactive Visual Animation — Step by Step</p>
+
+    <!-- Complexity Display -->
+    <div class="complexity">
+        <div class="complexity-item">
+            <div class="complexity-label">Time (Best)</div>
+            <div class="complexity-value">O(?)</div>
+        </div>
+        <div class="complexity-item">
+            <div class="complexity-label">Time (Avg)</div>
+            <div class="complexity-value">O(?)</div>
+        </div>
+        <div class="complexity-item">
+            <div class="complexity-label">Time (Worst)</div>
+            <div class="complexity-value">O(?)</div>
+        </div>
+        <div class="complexity-item">
+            <div class="complexity-label">Space</div>
+            <div class="complexity-value">O(?)</div>
+        </div>
+    </div>
+
+    <!-- Custom Input -->
+    <div class="input-control">
+        <input type="text" id="customInput" placeholder="Enter numbers: 5, 3, 8, 1, 9, 2, 7">
+        <button onclick="loadCustomInput()">Load</button>
+        <button onclick="generateRandom()">Random</button>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button id="startBtn" onclick="start()">Start</button>
+        <button id="stepBtn" onclick="stepForward()">Step</button>
+        <button id="pauseBtn" onclick="pause()" disabled>Pause</button>
+        <button id="resetBtn" onclick="reset()">Reset</button>
+    </div>
+
+    <!-- Speed Control -->
+    <div class="speed-control">
+        <label>Speed:</label>
+        <span>Slow</span>
+        <input type="range" id="speedSlider" min="1" max="10" value="5">
+        <span>Fast</span>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color" style="background: #4a9eff;"></div>
+            <span>Default</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ff6b6b;"></div>
+            <span>Comparing</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ffd93d;"></div>
+            <span>Swapping</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #6bcb77;"></div>
+            <span>Sorted</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #c084fc;"></div>
+            <span>Pivot</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ff9f43;"></div>
+            <span>Active</span>
+        </div>
+    </div>
+
+    <!-- Step Counter -->
+    <div class="step-counter">
+        Step: <span id="currentStep">0</span> / <span id="totalSteps">0</span>
+        &nbsp;|&nbsp; Comparisons: <span id="comparisons">0</span>
+        &nbsp;|&nbsp; Swaps: <span id="swaps">0</span>
+    </div>
+
+    <!-- Visualization Area -->
+    <div class="canvas-container" id="canvas">
+        <!-- Bars will be rendered here by JavaScript -->
+    </div>
+
+    <!-- Info Panel -->
+    <div class="info-panel">
+        <h3>Algorithm Explanation</h3>
+        <div class="step-info" id="stepInfo">
+            Press <span class="highlight">Start</span> to begin the animation,
+            or <span class="highlight">Step</span> to go one step at a time.
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURATION =====
+        let array = [5, 3, 8, 1, 9, 2, 7, 4, 6];
+        let steps = [];           // precomputed animation steps
+        let currentStepIndex = 0;
+        let isRunning = false;
+        let animationTimer = null;
+        let comparisonCount = 0;
+        let swapCount = 0;
+
+        // ===== STEP FORMAT =====
+        // Each step is an object:
+        // {
+        //   array: [...],            // current state of array
+        //   highlights: { index: 'comparing' | 'swapping' | 'sorted' | 'pivot' | 'active' },
+        //   description: "string",   // what's happening in this step
+        //   comparisons: number,
+        //   swaps: number
+        // }
+
+        // ===== TODO: IMPLEMENT YOUR ALGORITHM HERE =====
+        function generateSteps(arr) {
+            steps = [];
+            let a = [...arr];
+
+            // Example: Bubble Sort step generation
+            // Replace this with {{TOPIC_NAME}} algorithm
+            for (let i = 0; i < a.length; i++) {
+                for (let j = 0; j < a.length - i - 1; j++) {
+                    // Compare step
+                    comparisonCount++;
+                    let highlights = {};
+                    highlights[j] = 'comparing';
+                    highlights[j + 1] = 'comparing';
+                    // Mark sorted elements
+                    for (let k = a.length - i; k < a.length; k++) {
+                        highlights[k] = 'sorted';
+                    }
+                    steps.push({
+                        array: [...a],
+                        highlights: { ...highlights },
+                        description: `Comparing a[${j}]=${a[j]} with a[${j+1}]=${a[j+1]}`,
+                        comparisons: comparisonCount,
+                        swaps: swapCount
+                    });
+
+                    if (a[j] > a[j + 1]) {
+                        // Swap step
+                        [a[j], a[j + 1]] = [a[j + 1], a[j]];
+                        swapCount++;
+                        let swapHighlights = {};
+                        swapHighlights[j] = 'swapping';
+                        swapHighlights[j + 1] = 'swapping';
+                        for (let k = a.length - i; k < a.length; k++) {
+                            swapHighlights[k] = 'sorted';
+                        }
+                        steps.push({
+                            array: [...a],
+                            highlights: { ...swapHighlights },
+                            description: `Swapped a[${j}]=${a[j+1]} and a[${j+1}]=${a[j]} (${a[j+1]} > ${a[j]})`,
+                            comparisons: comparisonCount,
+                            swaps: swapCount
+                        });
+                    }
+                }
+            }
+
+            // Final sorted state
+            let finalHighlights = {};
+            for (let i = 0; i < a.length; i++) finalHighlights[i] = 'sorted';
+            steps.push({
+                array: [...a],
+                highlights: finalHighlights,
+                description: 'Array is now fully sorted!',
+                comparisons: comparisonCount,
+                swaps: swapCount
+            });
+
+            document.getElementById('totalSteps').textContent = steps.length;
+        }
+
+        // ===== RENDERING =====
+        function render(step) {
+            const canvas = document.getElementById('canvas');
+            const maxVal = Math.max(...step.array);
+            const barWidth = Math.max(20, Math.min(60, (canvas.clientWidth - 40) / step.array.length - 4));
+
+            canvas.innerHTML = step.array.map((val, i) => {
+                const height = (val / maxVal) * 250;
+                const colorClass = step.highlights[i] || 'default';
+                return `
+                    <div class="bar">
+                        <div class="bar-visual ${colorClass}"
+                             style="height: ${height}px; width: ${barWidth}px;">
+                        </div>
+                        <div class="bar-label">${val}</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('currentStep').textContent = currentStepIndex + 1;
+            document.getElementById('comparisons').textContent = step.comparisons;
+            document.getElementById('swaps').textContent = step.swaps;
+            document.getElementById('stepInfo').innerHTML = step.description;
+        }
+
+        // ===== CONTROLS =====
+        function getSpeed() {
+            const slider = document.getElementById('speedSlider');
+            return 1100 - slider.value * 100; // 1000ms (slow) to 100ms (fast)
+        }
+
+        function start() {
+            if (steps.length === 0) generateSteps(array);
+            isRunning = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('pauseBtn').disabled = false;
+            runAnimation();
+        }
+
+        function runAnimation() {
+            if (!isRunning || currentStepIndex >= steps.length) {
+                pause();
+                return;
+            }
+            render(steps[currentStepIndex]);
+            currentStepIndex++;
+            animationTimer = setTimeout(runAnimation, getSpeed());
+        }
+
+        function stepForward() {
+            if (steps.length === 0) generateSteps(array);
+            if (currentStepIndex < steps.length) {
+                render(steps[currentStepIndex]);
+                currentStepIndex++;
+            }
+        }
+
+        function pause() {
+            isRunning = false;
+            clearTimeout(animationTimer);
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+        }
+
+        function reset() {
+            pause();
+            currentStepIndex = 0;
+            comparisonCount = 0;
+            swapCount = 0;
+            steps = [];
+            document.getElementById('currentStep').textContent = '0';
+            document.getElementById('totalSteps').textContent = '0';
+            document.getElementById('comparisons').textContent = '0';
+            document.getElementById('swaps').textContent = '0';
+            document.getElementById('stepInfo').innerHTML =
+                'Press <span class="highlight">Start</span> to begin the animation, ' +
+                'or <span class="highlight">Step</span> to go one step at a time.';
+            renderInitial();
+        }
+
+        function loadCustomInput() {
+            const input = document.getElementById('customInput').value;
+            const nums = input.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+            if (nums.length > 0) {
+                array = nums;
+                reset();
+            }
+        }
+
+        function generateRandom() {
+            const size = Math.floor(Math.random() * 8) + 5; // 5-12 elements
+            array = Array.from({ length: size }, () => Math.floor(Math.random() * 50) + 1);
+            document.getElementById('customInput').value = array.join(', ');
+            reset();
+        }
+
+        function renderInitial() {
+            const canvas = document.getElementById('canvas');
+            const maxVal = Math.max(...array);
+            const barWidth = Math.max(20, Math.min(60, (canvas.clientWidth - 40) / array.length - 4));
+            canvas.innerHTML = array.map((val) => {
+                const height = (val / maxVal) * 250;
+                return `
+                    <div class="bar">
+                        <div class="bar-visual default"
+                             style="height: ${height}px; width: ${barWidth}px;">
+                        </div>
+                        <div class="bar-label">${val}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== INIT =====
+        document.getElementById('customInput').value = array.join(', ');
+        renderInitial();
+    </script>
+</body>
+</html>
+```
+
+> **IMPORTANT notes for `animation.html`:**
+> - Replace the example Bubble Sort algorithm in `generateSteps()` with the actual {{TOPIC_NAME}} algorithm
+> - Update complexity values in the HTML
+> - Update color legend if needed (add/remove states)
+> - Customize `description` strings to explain each step clearly
+> - For tree/graph algorithms: replace bar visualization with node-edge SVG rendering
+> - For search algorithms: highlight the search target and current position
+> - Must work standalone — NO external CDN, NO frameworks, NO build tools
+> - Dark theme with neon accent colors for readability
+> - Responsive design — works on mobile and desktop
