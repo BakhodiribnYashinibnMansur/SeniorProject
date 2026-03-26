@@ -247,19 +247,15 @@ Layering, reusable middleware, efficient queries, background queues.
 HTTP Handler  ← Parse/validate request, serialize response
 Service       ← Business logic, orchestration
 Repository    ← All DB access, SQL queries
-Domain Model  ← Entities, value objects, business rules
 ```
 
-**Go — Repository pattern:**
+**Go — Repository interface:**
 ```go
 type UserRepository interface {
     FindByID(ctx context.Context, id int64) (*User, error)
     Create(ctx context.Context, u *User) error
 }
-type postgresUserRepo struct{ db *pgxpool.Pool }
-
 func (r *postgresUserRepo) FindByID(ctx context.Context, id int64) (*User, error) {
-    var u User
     err := r.db.QueryRow(ctx, "SELECT id, name FROM users WHERE id=$1", id).Scan(&u.ID, &u.Name)
     if errors.Is(err, pgx.ErrNoRows) { return nil, ErrNotFound }
     return &u, err
@@ -269,12 +265,8 @@ func (r *postgresUserRepo) FindByID(ctx context.Context, id int64) (*User, error
 **Python — Service layer:**
 ```python
 class UserService:
-    def __init__(self, repo: UserRepository, mailer: Mailer):
-        self._repo, self._mailer = repo, mailer
-
     def register(self, name: str, email: str, password: str) -> User:
-        if self._repo.find_by_email(email):
-            raise DuplicateEmailError(email)
+        if self._repo.find_by_email(email): raise DuplicateEmailError(email)
         hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
         user = self._repo.create(name=name, email=email, password_hash=hashed)
         self._mailer.send_welcome(user)
@@ -359,7 +351,6 @@ rows, err := r.db.Query(ctx,
 ## Error Handling and Circuit Breaker Patterns
 
 ```go
-type AppError struct{ Code, Message string; Status int }
 var (
     ErrNotFound  = &AppError{"NOT_FOUND",  "Resource not found",      404}
     ErrForbidden = &AppError{"FORBIDDEN",  "Permission denied",       403}
@@ -370,9 +361,8 @@ var (
 ```python
 def with_retry(fn, max_attempts=3):
     for attempt in range(max_attempts):
-        try:
-            return fn()
-        except TransientError as e:
+        try: return fn()
+        except TransientError:
             if attempt == max_attempts - 1: raise
             time.sleep((2 ** attempt) * 0.1 + random.uniform(0, 0.05))
 ```
@@ -413,9 +403,7 @@ graph TD
 ## Introduction
 > Focus: "How to architect systems that handle millions of requests and survive partial failures?"
 
-## Distributed Architecture Patterns
-
-### Saga (distributed transactions)
+## Distributed Architecture Patterns — Saga (distributed transactions)
 
 ```mermaid
 sequenceDiagram
@@ -427,42 +415,15 @@ sequenceDiagram
     Orchestrator->>OrderSvc: Cancel order (compensate)
 ```
 
-## Event-Driven Design
+## Event-Driven Design and CQRS
+
+Publish domain events after writes; separate services consume them asynchronously.
 
 ```go
-func (s *OrderService) Create(ctx context.Context, req CreateOrderReq) (*Order, error) {
-    order, err := s.repo.Create(ctx, req)
-    if err != nil { return nil, err }
-    s.bus.Publish(ctx, "orders.created", OrderCreatedEvent{
-        OrderID: order.ID, UserID: req.UserID, Total: order.Total,
-    })
-    return order, nil
-}
+s.bus.Publish(ctx, "orders.created", OrderCreatedEvent{OrderID: order.ID, UserID: req.UserID})
 ```
 
-```javascript
-// Kafka consumer (Node.js)
-await consumer.run({
-    eachMessage: async ({ message }) => {
-        const event = JSON.parse(message.value.toString());
-        await notificationService.sendOrderConfirmation(event.user_id, event.order_id);
-    },
-});
-```
-
-## CQRS and Event Sourcing
-
-CQRS separates write models (commands) from read models (denormalized projections).
-
-```python
-# Command side — write model
-class OrderCommandHandler:
-    def handle(self, cmd: CreateOrderCommand) -> str:
-        order = Order.create(cmd.user_id, cmd.items)
-        self.event_store.append(order.pending_events)
-        self.event_bus.publish(order.pending_events)
-        return order.id
-```
+**CQRS:** Write model handles commands + publishes events. Read model projects events into denormalized views optimized for query patterns. Benefits: independent scaling of reads and writes, temporal query capability. Drawback: eventual consistency, schema evolution complexity.
 
 ## Resilience Patterns
 
@@ -584,10 +545,7 @@ nginx uses **edge-triggered** mode: notified only on state change (new data arri
 
 ## Go GMP Scheduler
 
-```
-G = Goroutine (user-space)   M = OS Thread   P = Logical Processor
-GOMAXPROCS = number of P's = true parallel goroutines
-```
+`G` = goroutine, `M` = OS thread, `P` = logical processor (GOMAXPROCS). Initial goroutine stack: 2KB vs 1–8MB OS thread. Work stealing: idle P steals from busy P's run queue. When goroutine blocks on syscall, runtime spins up a new M to keep the P busy.
 
 ```mermaid
 graph LR
@@ -596,81 +554,54 @@ graph LR
     GlobalQueue --> P1 & P2
 ```
 
-- Initial goroutine stack: 2KB (vs 1–8MB OS thread)
-- Work stealing: idle P steals from busy P's local run queue
-- When goroutine blocks on syscall, runtime can spin up a new M to keep P busy
-
 ## Python GIL and asyncio
 
+**GIL:** one thread executes CPython bytecode at a time. CPU-bound threads run sequentially despite multiple cores.
+**asyncio workaround:** single-threaded — no GIL contention. GIL is released during C-level socket I/O, allowing other coroutines to run.
+
 ```python
-# ❌ CPU-bound: GIL prevents true parallelism
-threading.Thread(target=compute_intensive).start()  # runs sequentially
-
-# ✅ I/O-bound: GIL released during C-extension socket ops
-async def fetch(session, url):
-    async with session.get(url) as resp:   # GIL released
-        return await resp.json()           # GIL released
-
 async def main():
     async with aiohttp.ClientSession() as s:
-        results = await asyncio.gather(fetch(s, url1), fetch(s, url2))
+        results = await asyncio.gather(fetch(s, url1), fetch(s, url2))  # concurrent I/O
 ```
 
 ## Node.js libuv Event Loop
 
-Phases (in order):
-```
-1. timers          — setTimeout / setInterval
-2. pending I/O     — deferred I/O errors
-3. poll            — retrieve new I/O events (blocks here if queue empty)
-4. check           — setImmediate
-5. close callbacks — socket.on('close')
-```
-
-Microtasks (Promises) drain **between** each phase.
+Phases: timers → pending I/O → poll (blocks if empty) → check (setImmediate) → close callbacks.
+Microtasks (Promises) drain between each phase.
 
 ## Query / Request Examples
 
 ### Go pprof profiling
 
-```go
-import _ "net/http/pprof"
-go func() { log.Println(http.ListenAndServe("localhost:6060", nil)) }()
-```
-
 ```bash
+# Expose pprof: import _ "net/http/pprof" + go http.ListenAndServe(":6060", nil)
 go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30
 curl http://localhost:6060/debug/pprof/goroutine?debug=2
 ```
 
-### Python async with connection pool
+### Python asyncpg pool
 
 ```python
 pool = await asyncpg.create_pool(dsn=DATABASE_URL, min_size=5, max_size=20)
-
-@app.get("/users/{user_id}")
-async def get_user(user_id: int):
-    async with pool.acquire() as conn:
-        row = await conn.fetchrow("SELECT id, name FROM users WHERE id=$1", user_id)
-    if not row: raise HTTPException(status_code=404)
-    return dict(row)
+async with pool.acquire() as conn:
+    row = await conn.fetchrow("SELECT id, name FROM users WHERE id=$1", user_id)
 ```
 
 ## Comparison with Alternative Approaches / Databases
 
-| Model | Language | Concurrency | Context Switch |
-|-------|---------|------------|---------------|
-| Goroutines (M:N) | Go | Millions | ~200ns (user-space) |
-| async/await | Python | 10K–100K | ~1μs |
-| Event loop | Node.js | 10K–100K | ~1μs |
-| OS threads | Java (pre-Loom) | ~10K | ~5–15μs (kernel) |
-| Virtual threads | Java (Loom) | Millions | ~200ns |
+| Model | Concurrency | Context Switch |
+|-------|------------|---------------|
+| Go goroutines (M:N) | Millions | ~200ns (user-space) |
+| Python asyncio | 10K–100K | ~1μs |
+| Node.js event loop | 10K–100K | ~1μs |
+| Java OS threads | ~10K | ~5–15μs |
+| Java virtual threads (Loom) | Millions | ~200ns |
 
 ## Further Reading
 - [nginx internals — aosabook.org](https://aosabook.org/en/nginx.html)
-- [Go scheduler — Dmitry Vyukov](https://docs.google.com/document/d/1TTj4T2JO42uD5ID9e89oa0sLKhJYD0Y_kqxDv3I3XMw)
+- [Go scheduler design](https://docs.google.com/document/d/1TTj4T2JO42uD5ID9e89oa0sLKhJYD0Y_kqxDv3I3XMw)
 - [epoll man page](https://man7.org/linux/man-pages/man7/epoll.7.html)
-- [libuv design overview](https://docs.libuv.org/en/v1.x/design.html)
 
 ---
 
@@ -836,48 +767,29 @@ const db = new Pool({ password: 'super_secret_prod_password_123' });
 ## Bug 7: Unhandled promise rejection in Express
 
 ```javascript
-// ❌ — if findById throws, Express never sends response; client hangs
-app.get('/users/:id', async (req, res) => {
-    const user = await userService.findById(req.params.id);
-    res.json(user);
-});
+// ❌ — throws → no response sent, client hangs
+app.get('/users/:id', async (req, res) => { res.json(await userService.findById(req.params.id)); });
 ```
 
-**Fix:** Add `try/catch` and call `next(err)` to pass to the Express error handler.
+**Fix:** Wrap in `try/catch` and call `next(err)` to pass to the Express error handler.
 
 ## Bug 8: Race condition on shared counter
 
 ```go
-// ❌ DATA RACE
-var requestCount int
-func handler(...) { requestCount++ }
+var requestCount int  // ❌ DATA RACE
 ```
 
 **Fix:** `var requestCount atomic.Int64` → `requestCount.Add(1)`
 
 ## Bug 9: Retrying 4xx errors
 
-```python
-# ❌ Retries 404/422 which will never succeed
-for attempt in range(5):
-    resp = requests.get(url)
-    if resp.status_code == 200: return resp.json()
-    time.sleep(2 ** attempt)
-```
-
-**Fix:** Only retry on `5xx` and `ConnectionError`. Return immediately for `4xx`.
+**Bug:** Retrying `404`/`422` will never succeed. Wastes time and resources.
+**Fix:** Only retry `5xx` and network errors. Return immediately for `4xx`.
 
 ## Bug 10: Returning 500 for a validation error
 
-```go
-// ❌
-if input.Email == "" {
-    http.Error(w, "email required", http.StatusInternalServerError)
-}
-```
-
-**Bug:** Validation failure is a client error, not a server error. Misleads monitoring dashboards.
-**Fix:** Return `422 Unprocessable Entity`.
+**Bug:** `http.StatusInternalServerError` for a missing field misleads monitoring dashboards.
+**Fix:** Return `422 Unprocessable Entity` for all validation failures.
 
 ---
 

@@ -139,40 +139,21 @@ curl -X PUT "localhost:9200/products" -H 'Content-Type: application/json' -d'
 }'
 ```
 
-### Index a document
+### Index a document and search
 
 ```bash
-curl -X POST "localhost:9200/products/_doc/1" -H 'Content-Type: application/json' -d'
-{
-  "name": "Wireless Noise-Cancelling Headphones",
-  "price": 299.99, "category": "electronics", "in_stock": true
-}'
+curl -X POST "localhost:9200/products/_doc/1" -d'
+{ "name": "Wireless Noise-Cancelling Headphones", "price": 299.99, "category": "electronics" }'
 ```
 
-### Full-text search
-
 ```json
+POST /products/_search
 {
-  "query": {
-    "match": { "name": "wireless headphones" }
-  }
+  "query": { "match": { "name": "wireless headphones" } }
 }
 ```
 
-```json
-{
-  "hits": {
-    "total": { "value": 1 },
-    "hits": [{ "_id": "1", "_score": 1.79, "_source": { "name": "Wireless Noise-Cancelling Headphones" } }]
-  }
-}
-```
-
-### Exact-value filter
-
-```json
-{ "query": { "term": { "category": "electronics" } } }
-```
+Exact-value filter: `{ "query": { "term": { "category": "electronics" } } }`
 
 ## Error Handling and Circuit Breaker Patterns
 
@@ -241,39 +222,25 @@ PUT /articles
 {
   "settings": {
     "analysis": {
-      "analyzer": {
-        "custom_english": {
-          "type": "custom", "tokenizer": "standard",
-          "filter": ["lowercase", "english_stemmer", "english_stop"]
-        }
-      },
+      "analyzer": { "custom_english": { "type": "custom", "tokenizer": "standard",
+          "filter": ["lowercase", "english_stemmer", "english_stop"] } },
       "filter": {
-        "english_stemmer": { "type": "stemmer",  "language": "english" },
-        "english_stop":    { "type": "stop",     "stopwords": "_english_" }
+        "english_stemmer": { "type": "stemmer", "language": "english" },
+        "english_stop":    { "type": "stop",    "stopwords": "_english_" }
       }
     }
   },
   "mappings": {
     "properties": {
-      "title":    { "type": "text", "analyzer": "custom_english" },
-      "author":   { "type": "keyword" },
-      "pub_date": { "type": "date" },
-      "views":    { "type": "integer" }
+      "title": { "type": "text", "analyzer": "custom_english" },
+      "author": { "type": "keyword" }, "pub_date": { "type": "date" }
     }
   }
 }
 ```
 
-### Test analyzer
-
-```bash
-curl -X POST "localhost:9200/articles/_analyze" -d'
-{ "analyzer": "custom_english", "text": "The quick brown foxes are jumping" }'
-```
-
-```json
-{ "tokens": [{ "token": "quick" }, { "token": "brown" }, { "token": "fox" }, { "token": "jump" }] }
-```
+Test: `POST /articles/_analyze { "analyzer": "custom_english", "text": "The quick brown foxes are jumping" }`
+→ tokens: `quick`, `brown`, `fox`, `jump` (stopwords removed, stems applied)
 
 ## Boolean Query DSL
 
@@ -409,89 +376,53 @@ graph TD
 
 ```mermaid
 graph TD
-    Client --> LB --> Coord1[Coordinating 1] & Coord2[Coordinating 2]
-    Coord1 & Coord2 --> Hot1[Hot SSD 1] & Hot2[Hot SSD 2] & Hot3[Hot SSD 3]
-    Hot1 & Hot2 & Hot3 --> Warm1[Warm HDD 1] & Warm2[Warm HDD 2]
-    Warm1 & Warm2 --> Cold1[Cold/Frozen]
-    Master1[Master 1] -.-> Master2[Master 2] -.-> Master3[Master 3]
+    Client --> LB --> Coord1 & Coord2
+    Coord1 & Coord2 --> Hot1[Hot SSD] & Hot2[Hot SSD] & Hot3[Hot SSD]
+    Hot1 & Hot2 & Hot3 --> Warm[Warm HDD] --> Cold[Cold/Frozen]
+    Master1 -.-> Master2 -.-> Master3
 ```
 
 | Role | Count | Reason |
 |------|-------|--------|
 | Master-eligible | 3 (odd) | Quorum (n/2)+1; 3 → tolerates 1 failure |
-| Coordinating | 2 | Offloads scatter-gather |
+| Coordinating | 2 | Offloads scatter-gather from data nodes |
 | Hot data | 3+ | Primary + 1 replica on separate nodes |
-| Warm data | 2+ | Holds data after ILM rollover |
 
 ## Shard Sizing and Allocation
 
-| Guideline | Target |
-|-----------|--------|
-| Shard size | 10–50 GB |
-| Max shards per GB heap | 20 |
-| Primary shards | Fixed at creation — cannot change without reindex |
+Target: 10–50 GB per shard. Max 20 shards per GB JVM heap. Primary shards are fixed at creation.
 
 ```bash
-# Allocate new index to hot tier
 PUT /logs-2026-03
-{
-  "settings": {
-    "index.routing.allocation.require.data": "hot",
-    "number_of_shards": 3, "number_of_replicas": 1
-  }
-}
-
-# Force-merge read-only warm index
+{ "settings": { "index.routing.allocation.require.data": "hot", "number_of_shards": 3 } }
 POST /logs-2025-01/_forcemerge?max_num_segments=1
 ```
 
 ### Zero-downtime reindex
 
-```json
-POST /_reindex
-{ "source": { "index": "products-v1" }, "dest": { "index": "products-v2" } }
-```
-
-```json
-POST /_aliases
-{
-  "actions": [
-    { "remove": { "index": "products-v1", "alias": "products" } },
-    { "add":    { "index": "products-v2", "alias": "products" } }
-  ]
-}
-```
+```bash
+POST /_reindex { "source": { "index": "products-v1" }, "dest": { "index": "products-v2" } }
+POST /_aliases { "actions": [
+  { "remove": { "index": "products-v1", "alias": "products" } },
+  { "add":    { "index": "products-v2", "alias": "products" } }
+]}
 
 ## Cross-Cluster Replication
 
 ```bash
 PUT /_cluster/settings
 { "persistent": { "cluster.remote.dr-cluster.seeds": ["dr-node1:9300"] } }
+PUT /follower-logs/_ccr/follow { "remote_cluster": "dr-cluster", "leader_index": "logs" }
 ```
 
-```json
-PUT /follower-logs/_ccr/follow
-{ "remote_cluster": "dr-cluster", "leader_index": "logs" }
-```
-
-```mermaid
-graph LR
-    Primary -->|Replicates ops| DRCluster
-    LB -->|Write + Read| Primary
-    LB -->|Failover Read| DRCluster
-```
+Use cases: DR (follower in another region), read offloading for analytics, geo-distributed search.
 
 ## Security Architecture
 
 ```json
 POST /_security/role/app-read-role
-{
-  "indices": [{
-    "names": ["logs-*"],
-    "privileges": ["read"],
-    "field_security": { "grant": ["@timestamp", "level", "message"] }
-  }]
-}
+{ "indices": [{ "names": ["logs-*"], "privileges": ["read"],
+    "field_security": { "grant": ["@timestamp", "level", "message"] } }] }
 ```
 
 ```json
@@ -510,23 +441,7 @@ POST /_security/api_key
 | Search reject count | > 0 | Any |
 
 ```bash
-GET /_cluster/health
-GET /_nodes/stats/jvm,os,fs
-GET /_cluster/pending_tasks
-GET /_nodes/hot_threads
-```
-
-## Query / Request Examples
-
-```json
-GET /products/_search
-{
-  "runtime_mappings": {
-    "price_with_tax": { "type": "double", "script": { "source": "emit(doc['price'].value * 1.21)" } }
-  },
-  "fields": ["name", "price_with_tax"], "_source": false,
-  "query": { "range": { "price_with_tax": { "gte": 100, "lte": 500 } } }
-}
+GET /_cluster/health && GET /_nodes/stats/jvm,os,fs && GET /_nodes/hot_threads
 ```
 
 ## Error Handling and Circuit Breaker Patterns
@@ -854,44 +769,23 @@ PUT /user-events
 
 ## Bug 6: Forgetting refresh in tests
 
-```python
-# ❌ — intermittently returns 0 hits
-es.index(index="products", id=1, body={"name": "Widget"})
-result = es.search(index="products", body={"query": {"match": {"name": "Widget"}}})
-assert result["hits"]["total"]["value"] == 1
-```
-
-**Bug:** Default refresh interval is 1 second. Document is buffered but not yet searchable.
-**Fix:** `es.index(..., refresh="wait_for")` in tests.
+**Bug:** Default refresh interval is 1 second — document is buffered but not yet searchable. Test intermittently returns 0 hits.
+**Fix:** `es.index(..., refresh="wait_for")` in tests. Never use `refresh=true` in production bulk indexing.
 
 ## Bug 7: Dynamic mapping causes field explosion
 
-```json
-POST /metrics/_doc
-{ "host": "web-01", "dimensions": { "env": "prod", "region": "us-east-1", "service": "api-gateway" } }
-```
-
-**Bug:** Each service with different dimension keys creates new fields. Hundreds of services = mapping explosion → master node OOM.
-**Fix:** Map `dimensions` as `"type": "flattened"` to store arbitrary key structures without field explosion.
+**Bug:** Each document with different keys under `dimensions` creates new fields. Hundreds of services → mapping explosion → master OOM.
+**Fix:** `"dimensions": { "type": "flattened" }` stores arbitrary key structures without creating new fields.
 
 ## Bug 8: Sorting on a `text` field
 
-```json
-GET /articles/_search
-{ "sort": [{ "title": { "order": "asc" } }] }
-```
-
-**Bug:** Sorting on `text` requires fielddata in JVM heap — expensive and can cause OOM.
-**Fix:** Add `"fields": { "keyword": { "type": "keyword" } }` to `title`. Sort on `title.keyword`.
+**Bug:** Sorting on `text` loads fielddata into JVM heap — expensive, can cause OOM.
+**Fix:** Add `.keyword` sub-field (`"type": "keyword"`). Sort on `title.keyword`.
 
 ## Bug 9: Unbounded `terms` aggregation
 
-```json
-{ "aggs": { "all_users": { "terms": { "field": "user_id" } } } }
-```
-
-**Bug:** Default `size: 10` returns only top 10 buckets. Setting `size: 1000000` risks OOM.
-**Fix:** Use `composite` aggregation with `after` cursor for large-cardinality pagination.
+**Bug:** Default `size: 10` silently truncates results. Setting `size: 1000000` risks OOM / circuit breaker.
+**Fix:** `composite` aggregation with `after` cursor for large-cardinality pagination.
 
 ## Bug 10: No ILM — unbounded index growth
 
