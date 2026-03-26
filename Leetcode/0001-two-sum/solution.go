@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"reflect"
+)
 
 // ============================================================
 // 0001. Two Sum
@@ -44,24 +47,39 @@ func twoSum(nums []int, target int) []int {
 // ============================================================
 
 func main() {
+	// Test yordamchi funksiya
+	passed, failed := 0, 0
+	test := func(name string, got, expected []int) {
+		if reflect.DeepEqual(got, expected) {
+			fmt.Printf("✅ PASS: %s\n", name)
+			passed++
+		} else {
+			fmt.Printf("❌ FAIL: %s\n  Got:      %v\n  Expected: %v\n", name, got, expected)
+			failed++
+		}
+	}
+
 	// Test 1: Basic case — birinchi juftlikda topiladi
-	fmt.Println(twoSum([]int{2, 7, 11, 15}, 9)) // Expected: [0, 1]
+	test("Basic case", twoSum([]int{2, 7, 11, 15}, 9), []int{0, 1})
 
 	// Test 2: O'rtada topiladi
-	fmt.Println(twoSum([]int{3, 2, 4}, 6)) // Expected: [1, 2]
+	test("O'rtada topiladi", twoSum([]int{3, 2, 4}, 6), []int{1, 2})
 
 	// Test 3: Dublikat qiymatlar
-	fmt.Println(twoSum([]int{3, 3}, 6)) // Expected: [0, 1]
+	test("Dublikat qiymatlar", twoSum([]int{3, 3}, 6), []int{0, 1})
 
 	// Test 4: Salbiy sonlar
-	fmt.Println(twoSum([]int{-1, -2, -3, -4, -5}, -8)) // Expected: [2, 4]
+	test("Salbiy sonlar", twoSum([]int{-1, -2, -3, -4, -5}, -8), []int{2, 4})
 
 	// Test 5: Aralash sonlar (manfiy + musbat)
-	fmt.Println(twoSum([]int{-3, 4, 3, 90}, 0)) // Expected: [0, 2]
+	test("Aralash sonlar", twoSum([]int{-3, 4, 3, 90}, 0), []int{0, 2})
 
 	// Test 6: Nol qiymatlar
-	fmt.Println(twoSum([]int{0, 4, 3, 0}, 0)) // Expected: [0, 3]
+	test("Nol qiymatlar", twoSum([]int{0, 4, 3, 0}, 0), []int{0, 3})
 
 	// Test 7: Katta qiymatlar
-	fmt.Println(twoSum([]int{1000000000, -1000000000}, 0)) // Expected: [0, 1]
+	test("Katta qiymatlar", twoSum([]int{1000000000, -1000000000}, 0), []int{0, 1})
+
+	// Natija
+	fmt.Printf("\n📊 Natija: %d passed, %d failed, %d total\n", passed, failed, passed+failed)
 }
