@@ -1,209 +1,100 @@
 # Go for Loop (C-style) — Find the Bug
 
-Each exercise contains a buggy Go program. Identify the bug and fix it.
+## Instructions
 
-**Difficulty ratings:**
-- 🟢 Easy — Beginner-level bug, obvious once spotted
-- 🟡 Medium — Requires understanding of Go semantics
-- 🔴 Hard — Subtle, requires deep knowledge of Go behavior
+Each exercise contains buggy Go code related to `for` loops. Identify the bug, explain why it occurs, and provide the corrected code. Difficulty levels: 🟢 Easy, 🟡 Medium, 🔴 Hard.
 
 ---
 
-## Bug 1 — Off-by-One: Last Element Skipped 🟢
+## Bug 1 🟢 — Off-by-One: Out of Bounds
 
 ```go
 package main
 
 import "fmt"
 
-func printAll(s []int) {
-    for i := 0; i < len(s)-1; i++ {
+func main() {
+    s := []int{10, 20, 30, 40, 50}
+    for i := 0; i <= len(s); i++ {
         fmt.Println(s[i])
     }
 }
-
-func main() {
-    printAll([]int{1, 2, 3, 4, 5})
-    // Expected: 1 2 3 4 5
-    // Got: 1 2 3 4
-}
 ```
 
-**Question**: What is the bug? Why is the last element skipped?
+**What is the bug?**
+
+<details>
+<summary>Hint</summary>
+What is the valid range of indices for a slice of length 5? What happens when `i == len(s)`?
+</details>
 
 <details>
 <summary>Solution</summary>
 
-**Bug**: The condition `i < len(s)-1` stops before the last element. For a 5-element slice, it stops at index 3 (skipping index 4).
+**Bug**: `i <= len(s)` allows `i` to reach `len(s)` (which is 5 for a 5-element slice). Valid indices are `0` to `len(s)-1` = 0 to 4. When `i == 5`, `s[5]` is an out-of-bounds access — **panic: runtime error: index out of range [5] with length 5**.
 
-**Fix**: Change `len(s)-1` to `len(s)`:
+**Fix**:
 ```go
-for i := 0; i < len(s); i++ {
+for i := 0; i < len(s); i++ {  // < instead of <=
     fmt.Println(s[i])
 }
 ```
 
-**Why it happens**: `len(s)-1` is the index of the last element. Using it as the loop bound means the last iteration is `i == len(s)-2`, which skips index `len(s)-1`.
-
+**Key lesson**: For a slice of length n, valid indices are `0..n-1`. Use `i < len(s)`, never `i <= len(s)`.
 </details>
 
 ---
 
-## Bug 2 — Off-by-One: Out-of-Bounds Panic 🟢
+## Bug 2 🟢 — Infinite Loop: Forgotten Post Statement
 
 ```go
 package main
 
 import "fmt"
 
-func sum(s []int) int {
-    total := 0
-    for i := 0; i <= len(s); i++ {
-        total += s[i]
-    }
-    return total
-}
-
 func main() {
-    fmt.Println(sum([]int{1, 2, 3}))
+    sum := 0
+    for i := 0; i < 100; {  // BUG: no post statement
+        sum += i
+    }
+    fmt.Println(sum)
 }
 ```
 
-**Question**: What panic does this produce and why?
+**What is the bug?**
+
+<details>
+<summary>Hint</summary>
+What value does `i` have on every iteration? Does the condition `i < 100` ever become false?
+</details>
 
 <details>
 <summary>Solution</summary>
 
-**Bug**: `i <= len(s)` causes the loop to execute when `i == len(s)`. For a 3-element slice, this tries to access `s[3]` — a valid index would be 0, 1, or 2 only.
-
-**Error**: `runtime error: index out of range [3] with length 3`
+**Bug**: The for loop has no post statement and `i` is never incremented inside the body either. `i` stays at 0 forever, `0 < 100` is always true, and the loop never terminates.
 
 **Fix**:
 ```go
-for i := 0; i < len(s); i++ {
-    total += s[i]
+sum := 0
+for i := 0; i < 100; i++ {  // add i++
+    sum += i
+}
+fmt.Println(sum)
+
+// Or increment in body:
+sum = 0
+for i := 0; i < 100; {
+    sum += i
+    i++  // must be inside body
 }
 ```
 
-**Rule**: For 0-indexed access, always use `i < len(s)`, not `i <= len(s)`.
-
+**Key lesson**: Always verify that the loop condition will eventually become false.
 </details>
 
 ---
 
-## Bug 3 — Infinite Loop: Missing Post Statement 🟢
-
-```go
-package main
-
-import "fmt"
-
-func printEven(n int) {
-    for i := 0; i <= n; {
-        if i%2 == 0 {
-            fmt.Println(i)
-        }
-        // Forgot to increment when odd
-        if i%2 == 0 {
-            i++
-        }
-    }
-}
-
-func main() {
-    printEven(10)
-}
-```
-
-**Question**: What happens when `i` is odd? What does this cause?
-
-<details>
-<summary>Solution</summary>
-
-**Bug**: When `i` is odd, neither `if` block increments `i`. For example, `i = 1` (odd): the first `if` is false (not printed), the second `if` is false (not incremented) — `i` stays at 1 forever.
-
-**Result**: Infinite loop printing nothing after the first even number.
-
-**Fix**: Always increment:
-```go
-for i := 0; i <= n; i++ {
-    if i%2 == 0 {
-        fmt.Println(i)
-    }
-}
-```
-
-</details>
-
----
-
-## Bug 4 — Break Only Exits Inner Loop 🟡
-
-```go
-package main
-
-import "fmt"
-
-func findTarget(matrix [][]int, target int) (int, int) {
-    for i := 0; i < len(matrix); i++ {
-        for j := 0; j < len(matrix[i]); j++ {
-            if matrix[i][j] == target {
-                fmt.Printf("Found at (%d,%d)\n", i, j)
-                break // Bug: doesn't stop the outer loop
-            }
-        }
-    }
-    return -1, -1 // always returns -1,-1
-}
-
-func main() {
-    m := [][]int{{1, 2}, {3, 4}, {5, 6}}
-    findTarget(m, 3)
-    // Expected: Found at (1,0), returns (1,0)
-    // Got: Found at (1,0), continues searching, returns (-1,-1)
-}
-```
-
-<details>
-<summary>Solution</summary>
-
-**Bug**: `break` only exits the inner `for j` loop. The outer `for i` loop continues, printing "Found at..." and then continuing to search — and always returning `-1, -1`.
-
-**Fix**: Use a labeled break:
-```go
-func findTarget(matrix [][]int, target int) (int, int) {
-outer:
-    for i := 0; i < len(matrix); i++ {
-        for j := 0; j < len(matrix[i]); j++ {
-            if matrix[i][j] == target {
-                fmt.Printf("Found at (%d,%d)\n", i, j)
-                break outer
-            }
-        }
-    }
-    return -1, -1
-}
-```
-
-Or return directly:
-```go
-func findTarget(matrix [][]int, target int) (int, int) {
-    for i := 0; i < len(matrix); i++ {
-        for j := 0; j < len(matrix[i]); j++ {
-            if matrix[i][j] == target {
-                return i, j  // immediate return — no label needed
-            }
-        }
-    }
-    return -1, -1
-}
-```
-
-</details>
-
----
-
-## Bug 5 — Goroutine Captures Loop Variable 🟡
+## Bug 3 🟢 — Goroutine Captures Loop Variable by Reference
 
 ```go
 package main
@@ -215,242 +106,422 @@ import (
 
 func main() {
     var wg sync.WaitGroup
-    results := make([]int, 5)
     for i := 0; i < 5; i++ {
         wg.Add(1)
         go func() {
             defer wg.Done()
-            results[i] = i * i  // BUG
+            fmt.Println(i)  // BUG: captures &i
         }()
     }
     wg.Wait()
-    fmt.Println(results)
-    // Expected: [0 1 4 9 16]
-    // Got: panic or wrong values
 }
+// Expected: 0 1 2 3 4 (in any order)
+// Actual: likely 5 5 5 5 5
 ```
 
-**Question**: What is the bug? What are the two problems this code has?
+**What is the bug?**
+
+<details>
+<summary>Hint</summary>
+What does the closure capture — the value of `i` or a reference to `i`? What is the value of `i` when the goroutines actually run?
+</details>
 
 <details>
 <summary>Solution</summary>
 
-**Bugs**:
-1. **Data race on `i`**: All goroutines read `i` which is being modified by the main goroutine's loop — undefined behavior.
-2. **Wrong index**: By the time goroutines run, `i` may be 5 (final value), causing `results[5]` — out of bounds panic, or all goroutines writing to the same index.
+**Bug**: The goroutine closure captures the variable `i` by reference (address). By the time the goroutines run, the main loop has finished and `i` equals 5. All goroutines read the same variable and print 5.
 
-**Fix**: Pass `i` as an argument (evaluates at call time):
+**Fix 1** — Pass `i` as an argument:
 ```go
 for i := 0; i < 5; i++ {
     wg.Add(1)
-    go func(idx int) {
+    go func(i int) {  // i is a parameter — new variable per call
         defer wg.Done()
-        results[idx] = idx * idx
-    }(i)  // i is passed by value here
+        fmt.Println(i)
+    }(i)  // pass current value of i
 }
 ```
 
-Note: In Go 1.22+, each iteration of a `for range` loop gets its own variable, but for C-style `for i := 0; i < n; i++`, you still need to pass by value.
+**Fix 2** — Shadow with a new variable:
+```go
+for i := 0; i < 5; i++ {
+    i := i  // new variable, scoped to iteration
+    wg.Add(1)
+    go func() {
+        defer wg.Done()
+        fmt.Println(i)
+    }()
+}
+```
 
+**Key lesson**: Always pass loop variables explicitly to goroutines. Never rely on closure capture in C-style for loops.
 </details>
 
 ---
 
-## Bug 6 — Appending to Slice While Iterating 🟡
+## Bug 4 🟢 — break Exits Switch, Not For Loop
 
 ```go
 package main
 
 import "fmt"
 
-func doubleUntilBig(s []int) []int {
+func findTarget(s []int, target int) {
     for i := 0; i < len(s); i++ {
-        if s[i] < 100 {
-            s = append(s, s[i]*2)  // BUG: modifies slice during iteration
+        switch {
+        case s[i] == target:
+            fmt.Printf("Found %d at index %d\n", target, i)
+            break  // intention: stop searching
+        case s[i] > target:
+            fmt.Println("Passed target")
+            break
+        }
+    }
+}
+
+func main() {
+    findTarget([]int{1, 3, 5, 7, 9}, 5)
+    // Expected: finds at index 2, stops
+    // Actual: continues searching after finding
+}
+```
+
+**What is the bug?**
+
+<details>
+<summary>Hint</summary>
+What does `break` exit when it is inside a `switch` that is inside a `for` loop?
+</details>
+
+<details>
+<summary>Solution</summary>
+
+**Bug**: `break` inside a `switch` exits only the `switch`, not the enclosing `for` loop. The loop continues after the switch, processing all remaining elements.
+
+**Fix** — Use labeled break:
+```go
+func findTarget(s []int, target int) {
+loop:
+    for i := 0; i < len(s); i++ {
+        switch {
+        case s[i] == target:
+            fmt.Printf("Found %d at index %d\n", target, i)
+            break loop  // exits the for loop
+        case s[i] > target:
+            fmt.Println("Passed target — not in slice")
+            break loop
+        }
+    }
+}
+```
+
+**Alternative** — Use `return` if in a function:
+```go
+func findTarget(s []int, target int) int {
+    for i := 0; i < len(s); i++ {
+        if s[i] == target {
+            fmt.Printf("Found at index %d\n", i)
+            return i
+        }
+    }
+    return -1
+}
+```
+</details>
+
+---
+
+## Bug 5 🟡 — Unsigned Integer Underflow in Countdown
+
+```go
+package main
+
+import "fmt"
+
+func countdown(n uint) {
+    for i := n; i >= 0; i-- {
+        fmt.Println(i)
+    }
+}
+
+func main() {
+    countdown(5)
+}
+```
+
+**What is the bug?**
+
+<details>
+<summary>Hint</summary>
+What happens to an unsigned integer when you subtract 1 from 0? Can `uint` ever be negative?
+</details>
+
+<details>
+<summary>Solution</summary>
+
+**Bug**: `uint` is an unsigned integer — it can never be negative. When `i == 0` and `i--` runs, `i` wraps around to the maximum `uint` value (~1.8×10¹⁹ on 64-bit). The condition `i >= 0` is always true for unsigned integers. This creates an infinite loop.
+
+**Fix 1** — Use `int`:
+```go
+func countdown(n int) {
+    for i := n; i >= 0; i-- {
+        fmt.Println(i)
+    }
+}
+```
+
+**Fix 2** — Restructure to avoid the underflow:
+```go
+func countdown(n uint) {
+    for i := n + 1; i > 0; i-- {
+        fmt.Println(i - 1)  // print i-1 to show 0
+    }
+}
+
+// Or use a different loop form:
+func countdown(n uint) {
+    i := n
+    for {
+        fmt.Println(i)
+        if i == 0 { break }
+        i--
+    }
+}
+```
+
+**Key lesson**: Never use unsigned integers for loop counters that count down to 0. Use `int`.
+</details>
+
+---
+
+## Bug 6 🟡 — Modifying Slice Length While Iterating
+
+```go
+package main
+
+import "fmt"
+
+func removeNegatives(s []int) []int {
+    for i := 0; i < len(s); i++ {
+        if s[i] < 0 {
+            s = append(s[:i], s[i+1:]...)
         }
     }
     return s
 }
 
 func main() {
-    result := doubleUntilBig([]int{5, 10, 20})
+    result := removeNegatives([]int{1, -2, -3, 4, -5, 6})
     fmt.Println(result)
-    // This may run for a very long time or forever!
+    // Expected: [1 4 6]
+    // Actual: [1 -3 4 6] — misses some negatives
 }
 ```
+
+**What is the bug?**
+
+<details>
+<summary>Hint</summary>
+When you remove element at index `i`, what happens to the elements at indices `i+1`, `i+2`, etc.? Where does the next unchecked element land?
+</details>
 
 <details>
 <summary>Solution</summary>
 
-**Bug**: The loop uses `len(s)` in the condition, but `s` grows inside the loop body. Every appended element `< 100` causes another append, potentially running forever.
+**Bug**: When `s[i]` is removed (e.g., `s[1] = -2`), all elements shift left by one. The element that was at `s[i+1]` (e.g., `-3`) is now at `s[i]`. But then `i++` runs, and we skip `s[i]` (which is now `-3`). Result: consecutive negative numbers are missed.
 
-**Fix**: Cache the length before the loop, or use a different approach:
+**Trace**:
+- i=1: s[1]=-2, remove → s=[1,-3,4,-5,6], i becomes 2
+- i=2: s[2]=4 (skipped -3!), continue
+- i=3: s[3]=-5, remove → s=[1,-3,4,6], i becomes 4
+- i=4: out of bounds, stop
+- Result: [1,-3,4,6] — missed -3
+
+**Fix** — Don't increment `i` after removal:
 ```go
-func doubleUntilBig(s []int) []int {
-    result := make([]int, 0, len(s))
-    for i := 0; i < len(s); i++ {  // only iterates original elements
-        result = append(result, s[i])
-        if s[i] < 100 {
-            result = append(result, s[i]*2)
+func removeNegatives(s []int) []int {
+    for i := 0; i < len(s); {
+        if s[i] < 0 {
+            s = append(s[:i], s[i+1:]...)
+            // Don't increment i — next element shifted to position i
+        } else {
+            i++
         }
     }
-    return result
+    return s
 }
 ```
 
-Or cache length:
+**Better fix** — Two-pointer in-place:
 ```go
-n := len(s)
-for i := 0; i < n; i++ {  // fixed number of iterations
-    if s[i] < 100 {
-        s = append(s, s[i]*2)
+func removeNegatives(s []int) []int {
+    j := 0
+    for i := 0; i < len(s); i++ {
+        if s[i] >= 0 {
+            s[j] = s[i]
+            j++
+        }
     }
+    return s[:j]
 }
 ```
-
 </details>
 
 ---
 
-## Bug 7 — Continue Skips Error Handling 🟡
-
-```go
-package main
-
-import (
-    "errors"
-    "fmt"
-)
-
-func processItems(items []int) error {
-    var firstErr error
-    for i := 0; i < len(items); i++ {
-        if items[i] < 0 {
-            continue  // BUG: skip setting firstErr
-        }
-        if err := validate(items[i]); err != nil {
-            firstErr = err
-        }
-    }
-    return firstErr
-}
-
-func validate(x int) error {
-    if x > 100 {
-        return errors.New("too large")
-    }
-    return nil
-}
-
-func main() {
-    err := processItems([]int{1, -5, 200, 3})
-    fmt.Println(err) // should report that -5 is invalid
-}
-```
-
-**Question**: What critical logic does the `continue` bypass?
-
-<details>
-<summary>Solution</summary>
-
-**Bug**: The `continue` bypasses the `validate` call for negative numbers. The requirement is presumably to collect all errors — but negative items are silently skipped instead of being flagged as invalid.
-
-**Fix**: Validate all items, including negative ones:
-```go
-func processItems(items []int) error {
-    var firstErr error
-    for i := 0; i < len(items); i++ {
-        if items[i] < 0 {
-            if firstErr == nil {
-                firstErr = fmt.Errorf("item[%d]: negative value %d", i, items[i])
-            }
-            continue  // skip further processing, but record the error
-        }
-        if err := validate(items[i]); err != nil {
-            if firstErr == nil {
-                firstErr = fmt.Errorf("item[%d]: %w", i, err)
-            }
-        }
-    }
-    return firstErr
-}
-```
-
-</details>
-
----
-
-## Bug 8 — Post Statement Not Executed on Panic Recovery 🔴
+## Bug 7 🟡 — Wrong Binary Search Causes Infinite Loop
 
 ```go
 package main
 
 import "fmt"
 
-func safeProcess(items []int) {
-    for i := 0; i < len(items); i++ {
-        func() {
-            defer func() {
-                if r := recover(); r != nil {
-                    fmt.Printf("recovered at i=%d: %v\n", i, r)
-                    // Developer intended i++ to happen after recovery
-                    // but believes it happens automatically
-                }
-            }()
-            if items[i] == 0 {
-                panic("zero found")
-            }
-            fmt.Printf("processed %d\n", items[i])
-        }()
+func binarySearch(s []int, target int) int {
+    lo, hi := 0, len(s)-1
+    for lo <= hi {
+        mid := (lo + hi) / 2
+        if s[mid] == target {
+            return mid
+        } else if s[mid] < target {
+            lo = mid  // BUG: should be mid+1
+        } else {
+            hi = mid  // BUG: should be mid-1
+        }
     }
+    return -1
 }
 
 func main() {
-    safeProcess([]int{1, 0, 2, 3})
+    s := []int{1, 3, 5, 7, 9}
+    fmt.Println(binarySearch(s, 6))  // hangs!
 }
 ```
 
-**Question**: Does this code have a bug? What does it actually output?
+**What is the bug?**
+
+<details>
+<summary>Hint</summary>
+What happens when `lo == hi == mid` and the target is not found? Do `lo` or `hi` change?
+</details>
 
 <details>
 <summary>Solution</summary>
 
-**Analysis**: This code is actually correct — the `panic` is contained within the inner anonymous function. The `defer recover()` catches it, the inner function returns normally, and then the `for` loop's post statement `i++` runs as expected.
+**Bug**: When `lo = mid` (not `mid+1`) and `hi = mid` (not `mid-1`), the search can get stuck in an infinite loop. For example, with `lo=2, hi=2`: `mid=2`, `s[2] < target`, so `lo = mid = 2` — nothing changes! The loop runs forever.
 
-**Output**:
-```
-processed 1
-recovered at i=1: zero found
-processed 2
-processed 3
-```
+**Also**: `(lo+hi)/2` can overflow for large indices. Use `lo + (hi-lo)/2`.
 
-The subtle point: `i++` in the `for` post statement runs after the inner function call returns (whether normally or via recover). The loop continues correctly.
-
-**The real bug risk**: If the panic were in the outer scope (not wrapped in an inner function), the post statement would NOT run — the deferred recover would be on the outer function's stack, not the loop's.
-
+**Fix**:
 ```go
-// BROKEN: panic in loop body, recover in outer function
-func safeProcessBroken(items []int) {
-    defer func() {
-        if r := recover(); r != nil {
-            fmt.Println("recovered:", r)
-            // Loop is gone — execution continues AFTER safeProcessBroken returns
-        }
-    }()
-    for i := 0; i < len(items); i++ {
-        if items[i] == 0 {
-            panic("zero") // post i++ never runs; function unwinds
+func binarySearch(s []int, target int) int {
+    lo, hi := 0, len(s)-1
+    for lo <= hi {
+        mid := lo + (hi-lo)/2  // no overflow
+        if s[mid] == target {
+            return mid
+        } else if s[mid] < target {
+            lo = mid + 1  // +1 to make progress
+        } else {
+            hi = mid - 1  // -1 to make progress
         }
     }
+    return -1
 }
 ```
 
+**Key lesson**: In binary search, always use `mid+1` and `mid-1` to guarantee progress.
 </details>
 
 ---
 
-## Bug 9 — Integer Overflow in Loop Bound 🔴
+## Bug 8 🟡 — defer Inside Loop with Resource Leak
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+)
+
+func processFiles(paths []string) error {
+    for i := 0; i < len(paths); i++ {
+        f, err := os.Open(paths[i])
+        if err != nil {
+            return err
+        }
+        defer f.Close()  // BUG: defers accumulate until function returns
+
+        // Process file
+        data := make([]byte, 1024)
+        _, err = f.Read(data)
+        if err != nil {
+            return err
+        }
+        fmt.Printf("Processed %s\n", paths[i])
+    }
+    return nil
+}
+```
+
+**What is the bug?**
+
+<details>
+<summary>Hint</summary>
+When do `defer`ed calls execute? What happens if you open 1000 files but the deferred closes only run at the end of the function?
+</details>
+
+<details>
+<summary>Solution</summary>
+
+**Bug**: `defer f.Close()` in a loop causes all close calls to accumulate until `processFiles` returns. If `len(paths)` is large, you'll have many file descriptors open simultaneously — potentially exceeding the OS limit (typically 1024 or 4096 open files).
+
+**Fix** — Use an inner function to scope the defer:
+```go
+func processFiles(paths []string) error {
+    for i := 0; i < len(paths); i++ {
+        err := processFile(paths[i])
+        if err != nil {
+            return fmt.Errorf("processing %s: %w", paths[i], err)
+        }
+    }
+    return nil
+}
+
+func processFile(path string) error {
+    f, err := os.Open(path)
+    if err != nil {
+        return err
+    }
+    defer f.Close()  // now deferred to processFile's return — file closed after each iteration
+
+    data := make([]byte, 1024)
+    if _, err = f.Read(data); err != nil {
+        return err
+    }
+    fmt.Printf("Processed %s\n", path)
+    return nil
+}
+```
+
+**Alternative** — Explicit close:
+```go
+for i := 0; i < len(paths); i++ {
+    f, err := os.Open(paths[i])
+    if err != nil {
+        return err
+    }
+    // process...
+    f.Close()  // explicit close each iteration — no defer needed
+}
+```
+
+**Key lesson**: Never use `defer` inside a loop for resource cleanup. Use an inner function or explicit cleanup.
+</details>
+
+---
+
+## Bug 9 🔴 — Integer Overflow in Loop Bound
 
 ```go
 package main
@@ -460,209 +531,315 @@ import (
     "math"
 )
 
-func countUp() {
-    for i := 0; i <= math.MaxInt64; i++ {
-        if i%1000000000 == 0 {
-            fmt.Printf("i = %d\n", i)
-        }
+func countOperations(n int32) int64 {
+    var count int64
+    limit := n * n  // BUG: int32 multiplication can overflow!
+    for i := int32(0); i < limit; i++ {
+        count++
     }
+    return count
 }
 
 func main() {
-    countUp()
+    fmt.Println(countOperations(50000))
+    // Expected: 2,500,000,000
+    // Actual: wrong result or panic due to overflow
 }
 ```
 
-**Question**: Will this loop ever terminate? What happens to `i` when it reaches `math.MaxInt64`?
+**What is the bug?**
+
+<details>
+<summary>Hint</summary>
+What is the maximum value of `int32`? What is 50000 × 50000?
+</details>
 
 <details>
 <summary>Solution</summary>
 
-**Bug**: On a 64-bit system, `i` is of type `int` which is 64-bit. When `i == math.MaxInt64`, `i++` causes signed integer overflow — undefined behavior in C, but in Go it wraps to `math.MinInt64` (a very large negative number). The condition `i <= math.MaxInt64` is then true again (since MinInt64 ≤ MaxInt64), and the loop continues from a very large negative value, effectively running forever.
+**Bug**: `n * n` where `n = int32(50000)`. `50000 × 50000 = 2,500,000,000`. The maximum `int32` value is ~2,147,483,647 (~2.1 billion). `2.5 billion > 2.1 billion` — **integer overflow**! The result wraps to a negative number, and the loop runs zero times (or a wrong number of times).
 
-**This loop never terminates.**
+```
+50000 * 50000 = 2,500,000,000
+int32 max     = 2,147,483,647
+overflow!     = 2,500,000,000 - 2^32 = 205,032,704 (wraps)
+```
 
-**Fix 1**: Use `for i := 0; i < math.MaxInt64; i++` (but still runs for ~9 quintillion iterations — impractical).
-
-**Fix 2**: Design the algorithm differently. Don't loop to `MaxInt64`. If you need to count up to a large value, use a different approach.
-
-**Fix 3**: For bounds, use `uint64` carefully — but overflow to 0 would still cause an infinite loop.
-
+**Fix** — Use `int64` for all intermediate computations:
 ```go
-// Practical fix: add a maximum iteration guard
-const maxIter = 1_000_000_000
-for i := 0; i < maxIter; i++ {
-    // body
+func countOperations(n int64) int64 {
+    var count int64
+    limit := n * n  // int64 can hold 50000*50000 = 2.5 billion
+    for i := int64(0); i < limit; i++ {
+        count++
+    }
+    return count
+}
+
+// Or with overflow check:
+func countOperations(n int32) (int64, error) {
+    if n > math.Sqrt(math.MaxInt32) {
+        return 0, fmt.Errorf("n=%d would overflow int32 when squared", n)
+    }
+    var count int64
+    limit := int64(n) * int64(n)  // widen before multiply
+    for i := int64(0); i < limit; i++ {
+        count++
+    }
+    return count, nil
 }
 ```
 
+**Key lesson**: Always use `int` (platform-native) or `int64` for loop bounds. Never use `int32` for values that may be squared or multiplied.
 </details>
 
 ---
 
-## Bug 10 — Two-Pointer Off-by-One in Palindrome Check 🟡
+## Bug 10 🔴 — Race Condition in Concurrent Loop
+
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    var mu sync.Mutex
+    results := make([]int, 0)
+    var wg sync.WaitGroup
+
+    data := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+    for i := 0; i < len(data); i++ {
+        wg.Add(1)
+        go func(i int) {
+            defer wg.Done()
+            result := data[i] * data[i]  // compute
+            mu.Lock()
+            results = append(results, result)
+            mu.Unlock()
+        }(i)
+    }
+
+    wg.Wait()
+    // BUG: sorting issue — results are in random order
+    // More subtle BUG: data[i] read while loop continues changing i
+    fmt.Println(results)
+}
+```
+
+**What is the bug?**
+
+<details>
+<summary>Hint</summary>
+Is `data[i]` safe to read inside the goroutine? Is `i` captured correctly? What about `results`?
+</details>
+
+<details>
+<summary>Solution</summary>
+
+**Bug 1**: `data[i]` inside the goroutine — `i` is passed correctly as a function argument, so `data[i]` uses the correct index. This is actually OK.
+
+**Bug 2**: The results are written in non-deterministic order. If the caller expects `results[j]` to correspond to `data[j]^2`, this is wrong because goroutines append in arbitrary order.
+
+**Bug 3**: If `data` is a large shared slice being written by other goroutines, `data[i]` is a data race. Even with just reads, if anything writes to `data` concurrently, this is a race.
+
+**Fix** — Pre-allocate and use index-based writes:
+```go
+func main() {
+    data := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+    results := make([]int, len(data))  // pre-allocate with known size
+    var wg sync.WaitGroup
+
+    for i := 0; i < len(data); i++ {
+        wg.Add(1)
+        go func(idx int) {
+            defer wg.Done()
+            results[idx] = data[idx] * data[idx]  // write to own index — no race
+        }(i)
+    }
+
+    wg.Wait()
+    fmt.Println(results)  // ordered: [1 4 9 16 25 36 49 64 81 100]
+}
+```
+
+**Key insight**: For parallel processing where order matters, pre-allocate the result slice and write to `results[idx]` rather than using `append`. Each goroutine writes to a unique index — no mutex needed.
+</details>
+
+---
+
+## Bug 11 🔴 — Stack Overflow from Deep Recursive-Style Loop
 
 ```go
 package main
 
 import "fmt"
 
-func isPalindrome(s string) bool {
-    for lo, hi := 0, len(s); lo < hi; lo, hi = lo+1, hi-1 {
-        if s[lo] != s[hi] {
-            return false
-        }
-    }
-    return true
+// Intended: process a deeply nested tree iteratively
+type Node struct {
+    Val      int
+    Children []*Node
 }
 
-func main() {
-    fmt.Println(isPalindrome("racecar")) // expected: true
-    fmt.Println(isPalindrome("hello"))   // expected: false
+func processTree(root *Node) []int {
+    result := []int{}
+    stack := []*Node{root}
+
+    for len(stack) > 0 {
+        node := stack[len(stack)-1]
+        stack = stack[:len(stack)-1]
+
+        result = append(result, node.Val)
+
+        // BUG: adds children in wrong order for DFS
+        for i := 0; i < len(node.Children); i++ {
+            stack = append(stack, node.Children[i])
+        }
+    }
+    return result
 }
 ```
 
-**Question**: What is the bug? What panic does this produce?
+**What is the bug?**
+
+<details>
+<summary>Hint</summary>
+If you want depth-first pre-order traversal, in what order should children be pushed onto the stack? Which child should be popped first?
+</details>
 
 <details>
 <summary>Solution</summary>
 
-**Bug**: `hi` is initialized to `len(s)`, not `len(s)-1`. On the first iteration, `s[hi]` accesses `s[len(s)]` which is out of bounds.
+**Bug**: Children are pushed left-to-right, so the last child is on top of the stack and processed first. This gives reverse-order DFS (right subtree before left), not standard left-to-right pre-order DFS.
 
-**Error**: `runtime error: index out of range [7] with length 7` (for "racecar")
+For a tree:
+```
+    A
+   /|\
+  B  C  D
+```
+Expected pre-order: A, B, C, D
+Actual output: A, D, C, B (reversed)
 
-**Fix**: Initialize `hi` to `len(s)-1`:
+**Fix** — Push children in reverse order so left child is processed first:
 ```go
-func isPalindrome(s string) bool {
-    for lo, hi := 0, len(s)-1; lo < hi; lo, hi = lo+1, hi-1 {
-        if s[lo] != s[hi] {
-            return false
+func processTree(root *Node) []int {
+    result := []int{}
+    stack := []*Node{root}
+
+    for len(stack) > 0 {
+        node := stack[len(stack)-1]
+        stack = stack[:len(stack)-1]
+        result = append(result, node.Val)
+
+        // Push children in REVERSE order so first child is processed first
+        for i := len(node.Children) - 1; i >= 0; i-- {
+            stack = append(stack, node.Children[i])
         }
     }
-    return true
+    return result
 }
 ```
 
-**Edge case**: Also handle empty string (`len(s) == 0`) — `len(s)-1 == -1`, so `lo < hi` is `0 < -1 == false`, loop doesn't run, returns `true` — correct.
-
+**Key insight**: Stack-based iterative DFS requires pushing children in reverse order to maintain the expected left-to-right traversal.
 </details>
 
 ---
 
-## Bug 11 — Misuse of `i` After Loop Scope 🟡
+## Bug 12 🔴 — Memory Leak from Growing Slice in Long-Running Loop
 
 ```go
 package main
 
-import "fmt"
+import (
+    "fmt"
+    "time"
+)
 
-func findFirst(s []int, target int) int {
-    for i := 0; i < len(s); i++ {
-        if s[i] == target {
-            break
+func processEvents() {
+    var log []string  // accumulates ALL events forever
+    for {
+        event := waitForEvent()
+        log = append(log, event)  // MEMORY LEAK: log grows unboundedly
+
+        if len(log)%100 == 0 {
+            fmt.Printf("Processed %d events\n", len(log))
         }
     }
-    return i  // BUG: i is not in scope here
 }
 
-func main() {
-    fmt.Println(findFirst([]int{1, 2, 3, 4}, 3))
+func waitForEvent() string {
+    time.Sleep(time.Millisecond)
+    return fmt.Sprintf("event-%d", time.Now().UnixNano())
 }
 ```
 
-**Question**: What compile error does this produce?
+**What is the bug?**
 
 <details>
-<summary>Solution</summary>
-
-**Bug**: `i` is declared in the init statement of the `for` loop and is scoped to the loop block. After the loop, `i` is undefined. The compiler error is: `undefined: i`.
-
-**Fix 1**: Declare `i` outside the loop:
-```go
-func findFirst(s []int, target int) int {
-    i := 0
-    for ; i < len(s); i++ {
-        if s[i] == target {
-            break
-        }
-    }
-    if i == len(s) {
-        return -1  // not found
-    }
-    return i
-}
-```
-
-**Fix 2**: Return directly from inside the loop:
-```go
-func findFirst(s []int, target int) int {
-    for i := 0; i < len(s); i++ {
-        if s[i] == target {
-            return i
-        }
-    }
-    return -1
-}
-```
-
-Fix 2 is the idiomatic Go approach.
-
+<summary>Hint</summary>
+What happens to the `log` slice over time? Is all historical event data needed?
 </details>
 
----
-
-## Bug 12 — Batch Processing Skips Last Batch 🔴
-
-```go
-package main
-
-import "fmt"
-
-func processBatches(items []string, batchSize int) {
-    for start := 0; start+batchSize <= len(items); start += batchSize {
-        batch := items[start : start+batchSize]
-        fmt.Printf("Processing batch: %v\n", batch)
-    }
-}
-
-func main() {
-    items := []string{"a", "b", "c", "d", "e"}
-    processBatches(items, 2)
-    // Expected:
-    // Processing batch: [a b]
-    // Processing batch: [c d]
-    // Processing batch: [e]     <- MISSING
-}
-```
-
-**Question**: Why is the last incomplete batch skipped?
-
 <details>
 <summary>Solution</summary>
 
-**Bug**: The condition `start+batchSize <= len(items)` requires a full batch to exist. When `start = 4` and `batchSize = 2`: `4+2 = 6 <= 5` is false — so the loop stops before processing the last item `"e"`.
+**Bug**: `log` grows without bound. In a long-running process, this will eventually exhaust memory.
 
-**Fix**: Use `start < len(items)` as the condition, and compute `end` safely:
+**Fix 1** — Fixed-size circular buffer (keep only last N events):
 ```go
-func processBatches(items []string, batchSize int) {
-    for start := 0; start < len(items); start += batchSize {
-        end := start + batchSize
-        if end > len(items) {
-            end = len(items)
+func processEvents() {
+    const maxLog = 1000
+    log := make([]string, 0, maxLog)
+    for {
+        event := waitForEvent()
+        if len(log) >= maxLog {
+            // Remove oldest (shift left) — or use a ring buffer
+            copy(log, log[1:])
+            log = log[:len(log)-1]
         }
-        batch := items[start:end]
-        fmt.Printf("Processing batch: %v\n", batch)
+        log = append(log, event)
     }
 }
 ```
 
-**Output**:
-```
-Processing batch: [a b]
-Processing batch: [c d]
-Processing batch: [e]
+**Fix 2** — Process and discard (streaming, no accumulation):
+```go
+func processEvents() {
+    count := 0
+    for {
+        event := waitForEvent()
+        processEvent(event)  // handle immediately, don't store
+        count++
+        if count%100 == 0 {
+            fmt.Printf("Processed %d events\n", count)
+        }
+    }
+}
 ```
 
-This is a very common production bug in pagination, batch processing, and chunked I/O.
+**Fix 3** — Use a ring buffer (production-quality):
+```go
+type RingBuffer struct {
+    data []string
+    head int
+    size int
+    cap  int
+}
 
+func NewRingBuffer(capacity int) *RingBuffer {
+    return &RingBuffer{data: make([]string, capacity), cap: capacity}
+}
+
+func (r *RingBuffer) Add(s string) {
+    r.data[r.head] = s
+    r.head = (r.head + 1) % r.cap
+    if r.size < r.cap { r.size++ }
+}
+```
+
+**Key lesson**: Any slice that grows in a long-running loop must have a bound. Use circular buffers, discard-after-process, or explicit max-size enforcement.
 </details>

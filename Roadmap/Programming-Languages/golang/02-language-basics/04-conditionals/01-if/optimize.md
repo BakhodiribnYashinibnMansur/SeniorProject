@@ -1,87 +1,657 @@
 # if Statement — Optimization Exercises
 
-Each exercise has slow code with a known bottleneck. Your goal: make it faster.
+Each exercise has slow or suboptimal code with a known bottleneck. Your goal: make it faster, cleaner, or more correct.
 
 Difficulty: 🟢 Easy | 🟡 Medium | 🔴 Hard
-Category: 📦 Allocation | ⚡ CPU | 🔄 Algorithm | 💾 Memory
 
 ---
 
-## Exercise 1 🟢 ⚡ — Repeated Function Call in Condition
+## Exercise 1 🟢 — Eliminate Redundant Boolean Comparison
 
-**What the code does:** Validates a user role by calling `getRole()` twice in the if condition.
-
-**The problem:** `getRole()` is called 2-3 times even though the value is the same.
+**Problem:** This code compiles and runs, but it is not idiomatic Go and adds unnecessary overhead in readability and expression evaluation.
 
 ```go
 package main
 
 import "fmt"
 
-func getRole(userID int) string {
-    // Simulates a map lookup or DB call
-    roles := map[int]string{1: "admin", 2: "editor", 3: "viewer"}
-    return roles[userID]
-}
-
-func checkAccess(userID int) string {
-    if getRole(userID) == "admin" || getRole(userID) == "editor" {
-        if getRole(userID) == "admin" {
-            return "full access"
+func isEligible(age int, hasLicense bool) bool {
+    if hasLicense == true {
+        if age >= 18 == true {
+            return true
+        } else {
+            return false
         }
-        return "write access"
+    } else {
+        return false
     }
-    return "read only"
 }
 
 func main() {
-    fmt.Println(checkAccess(1)) // full access
-    fmt.Println(checkAccess(2)) // write access
-    fmt.Println(checkAccess(3)) // read only
+    fmt.Println(isEligible(20, true))  // true
+    fmt.Println(isEligible(16, true))  // false
+    fmt.Println(isEligible(20, false)) // false
 }
 ```
 
-**Current benchmark:**
-```
-BenchmarkCheckAccess-8    5000000    320 ns/op    0 allocs/op
-```
+**What to improve:**
+- Remove redundant `== true` and `== false` comparisons
+- Eliminate unnecessary `else` after `return`
+- Simplify to a single expression
 
 <details>
 <summary>Hint</summary>
-Call `getRole()` once and store the result in a variable. Use the variable in all subsequent if conditions.
+
+A `bool` is already a boolean expression. `if flag == true` is identical to `if flag`. After a `return` in an `if` body, the `else` keyword is unnecessary — the remaining code only runs when the condition was false.
+
 </details>
 
 <details>
-<summary>Optimized Solution</summary>
+<summary>Solution</summary>
 
 ```go
-func checkAccess(userID int) string {
-    role := getRole(userID)  // called exactly once
-    if role == "admin" {
-        return "full access"
-    }
-    if role == "editor" {
-        return "write access"
-    }
-    return "read only"
+package main
+
+import "fmt"
+
+func isEligible(age int, hasLicense bool) bool {
+    return hasLicense && age >= 18
+}
+
+func main() {
+    fmt.Println(isEligible(20, true))  // true
+    fmt.Println(isEligible(16, true))  // false
+    fmt.Println(isEligible(20, false)) // false
 }
 ```
 
-**Optimized benchmark:**
-```
-BenchmarkCheckAccess-8    8000000    140 ns/op    0 allocs/op
-```
+**Why it's better:**
+- `hasLicense && age >= 18` is a single boolean expression — no branches needed
+- The compiler may generate a single `AND` instruction rather than multiple conditional jumps
+- Idiomatic Go: return the expression directly
 
-**Explanation:** Calling `getRole()` once reduces map lookups from 2-3 to 1. The if structure is also simplified — no need for nested if when you have the role cached. 2.3x speedup.
 </details>
 
 ---
 
-## Exercise 2 🟢 📦 — Error Allocation in Hot Path
+## Exercise 2 🟢 — Replace Nested `if` with Guard Clauses
 
-**What the code does:** Validates input in a tight loop, returning errors for invalid values.
+**Problem:** This HTTP handler has deeply nested `if` statements. Deep nesting makes the happy path hard to find and the error paths hard to read.
 
-**The problem:** `errors.New()` allocates a new error object on every failure.
+```go
+func createOrder(w http.ResponseWriter, r *http.Request) {
+    user := getUser(r)
+    if user != nil {
+        if user.IsActive {
+            var req OrderRequest
+            if err := json.NewDecoder(r.Body).Decode(&req); err == nil {
+                if len(req.Items) > 0 {
+                    if req.Total > 0 {
+                        order := processOrder(user, req)
+                        json.NewEncoder(w).Encode(order)
+                    } else {
+                        http.Error(w, "total must be positive", 400)
+                    }
+                } else {
+                    http.Error(w, "items cannot be empty", 400)
+                }
+            } else {
+                http.Error(w, "invalid JSON", 400)
+            }
+        } else {
+            http.Error(w, "user is inactive", 403)
+        }
+    } else {
+        http.Error(w, "unauthorized", 401)
+    }
+}
+```
+
+**What to improve:**
+- Invert conditions to fail fast (guard clauses)
+- Move error cases to the top
+- Keep the happy path at the bottom with no nesting
+
+<details>
+<summary>Hint</summary>
+
+Use early returns. Instead of `if condition { ... lots of code ... }`, write `if !condition { return }`. The happy path should be a flat sequence of statements at the end.
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+```go
+func createOrder(w http.ResponseWriter, r *http.Request) {
+    user := getUser(r)
+    if user == nil {
+        http.Error(w, "unauthorized", 401)
+        return
+    }
+    if !user.IsActive {
+        http.Error(w, "user is inactive", 403)
+        return
+    }
+    var req OrderRequest
+    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+        http.Error(w, "invalid JSON", 400)
+        return
+    }
+    if len(req.Items) == 0 {
+        http.Error(w, "items cannot be empty", 400)
+        return
+    }
+    if req.Total <= 0 {
+        http.Error(w, "total must be positive", 400)
+        return
+    }
+    // Happy path — all guards passed
+    order := processOrder(user, req)
+    json.NewEncoder(w).Encode(order)
+}
+```
+
+**Why it's better:**
+- Maximum nesting depth: 1 (was 5)
+- Error cases are immediately visible at the top
+- Happy path reads as a linear sequence — easier to understand and test
+- Each guard clause has a single responsibility
+
+</details>
+
+---
+
+## Exercise 3 🟢 — Use `if` Init Statement for Error Handling
+
+**Problem:** The following code declares variables before the `if` that are only used inside the `if` block, polluting the outer scope.
+
+```go
+func loadConfig(path string) (*Config, error) {
+    data, err := os.ReadFile(path)
+    if err != nil {
+        return nil, fmt.Errorf("loadConfig: %w", err)
+    }
+
+    var cfg Config
+    err = json.Unmarshal(data, &cfg)
+    if err != nil {
+        return nil, fmt.Errorf("loadConfig: %w", err)
+    }
+
+    return &cfg, nil
+}
+
+func processRequest(r *http.Request) {
+    body, err := io.ReadAll(r.Body)
+    if err != nil {
+        log.Printf("read error: %v", err)
+        return
+    }
+    _ = body
+}
+```
+
+**What to improve:**
+- Where applicable, move variable declarations into the `if` init statement
+- Limit variable scope to where it is needed
+- The `err` variable should not be reused with `=` when `:=` in an init statement keeps it scoped
+
+<details>
+<summary>Hint</summary>
+
+The `if` init statement syntax is: `if result, err := fn(); err != nil { ... }`. Variables declared there are only accessible inside the `if-else` block. This is idiomatic for error checking in Go.
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+```go
+func loadConfig(path string) (*Config, error) {
+    data, err := os.ReadFile(path)
+    if err != nil {
+        return nil, fmt.Errorf("loadConfig: %w", err)
+    }
+
+    var cfg Config
+    if err := json.Unmarshal(data, &cfg); err != nil {
+        return nil, fmt.Errorf("loadConfig: %w", err)
+    }
+
+    return &cfg, nil
+}
+
+func processRequest(r *http.Request) {
+    if body, err := io.ReadAll(r.Body); err != nil {
+        log.Printf("read error: %v", err)
+        return
+    } else {
+        _ = body
+    }
+}
+```
+
+**Or more idiomatically for processRequest:**
+
+```go
+func processRequest(r *http.Request) {
+    body, err := io.ReadAll(r.Body)
+    if err != nil {
+        log.Printf("read error: %v", err)
+        return
+    }
+    process(body)
+}
+```
+
+**Why it's better:**
+- `err` in `json.Unmarshal` doesn't accidentally shadow or reuse the outer `err`
+- Tighter scoping means fewer opportunities for variable misuse
+- Init statement is the standard Go idiom for operations that return (value, error)
+
+</details>
+
+---
+
+## Exercise 4 🟡 — Short-Circuit Ordering for Performance
+
+**Problem:** This code checks conditions in the wrong order. The cheap check comes last, causing the expensive check to run even when unnecessary.
+
+```go
+package main
+
+import (
+    "database/sql"
+    "strings"
+)
+
+func shouldProcessRecord(db *sql.DB, id int, input string) bool {
+    // Expensive: hits the database
+    exists, err := recordExistsInDB(db, id)
+    if err != nil || !exists {
+        return false
+    }
+
+    // Medium: regex or string processing
+    if !isValidFormat(input) {
+        return false
+    }
+
+    // Cheap: in-memory check
+    if strings.TrimSpace(input) == "" {
+        return false
+    }
+
+    return true
+}
+
+func recordExistsInDB(db *sql.DB, id int) (bool, error) {
+    var exists bool
+    err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM records WHERE id = $1)", id).Scan(&exists)
+    return exists, err
+}
+
+func isValidFormat(s string) bool {
+    return len(s) > 0 && len(s) < 1000
+}
+```
+
+**What to improve:**
+- Reorder the checks from cheapest to most expensive
+- Use `&&` short-circuit to avoid the DB call when early checks fail
+- The empty string check should run before any I/O
+
+<details>
+<summary>Hint</summary>
+
+With `&&`, if the left operand is `false`, the right operand is never evaluated. Put the cheapest checks first so that the expensive DB call is skipped whenever possible. `strings.TrimSpace(input) == ""` is O(n) string scan; `isValidFormat` is O(1) length check.
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+```go
+func shouldProcessRecord(db *sql.DB, id int, input string) bool {
+    // Cheapest first: in-memory O(1) check
+    if strings.TrimSpace(input) == "" {
+        return false
+    }
+
+    // Medium: string length check (O(1))
+    if !isValidFormat(input) {
+        return false
+    }
+
+    // Most expensive last: database I/O
+    exists, err := recordExistsInDB(db, id)
+    if err != nil || !exists {
+        return false
+    }
+
+    return true
+}
+```
+
+**Or as a combined expression:**
+
+```go
+func shouldProcessRecord(db *sql.DB, id int, input string) bool {
+    trimmed := strings.TrimSpace(input)
+    if trimmed == "" || !isValidFormat(trimmed) {
+        return false
+    }
+    exists, err := recordExistsInDB(db, id)
+    return err == nil && exists
+}
+```
+
+**Why it's better:**
+- Empty input is rejected before any format parsing
+- Format validation rejects bad input before making a DB connection
+- Database is only queried when input is guaranteed to be non-empty and valid
+- In a high-traffic system, this can eliminate 90%+ of DB queries for invalid inputs
+
+</details>
+
+---
+
+## Exercise 5 🟡 — Replace `if-else if` Chain with Data-Driven Dispatch
+
+**Problem:** This function uses a long `if-else if` chain to map HTTP status codes to messages. Adding a new status code requires modifying the function body.
+
+```go
+func statusMessage(code int) string {
+    if code == 200 {
+        return "OK"
+    } else if code == 201 {
+        return "Created"
+    } else if code == 204 {
+        return "No Content"
+    } else if code == 301 {
+        return "Moved Permanently"
+    } else if code == 302 {
+        return "Found"
+    } else if code == 400 {
+        return "Bad Request"
+    } else if code == 401 {
+        return "Unauthorized"
+    } else if code == 403 {
+        return "Forbidden"
+    } else if code == 404 {
+        return "Not Found"
+    } else if code == 500 {
+        return "Internal Server Error"
+    } else if code == 503 {
+        return "Service Unavailable"
+    } else {
+        return "Unknown"
+    }
+}
+```
+
+**What to improve:**
+- Replace the chain with a map or switch for O(1) lookup
+- Make it easy to extend without modifying logic
+- Benchmark the difference at high call rates
+
+<details>
+<summary>Hint</summary>
+
+A `map[int]string` provides O(1) average lookup and decouples data from logic. A `switch` statement on integers is compiled to a jump table in Go, which is also O(1) and avoids repeated comparisons. For read-only data, a package-level `var` map initialized once is ideal.
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+```go
+// Option A: map-based dispatch (O(1), extensible)
+var statusMessages = map[int]string{
+    200: "OK",
+    201: "Created",
+    204: "No Content",
+    301: "Moved Permanently",
+    302: "Found",
+    400: "Bad Request",
+    401: "Unauthorized",
+    403: "Forbidden",
+    404: "Not Found",
+    500: "Internal Server Error",
+    503: "Service Unavailable",
+}
+
+func statusMessage(code int) string {
+    if msg, ok := statusMessages[code]; ok {
+        return msg
+    }
+    return "Unknown"
+}
+
+// Option B: switch statement (O(1) jump table for dense int cases)
+func statusMessageSwitch(code int) string {
+    switch code {
+    case 200:
+        return "OK"
+    case 201:
+        return "Created"
+    case 204:
+        return "No Content"
+    case 301:
+        return "Moved Permanently"
+    case 400:
+        return "Bad Request"
+    case 401:
+        return "Unauthorized"
+    case 403:
+        return "Forbidden"
+    case 404:
+        return "Not Found"
+    case 500:
+        return "Internal Server Error"
+    case 503:
+        return "Service Unavailable"
+    default:
+        return "Unknown"
+    }
+}
+```
+
+**Benchmark results (typical):**
+
+```
+BenchmarkIfChain-8     50000000    28.3 ns/op   (linear scan)
+BenchmarkMap-8        100000000    10.5 ns/op   (hash lookup)
+BenchmarkSwitch-8     200000000     5.1 ns/op   (jump table)
+```
+
+**Why it's better:**
+- Map/switch: O(1) vs O(n) for the if-else chain
+- Adding a new status code only requires adding a map entry, not modifying logic
+- `switch` on integers is the fastest option — the compiler generates a jump table
+
+</details>
+
+---
+
+## Exercise 6 🟡 — Eliminate Repeated `if err != nil` with Helper
+
+**Problem:** This function has repetitive error handling that obscures the actual logic. Each step follows the same pattern but creates visual noise.
+
+```go
+func buildReport(db *sql.DB, userID int) ([]byte, error) {
+    user, err := fetchUser(db, userID)
+    if err != nil {
+        return nil, fmt.Errorf("buildReport: fetch user: %w", err)
+    }
+
+    orders, err := fetchOrders(db, userID)
+    if err != nil {
+        return nil, fmt.Errorf("buildReport: fetch orders: %w", err)
+    }
+
+    summary, err := computeSummary(orders)
+    if err != nil {
+        return nil, fmt.Errorf("buildReport: compute summary: %w", err)
+    }
+
+    report, err := renderReport(user, summary)
+    if err != nil {
+        return nil, fmt.Errorf("buildReport: render: %w", err)
+    }
+
+    data, err := json.Marshal(report)
+    if err != nil {
+        return nil, fmt.Errorf("buildReport: marshal: %w", err)
+    }
+
+    return data, nil
+}
+```
+
+**What to improve:**
+- The pattern is correct but verbose. Consider a pipeline or error-accumulating approach
+- For this use case, the sequential dependency means pipeline is the natural choice
+- Explore whether a `check` helper or functional option reduces repetition
+
+<details>
+<summary>Hint</summary>
+
+One pattern is a struct with an `err` field and methods that no-op when `err != nil` (the "errWriter" pattern from the Go blog). Another is accepting that sequential error handling is idiomatic in Go and focusing on making context wrapping consistent. For this specific case, the existing pattern may already be close to optimal — the question is whether wrapping context strings can be made more concise.
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+```go
+// Option A: Pipeline pattern with errWriter-style struct
+type reportBuilder struct {
+    db     *sql.DB
+    userID int
+    user   *User
+    orders []Order
+    summary Summary
+    report Report
+    err    error
+}
+
+func (b *reportBuilder) fetchUser() {
+    if b.err != nil {
+        return
+    }
+    b.user, b.err = fetchUser(b.db, b.userID)
+    if b.err != nil {
+        b.err = fmt.Errorf("fetch user: %w", b.err)
+    }
+}
+
+func (b *reportBuilder) fetchOrders() {
+    if b.err != nil {
+        return
+    }
+    b.orders, b.err = fetchOrders(b.db, b.userID)
+    if b.err != nil {
+        b.err = fmt.Errorf("fetch orders: %w", b.err)
+    }
+}
+
+func (b *reportBuilder) computeSummary() {
+    if b.err != nil {
+        return
+    }
+    b.summary, b.err = computeSummary(b.orders)
+    if b.err != nil {
+        b.err = fmt.Errorf("compute summary: %w", b.err)
+    }
+}
+
+func buildReport(db *sql.DB, userID int) ([]byte, error) {
+    rb := &reportBuilder{db: db, userID: userID}
+    rb.fetchUser()
+    rb.fetchOrders()
+    rb.computeSummary()
+    if rb.err != nil {
+        return nil, fmt.Errorf("buildReport: %w", rb.err)
+    }
+    report, err := renderReport(rb.user, rb.summary)
+    if err != nil {
+        return nil, fmt.Errorf("buildReport: render: %w", err)
+    }
+    data, err := json.Marshal(report)
+    if err != nil {
+        return nil, fmt.Errorf("buildReport: marshal: %w", err)
+    }
+    return data, nil
+}
+
+// Option B: Accept sequential pattern but use consistent wrapping
+// The original is already idiomatic — this is a style note, not a bug.
+// Go's philosophy: explicit error handling is intentional.
+// Optimize for clarity, not brevity.
+```
+
+**When to use each:**
+- **Original sequential pattern**: When steps have different error types and contexts. Most readable.
+- **errWriter pattern**: When many steps share the same structure and you want to eliminate repetition (e.g., `bufio.Scanner`, `bytes.Buffer` writes).
+- Use the pattern that makes the intent clearest to the next reader.
+
+</details>
+
+---
+
+## Exercise 7 🟡 — Use `errors.Is` Instead of String Comparison in `if`
+
+**Problem:** This code compares errors using string matching, which is fragile and breaks when error messages change.
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+)
+
+func readConfig(path string) ([]byte, error) {
+    data, err := os.ReadFile(path)
+    if err != nil {
+        return nil, err
+    }
+    return data, nil
+}
+
+func main() {
+    data, err := readConfig("/etc/myapp/config.json")
+    if err != nil {
+        // BAD: string comparison is fragile
+        if err.Error() == "open /etc/myapp/config.json: no such file or directory" {
+            fmt.Println("Config file not found, using defaults")
+        } else if err.Error() == "open /etc/myapp/config.json: permission denied" {
+            fmt.Println("Permission denied reading config")
+        } else {
+            fmt.Printf("Unexpected error: %v\n", err)
+        }
+        return
+    }
+    _ = data
+}
+```
+
+**What to improve:**
+- Use `errors.Is` for sentinel error comparison
+- Use `errors.As` for typed error extraction
+- The `os.PathError` type carries the path, op, and underlying error
+
+<details>
+<summary>Hint</summary>
+
+`os.ErrNotExist` and `os.ErrPermission` are sentinel errors that `os.ReadFile` wraps. Use `errors.Is(err, os.ErrNotExist)` — it unwraps the error chain. For extracting path information, use `errors.As(err, &pathErr)` to get an `*os.PathError`.
+
+</details>
+
+<details>
+<summary>Solution</summary>
 
 ```go
 package main
@@ -89,872 +659,712 @@ package main
 import (
     "errors"
     "fmt"
+    "os"
 )
 
-func validateAge(age int) error {
-    if age < 0 {
-        return errors.New("age cannot be negative")  // allocates each call
+func readConfig(path string) ([]byte, error) {
+    data, err := os.ReadFile(path)
+    if err != nil {
+        return nil, fmt.Errorf("readConfig: %w", err)
     }
-    if age > 150 {
-        return errors.New("age exceeds maximum")     // allocates each call
-    }
-    return nil
-}
-
-func processAges(ages []int) int {
-    valid := 0
-    for _, age := range ages {
-        if err := validateAge(age); err == nil {
-            valid++
-        }
-    }
-    return valid
+    return data, nil
 }
 
 func main() {
-    ages := make([]int, 1000)
-    for i := range ages {
-        ages[i] = i - 100  // some negative, some valid, some too large
+    data, err := readConfig("/etc/myapp/config.json")
+    if err != nil {
+        switch {
+        case errors.Is(err, os.ErrNotExist):
+            fmt.Println("Config file not found, using defaults")
+        case errors.Is(err, os.ErrPermission):
+            fmt.Println("Permission denied reading config")
+        default:
+            // Extract detailed path info if available
+            var pathErr *os.PathError
+            if errors.As(err, &pathErr) {
+                fmt.Printf("File operation %q failed on %q: %v\n",
+                    pathErr.Op, pathErr.Path, pathErr.Err)
+            } else {
+                fmt.Printf("Unexpected error: %v\n", err)
+            }
+        }
+        return
     }
-    fmt.Println("Valid:", processAges(ages))
+    _ = data
 }
 ```
 
-**Current benchmark:**
-```
-BenchmarkProcessAges-8    10000    125000 ns/op    2400 allocs/op
-```
+**Why it's better:**
+- `errors.Is` unwraps error chains — works even after `fmt.Errorf("...: %w", err)` wrapping
+- String comparison breaks when error message wording changes (OS updates, locale changes)
+- `errors.As` extracts typed errors to access their fields (path, operation)
+- Sentinel errors (`os.ErrNotExist`) are stable API contracts; message strings are not
 
-<details>
-<summary>Hint</summary>
-Pre-allocate sentinel error values at package level. Returning a pointer to an existing error requires no allocation.
-</details>
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-// Pre-allocated sentinel errors — allocated once at program start
-var (
-    ErrNegativeAge = errors.New("age cannot be negative")
-    ErrAgeTooLarge = errors.New("age exceeds maximum")
-)
-
-func validateAge(age int) error {
-    if age < 0 {
-        return ErrNegativeAge  // no allocation — returns existing pointer
-    }
-    if age > 150 {
-        return ErrAgeTooLarge  // no allocation
-    }
-    return nil
-}
-```
-
-**Optimized benchmark:**
-```
-BenchmarkProcessAges-8    50000    22000 ns/op    0 allocs/op
-```
-
-**Explanation:** Pre-allocated sentinel errors eliminate all allocations in the validation path. For the 1000-element slice with ~100 negatives and ~849 > 150, we go from 949 allocations to 0. 5.7x speedup.
 </details>
 
 ---
 
-## Exercise 3 🟢 🔄 — Redundant Condition Recalculation
+## Exercise 8 🔴 — Fix Check-Then-Act Race Condition
 
-**What the code does:** Classifies a score multiple times with overlapping conditions.
-
-**The problem:** Conditions overlap and the order causes unnecessary comparisons.
-
-```go
-package main
-
-func classifyScore(score int) string {
-    if score >= 0 && score < 60 {
-        return "F"
-    }
-    if score >= 60 && score < 70 {
-        return "D"
-    }
-    if score >= 70 && score < 80 {
-        return "C"
-    }
-    if score >= 80 && score < 90 {
-        return "B"
-    }
-    if score >= 90 && score <= 100 {
-        return "A"
-    }
-    return "invalid"
-}
-```
-
-**Current benchmark:**
-```
-BenchmarkClassify-8    20000000    62 ns/op
-```
-
-<details>
-<summary>Hint</summary>
-Since you check conditions in order, once you know `score >= 60`, you don't need to check `score >= 60` again in the next condition. Eliminate redundant lower-bound checks.
-</details>
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-func classifyScore(score int) string {
-    if score < 0 || score > 100 {  // fast reject out-of-range
-        return "invalid"
-    }
-    if score < 60 {
-        return "F"
-    }
-    if score < 70 {    // already know score >= 60
-        return "D"
-    }
-    if score < 80 {    // already know score >= 70
-        return "C"
-    }
-    if score < 90 {    // already know score >= 80
-        return "B"
-    }
-    return "A"         // already know score >= 90
-}
-```
-
-**Optimized benchmark:**
-```
-BenchmarkClassify-8    40000000    32 ns/op
-```
-
-**Explanation:** Each condition only checks the upper bound, cutting the number of comparisons roughly in half. Also added early-exit for out-of-range values. 2x speedup. The compiler may also generate better branch prediction hints.
-</details>
-
----
-
-## Exercise 4 🟡 ⚡ — Short-Circuit Order Wrong
-
-**What the code does:** Checks if a user can access a resource — requires DB lookup for both conditions.
-
-**The problem:** The expensive DB check runs even when the cheap check would already reject.
+**Problem:** This cache has a classic race condition: the check and the write are not atomic, so two goroutines can both see a cache miss and both compute the value.
 
 ```go
 package main
 
 import (
-    "fmt"
+    "sync"
     "time"
 )
 
-func hasSubscription(userID int) bool {
-    time.Sleep(10 * time.Microsecond) // simulates DB query
-    return userID%2 == 0             // even userIDs have subscription
+type Cache struct {
+    mu   sync.RWMutex
+    data map[string]string
 }
 
-func isFeatureEnabled(featureName string) bool {
-    time.Sleep(1 * time.Microsecond) // simulates config lookup (fast)
-    return featureName == "premium"
+func NewCache() *Cache {
+    return &Cache{data: make(map[string]string)}
 }
 
-func canAccess(userID int, feature string) bool {
-    // SLOW: hasSubscription (10µs) checked before isFeatureEnabled (1µs)
-    if hasSubscription(userID) && isFeatureEnabled(feature) {
-        return true
+func (c *Cache) Get(key string) (string, bool) {
+    c.mu.RLock()
+    defer c.mu.RUnlock()
+    v, ok := c.data[key]
+    return v, ok
+}
+
+func (c *Cache) Set(key, value string) {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+    c.data[key] = value
+}
+
+// BUG: race condition between Get and Set
+func (c *Cache) GetOrCompute(key string, compute func() string) string {
+    if v, ok := c.Get(key); ok {   // Check: read lock released here
+        return v
     }
-    return false
+    // Act: between here and the next line, another goroutine can also
+    // see a miss and call compute()
+    value := compute()             // expensive operation called twice!
+    c.Set(key, value)
+    return value
 }
 
-func main() {
-    fmt.Println(canAccess(1, "premium"))  // false (no subscription)
-    fmt.Println(canAccess(2, "premium"))  // true
-    fmt.Println(canAccess(2, "basic"))    // false (feature not enabled)
+func expensiveCompute(key string) string {
+    time.Sleep(100 * time.Millisecond) // simulate expensive work
+    return "result-" + key
 }
 ```
 
-**Current benchmark:**
-```
-BenchmarkCanAccess-8    50000    22000 ns/op
-```
+**What to improve:**
+- Make GetOrCompute atomic: check and set must happen under the same lock
+- Prevent the duplicate computation
+- Consider `singleflight` for deduplicated concurrent calls
 
 <details>
 <summary>Hint</summary>
-Go evaluates `&&` conditions left to right with short-circuit. Put the fastest (cheapest) check first.
+
+The fix requires holding the write lock for both the check and the set. The pattern is: acquire write lock, check again inside the lock (double-checked locking), compute only if still missing, set, release lock. Alternatively, `golang.org/x/sync/singleflight` ensures only one goroutine runs the computation regardless of how many goroutines call GetOrCompute simultaneously.
+
 </details>
 
 <details>
-<summary>Optimized Solution</summary>
-
-```go
-func canAccess(userID int, feature string) bool {
-    // FAST: isFeatureEnabled (1µs) checked first — short-circuits hasSubscription
-    if isFeatureEnabled(feature) && hasSubscription(userID) {
-        return true
-    }
-    return false
-}
-```
-
-**Optimized benchmark:**
-```
-BenchmarkCanAccess-8    150000    7500 ns/op
-```
-
-**Explanation:** When `feature` is not "premium", `isFeatureEnabled` returns false and `hasSubscription` is never called (short-circuit). This reduces average time from ~11µs to ~1µs for the common case where the feature is disabled. 3x average speedup.
-</details>
-
----
-
-## Exercise 5 🟡 📦 — String Allocation in Error Branch
-
-**What the code does:** Validates an HTTP method and returns an error with the method name in the message.
-
-**The problem:** `fmt.Sprintf` allocates a new string every time the method is invalid.
+<summary>Solution</summary>
 
 ```go
 package main
 
 import (
-    "fmt"
+    "sync"
+    "golang.org/x/sync/singleflight"
 )
 
-var validMethods = map[string]bool{
-    "GET": true, "POST": true, "PUT": true,
-    "DELETE": true, "PATCH": true, "HEAD": true,
-    "OPTIONS": true,
+// Option A: Write-lock the entire check-and-set operation
+type Cache struct {
+    mu   sync.Mutex
+    data map[string]string
 }
 
-func validateMethod(method string) error {
-    if !validMethods[method] {
-        return fmt.Errorf("invalid HTTP method: %s", method)  // allocates!
+func NewCache() *Cache {
+    return &Cache{data: make(map[string]string)}
+}
+
+func (c *Cache) GetOrCompute(key string, compute func() string) string {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+
+    // Check inside the write lock — atomically safe
+    if v, ok := c.data[key]; ok {
+        return v
     }
-    return nil
+
+    // Only one goroutine reaches here per key
+    value := compute()
+    c.data[key] = value
+    return value
 }
-```
 
-**Current benchmark:**
-```
-BenchmarkValidateMethod_Invalid-8    2000000    750 ns/op    2 allocs/op
-BenchmarkValidateMethod_Valid-8      10000000   120 ns/op    0 allocs/op
-```
+// Option B: singleflight — allows concurrent reads, deduplicates computation
+type CacheWithSingleflight struct {
+    mu   sync.RWMutex
+    data map[string]string
+    sg   singleflight.Group
+}
 
-<details>
-<summary>Hint</summary>
-For invalid methods, consider whether you really need the method name in the error, or if a sentinel error + logging is sufficient. Alternatively, use a fixed message.
-</details>
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-// Option 1: Sentinel error (zero allocs, loses method name)
-var ErrInvalidMethod = errors.New("invalid HTTP method")
-
-func validateMethodFast(method string) error {
-    if !validMethods[method] {
-        return ErrInvalidMethod
+func (c *CacheWithSingleflight) GetOrCompute(key string, compute func() string) string {
+    // Fast path: read lock
+    c.mu.RLock()
+    if v, ok := c.data[key]; ok {
+        c.mu.RUnlock()
+        return v
     }
-    return nil
-}
+    c.mu.RUnlock()
 
-// Option 2: Custom error type (one alloc, keeps method name, reuses type)
-type InvalidMethodError struct {
-    Method string
-}
+    // Slow path: singleflight deduplicates concurrent misses for the same key
+    v, _, _ := c.sg.Do(key, func() (interface{}, error) {
+        // Double-check after acquiring singleflight token
+        c.mu.RLock()
+        if v, ok := c.data[key]; ok {
+            c.mu.RUnlock()
+            return v, nil
+        }
+        c.mu.RUnlock()
 
-func (e *InvalidMethodError) Error() string {
-    return "invalid HTTP method: " + e.Method
-}
+        value := compute()
 
-func validateMethodTyped(method string) error {
-    if !validMethods[method] {
-        return &InvalidMethodError{Method: method}  // 1 alloc (struct, not string)
-    }
-    return nil
+        c.mu.Lock()
+        c.data[key] = value
+        c.mu.Unlock()
+
+        return value, nil
+    })
+    return v.(string)
 }
 ```
 
-**Optimized benchmark:**
-```
-BenchmarkValidateMethod_Invalid_Fast-8     10000000    120 ns/op    0 allocs/op
-BenchmarkValidateMethod_Invalid_Typed-8    5000000     250 ns/op    1 alloc/op
-```
+**Why it matters:**
+- Option A: Correct and simple. The compute function runs under a mutex — acceptable if compute is fast.
+- Option B: Optimal for expensive computations. Concurrent goroutines requesting the same missing key all wait for a single computation. `singleflight` prevents the "thundering herd" problem.
+- The original code is not just slow — it is **incorrect**: it produces duplicate writes and can return stale data if `compute` is not idempotent.
 
-**Explanation:** `fmt.Errorf` with a format string always allocates (format string + new error struct). Option 1 eliminates all allocations. Option 2 reduces from 2 allocations to 1 by using string concatenation (no format parser) and a single struct.
 </details>
 
 ---
 
-## Exercise 6 🟡 💾 — Unnecessary Slice Creation in if Condition
+## Exercise 9 🔴 — Branch-Free Optimization for Hot Path
 
-**What the code does:** Checks if all items in a slice pass a filter, using a helper that creates a new slice.
-
-**The problem:** The helper function allocates a slice just to count items.
+**Problem:** This function is called 10 million times per second in a metrics aggregator. The `if` statement in the inner loop causes branch mispredictions on random data.
 
 ```go
 package main
 
-import "fmt"
+import "testing"
 
-func filterPositive(nums []int) []int {
-    result := make([]int, 0, len(nums))
-    for _, n := range nums {
-        if n > 0 {
-            result = append(result, n)
+// Called in a tight loop with random values
+func countAboveThreshold(data []int, threshold int) int {
+    count := 0
+    for _, v := range data {
+        if v > threshold {
+            count++
         }
     }
-    return result
+    return count
 }
 
-func allPositive(nums []int) bool {
-    if len(filterPositive(nums)) == len(nums) {
-        return true
+func BenchmarkCount(b *testing.B) {
+    data := make([]int, 10000)
+    for i := range data {
+        data[i] = i // sorted, predictable
     }
-    return false
-}
-
-func main() {
-    nums := []int{1, 2, 3, 4, 5}
-    fmt.Println(allPositive(nums))  // true
-
-    nums2 := []int{1, -2, 3}
-    fmt.Println(allPositive(nums2)) // false
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        countAboveThreshold(data, 5000)
+    }
 }
 ```
 
-**Current benchmark:**
-```
-BenchmarkAllPositive-8    1000000    1200 ns/op    1 alloc/op
-```
+**The issue:** On truly random data (not sorted), the branch predictor achieves only ~50% accuracy. Each misprediction costs ~15 CPU cycles. With 10M iterations/sec, this adds up.
+
+**What to improve:**
+- Explore a branchless alternative using integer arithmetic
+- Compare sorted vs unsorted performance
+- Understand when the Go compiler applies CMOV automatically
 
 <details>
 <summary>Hint</summary>
-You don't need to collect the positive numbers — you just need to know if any are negative. Early exit on first negative.
+
+Branchless increment: `count += (v - threshold - 1) >> 63 + 1` uses arithmetic right shift to turn the comparison into a mask (0 or -1 in two's complement), avoiding a branch. However, check whether the Go compiler already generates CMOV for simple patterns. Use `go tool compile -S` to inspect the assembly. Sorting the data makes the branch highly predictable, which can be faster than any branchless code.
+
 </details>
 
 <details>
-<summary>Optimized Solution</summary>
+<summary>Solution</summary>
 
 ```go
-func allPositive(nums []int) bool {
-    for _, n := range nums {
-        if n <= 0 {
-            return false  // early exit — no allocation needed
+package main
+
+import (
+    "sort"
+    "testing"
+)
+
+// Option A: Sort first — predictable branch, fastest on repeated calls
+func countAboveThresholdSorted(data []int, threshold int) int {
+    // After sorting, all values <= threshold come first.
+    // Once we pass the threshold, the condition is always true.
+    // Branch predictor achieves ~100% accuracy.
+    count := 0
+    for _, v := range data {
+        if v > threshold {
+            count++
+        }
+    }
+    return count
+}
+
+// Option B: Branchless using bit manipulation
+// (v > threshold) is equivalent to: (threshold - v) has high bit set
+func countAboveThresholdBranchless(data []int, threshold int) int {
+    count := 0
+    for _, v := range data {
+        // Arithmetic right shift: (threshold - v) >> 63
+        // If v > threshold: threshold - v < 0, so high bit = 1, result = -1
+        // If v <= threshold: threshold - v >= 0, so high bit = 0, result = 0
+        // ^(threshold-v)>>63 gives 0 (false) or -1 (true), negate to get 0 or 1...
+        // Simpler: use the Go compiler's own optimization
+        diff := threshold - v
+        count += int(uint(diff) >> 63) // 1 if v > threshold, 0 otherwise
+    }
+    return count
+}
+
+// Option C: Let the compiler do it — check with: go tool compile -S
+// The compiler may already emit CMOV for the original simple if
+func countAboveThreshold(data []int, threshold int) int {
+    count := 0
+    for _, v := range data {
+        if v > threshold {
+            count++
+        }
+    }
+    return count
+}
+
+// Benchmark comparison
+func BenchmarkUnsorted(b *testing.B) {
+    data := makeRandomData(10000)
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        countAboveThreshold(data, 5000)
+    }
+}
+
+func BenchmarkSorted(b *testing.B) {
+    data := makeRandomData(10000)
+    sort.Ints(data)
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        countAboveThreshold(data, 5000)
+    }
+}
+
+func BenchmarkBranchless(b *testing.B) {
+    data := makeRandomData(10000)
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        countAboveThresholdBranchless(data, 5000)
+    }
+}
+```
+
+**Inspect assembly:**
+```bash
+go tool compile -S main.go | grep -A 20 "countAboveThreshold"
+# Look for: CMOVGT (conditional move) vs JGT (conditional jump)
+```
+
+**Typical benchmark results (random data, amd64):**
+```
+BenchmarkUnsorted-8      200000    7823 ns/op  (branch mispredictions)
+BenchmarkSorted-8        500000    2891 ns/op  (perfect prediction)
+BenchmarkBranchless-8    400000    3102 ns/op  (no branches)
+```
+
+**Key insight:** For truly random data where you cannot sort, branchless code eliminates the ~15-cycle misprediction penalty. But sorting first is often faster because it enables vectorization (SIMD) by the compiler.
+
+</details>
+
+---
+
+## Exercise 10 🔴 — Optimize Multi-Condition Validation with Early Exit
+
+**Problem:** This validation function evaluates all conditions even when an early failure is certain. For expensive validations (regex, DB lookup), this wastes significant time.
+
+```go
+package main
+
+import (
+    "regexp"
+    "strings"
+    "unicode"
+)
+
+var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
+
+type RegistrationRequest struct {
+    Username string
+    Email    string
+    Password string
+    Age      int
+}
+
+type ValidationResult struct {
+    Valid  bool
+    Errors []string
+}
+
+// BAD: evaluates ALL conditions, no short-circuiting
+func validateRegistration(req RegistrationRequest) ValidationResult {
+    var errs []string
+
+    // These are independent, so collecting all errors is intentional.
+    // But the ORDER within each check matters for performance.
+
+    // Username validation
+    usernameValid := len(req.Username) >= 3 &&
+        len(req.Username) <= 20 &&
+        !strings.ContainsAny(req.Username, "!@#$%^&*()") &&
+        isAlphanumeric(req.Username)  // expensive: iterates all runes
+
+    if !usernameValid {
+        errs = append(errs, "username: must be 3-20 alphanumeric characters")
+    }
+
+    // Email validation — regex is the expensive part
+    emailValid := emailRegex.MatchString(req.Email)  // expensive even if email is ""
+    if !emailValid {
+        errs = append(errs, "email: invalid format")
+    }
+
+    // Password validation
+    passwordValid := len(req.Password) >= 8 &&        // cheap
+        len(req.Password) <= 128 &&                   // cheap
+        hasUppercase(req.Password) &&                 // O(n)
+        hasDigit(req.Password) &&                     // O(n)
+        hasSpecialChar(req.Password)                  // O(n)
+    if !passwordValid {
+        errs = append(errs, "password: must be 8-128 chars with uppercase, digit, and special char")
+    }
+
+    // Age validation
+    if req.Age < 13 || req.Age > 120 {
+        errs = append(errs, "age: must be between 13 and 120")
+    }
+
+    return ValidationResult{Valid: len(errs) == 0, Errors: errs}
+}
+
+func isAlphanumeric(s string) bool {
+    for _, r := range s {
+        if !unicode.IsLetter(r) && !unicode.IsDigit(r) {
+            return false
         }
     }
     return true
 }
-```
 
-**Optimized benchmark:**
-```
-BenchmarkAllPositive-8    10000000    120 ns/op    0 allocs/op
-```
-
-**Explanation:** The original code allocated a new slice (O(n) memory) and traversed the entire input. The optimized version allocates nothing and exits as soon as it finds a non-positive number. 10x speedup for slices with early negatives, 10x for all-positive too (no allocation overhead).
-</details>
-
----
-
-## Exercise 7 🟡 ⚡ — if Inside Tight Loop with Interface Call
-
-**What the code does:** Filters a slice using an interface-based predicate.
-
-**The problem:** Interface dispatch in the tight inner loop prevents inlining.
-
-```go
-package main
-
-import "fmt"
-
-type Predicate interface {
-    Match(x int) bool
-}
-
-type GreaterThan struct{ Threshold int }
-func (g GreaterThan) Match(x int) bool { return x > g.Threshold }
-
-func filter(nums []int, pred Predicate) []int {
-    result := make([]int, 0, len(nums))
-    for _, n := range nums {
-        if pred.Match(n) {    // interface dispatch — not inlinable
-            result = append(result, n)
-        }
-    }
-    return result
-}
-
-func main() {
-    nums := make([]int, 10000)
-    for i := range nums { nums[i] = i }
-
-    result := filter(nums, GreaterThan{Threshold: 5000})
-    fmt.Println("Filtered:", len(result))
-}
-```
-
-**Current benchmark:**
-```
-BenchmarkFilter-8    500    2100000 ns/op    81920 B/op    1 alloc/op
-```
-
-<details>
-<summary>Hint</summary>
-Replace the interface with a function parameter. Go can inline function values in some cases, and avoids vtable dispatch.
-</details>
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-// Use a function parameter instead of interface for small, hot predicates
-func filterFunc(nums []int, match func(int) bool) []int {
-    result := make([]int, 0, len(nums)/2)  // better initial capacity estimate
-    for _, n := range nums {
-        if match(n) {    // function call — may be inlined
-            result = append(result, n)
-        }
-    }
-    return result
-}
-
-func main() {
-    nums := make([]int, 10000)
-    for i := range nums { nums[i] = i }
-
-    threshold := 5000
-    result := filterFunc(nums, func(x int) bool { return x > threshold })
-    fmt.Println("Filtered:", len(result))
-}
-```
-
-**Optimized benchmark:**
-```
-BenchmarkFilterFunc-8    800    1400000 ns/op    40960 B/op    1 alloc/op
-```
-
-**Explanation:** Function values (closures) can sometimes be devirtualized by the compiler, enabling inlining of the `if` condition body. Interface dispatch always goes through a vtable (indirect call). For hot loops, direct function calls are faster. ~1.5x speedup in this case; more pronounced with simpler predicates.
-</details>
-
----
-
-## Exercise 8 🔴 ⚡ — Branch Misprediction in Sort-Dependent Loop
-
-**What the code does:** Sums values from a slice only if they're above a threshold.
-
-**The problem:** Random data causes ~50% branch mispredictions.
-
-```go
-package main
-
-import (
-    "fmt"
-    "math/rand"
-)
-
-func sumAboveThreshold(data []int, threshold int) int {
-    sum := 0
-    for _, v := range data {
-        if v > threshold {  // unpredictable for random data
-            sum += v
-        }
-    }
-    return sum
-}
-
-func main() {
-    data := make([]int, 100000)
-    for i := range data {
-        data[i] = rand.Intn(200)
-    }
-    fmt.Println(sumAboveThreshold(data, 100))
-}
-```
-
-**Current benchmark (random data):**
-```
-BenchmarkSum_Random-8    1000    1050000 ns/op
-```
-
-<details>
-<summary>Hint</summary>
-Sort the data first so all values below threshold come before all above. The branch predictor will learn the pattern. Or use branchless arithmetic.
-</details>
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-import "sort"
-
-// Option 1: Sort first (if data can be sorted)
-func sumAboveThresholdSorted(data []int, threshold int) int {
-    sorted := make([]int, len(data))
-    copy(sorted, data)
-    sort.Ints(sorted)
-
-    sum := 0
-    for _, v := range sorted {
-        if v <= threshold {  // branch predictor learns: false for first N, then all true
-            continue
-        }
-        sum += v
-    }
-    return sum
-}
-
-// Option 2: Branchless arithmetic (avoids the if entirely)
-func sumAboveThresholdBranchless(data []int, threshold int) int {
-    sum := 0
-    for _, v := range data {
-        // diff > 0 when v > threshold, else 0
-        diff := v - threshold
-        // shift right 63 bits: 0 if positive, -1 (all 1s) if negative
-        mask := ^(diff >> 63)  // -1 when v > threshold, 0 otherwise
-        sum += v & mask        // adds v when mask is -1, adds 0 otherwise
-    }
-    return sum
-}
-
-// Option 3: Use binary search after sorting (if threshold is a single value)
-func sumAboveThresholdBinarySearch(data []int, threshold int) int {
-    sorted := make([]int, len(data))
-    copy(sorted, data)
-    sort.Ints(sorted)
-
-    // Find first index where value > threshold
-    idx := sort.SearchInts(sorted, threshold+1)
-
-    sum := 0
-    for _, v := range sorted[idx:] {
-        sum += v
-    }
-    return sum
-}
-```
-
-**Optimized benchmark:**
-```
-BenchmarkSum_Branchless-8    3000    410000 ns/op    // 2.6x faster
-BenchmarkSum_Sorted-8        500     2100000 ns/op   // slower due to sort overhead
-BenchmarkSum_BinarySearch-8  500     2050000 ns/op   // faster if data already sorted
-```
-
-**Explanation:** Branchless arithmetic eliminates the conditional branch entirely, replacing it with bit manipulation. The mask is all-zeros or all-ones depending on whether `v > threshold`. For truly random data with ~50% misprediction, this is 2-3x faster. For already-sorted data, the binary search approach is best.
-</details>
-
----
-
-## Exercise 9 🔴 🔄 — N^2 Search in Hot if Condition
-
-**What the code does:** For each request, checks if the IP is in a blocklist.
-
-**The problem:** Linear scan through the blocklist for every request.
-
-```go
-package main
-
-import "fmt"
-
-var blocklist = []string{
-    "192.168.1.1", "10.0.0.1", "172.16.0.1",
-    // ... hundreds more
-}
-
-func isBlocked(ip string) bool {
-    for _, blocked := range blocklist {
-        if ip == blocked {    // O(n) for each call
+func hasUppercase(s string) bool {
+    for _, r := range s {
+        if unicode.IsUpper(r) {
             return true
         }
     }
     return false
 }
 
-func handleRequest(ip string) {
-    if isBlocked(ip) {
-        fmt.Println("Blocked:", ip)
-        return
-    }
-    fmt.Println("Allowed:", ip)
-}
-
-func main() {
-    handleRequest("192.168.1.1")
-    handleRequest("8.8.8.8")
-}
-```
-
-**Current benchmark (1000-entry blocklist):**
-```
-BenchmarkIsBlocked_Hit-8    500000    2800 ns/op
-BenchmarkIsBlocked_Miss-8   200000    5600 ns/op
-```
-
-<details>
-<summary>Hint</summary>
-Use a hash set (map) for O(1) lookup instead of O(n) linear scan. Convert the slice to a map once at initialization.
-</details>
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-// Convert slice to map once at startup — O(1) lookup
-var blocklistSet map[string]struct{}
-
-func init() {
-    blocklistSet = make(map[string]struct{}, len(blocklist))
-    for _, ip := range blocklist {
-        blocklistSet[ip] = struct{}{}
-    }
-}
-
-func isBlockedFast(ip string) bool {
-    _, blocked := blocklistSet[ip]  // O(1) hash lookup
-    if blocked {
-        return true
+func hasDigit(s string) bool {
+    for _, r := range s {
+        if unicode.IsDigit(r) {
+            return true
+        }
     }
     return false
 }
 
-// Even more concise:
-func isBlockedConcise(ip string) bool {
-    _, ok := blocklistSet[ip]
-    return ok
+func hasSpecialChar(s string) bool {
+    specials := "!@#$%^&*()-_=+[]{}|;:,.<>?"
+    for _, r := range s {
+        if strings.ContainsRune(specials, r) {
+            return true
+        }
+    }
+    return false
 }
 ```
 
-**Optimized benchmark:**
-```
-BenchmarkIsBlocked_Hit_Fast-8    10000000    120 ns/op
-BenchmarkIsBlocked_Miss_Fast-8   10000000    118 ns/op
+**What to improve:**
+- Order conditions within each check from cheapest to most expensive
+- For the email regex: check for empty string before running the regex
+- For username: check length bounds (O(1)) before the rune iteration (O(n))
+- For password: fail fast on length before running character-class checks
+
+<details>
+<summary>Hint</summary>
+
+Within each `&&` chain, put the cheapest condition first. `len(s)` is O(1) in Go (stored in the slice header). `strings.ContainsAny` and regex matching are O(n). A length check that fails early avoids the expensive O(n) operations entirely.
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+```go
+package main
+
+import (
+    "regexp"
+    "strings"
+    "unicode"
+)
+
+var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
+
+type RegistrationRequest struct {
+    Username string
+    Email    string
+    Password string
+    Age      int
+}
+
+type ValidationResult struct {
+    Valid  bool
+    Errors []string
+}
+
+func validateRegistration(req RegistrationRequest) ValidationResult {
+    var errs []string
+
+    // Username: O(1) length checks first, then O(n) rune iteration
+    uLen := len(req.Username)
+    if uLen < 3 || uLen > 20 || !isAlphanumeric(req.Username) {
+        errs = append(errs, "username: must be 3-20 alphanumeric characters")
+    }
+
+    // Email: empty check (O(1)) before regex (O(n))
+    if req.Email == "" || !emailRegex.MatchString(req.Email) {
+        errs = append(errs, "email: invalid format")
+    }
+
+    // Password: O(1) length bounds first, then O(n) character checks
+    pLen := len(req.Password)
+    if pLen < 8 || pLen > 128 {
+        errs = append(errs, "password: must be 8-128 chars with uppercase, digit, and special char")
+    } else if !hasUppercase(req.Password) || !hasDigit(req.Password) || !hasSpecialChar(req.Password) {
+        errs = append(errs, "password: must contain uppercase, digit, and special char")
+    }
+
+    // Age: pure arithmetic — always cheap, no ordering concern
+    if req.Age < 13 || req.Age > 120 {
+        errs = append(errs, "age: must be between 13 and 120")
+    }
+
+    return ValidationResult{Valid: len(errs) == 0, Errors: errs}
+}
+
+// Single-pass validation for all password properties (O(n) total, not O(3n))
+func validatePasswordChars(s string) (hasUpper, hasDigitChar, hasSpecial bool) {
+    specials := "!@#$%^&*()-_=+[]{}|;:,.<>?"
+    for _, r := range s {
+        switch {
+        case unicode.IsUpper(r):
+            hasUpper = true
+        case unicode.IsDigit(r):
+            hasDigitChar = true
+        case strings.ContainsRune(specials, r):
+            hasSpecial = true
+        }
+        if hasUpper && hasDigitChar && hasSpecial {
+            return // early exit: all conditions met
+        }
+    }
+    return
+}
+
+// Optimized validation using single-pass character check
+func validateRegistrationOptimized(req RegistrationRequest) ValidationResult {
+    var errs []string
+
+    uLen := len(req.Username)
+    if uLen < 3 || uLen > 20 || !isAlphanumeric(req.Username) {
+        errs = append(errs, "username: must be 3-20 alphanumeric characters")
+    }
+
+    if req.Email == "" || !emailRegex.MatchString(req.Email) {
+        errs = append(errs, "email: invalid format")
+    }
+
+    pLen := len(req.Password)
+    if pLen < 8 || pLen > 128 {
+        errs = append(errs, "password: must be 8-128 chars with uppercase, digit, and special char")
+    } else {
+        hasUpper, hasDigit, hasSpecial := validatePasswordChars(req.Password)
+        if !hasUpper || !hasDigit || !hasSpecial {
+            errs = append(errs, "password: must contain uppercase, digit, and special char")
+        }
+    }
+
+    if req.Age < 13 || req.Age > 120 {
+        errs = append(errs, "age: must be between 13 and 120")
+    }
+
+    return ValidationResult{Valid: len(errs) == 0, Errors: errs}
+}
 ```
 
-**Explanation:** Map lookup is O(1) vs O(n) slice scan. For 1000 entries: 23x speedup on hits (no longer scanning to find it), 47x speedup on misses (no longer scanning entire list). The `if` condition changes from a loop with string comparisons to a single hash table lookup.
+**Key optimizations:**
+1. `len(s)` is O(1) — always check bounds before iterating over content
+2. Empty string check before regex: avoids regex engine startup cost for obvious failures
+3. Single-pass `validatePasswordChars` iterates the password once instead of three times
+4. Early exit in `validatePasswordChars` when all conditions are satisfied midway through the string
+5. Use `else` here (not anti-pattern): the character checks only run when length is valid, avoiding misleading error messages like "must have uppercase" when the password is too short
+
+**Benchmark comparison:**
+```
+BenchmarkOriginal-8     500000    2847 ns/op  (empty email still runs regex)
+BenchmarkOptimized-8   2000000     623 ns/op  (early exits, single-pass)
+```
+
 </details>
 
 ---
 
-## Exercise 10 🔴 💾 — Allocation in Error Message Construction
+## Exercise 11 🔴 — Reduce `if` Overhead in Hot Loop with Compile-Time Constants
 
-**What the code does:** Validates a complex struct and builds a detailed error message.
-
-**The problem:** Even when there are no errors, a `strings.Builder` is allocated.
+**Problem:** This logging function checks a debug flag on every call. In production, the flag is always `false`, but the check still runs millions of times per second.
 
 ```go
 package main
 
 import (
     "fmt"
-    "strings"
+    "os"
 )
 
-type Order struct {
-    ID       int
-    UserID   int
-    Amount   float64
-    Currency string
-    Items    []string
+var debugMode = os.Getenv("DEBUG") == "true"
+
+func processEvent(event Event, id int) {
+    if debugMode {
+        fmt.Printf("[DEBUG] processing event %d: %+v\n", id, event)
+    }
+
+    // ... actual processing ...
+    result := transform(event)
+
+    if debugMode {
+        fmt.Printf("[DEBUG] event %d result: %+v\n", id, result)
+    }
+
+    store(result)
 }
 
-func validateOrder(o Order) error {
-    var sb strings.Builder
-
-    if o.ID <= 0 {
-        sb.WriteString("invalid order ID; ")
-    }
-    if o.UserID <= 0 {
-        sb.WriteString("invalid user ID; ")
-    }
-    if o.Amount <= 0 {
-        sb.WriteString("amount must be positive; ")
-    }
-    if o.Currency == "" {
-        sb.WriteString("currency required; ")
-    }
-    if len(o.Items) == 0 {
-        sb.WriteString("no items; ")
-    }
-
-    if sb.Len() > 0 {
-        return fmt.Errorf("order validation: %s", sb.String())
-    }
-    return nil
+type Event struct {
+    Type    string
+    Payload []byte
 }
 
-func main() {
-    order := Order{ID: 1, UserID: 2, Amount: 99.99, Currency: "USD", Items: []string{"item1"}}
-    fmt.Println(validateOrder(order))
-}
+func transform(e Event) Event { return e }
+func store(e Event)           {}
 ```
 
-**Current benchmark (valid order — no errors):**
-```
-BenchmarkValidate_Valid-8    3000000    480 ns/op    2 allocs/op
-```
+**What to improve:**
+- In production builds, `debugMode` is always `false` — can we eliminate the check entirely?
+- Explore build tags, `const` approach, and function-level abstraction
+- Understand the difference between a `var` (runtime check) and a `const` (compile-time elimination)
 
 <details>
 <summary>Hint</summary>
-Allocate the `strings.Builder` only when you actually have an error. Use a counter or slice to detect first error.
+
+When `debugMode` is a `var`, the compiler cannot eliminate the `if` at compile time — it's evaluated at runtime. When it's a `const` set to `false`, the compiler's SSA dead code elimination removes the entire `if` body from the binary. Build tags (`//go:build debug`) allow different source files to define `debugMode` as `true` or `false` depending on the build.
+
 </details>
 
 <details>
-<summary>Optimized Solution</summary>
+<summary>Solution</summary>
 
 ```go
-func validateOrderFast(o Order) error {
-    // Fast path: check if validation will pass without allocating
-    if o.ID > 0 && o.UserID > 0 && o.Amount > 0 && o.Currency != "" && len(o.Items) > 0 {
-        return nil  // no allocation on success path
-    }
+// debug_off.go — compiled in production builds
+//go:build !debug
 
-    // Only allocate when we know there are errors
-    var errs []string
-    if o.ID <= 0 {
-        errs = append(errs, "invalid order ID")
-    }
-    if o.UserID <= 0 {
-        errs = append(errs, "invalid user ID")
-    }
-    if o.Amount <= 0 {
-        errs = append(errs, "amount must be positive")
-    }
-    if o.Currency == "" {
-        errs = append(errs, "currency required")
-    }
-    if len(o.Items) == 0 {
-        errs = append(errs, "no items")
-    }
+package main
 
-    return fmt.Errorf("order validation: %s", strings.Join(errs, "; "))
-}
+const debugMode = false
 
-// Alternative: use lazy error accumulator
-type lazyErrors struct {
-    msgs []string
-}
+// debug.go — compiled only with: go build -tags debug
+//go:build debug
 
-func (le *lazyErrors) add(condition bool, msg string) {
-    if condition {
-        le.msgs = append(le.msgs, msg)
-    }
-}
+package main
 
-func (le *lazyErrors) err(prefix string) error {
-    if len(le.msgs) == 0 {
-        return nil
-    }
-    return fmt.Errorf("%s: %s", prefix, strings.Join(le.msgs, "; "))
-}
+const debugMode = true
 
-func validateOrderLazy(o Order) error {
-    var le lazyErrors
-    le.add(o.ID <= 0, "invalid order ID")
-    le.add(o.UserID <= 0, "invalid user ID")
-    le.add(o.Amount <= 0, "amount must be positive")
-    le.add(o.Currency == "", "currency required")
-    le.add(len(o.Items) == 0, "no items")
-    return le.err("order validation")
-}
-```
-
-**Optimized benchmark:**
-```
-BenchmarkValidate_Valid_Fast-8    10000000    95 ns/op    0 allocs/op
-```
-
-**Explanation:** The fast path adds a single if check that covers all success conditions. When the order is valid (the common case in production), we skip all allocations entirely. The slow (error) path only triggers for invalid orders. 5x speedup for the valid case, same behavior for invalid cases.
-</details>
-
----
-
-## Exercise 11 🔴 ⚡🔄 — Redundant Interface Nil Check in Hot Loop
-
-**What the code does:** Processes a list of handlers, checking each for nil before calling.
-
-**The problem:** The nil check occurs inside the loop even though nil handlers shouldn't be in the list.
-
-```go
+// main.go — same for both builds
 package main
 
 import "fmt"
 
-type Handler interface {
-    Handle(data string) error
-}
-
-type LogHandler struct{}
-func (h *LogHandler) Handle(data string) error {
-    fmt.Println("log:", data)
-    return nil
-}
-
-func processAll(handlers []Handler, data string) []error {
-    var errs []error
-    for _, h := range handlers {
-        if h == nil {    // nil check on every iteration
-            continue
-        }
-        if err := h.Handle(data); err != nil {
-            errs = append(errs, err)
-        }
+func processEvent(event Event, id int) {
+    if debugMode {
+        // This entire block is ELIMINATED from the binary in production.
+        // The compiler sees: if false { ... } → dead code → removed.
+        fmt.Printf("[DEBUG] processing event %d: %+v\n", id, event)
     }
-    return errs
+
+    result := transform(event)
+
+    if debugMode {
+        fmt.Printf("[DEBUG] event %d result: %+v\n", id, result)
+    }
+
+    store(result)
 }
 ```
 
-**Current benchmark:**
+**Verify dead code elimination:**
+```bash
+# Production build (no debug tag):
+go build -o app_prod .
+nm app_prod | grep "DEBUG"  # should NOT appear
+
+# Debug build:
+go build -tags debug -o app_debug .
+nm app_debug | grep "DEBUG"  # should appear
+
+# Check binary sizes:
+ls -la app_prod app_debug
+# app_debug is larger due to debug printf strings in binary
 ```
-BenchmarkProcessAll-8    1000000    1500 ns/op
-```
 
-<details>
-<summary>Hint</summary>
-Validate and remove nil handlers once at registration time, not on every call. Keep the hot loop clean.
-</details>
-
-<details>
-<summary>Optimized Solution</summary>
-
+**Alternative: function-level abstraction with inlining:**
 ```go
-// Pre-filter nil handlers at construction time
-type Pipeline struct {
-    handlers []Handler
-}
-
-func NewPipeline(handlers ...Handler) *Pipeline {
-    valid := make([]Handler, 0, len(handlers))
-    for _, h := range handlers {
-        if h != nil {    // nil check ONCE at construction
-            valid = append(valid, h)
-        }
+// No-op in production: inlined away entirely
+func debugLog(format string, args ...interface{}) {
+    if debugMode { // const false → entire function is a no-op → inlined to nothing
+        fmt.Printf(format, args...)
     }
-    return &Pipeline{handlers: valid}
 }
 
-func (p *Pipeline) Process(data string) []error {
-    var errs []error
-    for _, h := range p.handlers {
-        // No nil check needed — guaranteed by NewPipeline
-        if err := h.Handle(data); err != nil {
-            errs = append(errs, err)
-        }
-    }
-    return errs
-}
-
-func main() {
-    p := NewPipeline(&LogHandler{}, nil, &LogHandler{})
-    errs := p.Process("hello")
-    fmt.Println("Errors:", errs)
+func processEvent(event Event, id int) {
+    debugLog("[DEBUG] processing event %d: %+v\n", id, event)
+    result := transform(event)
+    debugLog("[DEBUG] event %d result: %+v\n", id, result)
+    store(result)
 }
 ```
 
-**Optimized benchmark:**
-```
-BenchmarkPipelineProcess-8    2000000    720 ns/op
-```
+**Performance impact:**
+- `var debugMode = false`: runtime check every call — ~1 ns/call overhead
+- `const debugMode = false`: zero overhead — the `if` body does not exist in the binary
+- At 10M calls/sec: `var` approach wastes ~10ms/sec on useless checks
 
-**Explanation:** Moving the nil check out of the hot loop into the constructor means it runs once per handler registration instead of once per data item processed. For a pipeline processing 1M items with 10 handlers, this eliminates 10M nil interface comparisons. 2x speedup for the processing loop.
+**This is how the Go standard library implements `race.Enabled`, `godebug` flags, and build-constrained features.**
+
 </details>
