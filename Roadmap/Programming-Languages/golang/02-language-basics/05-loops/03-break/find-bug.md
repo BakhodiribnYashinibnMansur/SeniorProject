@@ -1,1142 +1,948 @@
-# Break Statement in Go — Find the Bug
+# break Statement — Find the Bug
 
 ## Overview
 
-10+ debugging exercises to find and fix bugs related to Go's `break` statement. Bugs are marked by difficulty: 🟢 Easy, 🟡 Medium, 🔴 Hard. Each bug includes a `<details>` hint and full solution.
+12 debugging exercises to find and fix bugs related to Go's `break` statement. Each bug has a difficulty marker 🟢 Easy, 🟡 Medium, 🔴 Hard, and a `<details>` section with the fix and explanation.
 
 ---
 
-## Bug 1 — The Classic: Break in Switch Doesn't Exit For Loop
-
-**Difficulty:** 🟢 Easy
-
-**Description:** The developer wants to stop processing when `i == 3`. But something is wrong.
+## Bug 1 🟢 — break Inside switch Does Not Exit for Loop
 
 ```go
 package main
 
 import "fmt"
 
-func main() {
-    for i := 0; i < 5; i++ {
+func stopAtFive() {
+    for i := 0; i < 10; i++ {
         switch i {
-        case 3:
-            fmt.Println("Found 3, stopping")
-            break // supposed to stop the loop
+        case 5:
+            fmt.Println("Found 5, stopping")
+            break // BUG
         }
-        fmt.Println("Processing:", i)
+        fmt.Println("i =", i)
     }
-    fmt.Println("Done")
+}
+
+func main() {
+    stopAtFive()
 }
 ```
 
 **Expected output:**
 ```
-Processing: 0
-Processing: 1
-Processing: 2
-Found 3, stopping
-Done
+i = 0
+i = 1
+i = 2
+i = 3
+i = 4
+Found 5, stopping
 ```
 
 **Actual output:**
 ```
-Processing: 0
-Processing: 1
-Processing: 2
-Found 3, stopping
-Processing: 3
-Processing: 4
-Done
+i = 0
+...
+i = 4
+Found 5, stopping
+i = 5   ← should not appear
+i = 6
+...
+i = 9
 ```
-
-<details>
-<summary>Hint</summary>
-`break` inside a `switch` statement only exits the `switch`, not the surrounding `for` loop. To exit the `for` loop from inside a `switch`, you need to use a labeled `break` targeting the `for` loop.
-</details>
 
 <details>
 <summary>Solution</summary>
 
+**Root cause:** `break` inside a `switch` exits only the `switch`, not the enclosing `for` loop.
+
+**Fix — use a labeled break:**
 ```go
-package main
-
-import "fmt"
-
-func main() {
-outer:
-    for i := 0; i < 5; i++ {
+func stopAtFive() {
+Loop:
+    for i := 0; i < 10; i++ {
         switch i {
-        case 3:
-            fmt.Println("Found 3, stopping")
-            break outer // exits the for loop
+        case 5:
+            fmt.Println("Found 5, stopping")
+            break Loop // exits the for loop
         }
-        fmt.Println("Processing:", i)
+        fmt.Println("i =", i)
     }
-    fmt.Println("Done")
 }
 ```
 
-**Why:** `break` in Go exits the **innermost** `for`, `switch`, or `select`. Since the break is inside the `switch`, it exits the `switch`. The `for` loop continues normally. The label `outer:` on the `for` allows `break outer` to exit the for loop directly.
-
-**Alternative fix:** Use an `if` instead of `switch`:
+**Alternative fix — use a flag variable:**
 ```go
-for i := 0; i < 5; i++ {
-    if i == 3 {
-        fmt.Println("Found 3, stopping")
-        break // now exits the for loop directly
+func stopAtFive() {
+    done := false
+    for i := 0; i < 10; i++ {
+        switch i {
+        case 5:
+            fmt.Println("Found 5, stopping")
+            done = true
+        }
+        if done { break }
+        fmt.Println("i =", i)
     }
-    fmt.Println("Processing:", i)
 }
 ```
+
+**Best practice:** In Go, `break` always exits only the innermost enclosing `for`, `switch`, or `select`. To exit an outer construct, use a labeled break.
+
 </details>
 
 ---
 
-## Bug 2 — Goroutine Leak: Break in Select
-
-**Difficulty:** 🟡 Medium
-
-**Description:** This service consumer is supposed to shut down cleanly when `done` is closed. But it doesn't.
-
-```go
-package main
-
-import (
-    "fmt"
-    "time"
-)
-
-func startConsumer(messages <-chan string, done <-chan struct{}) {
-    go func() {
-        for {
-            select {
-            case msg := <-messages:
-                fmt.Println("Received:", msg)
-            case <-done:
-                fmt.Println("Consumer shutting down")
-                break // BUG: goroutine should exit here
-            }
-        }
-    }()
-}
-
-func main() {
-    messages := make(chan string, 3)
-    done := make(chan struct{})
-
-    messages <- "hello"
-    messages <- "world"
-
-    startConsumer(messages, done)
-    time.Sleep(50 * time.Millisecond)
-    close(done)
-    time.Sleep(100 * time.Millisecond)
-    fmt.Println("Main exiting, goroutine count:", countGoroutines())
-}
-
-func countGoroutines() int {
-    // imagine this returns runtime.NumGoroutine()
-    return 0
-}
-```
-
-**Bug:** The goroutine never actually exits. It prints "Consumer shutting down" but keeps looping forever, causing a goroutine leak.
-
-<details>
-<summary>Hint</summary>
-`break` inside a `select` only exits the `select` statement. The `for` loop surrounding the `select` keeps running. After the `done` channel is closed, the goroutine will keep hitting the `case <-done:` case on every iteration (closed channels are always readable), printing the message infinitely.
-</details>
-
-<details>
-<summary>Solution</summary>
-
-**Fix 1: Use `return` (simplest)**
-```go
-func startConsumer(messages <-chan string, done <-chan struct{}) {
-    go func() {
-        for {
-            select {
-            case msg := <-messages:
-                fmt.Println("Received:", msg)
-            case <-done:
-                fmt.Println("Consumer shutting down")
-                return // goroutine function exits
-            }
-        }
-    }()
-}
-```
-
-**Fix 2: Use labeled break**
-```go
-func startConsumer(messages <-chan string, done <-chan struct{}) {
-    go func() {
-    loop:
-        for {
-            select {
-            case msg := <-messages:
-                fmt.Println("Received:", msg)
-            case <-done:
-                fmt.Println("Consumer shutting down")
-                break loop // exits the for loop
-            }
-        }
-        // post-loop cleanup code can go here if needed
-    }()
-}
-```
-
-**Note:** Also, once `messages` channel is drained and no new messages come, the goroutine would block on the select. The `done` channel handles clean shutdown.
-</details>
-
----
-
-## Bug 3 — Inner Break Doesn't Exit Outer Loop
-
-**Difficulty:** 🟢 Easy
-
-**Description:** This code should find the first cell in a matrix equal to -1 and stop searching immediately. But it keeps scanning.
+## Bug 2 🟢 — Infinite Loop Because break Is Never Reached
 
 ```go
 package main
 
 import "fmt"
 
-func main() {
-    matrix := [][]int{
-        {1, 2, 3},
-        {4, -1, 6},
-        {7, 8, 9},
-    }
-
-    found := false
-    foundRow, foundCol := -1, -1
-
-    for i, row := range matrix {
-        for j, val := range row {
-            if val == -1 {
-                found = true
-                foundRow, foundCol = i, j
-                break // BUG: only exits inner loop!
-            }
+func readPositive(values []int) int {
+    sum := 0
+    i := 0
+    for {
+        if i >= len(values) {
+            break
         }
+        v := values[i]
+        if v < 0 {
+            fmt.Println("Negative value, stopping")
+            // BUG: forgot break here
+        }
+        sum += v
+        i++
     }
+    return sum
+}
 
-    if found {
-        fmt.Printf("Found -1 at (%d, %d)\n", foundRow, foundCol)
-    }
+func main() {
+    fmt.Println(readPositive([]int{1, 2, -3, 4}))
 }
 ```
 
-**Symptom:** Code works but continues scanning rows after finding -1. Not a correctness bug in output, but a performance/logic bug. Prove it by adding print statements.
-
-<details>
-<summary>Hint</summary>
-`break` exits the innermost loop — the inner `for j` loop. But the outer `for i` loop continues to the next row. You need to either use a labeled break or restructure with a function return.
-</details>
+**Problem:** The function prints "Negative value, stopping" but continues processing and never terminates correctly because `break` is missing after the negative check.
 
 <details>
 <summary>Solution</summary>
 
-**Fix 1: Labeled break**
+**Root cause:** When `v < 0`, the code prints the message but does NOT break out of the loop. It then adds the negative value to `sum` and increments `i`, continuing forever.
+
+**Fix:**
+```go
+func readPositive(values []int) int {
+    sum := 0
+    i := 0
+    for {
+        if i >= len(values) {
+            break
+        }
+        v := values[i]
+        if v < 0 {
+            fmt.Println("Negative value, stopping")
+            break // fix: exit the loop
+        }
+        sum += v
+        i++
+    }
+    return sum
+}
+```
+
+**Or more idiomatically with for range:**
+```go
+func readPositive(values []int) int {
+    sum := 0
+    for _, v := range values {
+        if v < 0 {
+            break
+        }
+        sum += v
+    }
+    return sum
+}
+```
+
+</details>
+
+---
+
+## Bug 3 🟢 — break Only Exits Inner Loop
+
 ```go
 package main
 
 import "fmt"
 
-func main() {
-    matrix := [][]int{
-        {1, 2, 3},
-        {4, -1, 6},
-        {7, 8, 9},
-    }
-
-    foundRow, foundCol := -1, -1
-
-search:
+func findInMatrix(matrix [][]int, target int) {
     for i, row := range matrix {
-        for j, val := range row {
-            if val == -1 {
-                foundRow, foundCol = i, j
-                break search // exits BOTH loops
+        for j, v := range row {
+            if v == target {
+                fmt.Printf("Found at [%d][%d]\n", i, j)
+                break // BUG: only exits inner loop
             }
         }
     }
+}
 
-    if foundRow >= 0 {
-        fmt.Printf("Found -1 at (%d, %d)\n", foundRow, foundCol)
+func main() {
+    m := [][]int{
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9},
+    }
+    findInMatrix(m, 5)
+    // Expected: Found at [1][1]
+    // Problem: continues searching outer rows after finding 5
+}
+```
+
+**Problem:** After finding the target, the outer loop continues iterating remaining rows unnecessarily.
+
+<details>
+<summary>Solution</summary>
+
+**Root cause:** `break` inside a nested loop exits only the innermost loop. The outer `for i, row` loop keeps iterating.
+
+**Fix 1 — labeled break:**
+```go
+func findInMatrix(matrix [][]int, target int) {
+Outer:
+    for i, row := range matrix {
+        for j, v := range row {
+            if v == target {
+                fmt.Printf("Found at [%d][%d]\n", i, j)
+                break Outer
+            }
+        }
     }
 }
 ```
 
-**Fix 2: Extract to function (cleaner)**
+**Fix 2 — extract to function (preferred for readability):**
 ```go
-func findNegOne(matrix [][]int) (int, int, bool) {
+func findInMatrix(matrix [][]int, target int) (int, int, bool) {
     for i, row := range matrix {
-        for j, val := range row {
-            if val == -1 {
-                return i, j, true // exits the function = exits all loops
+        for j, v := range row {
+            if v == target {
+                return i, j, true
             }
         }
     }
     return -1, -1, false
 }
+
+func main() {
+    m := [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
+    if row, col, ok := findInMatrix(m, 5); ok {
+        fmt.Printf("Found at [%d][%d]\n", row, col)
+    }
+}
 ```
+
 </details>
 
 ---
 
-## Bug 4 — Dead Code After Break (Unreachable Cleanup)
-
-**Difficulty:** 🟢 Easy
-
-**Description:** The developer wants to log a warning AND break. But the log never prints.
+## Bug 4 🟡 — break in select Does Not Exit for Loop
 
 ```go
 package main
 
-import "fmt"
+import (
+    "fmt"
+    "time"
+)
 
-func processItems(items []string) {
-    for i, item := range items {
-        if item == "" {
-            break
-            fmt.Printf("Warning: empty item at index %d\n", i) // BUG: dead code
+func listenWithTimeout(ch <-chan int, timeout time.Duration) {
+    timer := time.After(timeout)
+    for {
+        select {
+        case v := <-ch:
+            fmt.Println("Received:", v)
+        case <-timer:
+            fmt.Println("Timeout!")
+            break // BUG: only exits select, not for
         }
-        fmt.Println("Processing:", item)
     }
+    fmt.Println("Done") // never reached
 }
 
 func main() {
-    items := []string{"a", "b", "", "d"}
-    processItems(items)
+    ch := make(chan int, 3)
+    ch <- 1
+    ch <- 2
+    close(ch)
+    listenWithTimeout(ch, 10*time.Millisecond)
 }
 ```
 
-**Expected output:**
-```
-Processing: a
-Processing: b
-Warning: empty item at index 2
-```
-
-**Actual output:**
-```
-Processing: a
-Processing: b
-```
-
-<details>
-<summary>Hint</summary>
-The `fmt.Printf` line is AFTER `break`. Once `break` executes, control jumps out of the loop immediately. Any code after `break` in the same block is unreachable (dead code).
-</details>
+**Problem:** After the timeout case, the function prints "Timeout!" but then re-enters the `for` loop and the `select`, running forever (or reading zero-values from the closed channel forever).
 
 <details>
 <summary>Solution</summary>
 
+**Root cause:** `break` inside `select` exits the `select` statement, not the enclosing `for` loop.
+
+**Fix 1 — labeled break:**
 ```go
-package main
-
-import "fmt"
-
-func processItems(items []string) {
-    for i, item := range items {
-        if item == "" {
-            fmt.Printf("Warning: empty item at index %d\n", i) // moved BEFORE break
-            break
-        }
-        fmt.Println("Processing:", item)
-    }
-}
-
-func main() {
-    items := []string{"a", "b", "", "d"}
-    processItems(items)
-}
-```
-
-**Rule:** Code after `break`, `return`, `panic`, or `goto` in the same block is unreachable. Always place any logic you want to run BEFORE the `break`.
-</details>
-
----
-
-## Bug 5 — Break Outside Loop (Compile Error Misunderstanding)
-
-**Difficulty:** 🟢 Easy
-
-**Description:** This code doesn't compile. Why?
-
-```go
-package main
-
-import "fmt"
-
-func process(items []string) {
-    handler := func(item string) {
-        if item == "stop" {
-            break // BUG: compile error
-        }
-        fmt.Println(item)
-    }
-
-    for _, item := range items {
-        handler(item)
-    }
-}
-
-func main() {
-    process([]string{"a", "stop", "b"})
-}
-```
-
-**Error:** `break is not in a loop, switch, or select`
-
-<details>
-<summary>Hint</summary>
-`break` only works inside a `for`, `switch`, or `select` **within the same function**. The anonymous function `handler` is its own function scope. The `for` loop is in the outer `process` function, not inside `handler`. You cannot `break` across function boundaries.
-</details>
-
-<details>
-<summary>Solution</summary>
-
-**Fix 1: Move the loop inside the anonymous function**
-```go
-package main
-
-import "fmt"
-
-func process(items []string) {
-    func() {
-        for _, item := range items {
-            if item == "stop" {
-                break // now in the same function as the for loop
+func listenWithTimeout(ch <-chan int, timeout time.Duration) {
+    timer := time.After(timeout)
+Loop:
+    for {
+        select {
+        case v, ok := <-ch:
+            if !ok {
+                fmt.Println("Channel closed")
+                break Loop
             }
-            fmt.Println(item)
+            fmt.Println("Received:", v)
+        case <-timer:
+            fmt.Println("Timeout!")
+            break Loop
+        }
+    }
+    fmt.Println("Done")
+}
+```
+
+**Fix 2 — return (preferred in goroutines):**
+```go
+func listenWithTimeout(ch <-chan int, timeout time.Duration) {
+    timer := time.After(timeout)
+    for {
+        select {
+        case v, ok := <-ch:
+            if !ok { return }
+            fmt.Println("Received:", v)
+        case <-timer:
+            fmt.Println("Timeout!")
+            return
+        }
+    }
+}
+```
+
+</details>
+
+---
+
+## Bug 5 🟡 — Goroutine Leak After break on Channel
+
+```go
+package main
+
+import (
+    "fmt"
+)
+
+func generate(n int) <-chan int {
+    ch := make(chan int) // unbuffered
+    go func() {
+        for i := 0; i < n; i++ {
+            ch <- i // blocks if consumer stopped
+        }
+        close(ch)
+    }()
+    return ch
+}
+
+func firstFive() []int {
+    var result []int
+    for v := range generate(1000000) {
+        result = append(result, v)
+        if len(result) == 5 {
+            break // BUG: producer goroutine is now blocked forever
+        }
+    }
+    return result
+}
+
+func main() {
+    fmt.Println(firstFive())
+}
+```
+
+**Problem:** After `break`, the goroutine inside `generate` is blocked on `ch <- i` forever — a goroutine leak. The program finishes `main` but the goroutine is never garbage collected.
+
+<details>
+<summary>Solution</summary>
+
+**Root cause:** The producer goroutine is blocked trying to send to an unbuffered channel that no longer has a consumer. The channel is never drained or closed from the consumer side, so the goroutine stays alive.
+
+**Fix — use context.Context to signal cancellation:**
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+)
+
+func generate(ctx context.Context, n int) <-chan int {
+    ch := make(chan int)
+    go func() {
+        defer close(ch)
+        for i := 0; i < n; i++ {
+            select {
+            case <-ctx.Done():
+                return // producer exits when consumer cancels
+            case ch <- i:
+            }
         }
     }()
+    return ch
 }
-```
 
-**Fix 2: Use a return value signal (closure approach)**
-```go
-package main
+func firstFive() []int {
+    ctx, cancel := context.WithCancel(context.Background())
+    defer cancel() // cancels producer when firstFive returns
 
-import "fmt"
-
-func process(items []string) {
-    for _, item := range items {
-        if shouldStop := handle(item); shouldStop {
+    var result []int
+    for v := range generate(ctx, 1000000) {
+        result = append(result, v)
+        if len(result) == 5 {
             break
         }
     }
+    return result
 }
 
-func handle(item string) bool {
-    if item == "stop" {
-        return true // signal to break
-    }
-    fmt.Println(item)
-    return false
+func main() {
+    fmt.Println(firstFive())
 }
 ```
 
-**Fix 3: Use a channel or closure variable**
+**Key rule:** Whenever you `break` from a channel range loop, ensure the producer goroutine can detect the cancellation. Always use `context.Context` or a done channel.
+
+</details>
+
+---
+
+## Bug 6 🟡 — Unreachable Code After break
+
 ```go
 package main
 
 import "fmt"
 
-func process(items []string) {
-    stop := false
-    handler := func(item string) {
+func processItems(items []string) {
+    for _, item := range items {
         if item == "stop" {
-            stop = true // set flag in closure
-            return
+            fmt.Println("Stopping")
+            break
+            fmt.Println("Processing stopped at:", item) // BUG: dead code
         }
-        fmt.Println(item)
+        fmt.Println("Processing:", item)
     }
+}
 
+func main() {
+    processItems([]string{"a", "b", "stop", "c"})
+}
+```
+
+**Problem:** The `fmt.Println("Processing stopped at:", item)` line after `break` is unreachable dead code. The Go compiler will not warn about this by default, but static analysis tools like `staticcheck` will flag it.
+
+<details>
+<summary>Solution</summary>
+
+**Root cause:** Any statement after an unconditional `break` (in the same block) is unreachable. The code was likely written with the intent to log before stopping, but the order is wrong.
+
+**Fix — move the log statement before break:**
+```go
+func processItems(items []string) {
     for _, item := range items {
-        handler(item)
-        if stop { break }
+        if item == "stop" {
+            fmt.Println("Stopping at:", item) // log first
+            break                             // then break
+        }
+        fmt.Println("Processing:", item)
     }
 }
 ```
+
+**Detection:** Run `staticcheck ./...` or `go vet ./...` to catch unreachable code. The `go vet` tool catches some cases; `staticcheck` is more thorough.
+
 </details>
 
 ---
 
-## Bug 6 — Missing Break Allows Infinite Channel Receive After Close
-
-**Difficulty:** 🟡 Medium
-
-**Description:** After the channel is closed, the loop should exit. But it seems to run forever printing zero values.
+## Bug 7 🟡 — Labeled break Targets Wrong Statement
 
 ```go
 package main
 
 import "fmt"
 
-func main() {
-    ch := make(chan int, 3)
-    ch <- 1
-    ch <- 2
-    ch <- 3
-    close(ch)
-
-    for {
-        v := <-ch
-        if v == 0 {
-            // BUG: should break here but doesn't
-            fmt.Println("Channel exhausted")
-        }
-        fmt.Println("Got:", v)
-    }
-}
-```
-
-**Actual behavior:** After printing 1, 2, 3, it prints "Channel exhausted" and "Got: 0" infinitely.
-
-<details>
-<summary>Hint</summary>
-Receiving from a closed, empty channel returns the zero value immediately without blocking. `v == 0` IS reached, but the code just prints "Channel exhausted" and continues the loop. The `break` is missing! Also, checking for zero value is unreliable — what if valid values can be 0? Use the two-value receive form `v, ok := <-ch`.
-</details>
-
-<details>
-<summary>Solution</summary>
-
-**Fix 1: Use two-value receive with break**
-```go
-package main
-
-import "fmt"
-
-func main() {
-    ch := make(chan int, 3)
-    ch <- 1
-    ch <- 2
-    ch <- 3
-    close(ch)
-
-    for {
-        v, ok := <-ch
-        if !ok {
-            fmt.Println("Channel exhausted")
-            break // channel closed and empty
-        }
-        fmt.Println("Got:", v)
-    }
-}
-```
-
-**Fix 2: Use `for range` (idiomatic)**
-```go
-package main
-
-import "fmt"
-
-func main() {
-    ch := make(chan int, 3)
-    ch <- 1
-    ch <- 2
-    ch <- 3
-    close(ch)
-
-    for v := range ch { // automatically stops when channel is closed
-        fmt.Println("Got:", v)
-    }
-    fmt.Println("Channel exhausted")
-}
-```
-
-**Output:**
-```
-Got: 1
-Got: 2
-Got: 3
-Channel exhausted
-```
-</details>
-
----
-
-## Bug 7 — Break in Nested Switch (Wrong Level)
-
-**Difficulty:** 🟡 Medium
-
-**Description:** The developer has two nested switches and wants the inner break to exit the outer switch. But it doesn't work as expected.
-
-```go
-package main
-
-import "fmt"
-
-func process(category, action string) {
-    switch category {
-    case "user":
-        switch action {
-        case "delete":
-            fmt.Println("Deleting user")
-            break // developer expects this to exit outer switch too
-        case "create":
-            fmt.Println("Creating user")
-        }
-        // this should NOT run if action == "delete"
-        fmt.Println("User operation logged") // BUG: runs even for delete
-    case "admin":
-        fmt.Println("Admin action")
-    }
-}
-
-func main() {
-    process("user", "delete")
-    fmt.Println("---")
-    process("user", "create")
-}
-```
-
-**Expected output:**
-```
-Deleting user
----
-Creating user
-User operation logged
-```
-
-**Actual output:**
-```
-Deleting user
-User operation logged
----
-Creating user
-User operation logged
-```
-
-<details>
-<summary>Hint</summary>
-`break` in the inner switch exits the inner switch only. The outer switch case body continues executing. To exit the outer switch, use a labeled break targeting the outer switch.
-</details>
-
-<details>
-<summary>Solution</summary>
-
-```go
-package main
-
-import "fmt"
-
-func process(category, action string) {
-outerSwitch:
-    switch category {
-    case "user":
-        switch action {
-        case "delete":
-            fmt.Println("Deleting user")
-            break outerSwitch // exits the outer switch
-        case "create":
-            fmt.Println("Creating user")
-        }
-        fmt.Println("User operation logged") // only runs for non-delete actions
-    case "admin":
-        fmt.Println("Admin action")
-    }
-}
-```
-
-**Alternative: restructure with return**
-```go
-func process(category, action string) {
-    if category == "user" {
-        if action == "delete" {
-            fmt.Println("Deleting user")
-            return // cleanest approach
-        }
-        fmt.Println("Creating user")
-        fmt.Println("User operation logged")
-    } else if category == "admin" {
-        fmt.Println("Admin action")
-    }
-}
-```
-</details>
-
----
-
-## Bug 8 — Break Doesn't Fire Due to Incorrect Condition
-
-**Difficulty:** 🟡 Medium
-
-**Description:** The loop should stop when it finds a negative number. But it runs through everything.
-
-```go
-package main
-
-import "fmt"
-
-func processUntilNegative(data []int) {
-    for i := 0; i < len(data); i++ {
-        fmt.Println("Processing:", data[i])
-        if i > 0 && data[i] < 0 {
-            fmt.Println("Found negative, stopping")
-            break
-        }
-    }
-}
-
-func main() {
-    data := []int{-5, 1, 2, 3}
-    processUntilNegative(data)
-}
-```
-
-**Expected output:**
-```
-Found negative, stopping
-```
-
-**Actual output:**
-```
-Processing: -5
-Processing: 1
-Processing: 2
-Processing: 3
-```
-
-<details>
-<summary>Hint</summary>
-The condition `i > 0 && data[i] < 0` skips index 0 entirely (`i > 0` is false when i=0). So when `data[0] == -5` (the negative number), the break condition is false because `i == 0`. The loop continues and no other negative number exists.
-</details>
-
-<details>
-<summary>Solution</summary>
-
-```go
-package main
-
-import "fmt"
-
-func processUntilNegative(data []int) {
-    for i := 0; i < len(data); i++ {
-        if data[i] < 0 { // removed the i > 0 guard
-            fmt.Println("Found negative, stopping")
-            break
-        }
-        fmt.Println("Processing:", data[i]) // only process non-negative
-    }
-}
-
-func main() {
-    data := []int{-5, 1, 2, 3}
-    processUntilNegative(data)
-}
-```
-
-**Output:**
-```
-Found negative, stopping
-```
-
-**Lesson:** Check break conditions carefully. The `i > 0` guard was accidentally preventing the break from firing at index 0. Also note: the `fmt.Println("Processing:", ...)` was moved AFTER the check — we don't want to process negative numbers.
-</details>
-
----
-
-## Bug 9 — Break Label on Wrong Statement
-
-**Difficulty:** 🔴 Hard
-
-**Description:** This code is supposed to exit the outer loop when a sum exceeds 10. But the label is misapplied.
-
-```go
-package main
-
-import "fmt"
-
-func main() {
-    data := [][]int{
-        {1, 2, 3},
-        {4, 5, 6},
-        {7, 8, 9},
-    }
-
-    sum := 0
-    for _, row := range data {
-    inner:  // BUG: label on inner loop, not outer
-        for _, v := range row {
-            sum += v
-            if sum > 10 {
-                break inner // developer thinks this exits outer loop
-                            // but inner: labels the inner for loop!
+func search(matrix [][]int, target int) (int, int) {
+    row, col := -1, -1
+Inner: // BUG: label is on the wrong loop
+    for i := range matrix {
+        for j, v := range matrix[i] {
+            if v == target {
+                row, col = i, j
+                break Inner // meant to exit outer loop, but Inner labels inner loop!
             }
         }
-        fmt.Println("Sum after row:", sum)
     }
-    fmt.Println("Final sum:", sum)
+    return row, col
+}
+
+func main() {
+    m := [][]int{{1, 2}, {3, 4}, {5, 6}}
+    fmt.Println(search(m, 4)) // Should be: 1 1
 }
 ```
 
-**Expected output:**
-```
-Sum after row: 6
-Final sum: 15  (stopped at 4+5+6=15, after sum > 10)
-```
-
-Wait, the REAL expected behavior: stop ALL processing (both loops) when sum > 10.
-
-**Expected output:**
-```
-Final sum: 15  (1+2+3+4+5=15 > 10, stopped mid-second-row)
-```
-
-**Actual output:** Continues processing all rows because `break inner` only exits the inner loop.
-
-<details>
-<summary>Hint</summary>
-The label `inner:` is placed on the inner `for _, v := range row` loop. So `break inner` exits the inner loop — same as a plain `break`. To exit the outer loop, the label must be placed on the outer `for _, row := range data` loop.
-</details>
+**Problem:** The label `Inner` is placed on the outer `for i` loop. When `break Inner` executes, it exits the outer loop (not the inner one as the programmer intended by the name). The naming is misleading and the placement may be incorrect depending on intent.
 
 <details>
 <summary>Solution</summary>
+
+**Root cause:** In Go, a label applies to the statement that immediately follows it. `Inner:` is placed before `for i := range matrix`, so `break Inner` exits the outer loop. The label name "Inner" is misleading.
+
+**If the goal is to exit BOTH loops (outer) on found:**
+```go
+// The label should be on the OUTER loop, named clearly
+func search(matrix [][]int, target int) (int, int) {
+    row, col := -1, -1
+Outer:
+    for i := range matrix {
+        for j, v := range matrix[i] {
+            if v == target {
+                row, col = i, j
+                break Outer // exits both loops
+            }
+        }
+    }
+    return row, col
+}
+```
+
+**If the goal is to exit only the INNER loop:**
+```go
+func search(matrix [][]int, target int) (int, int) {
+    row, col := -1, -1
+    for i := range matrix {
+    Inner:
+        for j, v := range matrix[i] {
+            if v == target {
+                row, col = i, j
+                break Inner // exits only the inner loop
+            }
+        }
+    }
+    return row, col
+}
+```
+
+**Rule:** Always place the label on the construct you want to exit, and name it to reflect the structure (e.g., `Outer`, `RowLoop`, `Batch`).
+
+</details>
+
+---
+
+## Bug 8 🔴 — break Inside defer (Compile Error)
 
 ```go
 package main
 
 import "fmt"
 
-func main() {
-    data := [][]int{
-        {1, 2, 3},
-        {4, 5, 6},
-        {7, 8, 9},
-    }
-
-    sum := 0
-outer: // label on OUTER loop
-    for _, row := range data {
-        for _, v := range row {
-            sum += v
-            if sum > 10 {
-                break outer // exits the outer for loop
+func processWithCleanup(items []int) {
+    for _, v := range items {
+        defer func() {
+            if v < 0 {
+                break // BUG: compile error — break not in for/switch/select
             }
-        }
-        fmt.Println("Sum after row:", sum)
+        }()
+        fmt.Println(v)
     }
-    fmt.Println("Final sum:", sum)
+}
+
+func main() {
+    processWithCleanup([]int{1, 2, -3, 4})
 }
 ```
 
-**Output:**
-```
-Sum after row: 6
-Final sum: 15
+**Problem:** `break` inside a `defer`ed function is a compile error: `break is not in a for, switch, or select`.
+
+<details>
+<summary>Solution</summary>
+
+**Root cause:** `break` requires a directly enclosing `for`, `switch`, or `select` in the same function body. A `defer`ed function is a separate closure — the `for` loop in the outer function is not visible to `break` inside the closure.
+
+**Fix 1 — remove the break, use return from defer if needed:**
+```go
+func processWithCleanup(items []int) {
+    for _, v := range items {
+        v := v // capture loop variable
+        defer func() {
+            if v < 0 {
+                fmt.Println("Cleanup for negative:", v)
+                return // return from defer, not break from for
+            }
+        }()
+        fmt.Println(v)
+    }
+}
 ```
 
-(Row 1 completes with sum=6, then row 2: 4 → 10, 5 → 15 > 10, `break outer` fires)
+**Fix 2 — move the break condition outside defer:**
+```go
+func processWithCleanup(items []int) {
+    for _, v := range items {
+        if v < 0 {
+            break // break is valid here — directly in for
+        }
+        fmt.Println(v)
+    }
+}
+```
 
-**Rule:** Place the label on the statement you want to EXIT when break fires, not on the inner statement.
+**Key rule:** `break` (and `continue`) cannot cross function boundaries. A `defer`ed function, an anonymous function, or a goroutine closure cannot `break` or `continue` the outer function's loop.
+
 </details>
 
 ---
 
-## Bug 10 — Break in Goroutine Causes Missed Cleanup
-
-**Difficulty:** 🔴 Hard
-
-**Description:** This worker processes jobs and is supposed to notify the WaitGroup when done. But sometimes `wg.Done()` is never called.
+## Bug 9 🔴 — break After Sending to Closed Channel
 
 ```go
 package main
 
-import (
-    "fmt"
-    "sync"
-)
+import "fmt"
 
-func worker(jobs <-chan int, done <-chan struct{}, wg *sync.WaitGroup) {
+func drain(ch chan int, done chan struct{}) {
     for {
         select {
-        case j, ok := <-jobs:
-            if !ok {
-                return // channel closed
+        case v := <-ch:
+            fmt.Println("Received:", v)
+            if v == 0 {
+                // zero value from closed channel
+                break // BUG: exits select, not for — infinite loop receiving 0
             }
-            fmt.Println("Job:", j)
         case <-done:
-            fmt.Println("Worker stopping")
-            return // BUG: wg.Done() never called!
-        }
-    }
-    wg.Done() // BUG: unreachable code — return above exits before this
-}
-
-func main() {
-    jobs := make(chan int, 5)
-    done := make(chan struct{})
-    var wg sync.WaitGroup
-
-    wg.Add(1)
-    go worker(jobs, done, &wg)
-
-    jobs <- 1
-    jobs <- 2
-    close(done)
-    wg.Wait() // DEADLOCK: blocks forever because wg.Done() never called
-    fmt.Println("All workers done")
-}
-```
-
-<details>
-<summary>Hint</summary>
-`wg.Done()` is placed after the `for` loop, but the loop only exits via `return` statements (which exit the function, not just the loop). The code after the `for` is unreachable. Use `defer wg.Done()` at the start of the function.
-</details>
-
-<details>
-<summary>Solution</summary>
-
-```go
-package main
-
-import (
-    "fmt"
-    "sync"
-)
-
-func worker(jobs <-chan int, done <-chan struct{}, wg *sync.WaitGroup) {
-    defer wg.Done() // FIXED: always called when function exits, regardless of exit path
-
-    for {
-        select {
-        case j, ok := <-jobs:
-            if !ok {
-                return
-            }
-            fmt.Println("Job:", j)
-        case <-done:
-            fmt.Println("Worker stopping")
             return
         }
     }
 }
 
 func main() {
-    jobs := make(chan int, 5)
+    ch := make(chan int, 3)
     done := make(chan struct{})
-    var wg sync.WaitGroup
+    ch <- 1
+    ch <- 2
+    close(ch) // after closing, receives return zero value infinitely
 
-    wg.Add(1)
-    go worker(jobs, done, &wg)
-
-    jobs <- 1
-    jobs <- 2
-    close(done)
-    wg.Wait()
-    fmt.Println("All workers done")
+    go drain(ch, done)
+    // done is never closed, goroutine loops printing 0 forever
+    fmt.Println("main done")
 }
 ```
 
-**Key insight:** `defer wg.Done()` fires on ANY exit from the function — `return`, `break` (if at function level), or `panic`. Always use `defer` for cleanup that must run regardless of exit path. Placing cleanup code after a loop that exits via `return` means that code is unreachable.
-</details>
+**Problem:** After `ch` is closed, reading from it returns `(0, false)` indefinitely. The `break` exits only the `select`, and `done` is never signaled, so the goroutine loops forever printing `Received: 0`.
 
----
+<details>
+<summary>Solution</summary>
 
-## Bug 11 — Infinite Loop Due to Missing Break in Select
+**Root cause:** Two bugs:
+1. `break` exits `select` not `for`
+2. The code doesn't check the `ok` value from channel receive to detect closure
 
-**Difficulty:** 🔴 Hard
-
-**Description:** This event processor should drain remaining events then exit. But it spins infinitely after the event channel is empty.
-
+**Fix — check ok and return on channel close:**
 ```go
-package main
-
-import (
-    "fmt"
-    "time"
-)
-
-func drainAndExit(events <-chan string, timeout <-chan time.Time) {
+func drain(ch chan int, done chan struct{}) {
     for {
         select {
-        case e := <-events:
-            fmt.Println("Event:", e)
-        case <-timeout:
-            fmt.Println("Timeout, flushing remaining...")
-            // BUG: wants to drain remaining buffered events then exit
-            for e := range events { // BUG: blocks forever if more events are never sent
-                fmt.Println("Flushing:", e)
+        case v, ok := <-ch:
+            if !ok {
+                fmt.Println("Channel closed, stopping")
+                return // channel is closed — exit goroutine
             }
+            fmt.Println("Received:", v)
+        case <-done:
             return
         }
     }
 }
 
 func main() {
-    events := make(chan string, 5)
-    for i := 1; i <= 5; i++ {
-        events <- fmt.Sprintf("event-%d", i)
-    }
-    // NOT closing events — simulating a live channel that just happens to be empty
+    ch := make(chan int, 3)
+    done := make(chan struct{})
+    ch <- 1
+    ch <- 2
+    close(ch)
 
-    timer := time.After(100 * time.Millisecond)
-    drainAndExit(events, timer)
+    drain(ch, done) // blocks until ch is drained and closed
+    fmt.Println("main done")
 }
 ```
 
-<details>
-<summary>Hint</summary>
-`for e := range events` blocks waiting for new events or for the channel to be closed. Since `events` is never closed, this drains the buffered events but then blocks forever. Use a non-blocking select (with `default`) to drain remaining buffered events without blocking.
-</details>
+**Rule:** When ranging over a channel that may close, always check the `ok` return value: `v, ok := <-ch`. If `!ok`, the channel is closed — `return` or `break` (with label) to exit the loop.
 
-<details>
-<summary>Solution</summary>
-
-```go
-package main
-
-import (
-    "fmt"
-    "time"
-)
-
-func drainAndExit(events <-chan string, timeout <-chan time.Time) {
-    for {
-        select {
-        case e := <-events:
-            fmt.Println("Event:", e)
-        case <-timeout:
-            fmt.Println("Timeout, flushing remaining...")
-            // Non-blocking drain: read all buffered events without blocking
-            for {
-                select {
-                case e := <-events:
-                    fmt.Println("Flushing:", e)
-                default:
-                    fmt.Println("Flush complete")
-                    return // no more buffered events
-                }
-            }
-        }
-    }
-}
-```
-
-**Output:**
-```
-Event: event-1
-Event: event-2
-... (or none, depending on timing)
-Timeout, flushing remaining...
-Flushing: event-3
-Flushing: event-4
-Flushing: event-5
-Flush complete
-```
-
-**Key pattern:** Use `select { case v := <-ch: ...; default: break }` for non-blocking channel drain.
 </details>
 
 ---
 
-## Bug 12 — Break in Fallthrough Chain
-
-**Difficulty:** 🟡 Medium
-
-**Description:** The developer is confused about `fallthrough` and `break`. They expect the following to print only "B" for input 2.
+## Bug 10 🔴 — Wrong Label Name (Case Sensitivity)
 
 ```go
 package main
 
 import "fmt"
 
-func printGrade(score int) {
-    switch {
-    case score >= 90:
-        fmt.Println("A")
-        fallthrough
-    case score >= 80:
-        fmt.Println("B")
-        break // developer thinks this stops the fallthrough chain
-        fallthrough
-    case score >= 70:
-        fmt.Println("C")
+func search(data [][]int, target int) bool {
+    found := false
+outer:
+    for _, row := range data {
+        for _, v := range row {
+            if v == target {
+                found = true
+                break Outer // BUG: "Outer" != "outer" — compile error
+            }
+        }
     }
+    return found
 }
 
 func main() {
-    printGrade(95) // expects: A, B
-    fmt.Println("---")
-    printGrade(85) // expects: B only
+    m := [][]int{{1, 2}, {3, 4}}
+    fmt.Println(search(m, 3))
 }
 ```
 
-<details>
-<summary>Hint</summary>
-`fallthrough` in Go moves execution to the next case body. `break` AFTER `fallthrough` is dead code — once `fallthrough` executes, you're in the next case. But importantly: `break` BEFORE the second `fallthrough` exits the switch immediately — the second `fallthrough` is unreachable.
-</details>
+**Problem:** The label is defined as `outer` (lowercase) but referenced as `Outer` (uppercase). Go labels are case-sensitive. This is a compile error: `label Outer not defined`.
 
 <details>
 <summary>Solution</summary>
 
-The code actually compiles and runs, but the dead code (second `fallthrough`) gives a compile warning/error with some linters.
+**Root cause:** Go identifiers (including labels) are case-sensitive. `outer` and `Outer` are different labels.
 
-**Actual output:**
-```
-A
-B
----
-B
-```
-
-For `score=95`: case `score>=90` matches → prints "A" → falls through to `score>=80` case → prints "B" → `break` exits the switch (second `fallthrough` is dead code).
-
-For `score=85`: case `score>=90` is false, case `score>=80` matches → prints "B" → `break` exits.
-
-**This code actually works for the desired behavior**, but the second `fallthrough` is dead code and confusing. Clean version:
-
+**Fix — use consistent casing:**
 ```go
-func printGrade(score int) {
-    switch {
-    case score >= 90:
-        fmt.Println("A")
-        fallthrough
-    case score >= 80:
-        fmt.Println("B")
-        // no break needed — Go switch doesn't fall through by default
-        // break here would be equivalent (exits switch same as natural end of case)
-    case score >= 70:
-        fmt.Println("C")
+func search(data [][]int, target int) bool {
+    found := false
+Outer:
+    for _, row := range data {
+        for _, v := range row {
+            if v == target {
+                found = true
+                break Outer // matches the label
+            }
+        }
     }
+    return found
 }
 ```
 
-**Key insight:** `break` at end of a switch case is redundant unless you need to exit EARLY from within the case body.
+**Convention:** By Go convention, labels are written in `CamelCase` or `ALLCAPS` for visibility (e.g., `Outer`, `OUTER`, `SearchLoop`). The Go spec does not mandate any style, but consistency is essential.
+
+**Detection:** This is always a compile error — the compiler will say `label Outer not defined`. If you see this error, check for capitalization mismatches.
+
 </details>
 
 ---
 
-## Summary: Break Bug Patterns
+## Bug 11 🔴 — Non-Deterministic Break Point Due to Map Iteration Order
 
-```mermaid
-flowchart TD
-    A[Break Bug?] --> B{Where is break?}
-    B --> C[Inside switch, inside for]
-    B --> D[Inside select, inside for]
-    B --> E[Inside anonymous func, outside loop]
-    B --> F[After return/panic]
-    B --> G[Label on wrong statement]
+```go
+package main
 
-    C --> C1["break exits switch only\nFix: labeled break or if statement"]
-    D --> D1["break exits select only\nFix: labeled break or return"]
-    E --> E1["Compile error: break not in loop\nFix: restructure or use return value"]
-    F --> F1["Dead code — never runs\nFix: move code before break"]
-    G --> G1["break targets wrong loop level\nFix: move label to outer statement"]
+import "fmt"
+
+func firstNegative(m map[string]int) (string, int, bool) {
+    for k, v := range m {
+        if v < 0 {
+            return k, v, true // BUG: order is random — different key returned each run
+        }
+    }
+    return "", 0, false
+}
+
+func main() {
+    m := map[string]int{
+        "a": 1,
+        "b": -2,
+        "c": -5,
+        "d": 3,
+    }
+    // May return "b" or "c" non-deterministically across runs
+    fmt.Println(firstNegative(m))
+}
 ```
 
-| Bug Pattern | Symptom | Fix |
-|-------------|---------|-----|
-| `break` in `switch` inside `for` | For loop continues | Use labeled `break` or `if` |
-| `break` in `select` inside `for` | Goroutine never exits | Use labeled `break` or `return` |
-| `break` in closure/anon func | Compile error | Restructure or use return signal |
-| Code after `break` | Dead code, never runs | Move code before `break` |
-| Label on wrong loop | Wrong loop level exited | Place label on the loop you want to exit |
-| Missing `break` after channel close check | Infinite loop on closed channel | Use `v, ok := <-ch; if !ok { break }` |
-| `wg.Done()` after loop with `return` | Deadlock / WaitGroup stuck | Use `defer wg.Done()` |
+**Problem:** The function intends to find a "first" negative value, but map iteration order in Go is randomized. Each run may return a different key. If the caller expects a consistent result (e.g., for reproducible tests), this is a bug.
+
+<details>
+<summary>Solution</summary>
+
+**Root cause:** Go map iteration order is randomized intentionally (since Go 1.0). There is no "first" element in a map. Using `break` or `return` on the first matching element during map range does not guarantee which element is returned.
+
+**Fix — sort keys first if determinism is required:**
+```go
+import (
+    "fmt"
+    "sort"
+)
+
+func firstNegative(m map[string]int) (string, int, bool) {
+    keys := make([]string, 0, len(m))
+    for k := range m {
+        keys = append(keys, k)
+    }
+    sort.Strings(keys)
+
+    for _, k := range keys {
+        if m[k] < 0 {
+            return k, m[k], true // deterministic: first alphabetically
+        }
+    }
+    return "", 0, false
+}
+```
+
+**Fix — use a slice of pairs if ordering by insertion matters:**
+```go
+type Pair struct{ Key string; Val int }
+
+func firstNegative(pairs []Pair) (string, int, bool) {
+    for _, p := range pairs {
+        if p.Val < 0 {
+            return p.Key, p.Val, true
+        }
+    }
+    return "", 0, false
+}
+```
+
+**Rule:** Never rely on map iteration order. If you need to break at a specific element position, use a sorted slice or a slice of ordered pairs.
+
+</details>
+
+---
+
+## Bug 12 🔴 — Stale Label After Code Refactoring
+
+```go
+package main
+
+import "fmt"
+
+func processAll(matrix [][]int) {
+    total := 0
+Outer:
+    for _, row := range matrix {
+        for _, v := range row {
+            if v < 0 {
+                fmt.Println("Negative found, skipping row")
+                continue Outer
+            }
+            total += v
+        }
+    }
+
+    // Later, someone refactored to add early termination:
+    result := 0
+Batch: // new label added
+    for _, row := range matrix {
+        for _, v := range row {
+            if v > 100 {
+                break Batch
+            }
+            result += v
+        }
+    }
+
+    // Now a developer tries to add another early exit using Outer:
+    sum := 0
+    for _, row := range matrix {
+        for _, v := range row {
+            if v == 0 {
+                break Outer // BUG: Outer is defined in a different scope above — compile error
+            }
+            sum += v
+        }
+    }
+    fmt.Println(total, result, sum)
+}
+
+func main() {
+    processAll([][]int{{1, 2, 3}, {4, 0, 6}})
+}
+```
+
+**Problem:** `break Outer` in the third loop tries to reference `Outer`, which was defined in the scope of the first loop. Labels in Go have function scope but can only target statements in the same block where they appear as a direct label. The third loop has no `Outer` label, so this is a compile error: `label Outer not defined`.
+
+<details>
+<summary>Solution</summary>
+
+**Root cause:** Go labels are defined per statement, not globally. A label defined on one `for` loop cannot be reused by another `for` loop — each labeled statement is independent.
+
+**Fix — define a new label for the third loop:**
+```go
+func processAll(matrix [][]int) {
+    total := 0
+OuterA:
+    for _, row := range matrix {
+        for _, v := range row {
+            if v < 0 {
+                fmt.Println("Negative found, skipping row")
+                continue OuterA
+            }
+            total += v
+        }
+    }
+
+    result := 0
+OuterB:
+    for _, row := range matrix {
+        for _, v := range row {
+            if v > 100 {
+                break OuterB
+            }
+            result += v
+        }
+    }
+
+    sum := 0
+OuterC:
+    for _, row := range matrix {
+        for _, v := range row {
+            if v == 0 {
+                break OuterC
+            }
+            sum += v
+        }
+    }
+    fmt.Println(total, result, sum)
+}
+```
+
+**Best practice:** Use descriptive, unique label names when multiple loops exist in the same function (e.g., `ScanRows`, `FilterBatch`, `SumLoop`). Avoid generic names like `Outer` that can cause confusion after refactoring.
+
+**Detection:** The Go compiler will report `label Outer not defined` if a label is referenced but not directly enclosing the statement. Always ensure each `break Label` or `continue Label` has a matching label on the immediately enclosing loop.
+
+</details>
+
+---
+
+## Summary Table
+
+| # | Difficulty | Pattern | Fix Strategy |
+|---|---|---|---|
+| 1 | 🟢 | `break` in `switch` exits switch only | Labeled `break` targeting `for` |
+| 2 | 🟢 | Missing `break` causes unintended continuation | Add `break` after condition |
+| 3 | 🟢 | `break` exits only inner loop | Labeled `break` or extract to function |
+| 4 | 🟡 | `break` in `select` exits select only | Labeled `break` or `return` |
+| 5 | 🟡 | Goroutine leak after `break` on channel | Use `context.Context` + `cancel()` |
+| 6 | 🟡 | Unreachable code after `break` | Move log before `break` |
+| 7 | 🟡 | Label on wrong loop | Move label to correct construct |
+| 8 | 🔴 | `break` inside `defer` (compile error) | Use `return` in defer, `break` outside |
+| 9 | 🔴 | `break` exits `select`, closed channel loops | Check `ok` from receive, use `return` |
+| 10 | 🔴 | Label case sensitivity mismatch | Match label name exactly |
+| 11 | 🔴 | Non-deterministic break on map range | Sort keys first for determinism |
+| 12 | 🔴 | Reusing label from different loop scope | Use unique label names per loop |
