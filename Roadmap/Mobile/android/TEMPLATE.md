@@ -9,7 +9,7 @@
 | | Description |
 |---|---|
 | **Purpose** | Universal template for all Android roadmap topics |
-| **Files per topic** | 8 files: `junior.md`, `middle.md`, `senior.md`, `professional.md`, `interview.md`, `tasks.md`, `find-bug.md`, `optimize.md` |
+| **Files per topic** | 9 files: `junior.md`, `middle.md`, `senior.md`, `professional.md`, `interview.md`, `tasks.md`, `find-bug.md`, `optimize.md`, `specification.md` |
 | **Language** | All content must be generated in **English** |
 | **Table of Contents** | **Optional** — include only if relevant to the topic. For theory/practice files (`tasks.md`, `find-bug.md`, `optimize.md`) it is NOT required |
 
@@ -24,7 +24,8 @@ XX-topic-name/
 ├── interview.md       ← Interview prep across all levels
 ├── tasks.md           ← Hands-on practice tasks
 ├── find-bug.md        ← Find and fix bugs in code (10+ exercises)
-└── optimize.md        ← Optimize slow/inefficient code (10+ exercises)
+├── optimize.md        ← Optimize slow/inefficient code (10+ exercises)
+└── specification.md   ← Official spec / documentation deep-dive
 ```
 
 ---
@@ -3784,5 +3785,211 @@ systrace: 98% frames < 16ms, GPU overdraw 1x
 | Unoptimized images | `BitmapFactory.Options.inSampleSize` | High |
 | Blocking coroutine | Use `withContext(Dispatchers.IO)` | High |
 | GC pressure | Reduce allocations in hot paths | Medium |
+
+</details>
+---
+---
+
+# TEMPLATE 9 — `specification.md`
+
+> **Focus:** Official documentation deep-dive — API reference, component specs, browser/platform compatibility, and version compatibility.
+>
+> **Source:** Always cite the official documentation with direct section links.
+> - React: https://react.dev/reference/react
+> - TypeScript: https://www.typescriptlang.org/docs/handbook/
+> - GraphQL: https://spec.graphql.org/October2021/
+> - Frontend (HTML/CSS/JS): https://developer.mozilla.org/en-US/docs/Web
+> - Design System: https://m3.material.io/ | https://atlassian.design/
+> - Android: https://developer.android.com/docs
+> - iOS: https://developer.apple.com/documentation/
+
+<details open>
+<summary><strong>Template Content</strong></summary>
+
+# {{TOPIC_NAME}} — Specification
+
+> **Official Documentation Reference**
+>
+> Source: [{{TOOL_NAME}} Official Docs]({{DOCS_URL}}) — {{SECTION}}
+
+---
+
+## Table of Contents
+
+1. [Docs Reference](#docs-reference)
+2. [API / Component Reference](#api--component-reference)
+3. [Core Concepts & Rules](#core-concepts--rules)
+4. [Props / Options Reference](#props--options-reference)
+5. [Behavioral Specification](#behavioral-specification)
+6. [Browser / Platform Compatibility](#browser--platform-compatibility)
+7. [Edge Cases from Official Docs](#edge-cases-from-official-docs)
+8. [Version & Deprecation History](#version--deprecation-history)
+9. [Official Examples](#official-examples)
+10. [Compliance Checklist](#compliance-checklist)
+11. [Related Documentation](#related-documentation)
+
+---
+
+## 1. Docs Reference
+
+| Property | Value |
+|----------|-------|
+| **Official Docs** | [{{TOOL_NAME}} Documentation]({{DOCS_URL}}) |
+| **Relevant Section** | {{SECTION_NAME}} — {{SECTION_TITLE}} |
+| **Version** | {{TOOL_VERSION}} |
+| **Direct URL** | {{DOCS_URL}}/{{PATH}} |
+
+---
+
+## 2. API / Component Reference
+
+> From: {{DOCS_URL}}/{{API_SECTION}}
+
+### `{{COMPONENT_OR_HOOK_NAME}}`
+
+**Signature:**
+```typescript
+{{FUNCTION_SIGNATURE}}
+```
+
+| Prop / Parameter | Type | Required | Default | Description |
+|-----------------|------|----------|---------|-------------|
+| `{{PROP_1}}` | `{{TYPE_1}}` | ✅ | — | {{DESC_1}} |
+| `{{PROP_2}}` | `{{TYPE_2}}` | ❌ | `{{DEFAULT_2}}` | {{DESC_2}} |
+| `{{PROP_3}}` | `{{TYPE_3}}` | ❌ | `{{DEFAULT_3}}` | {{DESC_3}} |
+
+**Returns / Renders:** {{RETURN_DESC}}
+
+---
+
+## 3. Core Concepts & Rules
+
+### Rule 1: {{RULE_NAME}}
+
+> *Docs: [{{DOCS_URL}}/{{SECTION}}]({{DOCS_URL}}/{{SECTION}}) — "{{DOC_QUOTE}}"*
+
+{{RULE_EXPLANATION}}
+
+```tsx
+// ✅ Correct — follows official guidance
+{{VALID_EXAMPLE}}
+
+// ❌ Incorrect — violates official guidance
+{{INVALID_EXAMPLE}}
+```
+
+### Rule 2: {{RULE_NAME}}
+
+> *Docs: [{{DOCS_URL}}/{{SECTION}}]({{DOCS_URL}}/{{SECTION}})*
+
+{{RULE_EXPLANATION}}
+
+```tsx
+{{CODE_EXAMPLE}}
+```
+
+---
+
+## 4. Props / Options Reference
+
+| Prop | Type | Required | Default | Since | Description |
+|------|------|----------|---------|-------|-------------|
+| `{{PROP_1}}` | `{{TYPE_1}}` | ✅ | — | {{VERSION_1}} | {{DESC_1}} |
+| `{{PROP_2}}` | `{{TYPE_2}}` | ❌ | `{{DEFAULT_2}}` | {{VERSION_2}} | {{DESC_2}} |
+| `{{PROP_3}}` ⚠️ *deprecated* | `{{TYPE_3}}` | ❌ | `{{DEFAULT_3}}` | {{VERSION_3}} | {{DESC_3}} — Use `{{REPLACEMENT}}` instead |
+
+---
+
+## 5. Behavioral Specification
+
+### Rendering / Execution Model
+
+{{RENDERING_MODEL}}
+
+### Performance Characteristics
+
+{{PERFORMANCE_CHARACTERISTICS}}
+
+### Side Effects & Lifecycle
+
+{{LIFECYCLE_BEHAVIOR}}
+
+---
+
+## 6. Browser / Platform Compatibility
+
+| Feature | Chrome | Firefox | Safari | Edge | iOS | Android | Notes |
+|---------|--------|---------|--------|------|-----|---------|-------|
+| {{FEAT_1}} | {{C_1}} | {{F_1}} | {{S_1}} | {{E_1}} | {{I_1}} | {{A_1}} | {{N_1}} |
+| {{FEAT_2}} | {{C_2}} | {{F_2}} | {{S_2}} | {{E_2}} | {{I_2}} | {{A_2}} | {{N_2}} |
+
+---
+
+## 7. Edge Cases from Official Docs
+
+| Edge Case | Official Behavior | Reference |
+|-----------|-------------------|-----------|
+| {{EDGE_1}} | {{BEHAVIOR_1}} | [Docs]({{URL_1}}) |
+| {{EDGE_2}} | {{BEHAVIOR_2}} | [Docs]({{URL_2}}) |
+| {{EDGE_3}} | {{BEHAVIOR_3}} | [Docs]({{URL_3}}) |
+
+---
+
+## 8. Version & Deprecation History
+
+| Version | Change | Deprecated? | Migration |
+|---------|--------|-------------|-----------|
+| `{{VER_1}}` | {{CHANGE_1}} | ❌ | — |
+| `{{VER_2}}` | {{CHANGE_2}} | ⚠️ | {{MIGRATION_2}} |
+| `{{VER_3}}` | {{CHANGE_3}} | ✅ Removed | {{MIGRATION_3}} |
+
+---
+
+## 9. Official Examples
+
+### Example from Docs: {{EXAMPLE_TITLE}}
+
+> Source: [{{DOCS_URL}}/{{ANCHOR}}]({{DOCS_URL}}/{{ANCHOR}})
+
+```tsx
+{{OFFICIAL_EXAMPLE_CODE}}
+```
+
+**Result:**
+
+```
+{{EXPECTED_RESULT}}
+```
+
+---
+
+## 10. Compliance Checklist
+
+- [ ] Follows official recommended patterns for {{TOPIC_NAME}}
+- [ ] Uses supported version ({{TOOL_VERSION}}+)
+- [ ] No deprecated APIs used (or migration path documented)
+- [ ] Handles all documented edge cases
+- [ ] Browser/platform compatibility requirements met
+- [ ] Accessibility guidelines from official docs followed
+
+---
+
+## 11. Related Documentation
+
+| Topic | Doc Section | URL |
+|-------|-------------|-----|
+| {{RELATED_1}} | {{SECTION_1}} | [Link]({{URL_1}}) |
+| {{RELATED_2}} | {{SECTION_2}} | [Link]({{URL_2}}) |
+| {{RELATED_3}} | {{SECTION_3}} | [Link]({{URL_3}}) |
+
+---
+
+> **Content Rules for `specification.md`:**
+> - Always link directly to the relevant doc section (not just the homepage)
+> - Include browser/platform compatibility tables for applicable features
+> - Document deprecated APIs with migration paths
+> - Use official TypeScript types/signatures when available
+> - Include accessibility requirements from official docs
+> - Minimum 2 Core Rules, 3 Props/Options, 3 Edge Cases, 2 Official Examples
 
 </details>

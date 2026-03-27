@@ -8,7 +8,24 @@
 
 > Provide a 2–3 sentence summary of what this topic covers and why it matters for developers working with Git and GitHub.
 
-This template covers the full spectrum of Git and GitHub knowledge — from daily developer workflows to internal object model internals. It is structured into eight progressive documents, each targeting a specific experience level or use case.
+This template covers the full spectrum of Git and GitHub knowledge — from daily developer workflows to internal object model internals. It is structured into nine progressive documents, each targeting a specific experience level or use case.
+
+| **Files per topic** | 9 files: `junior.md`, `middle.md`, `senior.md`, `professional.md`, `interview.md`, `tasks.md`, `find-bug.md`, `optimize.md`, `specification.md` |
+
+### Topic Structure
+
+```
+XX-topic-name/
+├── junior.md          ← Daily Git workflow, basic commands, GitHub UI
+├── middle.md          ← Branching strategies, rebasing, GitHub Actions, PRs
+├── senior.md          ← Repository design, automation, inner-source, security
+├── professional.md    ← Mastery / Leadership — Git internals, object model
+├── interview.md       ← Interview prep across all levels
+├── tasks.md           ← Hands-on practice tasks
+├── find-bug.md        ← Find and fix bugs in code (10+ exercises)
+├── optimize.md        ← Optimize slow/inefficient code (10+ exercises)
+└── specification.md   ← Official spec / documentation deep-dive
+```
 
 ---
 
@@ -3482,3 +3499,190 @@ The most important Git skill at every level: **commit atomically, communicate cl
 | Skipping pre-commit hooks (`--no-verify`) | Lets broken code bypass quality gates | Fix the root cause, never skip |
 | Tagging without signing | Release integrity cannot be verified | Always use annotated signed tags for releases |
 | No `.gitignore` | Leaks build artifacts, IDE configs, secrets | Template from gitignore.io at repo creation |
+---
+---
+
+# TEMPLATE 9 — `specification.md`
+
+> **Focus:** Official documentation deep-dive — standards references, framework specifications, official guidelines, and version compatibility.
+>
+> **Source:** Always cite the official documentation or standards with direct section links.
+> - AI Red Teaming: https://airc.nist.gov/Docs | https://owasp.org/www-project-ai-security-and-privacy-guide/
+> - Cyber Security: https://owasp.org/www-project-top-ten/ | https://csrc.nist.gov/
+> - Code Review: https://google.github.io/eng-practices/review/
+> - Engineering Manager: https://www.manager-tools.com/ | https://lethain.com/staff-engineer/
+> - QA: https://www.istqb.org/certifications/ | https://testing.googleblog.com/
+> - Technical Writer: https://developers.google.com/tech-writing | https://www.writethedocs.org/guide/
+> - Product Manager: https://www.svpg.com/inspired/ | https://www.productboard.com/resources/
+> - DevRel: https://www.devrel.agency/resources | https://www.commonroom.io/resources/
+> - AWS: https://docs.aws.amazon.com/ | https://aws.amazon.com/architecture/
+> - Git/GitHub: https://git-scm.com/docs | https://docs.github.com/
+
+<details open>
+<summary><strong>Template Content</strong></summary>
+
+# {{TOPIC_NAME}} — Specification
+
+> **Official Documentation / Standards Reference**
+>
+> Source: [{{SOURCE_NAME}}]({{DOCS_URL}}) — {{SECTION}}
+
+---
+
+## Table of Contents
+
+1. [Reference](#reference)
+2. [Official Framework / Standard](#official-framework--standard)
+3. [Core Rules & Guidelines](#core-rules--guidelines)
+4. [Process / Workflow Specification](#process--workflow-specification)
+5. [Metrics & Measurement](#metrics--measurement)
+6. [Common Scenarios & Responses](#common-scenarios--responses)
+7. [Version & Evolution History](#version--evolution-history)
+8. [Official Examples & Case Studies](#official-examples--case-studies)
+9. [Compliance Checklist](#compliance-checklist)
+10. [Related Resources](#related-resources)
+
+---
+
+## 1. Reference
+
+| Property | Value |
+|----------|-------|
+| **Official Source** | [{{SOURCE_NAME}}]({{DOCS_URL}}) |
+| **Relevant Section** | {{SECTION_NAME}} — {{SECTION_TITLE}} |
+| **Standard / Version** | {{STANDARD_VERSION}} |
+| **Direct URL** | {{DOCS_URL}}/{{PATH}} |
+
+---
+
+## 2. Official Framework / Standard
+
+> From: {{DOCS_URL}}/{{FRAMEWORK_SECTION}}
+
+### {{FRAMEWORK_OR_STANDARD_NAME}}
+
+{{FRAMEWORK_DESCRIPTION}}
+
+| Component | Purpose | Official Guidance |
+|-----------|---------|------------------|
+| {{COMP_1}} | {{PURPOSE_1}} | [Link]({{URL_1}}) |
+| {{COMP_2}} | {{PURPOSE_2}} | [Link]({{URL_2}}) |
+| {{COMP_3}} | {{PURPOSE_3}} | [Link]({{URL_3}}) |
+
+---
+
+## 3. Core Rules & Guidelines
+
+### Guideline 1: {{GUIDELINE_NAME}}
+
+> *Source: [{{DOCS_URL}}/{{SECTION}}]({{DOCS_URL}}/{{SECTION}}) — "{{DOC_QUOTE}}"*
+
+{{GUIDELINE_EXPLANATION}}
+
+**✅ Good practice:**
+{{GOOD_EXAMPLE}}
+
+**❌ Anti-pattern:**
+{{BAD_EXAMPLE}}
+
+### Guideline 2: {{GUIDELINE_NAME}}
+
+> *Source: [{{DOCS_URL}}/{{SECTION}}]({{DOCS_URL}}/{{SECTION}})*
+
+{{GUIDELINE_EXPLANATION}}
+
+---
+
+## 4. Process / Workflow Specification
+
+### Official Process Flow
+
+```
+{{PROCESS_STEP_1}}
+    ↓
+{{PROCESS_STEP_2}}
+    ↓
+{{PROCESS_STEP_3}}
+    ↓
+{{PROCESS_STEP_4}}
+```
+
+| Stage | Official Requirement | Notes |
+|-------|---------------------|-------|
+| {{STAGE_1}} | {{REQ_1}} | {{NOTES_1}} |
+| {{STAGE_2}} | {{REQ_2}} | {{NOTES_2}} |
+
+---
+
+## 5. Metrics & Measurement
+
+| Metric | Official Definition | Target / Benchmark | Reference |
+|--------|--------------------|--------------------|-----------|
+| {{METRIC_1}} | {{DEF_1}} | {{TARGET_1}} | [Link]({{URL_1}}) |
+| {{METRIC_2}} | {{DEF_2}} | {{TARGET_2}} | [Link]({{URL_2}}) |
+| {{METRIC_3}} | {{DEF_3}} | {{TARGET_3}} | [Link]({{URL_3}}) |
+
+---
+
+## 6. Common Scenarios & Responses
+
+| Scenario | Official Guidance | Reference |
+|----------|-------------------|-----------|
+| {{SCENARIO_1}} | {{GUIDANCE_1}} | [Docs]({{URL_1}}) |
+| {{SCENARIO_2}} | {{GUIDANCE_2}} | [Docs]({{URL_2}}) |
+| {{SCENARIO_3}} | {{GUIDANCE_3}} | [Docs]({{URL_3}}) |
+
+---
+
+## 7. Version & Evolution History
+
+| Version / Edition | Change | Year | Notes |
+|------------------|--------|------|-------|
+| {{VER_1}} | {{CHANGE_1}} | {{YEAR_1}} | {{NOTES_1}} |
+| {{VER_2}} | {{CHANGE_2}} | {{YEAR_2}} | {{NOTES_2}} |
+
+---
+
+## 8. Official Examples & Case Studies
+
+### Example: {{EXAMPLE_TITLE}}
+
+> Source: [{{DOCS_URL}}/{{ANCHOR}}]({{DOCS_URL}}/{{ANCHOR}})
+
+{{EXAMPLE_DESCRIPTION}}
+
+**Outcome / Result:**
+{{EXPECTED_OUTCOME}}
+
+---
+
+## 9. Compliance Checklist
+
+- [ ] Follows official recommended approach for {{TOPIC_NAME}}
+- [ ] Aligned with standard version ({{STANDARD_VERSION}})
+- [ ] Covers all required process stages
+- [ ] Metrics are tracked per official guidance
+- [ ] Common scenarios handled per official recommendations
+- [ ] Team/stakeholder requirements met
+
+---
+
+## 10. Related Resources
+
+| Topic | Source | URL |
+|-------|--------|-----|
+| {{RELATED_1}} | {{SOURCE_1}} | [Link]({{URL_1}}) |
+| {{RELATED_2}} | {{SOURCE_2}} | [Link]({{URL_2}}) |
+| {{RELATED_3}} | {{SOURCE_3}} | [Link]({{URL_3}}) |
+
+---
+
+> **Content Rules for `specification.md`:**
+> - Always link directly to the relevant section of the official source (not just the homepage)
+> - Use the most authoritative and widely accepted official standard or framework
+> - Include measurable metrics where official standards define them
+> - Document process flows using official terminology
+> - Note when standards or best practices have evolved over time
+> - Minimum 2 Core Guidelines, 3 Metrics, 3 Scenarios, 2 Official Examples
+
+</details>

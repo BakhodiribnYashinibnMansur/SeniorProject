@@ -8,7 +8,7 @@
 | | Description |
 |---|---|
 | **Purpose** | Universal template for all Elasticsearch roadmap topics |
-| **Files per topic** | 8 files: `junior.md`, `middle.md`, `senior.md`, `professional.md`, `interview.md`, `tasks.md`, `find-bug.md`, `optimize.md` |
+| **Files per topic** | 9 files: `junior.md`, `middle.md`, `senior.md`, `professional.md`, `interview.md`, `tasks.md`, `find-bug.md`, `optimize.md`, `specification.md` |
 | **Language** | All content in **English** |
 
 ### Topic Structure
@@ -22,7 +22,8 @@ XX-topic-name/
 ├── interview.md       ← Interview prep across all levels
 ├── tasks.md           ← Hands-on indexing and search tasks
 ├── find-bug.md        ← Wrong mapping, missing replica, wildcard on text
-└── optimize.md        ← _profile API output, shard sizing, query rewrite
+├── optimize.md        ← _profile API output, shard sizing, query rewrite
+└── specification.md   ← Official spec / documentation deep-dive
 ```
 
 ## Level Comparison Matrix
@@ -893,3 +894,203 @@ segment_count: 1, size: 36GB  (deleted docs reclaimed)
 - Include Mermaid diagrams for cluster topology, search flow, ILM tiers, Raft election
 - `find-bug.md`: wrong mapping type, missing replica, wildcard on unanalyzed field
 - `optimize.md`: `_profile` API output, index size before/after, shard count analysis, latency figures
+---
+---
+
+# TEMPLATE 9 — `specification.md`
+
+> **Focus:** Official documentation deep-dive — API reference, configuration schema, behavioral guarantees, and version compatibility.
+>
+> **Source:** Always cite the official documentation with direct section links.
+> - Blockchain: https://bitcoin.org/bitcoin.pdf | https://ethereum.org/en/whitepaper/
+> - Software Design/Architecture: https://refactoring.guru/design-patterns
+> - Computer Science: https://en.wikipedia.org/wiki/List_of_data_structures
+> - Software Architect: https://www.oreilly.com/library/view/fundamentals-of-software/9781492043447/
+> - System Design: https://github.com/donnemartin/system-design-primer
+> - MongoDB: https://www.mongodb.com/docs/manual/reference/
+> - PostgreSQL: https://www.postgresql.org/docs/current/
+> - API Design: https://swagger.io/specification/ (OpenAPI 3.x)
+> - Backend: https://developer.mozilla.org/en-US/docs/Learn/Server-side
+> - Elasticsearch: https://www.elastic.co/guide/en/elasticsearch/reference/current/
+> - Redis: https://redis.io/docs/latest/commands/
+> - Full-Stack: https://developer.mozilla.org/en-US/
+
+<details open>
+<summary><strong>Template Content</strong></summary>
+
+# {{TOPIC_NAME}} — Specification
+
+> **Official Documentation Reference**
+>
+> Source: [{{TOOL_NAME}} Official Docs]({{DOCS_URL}}) — {{SECTION}}
+
+---
+
+## Table of Contents
+
+1. [Docs Reference](#docs-reference)
+2. [API / Configuration Reference](#api--configuration-reference)
+3. [Core Concepts & Rules](#core-concepts--rules)
+4. [Schema / Options Reference](#schema--options-reference)
+5. [Behavioral Specification](#behavioral-specification)
+6. [Edge Cases from Official Docs](#edge-cases-from-official-docs)
+7. [Version & Compatibility Matrix](#version--compatibility-matrix)
+8. [Official Examples](#official-examples)
+9. [Compliance Checklist](#compliance-checklist)
+10. [Related Documentation](#related-documentation)
+
+---
+
+## 1. Docs Reference
+
+| Property | Value |
+|----------|-------|
+| **Official Docs** | [{{TOOL_NAME}} Documentation]({{DOCS_URL}}) |
+| **Relevant Section** | {{SECTION_NAME}} — {{SECTION_TITLE}} |
+| **Version** | {{TOOL_VERSION}} |
+| **Direct URL** | {{DOCS_URL}}/{{PATH}} |
+
+---
+
+## 2. API / Configuration Reference
+
+> From: {{DOCS_URL}}/{{API_SECTION}}
+
+### {{RESOURCE_OR_ENDPOINT_NAME}}
+
+| Field / Parameter | Type | Required | Default | Description |
+|------------------|------|----------|---------|-------------|
+| `{{FIELD_1}}` | `{{TYPE_1}}` | ✅ | — | {{DESC_1}} |
+| `{{FIELD_2}}` | `{{TYPE_2}}` | ❌ | `{{DEFAULT_2}}` | {{DESC_2}} |
+| `{{FIELD_3}}` | `{{TYPE_3}}` | ❌ | `{{DEFAULT_3}}` | {{DESC_3}} |
+
+---
+
+## 3. Core Concepts & Rules
+
+The official documentation defines these key rules for {{TOPIC_NAME}}:
+
+### Rule 1: {{RULE_NAME}}
+
+> *Docs: [{{DOCS_URL}}/{{SECTION}}]({{DOCS_URL}}/{{SECTION}}) — "{{DOC_QUOTE}}"*
+
+{{RULE_EXPLANATION}}
+
+```{{CODE_LANG}}
+# ✅ Correct — follows official guidance
+{{VALID_EXAMPLE}}
+
+# ❌ Incorrect — violates official guidance
+{{INVALID_EXAMPLE}}
+```
+
+### Rule 2: {{RULE_NAME}}
+
+> *Docs: [{{DOCS_URL}}/{{SECTION}}]({{DOCS_URL}}/{{SECTION}})*
+
+{{RULE_EXPLANATION}}
+
+```{{CODE_LANG}}
+{{CODE_EXAMPLE}}
+```
+
+---
+
+## 4. Schema / Options Reference
+
+| Option | Type | Allowed Values | Default | Docs |
+|--------|------|---------------|---------|------|
+| `{{OPT_1}}` | `{{TYPE_1}}` | `{{VALUES_1}}` | `{{DEFAULT_1}}` | [Link]({{URL_1}}) |
+| `{{OPT_2}}` | `{{TYPE_2}}` | `{{VALUES_2}}` | `{{DEFAULT_2}}` | [Link]({{URL_2}}) |
+| `{{OPT_3}}` | `{{TYPE_3}}` | `{{VALUES_3}}` | `{{DEFAULT_3}}` | [Link]({{URL_3}}) |
+
+---
+
+## 5. Behavioral Specification
+
+### Normal Operation
+
+{{NORMAL_OPERATION}}
+
+### Performance Characteristics
+
+| Operation | Time Complexity | Space | Notes |
+|-----------|----------------|-------|-------|
+| {{OP_1}} | {{TIME_1}} | {{SPACE_1}} | {{NOTES_1}} |
+| {{OP_2}} | {{TIME_2}} | {{SPACE_2}} | {{NOTES_2}} |
+
+### Error / Failure Conditions
+
+| Error | Condition | Official Resolution |
+|-------|-----------|---------------------|
+| `{{ERROR_1}}` | {{COND_1}} | {{FIX_1}} |
+| `{{ERROR_2}}` | {{COND_2}} | {{FIX_2}} |
+
+---
+
+## 6. Edge Cases from Official Docs
+
+| Edge Case | Official Behavior | Reference |
+|-----------|-------------------|-----------|
+| {{EDGE_1}} | {{BEHAVIOR_1}} | [Docs]({{URL_1}}) |
+| {{EDGE_2}} | {{BEHAVIOR_2}} | [Docs]({{URL_2}}) |
+| {{EDGE_3}} | {{BEHAVIOR_3}} | [Docs]({{URL_3}}) |
+
+---
+
+## 7. Version & Compatibility Matrix
+
+| Version | Change | Backward Compatible? | Notes |
+|---------|--------|---------------------|-------|
+| `{{VER_1}}` | {{CHANGE_1}} | {{COMPAT_1}} | {{NOTES_1}} |
+| `{{VER_2}}` | {{CHANGE_2}} | {{COMPAT_2}} | {{NOTES_2}} |
+
+---
+
+## 8. Official Examples
+
+### Example from Docs: {{EXAMPLE_TITLE}}
+
+> Source: [{{DOCS_URL}}/{{ANCHOR}}]({{DOCS_URL}}/{{ANCHOR}})
+
+```{{CODE_LANG}}
+{{OFFICIAL_EXAMPLE_CODE}}
+```
+
+**Expected result:**
+
+```
+{{EXPECTED_RESULT}}
+```
+
+---
+
+## 9. Compliance Checklist
+
+- [ ] Follows official recommended patterns for {{TOPIC_NAME}}
+- [ ] Uses supported version ({{TOOL_VERSION}}+)
+- [ ] Handles all documented error conditions
+- [ ] Follows official security recommendations
+- [ ] Compatible with listed dependencies
+- [ ] Configuration validated against official schema
+
+---
+
+## 10. Related Documentation
+
+| Topic | Doc Section | URL |
+|-------|-------------|-----|
+| {{RELATED_1}} | {{SECTION_1}} | [Link]({{URL_1}}) |
+| {{RELATED_2}} | {{SECTION_2}} | [Link]({{URL_2}}) |
+| {{RELATED_3}} | {{SECTION_3}} | [Link]({{URL_3}}) |
+
+---
+
+> **Content Rules for `specification.md`:**
+> - Always link directly to the relevant doc section (not just the homepage)
+> - Use official examples from the documentation when available
+> - Note breaking changes and deprecated features between versions
+> - Include official security recommendations
+> - Minimum 2 Core Rules, 3 Schema fields, 3 Edge Cases, 2 Official Examples
+
+</details>

@@ -4,9 +4,24 @@
 > Language: English | Code fence: ```bash (commands), ```text (config files)
 
 ## Universal Requirements
-- 8 output files per topic: junior.md, middle.md, senior.md, professional.md, interview.md, tasks.md, find-bug.md, optimize.md
+- 9 output files per topic: junior.md, middle.md, senior.md, professional.md, interview.md, tasks.md, find-bug.md, optimize.md, specification.md
 - Keep {{TOPIC_NAME}} placeholder throughout
 - Include Mermaid diagrams in each template
+
+### Topic Structure
+
+```
+XX-topic-name/
+├── junior.md          ← "What?" and "How?"
+├── middle.md          ← "Why?" and "When?"
+├── senior.md          ← "How to optimize?" and "How to architect?"
+├── professional.md    ← "Under the Hood" — Linux kernel internals
+├── interview.md       ← Interview prep across all levels
+├── tasks.md           ← Hands-on practice tasks
+├── find-bug.md        ← Find and fix bugs in code (10+ exercises)
+├── optimize.md        ← Optimize slow/inefficient code (10+ exercises)
+└── specification.md   ← Official spec / documentation deep-dive
+```
 
 ---
 
@@ -1057,3 +1072,213 @@ journalctl -u {{service-name}} --since "1 hour ago" | grep -c ERROR
 > - [ ] Flame graph hot path addressed
 > - [ ] Kernel parameters persisted to `/etc/sysctl.d/`
 > - [ ] No new errors in journal post-optimization
+---
+---
+
+# TEMPLATE 9 — `specification.md`
+
+> **Focus:** Official documentation deep-dive — reference specs, configuration schemas, CLI reference, and version compatibility.
+>
+> **Source:** Always cite the official documentation with direct section links.
+> - Docker: https://docs.docker.com/reference/
+> - Kubernetes: https://kubernetes.io/docs/reference/
+> - AWS: https://docs.aws.amazon.com/
+> - Terraform: https://developer.hashicorp.com/terraform/docs
+> - Linux: https://man7.org/linux/man-pages/ | https://kernel.org/doc/
+> - Cloudflare: https://developers.cloudflare.com/docs/
+> - DevOps: https://www.atlassian.com/devops | https://dora.dev/
+> - MLOps: https://ml-ops.org/ | https://mlflow.org/docs/latest/
+
+<details open>
+<summary><strong>Template Content</strong></summary>
+
+# {{TOPIC_NAME}} — Specification
+
+> **Official Documentation Reference**
+>
+> Source: [{{TOOL_NAME}} Official Docs]({{DOCS_URL}}) — {{SECTION}}
+
+---
+
+## Table of Contents
+
+1. [Docs Reference](#docs-reference)
+2. [CLI / API Reference](#cli--api-reference)
+3. [Configuration Schema](#configuration-schema)
+4. [Core Rules & Constraints](#core-rules--constraints)
+5. [Behavioral Specification](#behavioral-specification)
+6. [Edge Cases from Official Docs](#edge-cases-from-official-docs)
+7. [Version & Compatibility Matrix](#version--compatibility-matrix)
+8. [Official Examples](#official-examples)
+9. [Compliance Checklist](#compliance-checklist)
+10. [Related Documentation](#related-documentation)
+
+---
+
+## 1. Docs Reference
+
+| Property | Value |
+|----------|-------|
+| **Official Docs** | [{{TOOL_NAME}} Documentation]({{DOCS_URL}}) |
+| **Relevant Section** | {{SECTION_NAME}} — {{SECTION_TITLE}} |
+| **Version** | {{TOOL_VERSION}} |
+| **Direct URL** | {{DOCS_URL}}/{{PATH}} |
+
+---
+
+## 2. CLI / API Reference
+
+> From: {{DOCS_URL}}/{{CLI_SECTION}}
+
+### `{{COMMAND_OR_RESOURCE}}`
+
+**Syntax:**
+```
+{{COMMAND_SYNTAX}}
+```
+
+| Flag / Option | Type | Required | Default | Description |
+|---------------|------|----------|---------|-------------|
+| `{{FLAG_1}}` | `{{TYPE_1}}` | ✅ | — | {{DESC_1}} |
+| `{{FLAG_2}}` | `{{TYPE_2}}` | ❌ | `{{DEFAULT_2}}` | {{DESC_2}} |
+| `{{FLAG_3}}` | `{{TYPE_3}}` | ❌ | `{{DEFAULT_3}}` | {{DESC_3}} |
+
+**Exit codes:**
+
+| Code | Meaning |
+|------|---------|
+| `0` | Success |
+| `1` | General error |
+| `{{CODE_N}}` | {{MEANING_N}} |
+
+---
+
+## 3. Configuration Schema
+
+> From: {{DOCS_URL}}/{{CONFIG_SECTION}}
+
+```yaml
+# {{TOPIC_NAME}} configuration schema
+{{CONFIG_SCHEMA_YAML}}
+```
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `{{FIELD_1}}` | `{{TYPE_1}}` | ✅ | — | {{DESC_1}} |
+| `{{FIELD_2}}` | `{{TYPE_2}}` | ❌ | `{{DEFAULT_2}}` | {{DESC_2}} |
+
+---
+
+## 4. Core Rules & Constraints
+
+### Rule 1: {{RULE_NAME}}
+
+> *Docs: [{{DOCS_URL}}/{{SECTION}}]({{DOCS_URL}}/{{SECTION}}) — "{{DOC_QUOTE}}"*
+
+{{RULE_EXPLANATION}}
+
+```{{CODE_LANG}}
+# ✅ Correct
+{{VALID_EXAMPLE}}
+
+# ❌ Incorrect
+{{INVALID_EXAMPLE}}
+```
+
+### Rule 2: {{RULE_NAME}}
+
+> *Docs: [{{DOCS_URL}}/{{SECTION}}]({{DOCS_URL}}/{{SECTION}})*
+
+{{RULE_EXPLANATION}}
+
+---
+
+## 5. Behavioral Specification
+
+### Normal Operation
+
+{{NORMAL_OPERATION}}
+
+### Resource Limits & Quotas
+
+| Resource | Default Limit | Max | Notes |
+|----------|--------------|-----|-------|
+| {{RES_1}} | {{LIMIT_1}} | {{MAX_1}} | {{NOTES_1}} |
+| {{RES_2}} | {{LIMIT_2}} | {{MAX_2}} | {{NOTES_2}} |
+
+### Error / Failure Conditions
+
+| Error Code | Condition | Resolution |
+|-----------|-----------|------------|
+| `{{ERROR_1}}` | {{COND_1}} | {{FIX_1}} |
+| `{{ERROR_2}}` | {{COND_2}} | {{FIX_2}} |
+
+---
+
+## 6. Edge Cases from Official Docs
+
+| Edge Case | Official Behavior | Reference |
+|-----------|-------------------|-----------|
+| {{EDGE_1}} | {{BEHAVIOR_1}} | [Docs]({{URL_1}}) |
+| {{EDGE_2}} | {{BEHAVIOR_2}} | [Docs]({{URL_2}}) |
+| {{EDGE_3}} | {{BEHAVIOR_3}} | [Docs]({{URL_3}}) |
+
+---
+
+## 7. Version & Compatibility Matrix
+
+| Version | Change | Backward Compatible? | Notes |
+|---------|--------|---------------------|-------|
+| `{{VER_1}}` | {{CHANGE_1}} | {{COMPAT_1}} | {{NOTES_1}} |
+| `{{VER_2}}` | {{CHANGE_2}} | {{COMPAT_2}} | {{NOTES_2}} |
+
+---
+
+## 8. Official Examples
+
+### Example from Docs: {{EXAMPLE_TITLE}}
+
+> Source: [{{DOCS_URL}}/{{ANCHOR}}]({{DOCS_URL}}/{{ANCHOR}})
+
+```{{CODE_LANG}}
+{{OFFICIAL_EXAMPLE_CODE}}
+```
+
+**Expected output:**
+
+```
+{{EXPECTED_OUTPUT}}
+```
+
+---
+
+## 9. Compliance Checklist
+
+- [ ] Follows official recommended configuration for {{TOPIC_NAME}}
+- [ ] Uses supported version ({{TOOL_VERSION}}+)
+- [ ] Handles all documented error/failure conditions
+- [ ] Follows official security hardening guidelines
+- [ ] Resource limits configured per official recommendations
+- [ ] Monitoring/alerting set up per official guidance
+
+---
+
+## 10. Related Documentation
+
+| Topic | Doc Section | URL |
+|-------|-------------|-----|
+| {{RELATED_1}} | {{SECTION_1}} | [Link]({{URL_1}}) |
+| {{RELATED_2}} | {{SECTION_2}} | [Link]({{URL_2}}) |
+| {{RELATED_3}} | {{SECTION_3}} | [Link]({{URL_3}}) |
+
+---
+
+> **Content Rules for `specification.md`:**
+> - Always link directly to the relevant doc section (not just the homepage)
+> - Include official CLI/API reference tables with all flags and options
+> - Document configuration schema with required/optional fields
+> - Note deprecated commands and their replacements
+> - Include official security hardening recommendations
+> - Minimum 2 Core Rules, 3 Config fields, 3 Edge Cases, 2 Official Examples
+
+</details>

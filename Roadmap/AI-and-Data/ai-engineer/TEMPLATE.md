@@ -9,7 +9,7 @@
 | | Description |
 |---|---|
 | **Purpose** | Universal template for all AI Engineer roadmap topics |
-| **Files per topic** | 8 files: `junior.md`, `middle.md`, `senior.md`, `professional.md`, `interview.md`, `tasks.md`, `find-bug.md`, `optimize.md` |
+| **Files per topic** | 9 files: `junior.md`, `middle.md`, `senior.md`, `professional.md`, `interview.md`, `tasks.md`, `find-bug.md`, `optimize.md`, `specification.md` |
 | **Language** | All content must be generated in **English** |
 | **Table of Contents** | **Optional** — include only if relevant to the topic. For theory/practice files (`tasks.md`, `find-bug.md`, `optimize.md`) it is NOT required |
 
@@ -24,7 +24,8 @@ XX-topic-name/
 ├── interview.md       ← Interview prep across all levels
 ├── tasks.md           ← Hands-on practice tasks
 ├── find-bug.md        ← Find and fix bugs in code (10+ exercises)
-└── optimize.md        ← Optimize slow/inefficient code (10+ exercises)
+├── optimize.md        ← Optimize slow/inefficient code (10+ exercises)
+└── specification.md   ← Official spec / documentation deep-dive
 ```
 
 ---
@@ -3690,5 +3691,211 @@ print(f"Faithfulness delta: {new_scores['faithfulness'] - baseline_scores['faith
 | GPU OOM on weights | FP16 / INT4 quantization | Very High |
 | Sequential request serving | Continuous batching (vLLM) | Very High |
 | No quality monitoring | RAG evaluation pipeline | Strategic |
+
+</details>
+---
+---
+
+# TEMPLATE 9 — `specification.md`
+
+> **Focus:** Official documentation deep-dive — API reference, configuration schema, behavioral guarantees, and version compatibility.
+>
+> **Source:** Always cite the official documentation with direct section links.
+> - AI Agents / Claude: https://docs.anthropic.com/en/api/
+> - Machine Learning (scikit-learn): https://scikit-learn.org/stable/modules/classes.html
+> - Prompt Engineering: https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview
+> - Data Analyst (pandas): https://pandas.pydata.org/docs/reference/
+> - Claude Code: https://docs.anthropic.com/en/docs/claude-code/overview
+> - AI Engineer: https://docs.anthropic.com/en/api/
+> - BI Analyst: https://docs.metabase.com/latest/
+> - AI Data Scientist: https://docs.scipy.org/doc/scipy/reference/
+> - Data Structures & Algorithms: https://docs.python.org/3/library/
+
+<details open>
+<summary><strong>Template Content</strong></summary>
+
+# {{TOPIC_NAME}} — Specification
+
+> **Official Documentation Reference**
+>
+> Source: [{{TOOL_NAME}} Official Docs]({{DOCS_URL}}) — {{SECTION}}
+
+---
+
+## Table of Contents
+
+1. [Docs Reference](#docs-reference)
+2. [API / Configuration Reference](#api--configuration-reference)
+3. [Core Concepts & Rules](#core-concepts--rules)
+4. [Schema / Parameters Reference](#schema--parameters-reference)
+5. [Behavioral Specification](#behavioral-specification)
+6. [Edge Cases from Official Docs](#edge-cases-from-official-docs)
+7. [Version & Compatibility Matrix](#version--compatibility-matrix)
+8. [Official Examples](#official-examples)
+9. [Compliance & Best Practices Checklist](#compliance--best-practices-checklist)
+10. [Related Documentation](#related-documentation)
+
+---
+
+## 1. Docs Reference
+
+| Property | Value |
+|----------|-------|
+| **Official Docs** | [{{TOOL_NAME}} Documentation]({{DOCS_URL}}) |
+| **Relevant Section** | {{SECTION_NAME}} — {{SECTION_TITLE}} |
+| **Version** | {{TOOL_VERSION}} |
+| **Direct URL** | {{DOCS_URL}}/{{PATH}} |
+
+---
+
+## 2. API / Configuration Reference
+
+> From: {{DOCS_URL}}/{{API_SECTION}}
+
+### {{RESOURCE_OR_FUNCTION_NAME}}
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `{{PARAM_1}}` | `{{TYPE_1}}` | ✅ | — | {{DESC_1}} |
+| `{{PARAM_2}}` | `{{TYPE_2}}` | ❌ | `{{DEFAULT_2}}` | {{DESC_2}} |
+| `{{PARAM_3}}` | `{{TYPE_3}}` | ❌ | `{{DEFAULT_3}}` | {{DESC_3}} |
+
+**Returns:** `{{RETURN_TYPE}}` — {{RETURN_DESC}}
+
+---
+
+## 3. Core Concepts & Rules
+
+The official documentation defines these key rules for {{TOPIC_NAME}}:
+
+### Rule 1: {{RULE_NAME}}
+
+> *Docs: [{{DOCS_URL}}/{{SECTION}}]({{DOCS_URL}}/{{SECTION}}) — "{{DOC_QUOTE}}"*
+
+{{RULE_EXPLANATION}}
+
+```python
+# ✅ Correct — follows official guidance
+{{VALID_EXAMPLE}}
+
+# ❌ Incorrect — violates official guidance
+{{INVALID_EXAMPLE}}
+```
+
+### Rule 2: {{RULE_NAME}}
+
+> *Docs: [{{DOCS_URL}}/{{SECTION}}]({{DOCS_URL}}/{{SECTION}})*
+
+{{RULE_EXPLANATION}}
+
+```python
+{{CODE_EXAMPLE}}
+```
+
+---
+
+## 4. Schema / Parameters Reference
+
+| Option | Type | Allowed Values | Default | Docs |
+|--------|------|---------------|---------|------|
+| `{{OPT_1}}` | `{{TYPE_1}}` | `{{VALUES_1}}` | `{{DEFAULT_1}}` | [Link]({{URL_1}}) |
+| `{{OPT_2}}` | `{{TYPE_2}}` | `{{VALUES_2}}` | `{{DEFAULT_2}}` | [Link]({{URL_2}}) |
+| `{{OPT_3}}` | `{{TYPE_3}}` | `{{VALUES_3}}` | `{{DEFAULT_3}}` | [Link]({{URL_3}}) |
+
+---
+
+## 5. Behavioral Specification
+
+### Normal Operation
+
+{{NORMAL_OPERATION}}
+
+### Documented Limitations
+
+| Limitation | Details | Workaround |
+|------------|---------|------------|
+| {{LIMIT_1}} | {{DETAIL_1}} | {{WORKAROUND_1}} |
+| {{LIMIT_2}} | {{DETAIL_2}} | {{WORKAROUND_2}} |
+
+### Error / Failure Conditions
+
+| Error | Condition | Official Resolution |
+|-------|-----------|---------------------|
+| `{{ERROR_1}}` | {{COND_1}} | {{FIX_1}} |
+| `{{ERROR_2}}` | {{COND_2}} | {{FIX_2}} |
+
+---
+
+## 6. Edge Cases from Official Docs
+
+| Edge Case | Official Behavior | Reference |
+|-----------|-------------------|-----------|
+| {{EDGE_1}} | {{BEHAVIOR_1}} | [Docs]({{URL_1}}) |
+| {{EDGE_2}} | {{BEHAVIOR_2}} | [Docs]({{URL_2}}) |
+| {{EDGE_3}} | {{BEHAVIOR_3}} | [Docs]({{URL_3}}) |
+
+---
+
+## 7. Version & Compatibility Matrix
+
+| Version | Change | Notes |
+|---------|--------|-------|
+| `{{VER_1}}` | {{CHANGE_1}} | {{NOTES_1}} |
+| `{{VER_2}}` | {{CHANGE_2}} | {{NOTES_2}} |
+
+### Dependency Compatibility
+
+| Dependency | Supported Versions | Notes |
+|------------|-------------------|-------|
+| {{DEP_1}} | {{VER_RANGE_1}} | {{NOTES_1}} |
+| {{DEP_2}} | {{VER_RANGE_2}} | {{NOTES_2}} |
+
+---
+
+## 8. Official Examples
+
+### Example from Docs: {{EXAMPLE_TITLE}}
+
+> Source: [{{DOCS_URL}}/{{ANCHOR}}]({{DOCS_URL}}/{{ANCHOR}})
+
+```python
+{{OFFICIAL_EXAMPLE_CODE}}
+```
+
+**Expected result:**
+
+```
+{{EXPECTED_RESULT}}
+```
+
+---
+
+## 9. Compliance & Best Practices Checklist
+
+- [ ] Follows official recommended patterns for {{TOPIC_NAME}}
+- [ ] Uses supported version ({{TOOL_VERSION}}+)
+- [ ] Handles all documented error/edge conditions
+- [ ] Follows official security recommendations
+- [ ] Uses official API/SDK rather than workarounds
+- [ ] Compatible with listed dependencies
+
+---
+
+## 10. Related Documentation
+
+| Topic | Doc Section | URL |
+|-------|-------------|-----|
+| {{RELATED_1}} | {{SECTION_1}} | [Link]({{URL_1}}) |
+| {{RELATED_2}} | {{SECTION_2}} | [Link]({{URL_2}}) |
+| {{RELATED_3}} | {{SECTION_3}} | [Link]({{URL_3}}) |
+
+---
+
+> **Content Rules for `specification.md`:**
+> - Always link directly to the relevant doc section (not just the homepage)
+> - Use official examples from the documentation when available
+> - Note breaking changes and deprecated features between versions
+> - Include official security / safety recommendations
+> - Minimum 2 Core Rules, 3 Parameters, 3 Edge Cases, 2 Official Examples
 
 </details>

@@ -9,7 +9,7 @@
 | | Description |
 |---|---|
 | **Purpose** | Universal template for all Rust roadmap topics |
-| **Files per topic** | 8 files: `junior.md`, `middle.md`, `senior.md`, `professional.md`, `interview.md`, `tasks.md`, `find-bug.md`, `optimize.md` |
+| **Files per topic** | 9 files: `junior.md`, `middle.md`, `senior.md`, `professional.md`, `interview.md`, `tasks.md`, `find-bug.md`, `optimize.md`, `specification.md` |
 | **Language** | All content must be generated in **English** |
 | **Table of Contents** | **Optional** — include only if relevant to the topic. For theory/practice files (`tasks.md`, `find-bug.md`, `optimize.md`) it is NOT required |
 
@@ -24,7 +24,8 @@ XX-topic-name/
 ├── interview.md       ← Interview prep across all levels
 ├── tasks.md           ← Hands-on practice tasks
 ├── find-bug.md        ← Find and fix bugs in code (10+ exercises)
-└── optimize.md        ← Optimize slow/inefficient code (10+ exercises)
+├── optimize.md        ← Optimize slow/inefficient code (10+ exercises)
+└── specification.md   ← Official spec / documentation deep-dive
 ```
 
 ### Rust Roadmap Topics (from roadmap.sh)
@@ -3875,5 +3876,250 @@ Consider lock-free data structures or sharding...
 > - Hard exercises involve: SIMD (`std::arch`), custom allocator, rayon parallel
 > - Verify zero-allocation claims with custom counting allocator
 > - Include assembly comparison for zero-cost abstraction exercises
+
+</details>
+
+---
+---
+
+# TEMPLATE 9 — `specification.md`
+
+> **Focus:** Official language specification deep-dive — formal grammar, type rules, behavioral guarantees, and implementation requirements.
+>
+> **Source:** Always cite the official language specification with section links.
+> - Go: https://go.dev/ref/spec
+> - Java: https://docs.oracle.com/javase/specs/jls/se21/html/index.html
+> - Python: https://docs.python.org/3/reference/
+> - Rust: https://doc.rust-lang.org/reference/
+> - SQL: https://www.postgresql.org/docs/current/ + ISO SQL
+
+<details open>
+<summary><strong>Template Content</strong></summary>
+
+# {{TOPIC_NAME}} — Specification
+
+> **Official Specification Reference**
+>
+> Source: [{{LANGUAGE}} Language Specification]({{SPEC_URL}}) — §{{SECTION}}
+
+---
+
+## Table of Contents
+
+1. [Spec Reference](#spec-reference)
+2. [Formal Grammar](#formal-grammar)
+3. [Core Rules & Constraints](#core-rules--constraints)
+4. [Type Rules](#type-rules)
+5. [Behavioral Specification](#behavioral-specification)
+6. [Defined vs Undefined Behavior](#defined-vs-undefined-behavior)
+7. [Edge Cases from Spec](#edge-cases-from-spec)
+8. [Version History](#version-history)
+9. [Implementation-Specific Behavior](#implementation-specific-behavior)
+10. [Spec Compliance Checklist](#spec-compliance-checklist)
+11. [Official Examples](#official-examples)
+12. [Related Spec Sections](#related-spec-sections)
+
+---
+
+## 1. Spec Reference
+
+| Property | Value |
+|----------|-------|
+| **Official Spec** | [{{LANGUAGE}} Specification]({{SPEC_URL}}) |
+| **Relevant Section** | §{{SECTION_NAME}} — {{SECTION_TITLE}} |
+| **Language Version** | {{LANGUAGE_VERSION}} |
+| **Spec URL** | {{SPEC_URL}}#{{ANCHOR}} |
+
+---
+
+## 2. Formal Grammar
+
+> From: {{SPEC_URL}}#{{GRAMMAR_SECTION}}
+
+```ebnf
+{{FORMAL_GRAMMAR_EBNF}}
+```
+
+### Grammar Breakdown
+
+| Symbol | Meaning |
+|--------|---------|
+| `::=`  | Is defined as |
+| `\|`   | Alternative |
+| `{}`   | Zero or more repetitions |
+| `[]`   | Optional |
+| `()`   | Grouping |
+
+### Example Parse
+
+```
+{{PARSE_EXAMPLE_INPUT}} → {{PARSE_RESULT}}
+```
+
+---
+
+## 3. Core Rules & Constraints
+
+The specification defines these **mandatory** rules for {{TOPIC_NAME}}:
+
+### Rule 1: {{RULE_NAME}}
+
+> *Spec: §{{SECTION}} — "{{SPEC_QUOTE}}"*
+
+{{RULE_EXPLANATION}}
+
+```{{LANGUAGE_LOWERCASE}}
+// ✅ Valid — follows spec rule
+{{VALID_EXAMPLE}}
+
+// ❌ Invalid — violates spec rule
+{{INVALID_EXAMPLE}}
+```
+
+### Rule 2: {{RULE_NAME}}
+
+> *Spec: §{{SECTION}} — "{{SPEC_QUOTE}}"*
+
+{{RULE_EXPLANATION}}
+
+```{{LANGUAGE_LOWERCASE}}
+{{CODE_EXAMPLE}}
+```
+
+---
+
+## 4. Type Rules
+
+| Expression | Type | Spec Reference |
+|------------|------|----------------|
+| `{{EXPR_1}}` | `{{TYPE_1}}` | §{{SECTION}} |
+| `{{EXPR_2}}` | `{{TYPE_2}}` | §{{SECTION}} |
+| `{{EXPR_3}}` | `{{TYPE_3}}` | §{{SECTION}} |
+
+### Type Compatibility Matrix
+
+| From | To | Allowed? | Spec Reference |
+|------|----|----------|----------------|
+| `{{TYPE_A}}` | `{{TYPE_B}}` | ✅ Implicit | §{{SECTION}} |
+| `{{TYPE_C}}` | `{{TYPE_D}}` | ⚠️ Explicit only | §{{SECTION}} |
+| `{{TYPE_E}}` | `{{TYPE_F}}` | ❌ Not allowed | §{{SECTION}} |
+
+---
+
+## 5. Behavioral Specification
+
+### Normal Execution
+
+{{NORMAL_EXECUTION_SPEC}}
+
+### Error Conditions (Spec-Defined)
+
+| Condition | Spec Behavior | Example |
+|-----------|--------------|---------|
+| {{COND_1}} | {{BEHAVIOR_1}} | `{{EXAMPLE_1}}` |
+| {{COND_2}} | {{BEHAVIOR_2}} | `{{EXAMPLE_2}}` |
+
+### Compile-Time Behavior
+
+{{COMPILE_TIME_BEHAVIOR}}
+
+### Run-Time Behavior
+
+{{RUNTIME_BEHAVIOR}}
+
+---
+
+## 6. Defined vs Undefined Behavior
+
+| Scenario | Category | Result |
+|----------|----------|--------|
+| {{SCENARIO_1}} | ✅ Defined | {{RESULT_1}} |
+| {{SCENARIO_2}} | ⚠️ Implementation-defined | {{RESULT_2}} |
+| {{SCENARIO_3}} | ❌ Undefined | {{RESULT_3}} |
+
+---
+
+## 7. Edge Cases from Spec
+
+These are **explicitly specified** in the official spec:
+
+| Edge Case | Spec-Defined Behavior | Example |
+|-----------|----------------------|---------|
+| {{EDGE_1}} | {{BEHAVIOR_1}} | `{{CODE_1}}` |
+| {{EDGE_2}} | {{BEHAVIOR_2}} | `{{CODE_2}}` |
+| {{EDGE_3}} | {{BEHAVIOR_3}} | `{{CODE_3}}` |
+
+```{{LANGUAGE_LOWERCASE}}
+// Spec edge case: {{DESCRIPTION}}
+{{EDGE_CASE_CODE}}
+// Output (spec-guaranteed): {{OUTPUT}}
+```
+
+---
+
+## 8. Version History
+
+| Version | Change to {{TOPIC_NAME}} | Backward Compatible? | Spec Reference |
+|---------|--------------------------|---------------------|----------------|
+| {{VERSION_1}} | {{CHANGE_1}} | {{COMPAT_1}} | [Release Notes]({{URL_1}}) |
+| {{VERSION_2}} | {{CHANGE_2}} | {{COMPAT_2}} | [Release Notes]({{URL_2}}) |
+
+---
+
+## 9. Implementation-Specific Behavior
+
+| Compiler / Runtime | Behavior | Notes |
+|-------------------|----------|-------|
+| {{IMPL_1}} | {{BEHAVIOR_1}} | {{NOTES_1}} |
+| {{IMPL_2}} | {{BEHAVIOR_2}} | {{NOTES_2}} |
+
+---
+
+## 10. Spec Compliance Checklist
+
+- [ ] Code follows formal grammar rules defined in §{{GRAMMAR_SECTION}}
+- [ ] All type rules are respected (§{{TYPE_SECTION}})
+- [ ] Edge cases handled per spec (§{{EDGE_SECTION}})
+- [ ] No reliance on implementation-defined behavior where spec is clear
+- [ ] Compatible with language version {{LANGUAGE_VERSION}}+
+- [ ] Passes all spec-defined compile-time checks
+
+---
+
+## 11. Official Examples
+
+### Example from Spec: {{EXAMPLE_TITLE}}
+
+> Source: [{{SPEC_URL}}#{{ANCHOR}}]({{SPEC_URL}}#{{ANCHOR}})
+
+```{{LANGUAGE_LOWERCASE}}
+{{OFFICIAL_EXAMPLE_CODE}}
+```
+
+**Expected output (spec-guaranteed):**
+
+```
+{{EXPECTED_OUTPUT}}
+```
+
+---
+
+## 12. Related Spec Sections
+
+| Topic | Section | URL |
+|-------|---------|-----|
+| {{RELATED_1}} | §{{SECTION_1}} | [Link]({{URL_1}}) |
+| {{RELATED_2}} | §{{SECTION_2}} | [Link]({{URL_2}}) |
+| {{RELATED_3}} | §{{SECTION_3}} | [Link]({{URL_3}}) |
+
+---
+
+> **Content Rules for `specification.md`:**
+> - Always link directly to the relevant spec section (not just the homepage)
+> - EBNF/BNF grammar must match the actual spec notation
+> - All examples must be spec-compliant and runnable
+> - Note when behavior changed between versions
+> - Distinguish "defined" vs "implementation-defined" vs "undefined" behavior
+> - Minimum 2 Core Rules, 3 Type Rules, 3 Edge Cases, 2 Official Examples
 
 </details>

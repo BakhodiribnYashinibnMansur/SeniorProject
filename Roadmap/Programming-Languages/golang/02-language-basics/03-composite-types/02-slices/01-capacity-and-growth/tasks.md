@@ -4,26 +4,56 @@
 
 ---
 
-## Table of Contents
+## Overview
 
-- [Junior Tasks](#junior-tasks)
-- [Middle Tasks](#middle-tasks)
-- [Senior Tasks](#senior-tasks)
-- [Questions to Answer](#questions-to-answer)
-- [Mini Projects](#mini-projects)
-- [Challenge](#challenge)
+These tasks deepen your understanding of slice capacity, growth mechanics, and performance optimization. Each task builds a complete, testable solution. Difficulty: 🟢 Easy | 🟡 Medium | 🔴 Hard.
 
 ---
 
 ## Junior Tasks
 
----
+### Task 1 🟢 — Capacity Observer
 
-### Task 1 — Observe Slice Growth
+**Goal:** Write a program that prints capacity changes as elements are appended.
 
-**Type:** Code
-**Difficulty:** 🟢 Easy
-**Goal:** Print len and cap each time the capacity changes during sequential appends. Observe the doubling behavior.
+**Requirements:**
+- Start with a nil slice of `int`
+- Append elements one by one up to 100
+- Print a line only when `cap` changes: `"len=N cap=C (grew from PREV_CAP)"`
+- At the end, print the total number of reallocation events
+
+**Starter Code:**
+```go
+package main
+
+import "fmt"
+
+func main() {
+    var s []int
+    prevCap := 0
+    reallocations := 0
+
+    for i := 0; i < 100; i++ {
+        // TODO: append i to s
+        // TODO: if cap changed, print the message and increment reallocations
+    }
+
+    fmt.Printf("Total reallocations: %d\n", reallocations)
+}
+```
+
+**Expected output (partial):**
+```
+len=1 cap=1 (grew from 0)
+len=2 cap=2 (grew from 1)
+len=3 cap=4 (grew from 2)
+len=5 cap=8 (grew from 4)
+...
+Total reallocations: 7
+```
+
+<details>
+<summary>Solution</summary>
 
 ```go
 package main
@@ -31,459 +61,320 @@ package main
 import "fmt"
 
 func main() {
-    s := make([]int, 0)
-    prevCap := -1
+    var s []int
+    prevCap := 0
+    reallocations := 0
 
-    for i := 0; i < 33; i++ {
+    for i := 0; i < 100; i++ {
         s = append(s, i)
-        // TODO: if cap(s) changed from prevCap,
-        //       print: "append #%d: len=%d cap=%d\n"
-        //       then update prevCap
+        if cap(s) != prevCap {
+            fmt.Printf("len=%d cap=%d (grew from %d)\n", len(s), cap(s), prevCap)
+            prevCap = cap(s)
+            reallocations++
+        }
+    }
+
+    fmt.Printf("Total reallocations: %d\n", reallocations)
+}
+```
+</details>
+
+---
+
+### Task 2 🟢 — Pre-allocation Comparison
+
+**Goal:** Demonstrate the performance difference between pre-allocated and non-pre-allocated slices.
+
+**Requirements:**
+- Write two functions: `buildSliceNoHint(n int) []int` and `buildSliceWithHint(n int) []int`
+- Both fill a slice with squares `[0, 1, 4, 9, ..., (n-1)^2]`
+- `NoHint` uses `var s []int`, `WithHint` uses `make([]int, 0, n)`
+- Write benchmark functions for both with `b.ReportAllocs()`
+- Write a test that verifies both functions produce identical output
+
+```go
+package capacity_test
+
+import (
+    "testing"
+    "reflect"
+)
+
+func buildSliceNoHint(n int) []int {
+    // TODO
+}
+
+func buildSliceWithHint(n int) []int {
+    // TODO
+}
+
+func TestBothFunctionsMatch(t *testing.T) {
+    // TODO: verify buildSliceNoHint(1000) == buildSliceWithHint(1000)
+}
+
+func BenchmarkNoHint(b *testing.B) {
+    // TODO
+}
+
+func BenchmarkWithHint(b *testing.B) {
+    // TODO
+}
+```
+
+<details>
+<summary>Solution</summary>
+
+```go
+package capacity_test
+
+import (
+    "reflect"
+    "testing"
+)
+
+func buildSliceNoHint(n int) []int {
+    var s []int
+    for i := 0; i < n; i++ {
+        s = append(s, i*i)
+    }
+    return s
+}
+
+func buildSliceWithHint(n int) []int {
+    s := make([]int, 0, n)
+    for i := 0; i < n; i++ {
+        s = append(s, i*i)
+    }
+    return s
+}
+
+func TestBothFunctionsMatch(t *testing.T) {
+    a := buildSliceNoHint(1000)
+    b := buildSliceWithHint(1000)
+    if !reflect.DeepEqual(a, b) {
+        t.Error("functions produce different results")
+    }
+}
+
+func BenchmarkNoHint(b *testing.B) {
+    b.ReportAllocs()
+    for b.Loop() {
+        _ = buildSliceNoHint(10_000)
+    }
+}
+
+func BenchmarkWithHint(b *testing.B) {
+    b.ReportAllocs()
+    for b.Loop() {
+        _ = buildSliceWithHint(10_000)
     }
 }
 ```
-
-**Expected Output:**
-```
-append #1:  len=1  cap=1
-append #2:  len=2  cap=2
-append #3:  len=3  cap=4
-append #5:  len=5  cap=8
-append #9:  len=9  cap=16
-append #17: len=17 cap=32
-append #33: len=33 cap=64
-```
-
-**Evaluation Checklist:**
-- [ ] Correctly detects capacity change
-- [ ] Prints len and cap at each growth point
-- [ ] Observes doubling pattern for small slices
-- [ ] Does not print every iteration — only on capacity change
+</details>
 
 ---
 
-### Task 2 — Pre-allocate vs Dynamic Append
+### Task 3 🟢 — Safe Sub-slice Copy
 
-**Type:** Code + Compare
-**Difficulty:** 🟢 Easy
-**Goal:** Implement both a dynamic and pre-allocated version of building a slice of 1000 squares. Count allocations using `runtime.MemStats`.
+**Goal:** Write a function that returns the last N bytes of a large slice without retaining the large backing array.
 
-```go
-package main
-
-import (
-    "fmt"
-    "runtime"
-)
-
-func dynamic() []int {
-    // TODO: start with var s []int
-    // append i*i for i in 0..999
-    // return s
-    return nil
-}
-
-func preAllocated() []int {
-    // TODO: make with capacity 1000
-    // append i*i for i in 0..999
-    // return s
-    return nil
-}
-
-func mallocs(f func() []int) uint64 {
-    runtime.GC()
-    var before runtime.MemStats
-    runtime.ReadMemStats(&before)
-    f()
-    var after runtime.MemStats
-    runtime.ReadMemStats(&after)
-    return after.Mallocs - before.Mallocs
-}
-
-func main() {
-    fmt.Printf("dynamic allocs:      %d\n", mallocs(dynamic))
-    fmt.Printf("pre-allocated allocs: %d\n", mallocs(preAllocated))
-}
-```
-
-**Expected Output:**
-```
-dynamic allocs:       11
-pre-allocated allocs:  1
-```
-
-**Evaluation Checklist:**
-- [ ] `dynamic()` uses no initial capacity
-- [ ] `preAllocated()` uses `make([]int, 0, 1000)`
-- [ ] Both return identical elements
-- [ ] Allocation count for pre-allocated is exactly 1
-- [ ] Student can explain the difference in allocation counts
-
----
-
-### Task 3 — Reslice Without Reallocation
-
-**Type:** Code
-**Difficulty:** 🟢 Easy
-**Goal:** Demonstrate that reslicing within capacity does not allocate.
+**Requirements:**
+- Function signature: `func lastN(data []byte, n int) []byte`
+- If `n >= len(data)`, return a full independent copy
+- If `n < len(data)`, return an independent copy of the last `n` bytes
+- The returned slice must NOT share a backing array with the input
 
 ```go
 package main
 
 import "fmt"
 
+func lastN(data []byte, n int) []byte {
+    // TODO: return independent copy of last n bytes
+}
+
 func main() {
-    s := make([]int, 3, 10)
-    s[0], s[1], s[2] = 10, 20, 30
+    large := make([]byte, 10_000)
+    for i := range large {
+        large[i] = byte(i % 256)
+    }
 
-    // TODO: extend s to length 7 without append (use reslice)
-    // Set s[3]=40, s[4]=50, s[5]=60, s[6]=70
-    // Hint: s = s[:newLen]
+    tail := lastN(large, 5)
+    fmt.Println(tail)
 
-    fmt.Println(s)
-    fmt.Println(len(s), cap(s))
+    // Verify independence
+    large[9999] = 0xFF
+    fmt.Println(tail[4]) // should NOT be 0xFF
 }
 ```
 
-**Expected Output:**
-```
-[10 20 30 40 50 60 70]
-7 10
-```
-
-**Evaluation Checklist:**
-- [ ] Uses reslice syntax, not append
-- [ ] No new allocation occurs
-- [ ] `cap` remains 10 after reslice
-- [ ] All 7 elements have correct values
-
----
-
-### Task 4 — The Full Slice Expression
-
-**Type:** Code
-**Difficulty:** 🟢 Easy
-**Goal:** Use the full slice expression `a[low:high:max]` to safely take a subslice and prevent it from growing into the original array.
+<details>
+<summary>Solution</summary>
 
 ```go
 package main
 
 import "fmt"
 
+func lastN(data []byte, n int) []byte {
+    if n >= len(data) {
+        result := make([]byte, len(data))
+        copy(result, data)
+        return result
+    }
+    result := make([]byte, n)
+    copy(result, data[len(data)-n:])
+    return result
+}
+
 func main() {
-    data := []int{1, 2, 3, 4, 5, 6, 7, 8}
+    large := make([]byte, 10_000)
+    for i := range large {
+        large[i] = byte(i % 256)
+    }
 
-    // TODO: create a subslice 'sub' from data[2:5]
-    //       using the full slice expression so that cap(sub) == 3
-    //       (max = 5)
+    tail := lastN(large, 5)
+    fmt.Println(tail)
 
-    fmt.Println(sub)           // [3 4 5]
-    fmt.Println(cap(sub))      // 3
-
-    // TODO: append 99 to sub
-    //       verify that data[5] is still 6 (not 99)
-    sub = append(sub, 99)
-    fmt.Println(data[5])       // 6 (unchanged)
-    fmt.Println(sub)           // [3 4 5 99]
+    large[9999] = 0xFF
+    fmt.Println(tail[4]) // unchanged — independent copy
 }
 ```
-
-**Expected Output:**
-```
-[3 4 5]
-3
-6
-[3 4 5 99]
-```
-
-**Evaluation Checklist:**
-- [ ] Uses full slice expression with three indices
-- [ ] `cap(sub)` is correctly 3
-- [ ] After appending to `sub`, `data[5]` is unchanged
-- [ ] Student understands why reallocation occurred
+</details>
 
 ---
 
 ## Middle Tasks
 
----
+### Task 4 🟡 — Capacity-Aware Filter
 
-### Task 5 — Word Frequency Counter with Pre-allocation
+**Goal:** Implement an efficient filter function with multiple capacity strategies.
 
-**Type:** Code + Design
-**Difficulty:** 🟡 Medium
-**Goal:** Build a word frequency counter. Pre-allocate the map with a capacity hint. Then collect frequent words into a pre-allocated slice.
+**Requirements:**
+- Implement three versions of `filterPositive(nums []int) []int`:
+  1. `filterV1`: no capacity hint
+  2. `filterV2`: worst-case pre-allocation (`len(input)`)
+  3. `filterV3`: two-pass (exact count first, then fill)
+- Write benchmarks for all three with `n = 1,000,000` and `~50%` passing rate
+- Include a test with empty input, all-fail input, and all-pass input
+
+<details>
+<summary>Solution</summary>
 
 ```go
-package main
+package filter_test
 
 import (
-    "fmt"
-    "strings"
+    "testing"
 )
 
-func wordFrequency(text string) map[string]int {
-    words := strings.Fields(text)
-    // TODO: create freq map with capacity hint len(words)
-    // count each word
-    // return freq
-    return nil
-}
-
-func frequentWords(freq map[string]int, minCount int) []string {
-    // TODO: pre-allocate result slice with capacity len(freq)
-    // append words where freq[word] >= minCount
-    // return result
-    return nil
-}
-
-func main() {
-    text := "go is fast go is simple go is concurrent go is fun"
-    freq := wordFrequency(text)
-    fmt.Println(freq)
-    words := frequentWords(freq, 3)
-    fmt.Println(words) // should contain "go" and "is"
-}
-```
-
-**Expected Output (order may vary):**
-```
-map[concurrent:1 fast:1 fun:1 go:4 is:4 simple:1]
-[go is]
-```
-
-**Evaluation Checklist:**
-- [ ] Map created with `make(map[string]int, len(words))`
-- [ ] Slice created with `make([]string, 0, len(freq))`
-- [ ] Results are correct
-- [ ] No unnecessary reallocations in hot path
-
----
-
-### Task 6 — Implement `Filter` Without Reallocation
-
-**Type:** Code
-**Difficulty:** 🟡 Medium
-**Goal:** Implement a generic-style `Filter` function that reuses the input slice's backing array when possible (in-place filtering).
-
-```go
-package main
-
-import "fmt"
-
-// filterInPlace removes elements not matching predicate.
-// It modifies the input slice in place to avoid allocation.
-func filterInPlace(s []int, keep func(int) bool) []int {
-    // TODO: use a write index approach
-    // iterate over s, copy matching elements to front
-    // return s[:writeIdx]
-    return nil
-}
-
-func main() {
-    data := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-    evens := filterInPlace(data, func(n int) bool { return n%2 == 0 })
-    fmt.Println(evens)       // [2 4 6 8 10]
-    fmt.Println(cap(evens))  // 10 — same backing array, no allocation
-}
-```
-
-**Expected Output:**
-```
-[2 4 6 8 10]
-10
-```
-
-**Evaluation Checklist:**
-- [ ] Uses write-index technique (no allocations)
-- [ ] Returns correct subset
-- [ ] `cap(result)` equals `cap(original)` — same backing array
-- [ ] Works correctly with various predicates
-- [ ] Student can explain the trade-off (original data is modified)
-
----
-
-### Task 7 — Circular Buffer Using a Slice
-
-**Type:** Code + Design
-**Difficulty:** 🟡 Medium
-**Goal:** Implement a fixed-capacity circular buffer using a slice. The buffer should not grow beyond the initial capacity.
-
-```go
-package main
-
-import "fmt"
-
-type CircularBuffer struct {
-    data  []int
-    head  int
-    tail  int
-    size  int
-    cap   int
-}
-
-func NewCircularBuffer(capacity int) *CircularBuffer {
-    // TODO: initialize with make([]int, capacity)
-    return nil
-}
-
-func (cb *CircularBuffer) Push(v int) bool {
-    // TODO: return false if full
-    // write v at tail, advance tail with wrap-around
-    // increment size
-    return false
-}
-
-func (cb *CircularBuffer) Pop() (int, bool) {
-    // TODO: return 0, false if empty
-    // read from head, advance head with wrap-around
-    // decrement size
-    return 0, false
-}
-
-func (cb *CircularBuffer) Len() int { return cb.size }
-
-func main() {
-    cb := NewCircularBuffer(4)
-    cb.Push(1)
-    cb.Push(2)
-    cb.Push(3)
-    cb.Push(4)
-    ok := cb.Push(5) // should return false — full
-    fmt.Println("Push 5 succeeded:", ok) // false
-
-    v, _ := cb.Pop()
-    fmt.Println("Popped:", v) // 1
-
-    cb.Push(5) // now there's room
-    for cb.Len() > 0 {
-        v, _ := cb.Pop()
-        fmt.Print(v, " ")
+func filterV1(nums []int) []int {
+    var result []int
+    for _, n := range nums {
+        if n > 0 {
+            result = append(result, n)
+        }
     }
-    fmt.Println()
+    return result
 }
-```
 
-**Expected Output:**
-```
-Push 5 succeeded: false
-Popped: 1
-2 3 4 5
-```
+func filterV2(nums []int) []int {
+    result := make([]int, 0, len(nums))
+    for _, n := range nums {
+        if n > 0 {
+            result = append(result, n)
+        }
+    }
+    return result
+}
 
-**Evaluation Checklist:**
-- [ ] Uses exactly one allocation (`make` in constructor)
-- [ ] Never exceeds initial capacity
-- [ ] Wrap-around logic is correct
-- [ ] Push/Pop return correct bool indicators
-- [ ] All elements in correct FIFO order
+func filterV3(nums []int) []int {
+    count := 0
+    for _, n := range nums {
+        if n > 0 {
+            count++
+        }
+    }
+    result := make([]int, 0, count)
+    for _, n := range nums {
+        if n > 0 {
+            result = append(result, n)
+        }
+    }
+    return result
+}
 
----
+func makeTestData(n int) []int {
+    data := make([]int, n)
+    for i := range data {
+        if i%2 == 0 {
+            data[i] = i + 1
+        } else {
+            data[i] = -(i + 1)
+        }
+    }
+    return data
+}
 
-### Task 8 — Benchmark Pre-allocated vs Dynamic Slice
-
-**Type:** Benchmark
-**Difficulty:** 🟡 Medium
-**Goal:** Write a Go benchmark comparing dynamic growth vs pre-allocated slice for collecting results of processing 10,000 integers.
-
-```go
-package bench_test
-
-import "testing"
-
-func processItem(n int) int { return n*n + n }
-
-// TODO: implement BenchmarkDynamic
-// - use []int{} or var s []int
-// - append processItem(i) for i in 0..9999
-// - call b.ReportAllocs()
-
-// TODO: implement BenchmarkPreAllocated
-// - use make([]int, 0, 10000)
-// - append processItem(i) for i in 0..9999
-// - call b.ReportAllocs()
-
-// TODO: implement BenchmarkExactLength
-// - use make([]int, 10000) with index assignment s[i] = ...
-// - call b.ReportAllocs()
-```
-
-Run with: `go test -bench=. -benchmem`
-
-**Expected Results (approximate):**
-```
-BenchmarkDynamic-8          50000    25000 ns/op    386097 B/op    14 allocs/op
-BenchmarkPreAllocated-8    200000     6000 ns/op     81920 B/op     1 allocs/op
-BenchmarkExactLength-8     250000     5500 ns/op     81920 B/op     1 allocs/op
-```
-
-**Evaluation Checklist:**
-- [ ] All three benchmarks implemented correctly
-- [ ] `b.ReportAllocs()` called in each
-- [ ] Pre-allocated and exact-length have 1 alloc/op
-- [ ] Dynamic has ~14 allocs/op (log2(10000) + initial)
-- [ ] Student can explain the ns/op difference
-
----
-
-## Senior Tasks
-
----
-
-### Task 9 — Detect and Fix Memory Leak
-
-**Type:** Debug + Fix
-**Difficulty:** 🔴 Hard
-**Goal:** The function below processes log lines, extracts the first 50 bytes of each, and caches them. Find and fix the memory leak.
-
-```go
-package main
-
-import (
-    "fmt"
-)
-
-var cache [][]byte
-
-func processLogs(logs [][]byte) {
-    for _, log := range logs {
-        // TODO: this code has a memory leak — find it and fix it
-        entry := log[:50]
-        cache = append(cache, entry)
+func BenchmarkFilterV1(b *testing.B) {
+    b.ReportAllocs()
+    data := makeTestData(1_000_000)
+    for b.Loop() {
+        _ = filterV1(data)
     }
 }
 
-func main() {
-    // Simulate 1000 large log entries (1MB each)
-    logs := make([][]byte, 100)
-    for i := range logs {
-        logs[i] = make([]byte, 1_000_000)
-        logs[i][0] = byte(i)
+func BenchmarkFilterV2(b *testing.B) {
+    b.ReportAllocs()
+    data := makeTestData(1_000_000)
+    for b.Loop() {
+        _ = filterV2(data)
     }
+}
 
-    processLogs(logs)
-    fmt.Printf("Cache len: %d\n", len(cache))
-    // After this, 'logs' goes out of scope but
-    // 100MB is still alive due to the leak
+func BenchmarkFilterV3(b *testing.B) {
+    b.ReportAllocs()
+    data := makeTestData(1_000_000)
+    for b.Loop() {
+        _ = filterV3(data)
+    }
+}
+
+func TestEdgeCases(t *testing.T) {
+    tests := []struct {
+        name  string
+        input []int
+        want  int
+    }{
+        {"empty", []int{}, 0},
+        {"all fail", []int{-1, -2, -3}, 0},
+        {"all pass", []int{1, 2, 3}, 3},
+        {"mixed", []int{1, -2, 3, -4, 5}, 3},
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            if got := len(filterV3(tt.input)); got != tt.want {
+                t.Errorf("got %d, want %d", got, tt.want)
+            }
+        })
+    }
 }
 ```
-
-**Expected Fix:** Each `cache` entry should only hold 50 bytes, not reference a 1MB backing array.
-
-**Evaluation Checklist:**
-- [ ] Correctly identifies that `log[:50]` keeps full backing array alive
-- [ ] Fix uses `copy` or `append([]byte(nil), log[:50]...)` 
-- [ ] After fix, only 50 bytes per entry are retained
-- [ ] Can describe the impact on GC behavior
-- [ ] Knows how to verify with `runtime.ReadMemStats`
+</details>
 
 ---
 
-### Task 10 — Pool of Reusable Slices
+### Task 5 🟡 — Safe Buffer with Three-Index Slices
 
-**Type:** Design + Code
-**Difficulty:** 🔴 Hard
-**Goal:** Implement a `BufferPool` that reuses byte slices to reduce GC pressure in a high-throughput system.
+**Goal:** Implement a buffer pool that uses three-index slices to prevent caller overwrites.
+
+**Requirements:**
+- `BufferPool` type that manages `[]byte` buffers of fixed size (4096 bytes)
+- `Get(size int) []byte` returns a slice with `cap` limited to `size` (not 4096)
+- Callers should NOT be able to accidentally write beyond their requested size via `append`
+
+<details>
+<summary>Solution</summary>
 
 ```go
 package main
@@ -493,218 +384,425 @@ import (
     "sync"
 )
 
+const poolBufSize = 4096
+
+type PooledBuf struct {
+    Slice   []byte
+    backing *[]byte
+    pool    *BufferPool
+}
+
+func (p *PooledBuf) Release() {
+    if p.backing != nil {
+        *p.backing = (*p.backing)[:0] // reset length
+        p.pool.pool.Put(p.backing)
+        p.backing = nil
+    }
+}
+
 type BufferPool struct {
-    // TODO: embed sync.Pool
-    // pool should store *[]byte
-    // New function should create make([]byte, 0, 4096)
+    pool sync.Pool
 }
 
 func NewBufferPool() *BufferPool {
-    // TODO: initialize and return
-    return nil
+    return &BufferPool{
+        pool: sync.Pool{
+            New: func() any {
+                buf := make([]byte, poolBufSize)
+                return &buf
+            },
+        },
+    }
 }
 
-func (bp *BufferPool) Get() []byte {
-    // TODO: get from pool
-    // return slice reset to len=0 (keep capacity)
-    return nil
-}
-
-func (bp *BufferPool) Put(b []byte) {
-    // TODO: reset and return to pool
-    // only return if cap is not too large (e.g., cap <= 64*1024)
+func (p *BufferPool) Get(size int) *PooledBuf {
+    if size > poolBufSize {
+        s := make([]byte, size)
+        return &PooledBuf{Slice: s}
+    }
+    pBuf := p.pool.Get().(*[]byte)
+    return &PooledBuf{
+        Slice:   (*pBuf)[:size:size], // three-index: cap capped at size
+        backing: pBuf,
+        pool:    p,
+    }
 }
 
 func main() {
     pool := NewBufferPool()
+    pb := pool.Get(100)
+    fmt.Println(len(pb.Slice), cap(pb.Slice)) // 100 100
 
-    // Simulate processing 1000 requests
-    var wg sync.WaitGroup
-    for i := 0; i < 1000; i++ {
-        wg.Add(1)
-        go func(n int) {
-            defer wg.Done()
-            buf := pool.Get()
-            // simulate writing data
-            buf = append(buf, fmt.Sprintf("request-%d", n)...)
-            pool.Put(buf)
-        }(i)
-    }
-    wg.Wait()
-    fmt.Println("Done")
+    // Cannot exceed cap via append without allocating a new array:
+    extra := append(pb.Slice, 0)
+    fmt.Println(len(extra), cap(extra)) // 101, ~200 (new array)
+
+    pb.Release() // return 4096-byte backing to pool
 }
 ```
-
-**Evaluation Checklist:**
-- [ ] Uses `sync.Pool` correctly
-- [ ] `Get()` returns `s[:0]` (resets len, keeps cap)
-- [ ] `Put()` guards against oversized buffers
-- [ ] Thread-safe (sync.Pool handles this)
-- [ ] Student can explain why this reduces GC pressure
-- [ ] Student knows that sync.Pool entries may be collected between GC cycles
+</details>
 
 ---
 
-### Task 11 — Avoid Growing Slice in Hot Path
+### Task 6 🟡 — Adaptive Pre-allocator
 
-**Type:** Refactor
-**Difficulty:** 🔴 Hard
-**Goal:** The function below is called 1M times per second and allocates in the hot path. Refactor it to zero allocations.
+**Goal:** Build a type that tracks historical slice sizes and provides increasingly accurate capacity hints.
 
-```go
-package main
+**Requirements:**
+- `SizeEstimator` tracks the last 10 observed sizes using a ring buffer
+- `Estimate() int` returns 120% of the rolling average
+- `Record(n int)` adds a new observation (evicts oldest when > 10)
+- `Reset()` clears all history
 
-import (
-    "fmt"
-    "strings"
-)
-
-// SLOW: allocates on every call
-func parseTagsSlow(input string) []string {
-    parts := strings.Split(input, ",")
-    var tags []string
-    for _, p := range parts {
-        p = strings.TrimSpace(p)
-        if p != "" {
-            tags = append(tags, p)
-        }
-    }
-    return tags
-}
-
-// TODO: implement parseTagsFast that:
-// 1. Accepts a []string buffer as parameter (caller provides)
-// 2. Resets and reuses the buffer (buf = buf[:0])
-// 3. Returns buf with results written in
-// This avoids ALL allocations when the caller reuses the buffer
-
-func main() {
-    input := "go, python, rust, , java"
-    fmt.Println(parseTagsSlow(input))
-
-    // TODO: demonstrate parseTagsFast with a reused buffer
-}
-```
-
-**Expected Output:**
-```
-[go python rust java]
-[go python rust java]
-```
-
-**Evaluation Checklist:**
-- [ ] `parseTagsFast` takes a `buf []string` parameter
-- [ ] Resets buf with `buf = buf[:0]`
-- [ ] Returns `buf` with results appended
-- [ ] No allocations when buffer has sufficient capacity
-- [ ] Caller demonstrates reuse across multiple calls
-
----
-
-## Questions to Answer
-
-Answer these in writing (no code required):
-
-**Q1.** Why does `append` need to return a value? What would go wrong if it modified the slice in place?
-
-**Q2.** What is the "amortized O(1)" claim for append, and why does geometric growth (doubling) guarantee it?
-
-**Q3.** Explain the trade-off between `make([]T, n)` and `make([]T, 0, n)`. When would you use each?
-
-**Q4.** A colleague says "I never need `cap()` because the runtime handles growth automatically." In what situations is knowing `cap()` important?
-
-**Q5.** Why did Go 1.18 lower the growth threshold from 1024 to 256? What problem did the old threshold cause?
-
----
-
-## Mini Projects
-
----
-
-### Mini Project 1 — Capacity-Aware Builder
-
-**Goal:** Implement a `StringBuilder`-like type that pre-allocates and tracks its own capacity growth.
-
-```go
-type StringBuilder struct {
-    buf []byte
-    // TODO: add a field to track reallocations
-}
-
-func (sb *StringBuilder) WriteString(s string) *StringBuilder
-func (sb *StringBuilder) WriteByte(b byte) *StringBuilder
-func (sb *StringBuilder) String() string
-func (sb *StringBuilder) Reallocations() int
-func (sb *StringBuilder) Len() int
-func (sb *StringBuilder) Cap() int
-```
-
-Requirements:
-- Start with `make([]byte, 0, 64)`
-- Track how many times the backing array was reallocated
-- All methods chainable (return `*StringBuilder`)
-
----
-
-### Mini Project 2 — Slice Growth Visualizer
-
-**Goal:** Write a CLI tool that prints an ASCII histogram of capacity growth steps for different element types and starting sizes.
-
-```
-go run main.go --type int --start 1 --appends 1000
-
-Capacity Growth for []int (1000 appends from cap=1):
-  cap=1    ██
-  cap=2    ████
-  cap=4    ████████
-  cap=8    ████████████████
-  ...
-```
-
-Requirements:
-- Shows actual capacity at each growth point
-- Marks the 256 threshold with a divider
-- Accepts command-line flags
-
----
-
-## Challenge
-
-### Challenge — Zero-Allocation JSON Tag Parser
-
-**Goal:** Parse JSON field tags like `json:"name,omitempty"` into a struct with zero heap allocations. Use a fixed-size backing array on the stack.
+<details>
+<summary>Solution</summary>
 
 ```go
 package main
 
 import "fmt"
 
-type TagOptions struct {
-    Name      string
-    OmitEmpty bool
-    String    bool
-    // up to 4 options
+type SizeEstimator struct {
+    history [10]int
+    count   int
+    pos     int
 }
 
-// parseJSONTag must have 0 allocs/op in benchmarks.
-// Hint: use [4]string on the stack, take a slice of it.
-func parseJSONTag(tag string) TagOptions {
-    // TODO
-    return TagOptions{}
+func (e *SizeEstimator) Record(n int) {
+    e.history[e.pos] = n
+    e.pos = (e.pos + 1) % 10
+    if e.count < 10 {
+        e.count++
+    }
+}
+
+func (e *SizeEstimator) Estimate() int {
+    if e.count == 0 {
+        return 64
+    }
+    sum := 0
+    for i := 0; i < e.count; i++ {
+        sum += e.history[i]
+    }
+    avg := sum / e.count
+    return avg * 12 / 10 // 120% of average
+}
+
+func (e *SizeEstimator) Reset() {
+    *e = SizeEstimator{}
 }
 
 func main() {
-    fmt.Println(parseJSONTag(`name,omitempty`))
-    // {Name:name OmitEmpty:true String:false}
-    fmt.Println(parseJSONTag(`id,string`))
-    // {Name:id OmitEmpty:false String:true}
+    e := &SizeEstimator{}
+
+    for i := 0; i < 20; i++ {
+        size := 950 + i*5
+        e.Record(size)
+        fmt.Printf("after recording %d: estimate=%d\n", size, e.Estimate())
+    }
+}
+```
+</details>
+
+---
+
+## Senior Tasks
+
+### Task 7 🔴 — Zero-Allocation Request Pipeline
+
+**Goal:** Build a request processing pipeline that allocates zero bytes on internal processing after warmup.
+
+**Requirements:**
+- `Pipeline` struct with a `sync.Pool` of `[]byte` buffers
+- `Process(input []byte) []byte` borrows, fills, copies result, and returns buffer to pool
+- Benchmark must show `1 allocs/op` only for the returned copy, 0 for internal processing
+- `*pSlice = buf` before returning to pool is required
+
+<details>
+<summary>Solution</summary>
+
+```go
+package pipeline_test
+
+import (
+    "sync"
+    "testing"
+)
+
+var header = []byte("HEADER:")
+var footer = []byte(":FOOTER")
+
+type Pipeline struct {
+    pool sync.Pool
+}
+
+func NewPipeline() *Pipeline {
+    return &Pipeline{
+        pool: sync.Pool{
+            New: func() any {
+                buf := make([]byte, 0, 512)
+                return &buf
+            },
+        },
+    }
+}
+
+func (p *Pipeline) Process(input []byte) []byte {
+    pBuf := p.pool.Get().(*[]byte)
+    buf := (*pBuf)[:0]
+
+    buf = append(buf, header...)
+    buf = append(buf, input...)
+    buf = append(buf, footer...)
+
+    result := make([]byte, len(buf))
+    copy(result, buf)
+
+    *pBuf = buf
+    p.pool.Put(pBuf)
+
+    return result
+}
+
+func BenchmarkPipeline(b *testing.B) {
+    p := NewPipeline()
+    input := []byte("hello world this is a test payload")
+
+    _ = p.Process(input) // warm up pool
+
+    b.ReportAllocs()
+    b.ResetTimer()
+
+    for b.Loop() {
+        result := p.Process(input)
+        _ = result
+    }
+}
+```
+</details>
+
+---
+
+### Task 8 🔴 — Capacity-Bounded Ring Buffer
+
+**Goal:** Implement a fixed-capacity ring buffer using a pre-allocated slice as the backing store.
+
+**Requirements:**
+- `RingBuffer[T]` generic type with capacity set at creation
+- `Push(v T) error`: return `ErrFull` if at capacity
+- `Pop() (T, error)`: return `ErrEmpty` if empty
+- Backing slice must NEVER grow beyond initial capacity
+- Test wrap-around, full, and empty edge cases
+
+<details>
+<summary>Solution</summary>
+
+```go
+package ringbuf
+
+import "errors"
+
+var (
+    ErrFull  = errors.New("ring buffer is full")
+    ErrEmpty = errors.New("ring buffer is empty")
+)
+
+type RingBuffer[T any] struct {
+    buf   []T
+    head  int
+    tail  int
+    count int
+}
+
+func New[T any](capacity int) *RingBuffer[T] {
+    return &RingBuffer[T]{
+        buf: make([]T, capacity), // allocated once, never grows
+    }
+}
+
+func (r *RingBuffer[T]) Push(v T) error {
+    if r.count == cap(r.buf) {
+        return ErrFull
+    }
+    r.buf[r.tail] = v
+    r.tail = (r.tail + 1) % cap(r.buf)
+    r.count++
+    return nil
+}
+
+func (r *RingBuffer[T]) Pop() (T, error) {
+    var zero T
+    if r.count == 0 {
+        return zero, ErrEmpty
+    }
+    v := r.buf[r.head]
+    r.buf[r.head] = zero // clear to avoid pointer retention
+    r.head = (r.head + 1) % cap(r.buf)
+    r.count--
+    return v, nil
+}
+
+func (r *RingBuffer[T]) Len() int { return r.count }
+func (r *RingBuffer[T]) Cap() int { return cap(r.buf) }
+```
+
+**Test:**
+```go
+package ringbuf_test
+
+import "testing"
+
+func TestRingBuffer(t *testing.T) {
+    rb := New[int](3)
+
+    if _, err := rb.Pop(); err != ErrEmpty {
+        t.Error("expected ErrEmpty on empty pop")
+    }
+
+    rb.Push(1); rb.Push(2); rb.Push(3)
+
+    if err := rb.Push(4); err != ErrFull {
+        t.Error("expected ErrFull when full")
+    }
+
+    v, _ := rb.Pop()
+    if v != 1 { t.Errorf("got %d want 1", v) }
+
+    rb.Push(4) // wrap-around
+
+    v, _ = rb.Pop()
+    if v != 2 { t.Errorf("got %d want 2", v) }
+
+    if rb.Len() != 2 { t.Errorf("len=%d want 2", rb.Len()) }
+    if rb.Cap() != 3 { t.Errorf("cap=%d want 3", rb.Cap()) }
+}
+```
+</details>
+
+---
+
+## Comprehension Questions
+
+1. Why does `make([]int, 0, 5)` produce a non-nil slice even though it has zero length?
+2. If `s := base[2:5]` and `len(base) == 10`, what is `cap(s)`? What if you use `base[2:5:6]`?
+3. A function returns `s[:0]` — in what situation does this cause a memory leak?
+4. After `a = append(a, 1, 2, 3)`, is the original `a` modified? How do you verify this in code?
+5. When does the Go 1.18+ growth algorithm pick `newCap = newLen` directly instead of applying the smooth curve?
+
+---
+
+## Mini Project 1: Batch Processor with Capacity Telemetry
+
+Build a batch processor that tracks its own capacity utilization:
+
+```go
+type BatchProcessor struct {
+    results  []Result
+    maxCap   int  // maximum capacity ever observed
+    reallocN int  // total reallocation events
+}
+
+func (p *BatchProcessor) Process(items []Item) []Result {
+    // Pre-allocate based on past experience
+    // Track capacity growth events
+    // Return results
+}
+
+func (p *BatchProcessor) Stats() (maxCap, reallocations int) {
+    return p.maxCap, p.reallocN
 }
 ```
 
-**Constraint:** `go test -bench=BenchmarkParseJSONTag -benchmem` must report `0 allocs/op`.
+Requirements:
+- Use `cap` tracking to detect reallocation events
+- On each call, use the max of `len(items)` and the previous high-water mark for pre-allocation
+- Print stats at the end showing reallocation count
 
-**Evaluation Checklist:**
-- [ ] Zero allocations confirmed by benchmark
-- [ ] Correct parsing of name, omitempty, string options
-- [ ] Uses stack-allocated array as slice backing
-- [ ] Handles edge cases (empty tag, `-` skip tag)
+---
+
+## Mini Project 2: Memory-Bounded Buffer Pool
+
+Build a pool with a total memory budget:
+
+```go
+type BoundedPool struct {
+    mu         sync.Mutex
+    buffers    []*[]byte
+    totalBytes int
+    maxBytes   int
+}
+
+func NewBoundedPool(maxMB int) *BoundedPool { ... }
+func (p *BoundedPool) Get(size int) []byte { ... }
+func (p *BoundedPool) Put(buf []byte) { ... }
+func (p *BoundedPool) Stats() (count, totalBytes int) { ... }
+```
+
+Rules:
+- `Put` refuses buffers if adding them would exceed `maxBytes`
+- `Get` returns a buffer from pool if available, otherwise allocates fresh
+- Track total bytes currently in pool
+- Write tests that verify the budget is never exceeded
+
+---
+
+## Challenge: Generic Growing Stack with Shrink Policy
+
+Implement a `Stack[T]` that:
+1. Uses a backing slice that grows like `append`
+2. Shrinks when occupancy drops below 25% (to avoid hoarding memory)
+3. Never shrinks below a minimum capacity of 16
+4. Reports allocation/deallocation events via optional callbacks
+
+```go
+type Stack[T any] struct {
+    data     []T
+    minCap   int
+    onGrow   func(from, to int)
+    onShrink func(from, to int)
+}
+
+func NewStack[T any](minCap int) *Stack[T] {
+    return &Stack[T]{
+        data:   make([]T, 0, minCap),
+        minCap: minCap,
+    }
+}
+
+func (s *Stack[T]) Push(v T) {
+    s.data = append(s.data, v)
+    if s.onGrow != nil && cap(s.data) > s.minCap {
+        // detect growth here
+    }
+}
+
+func (s *Stack[T]) Pop() (T, bool) {
+    if len(s.data) == 0 {
+        var zero T
+        return zero, false
+    }
+    v := s.data[len(s.data)-1]
+    s.data = s.data[:len(s.data)-1]
+    s.maybeShrink()
+    return v, true
+}
+
+func (s *Stack[T]) maybeShrink() {
+    c := cap(s.data)
+    l := len(s.data)
+    if c > s.minCap && l < c/4 {
+        newCap := c / 2
+        if newCap < s.minCap {
+            newCap = s.minCap
+        }
+        newData := make([]T, l, newCap)
+        copy(newData, s.data)
+        if s.onShrink != nil {
+            s.onShrink(c, newCap)
+        }
+        s.data = newData
+    }
+}
+```
+
+Bonus: write a benchmark that pushes 1024 elements then pops all, verify total allocation count is O(log n).
