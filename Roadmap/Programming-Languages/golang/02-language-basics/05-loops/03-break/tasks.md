@@ -1,121 +1,334 @@
-# break Statement — Tasks
+# break Statement — Coding Tasks
 
-## Task 1: Linear Search (Easy)
+## Overview
 
-Search a slice for the first occurrence of a target value. Return its index, or -1 if not found. Use `break` to stop early.
-
-```go
-package main
-
-import "fmt"
-
-// TODO: implement LinearSearch using break
-func LinearSearch(s []int, target int) int {
-    // Iterate with for range
-    // When found: set result and break
-    // Return -1 if not found
-}
-
-func main() {
-    fmt.Println(LinearSearch([]int{3, 7, 2, 9, 1}, 9))  // 3
-    fmt.Println(LinearSearch([]int{3, 7, 2, 9, 1}, 5))  // -1
-    fmt.Println(LinearSearch([]int{5}, 5))               // 0
-}
-```
-
-**Requirements:**
-- Use `break` to exit as soon as the target is found
-- Return the index (not the value)
+12 coding tasks to practice and master the `break` statement in Go. Tasks are grouped by level. Each task has a Type, Goal, starter code with `// TODO` markers, expected output, and an evaluation checklist.
 
 ---
 
-## Task 2: Read Until Sentinel (Easy)
+## Junior Tasks
 
-Process values from a slice until you encounter a sentinel value (-1).
+### Task 1: Linear Search — Find First Match
+
+**Type:** Implementation
+**Difficulty:** 🟢 Easy
+**Concept:** Basic `break` in `for range`
+**Goal:** Find the first occurrence of a target value in a slice. Return its index or -1 if not found.
 
 ```go
 package main
 
 import "fmt"
 
-// TODO: implement ProcessUntilSentinel
-// Process all values until -1 is encountered; return sum of processed values
+// LinearSearch returns the index of the first occurrence of target,
+// or -1 if not found. Use break to stop scanning early.
+func LinearSearch(s []int, target int) int {
+    // TODO: iterate over s with index
+    // TODO: if s[i] == target, store index and break
+    // TODO: return found index or -1
+    return -1
+}
+
+func main() {
+    fmt.Println(LinearSearch([]int{3, 7, 2, 9, 1}, 9)) // 3
+    fmt.Println(LinearSearch([]int{3, 7, 2, 9, 1}, 5)) // -1
+    fmt.Println(LinearSearch([]int{5}, 5))              // 0
+}
+```
+
+**Expected Output:**
+```
+3
+-1
+0
+```
+
+**Evaluation Checklist:**
+- [ ] Uses `break` to stop scanning after first match
+- [ ] Returns the correct index (not the value)
+- [ ] Returns -1 when not found
+- [ ] No panic on empty slice
+
+---
+
+### Task 2: Read Until Sentinel Value
+
+**Type:** Implementation
+**Difficulty:** 🟢 Easy
+**Concept:** `break` when a sentinel is encountered
+**Goal:** Sum values in a slice until a sentinel value (-1) is found. Stop immediately when seen.
+
+```go
+package main
+
+import "fmt"
+
+// ProcessUntilSentinel returns the sum of values before the sentinel -1.
 func ProcessUntilSentinel(data []int) int {
     sum := 0
-    // Use for range and break when sentinel found
+    // TODO: range over data
+    // TODO: if value == -1, break
+    // TODO: otherwise add to sum
     return sum
 }
 
 func main() {
-    fmt.Println(ProcessUntilSentinel([]int{3, 5, 7, -1, 2, 4})) // 15 (3+5+7)
-    fmt.Println(ProcessUntilSentinel([]int{1, 2, 3}))            // 6 (no sentinel)
-    fmt.Println(ProcessUntilSentinel([]int{-1, 5, 6}))           // 0 (immediate)
+    fmt.Println(ProcessUntilSentinel([]int{3, 5, 7, -1, 2, 4})) // 15
+    fmt.Println(ProcessUntilSentinel([]int{1, 2, 3}))            // 6
+    fmt.Println(ProcessUntilSentinel([]int{-1, 5, 6}))           // 0
 }
 ```
 
+**Expected Output:**
+```
+15
+6
+0
+```
+
+**Evaluation Checklist:**
+- [ ] Values after sentinel are not summed
+- [ ] Correct result when no sentinel present
+- [ ] Correct result when sentinel is first element
+- [ ] No side effects on input slice
+
 ---
 
-## Task 3: break in switch-for (Common Pitfall) (Easy)
+### Task 3: Fix the break-in-switch Bug
 
-Fix the buggy code below so it correctly stops the loop when `i == 3`.
+**Type:** Fix + Demonstration
+**Difficulty:** 🟢 Easy
+**Concept:** `break` in switch exits only the switch, NOT the for loop
+**Goal:** The function below is supposed to stop the loop when `i == 3` but does not. Fix it.
 
 ```go
 package main
 
 import "fmt"
 
-// TODO: fix this function — break should exit the for loop, not just the switch
-func stopAtThree() {
+// buggyStopAtThree — break exits switch only, loop continues
+func buggyStopAtThree() {
     for i := 0; i < 6; i++ {
         switch i {
         case 3:
             fmt.Println("Stopping at 3")
-            break // BUG: this only exits the switch!
+            break // BUG: exits switch, NOT the for loop
+        }
+        fmt.Println("i =", i) // still prints i=3 because loop continues
+    }
+}
+
+// TODO: implement fixedStopAtThree so it truly stops when i == 3
+// Expected output: i=0, i=1, i=2, Stopping at 3
+func fixedStopAtThree() {
+    // TODO: add a label before the for loop
+    // TODO: use break <label> inside case 3
+    for i := 0; i < 6; i++ {
+        switch i {
+        case 3:
+            fmt.Println("Stopping at 3")
+            break // TODO: change this to exit the for loop
         }
         fmt.Println("i =", i)
     }
-    // Current output: i=0,1,2, Stopping at 3, i=3, i=4, i=5
-    // Expected: i=0,1,2, Stopping at 3
 }
 
 func main() {
-    stopAtThree()
+    fmt.Println("--- Buggy ---")
+    buggyStopAtThree()
+    fmt.Println("--- Fixed ---")
+    fixedStopAtThree()
 }
 ```
 
-**Hint:** Use a labeled break targeting the for loop.
+**Expected Output:**
+```
+--- Buggy ---
+i = 0
+i = 1
+i = 2
+Stopping at 3
+i = 3
+i = 4
+i = 5
+--- Fixed ---
+i = 0
+i = 1
+i = 2
+Stopping at 3
+```
+
+**Evaluation Checklist:**
+- [ ] `buggyStopAtThree` is unchanged (demonstrates the bug)
+- [ ] `fixedStopAtThree` does NOT print `i = 3` or beyond
+- [ ] Uses labeled `break` in `fixedStopAtThree`
+- [ ] Output matches exactly
 
 ---
 
-## Task 4: Find First Duplicate (Medium)
+### Task 4: Find First Adult with Flag Pattern
 
-Given a slice, find the first element that appears more than once. Return it and `true`, or 0 and `false` if no duplicates.
+**Type:** Implementation
+**Difficulty:** 🟢 Easy
+**Concept:** `break` with a boolean flag (Go's for-else equivalent)
+**Goal:** Find the first user with `Age >= 18`. Use a found flag so you can check whether break was used.
 
 ```go
 package main
 
 import "fmt"
 
-// TODO: implement FirstDuplicate
-// Use a map to track seen values
-// Break when a duplicate is found
-func FirstDuplicate(s []int) (int, bool) {
-    seen := make(map[int]bool)
-    // your code here
+type User struct {
+    Name string
+    Age  int
+}
+
+// findFirstAdult returns the first adult and true, or zero User and false.
+func findFirstAdult(users []User) (User, bool) {
+    // TODO: iterate over users
+    // TODO: if user.Age >= 18, return user and true (use break and a flag, or direct return)
+    return User{}, false
 }
 
 func main() {
-    fmt.Println(FirstDuplicate([]int{1, 2, 3, 2, 5}))    // 2, true
-    fmt.Println(FirstDuplicate([]int{1, 2, 3, 4, 5}))    // 0, false
-    fmt.Println(FirstDuplicate([]int{7, 7, 8, 9}))       // 7, true
+    users := []User{{"Alice", 15}, {"Bob", 17}, {"Carol", 22}, {"Dave", 30}}
+    if u, ok := findFirstAdult(users); ok {
+        fmt.Printf("First adult: %s (age %d)\n", u.Name, u.Age)
+    }
+
+    minors := []User{{"Eve", 10}, {"Frank", 14}}
+    if _, ok := findFirstAdult(minors); !ok {
+        fmt.Println("No adult found")
+    }
 }
 ```
 
+**Expected Output:**
+```
+First adult: Carol (age 22)
+No adult found
+```
+
+**Evaluation Checklist:**
+- [ ] Stops at Carol; does not scan Dave
+- [ ] Returns the correct `User` struct
+- [ ] Returns `User{}, false` for all-minors slice
+- [ ] Handles empty slice
+
 ---
 
-## Task 5: Word Count with Limit (Medium)
+## Middle Tasks
 
-Count words in a string, but stop counting after reaching a maximum count limit.
+### Task 5: Labeled Break — 2D Matrix Search
+
+**Type:** Implementation
+**Difficulty:** 🟡 Medium
+**Concept:** Labeled `break` exits both nested loops simultaneously
+**Goal:** Find a target in a `[][]int` matrix. When found, record position and break out of BOTH loops using a labeled `break`.
+
+```go
+package main
+
+import "fmt"
+
+type Position struct{ Row, Col int }
+
+// FindInMatrix returns the position of target and true,
+// or Position{-1,-1} and false if not found.
+// Must use a labeled break (not return) to exit both loops.
+func FindInMatrix(matrix [][]int, target int) (Position, bool) {
+    pos := Position{-1, -1}
+    found := false
+    // TODO: label the outer for loop (e.g., "search:")
+    // TODO: when target is found: set pos, set found=true, break search
+    return pos, found
+}
+
+func main() {
+    m := [][]int{
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9},
+    }
+    fmt.Println(FindInMatrix(m, 5)) // {1 1} true
+    fmt.Println(FindInMatrix(m, 0)) // {-1 -1} false
+}
+```
+
+**Expected Output:**
+```
+{1 1} true
+{-1 -1} false
+```
+
+**Evaluation Checklist:**
+- [ ] Labeled `break` used (not `return`)
+- [ ] Both loops exit when target is found
+- [ ] Does not scan rows/cols after the match
+- [ ] Correct position returned
+- [ ] Handles value not in matrix
+
+---
+
+### Task 6: Break in Select — Timeout-Bounded Channel Reader
+
+**Type:** Implementation
+**Difficulty:** 🟡 Medium
+**Concept:** Labeled `break` in `for { select { ... } }`
+**Goal:** Read from a channel, stopping after collecting `max` items OR when a timer fires. Return collected items.
+
+```go
+package main
+
+import (
+    "fmt"
+    "time"
+)
+
+// CollectWithTimeout reads from src until max items collected or timeout fires.
+func CollectWithTimeout(src <-chan int, timeout time.Duration, max int) []int {
+    result := make([]int, 0, max)
+    timer := time.NewTimer(timeout)
+    defer timer.Stop()
+
+    // TODO: label a for loop as "collect:"
+    // TODO: use select:
+    //   case v := <-src: append v; if len(result) >= max, break collect
+    //   case <-timer.C: break collect
+    return result
+}
+
+func main() {
+    ch := make(chan int, 10)
+    for i := 1; i <= 10; i++ {
+        ch <- i
+    }
+
+    items := CollectWithTimeout(ch, 50*time.Millisecond, 5)
+    fmt.Println("collected:", items) // [1 2 3 4 5]
+}
+```
+
+**Expected Output:**
+```
+collected: [1 2 3 4 5]
+```
+
+**Evaluation Checklist:**
+- [ ] Labeled `break` used to exit `for` from inside `select`
+- [ ] Stops at exactly `max` items when channel has more
+- [ ] Stops on timeout when fewer items are available
+- [ ] `timer.Stop()` called (no resource leak)
+- [ ] Returns correct slice
+
+---
+
+### Task 7: Multiple Break Conditions — Log Parser
+
+**Type:** Implementation
+**Difficulty:** 🟡 Medium
+**Concept:** Multiple distinct `break` points, each recording a stop reason
+**Goal:** Validate log lines. Stop processing on: empty line, line starting with "ERROR", or after `maxLines`. Return count of valid lines and the stop reason.
 
 ```go
 package main
@@ -125,77 +338,77 @@ import (
     "strings"
 )
 
-// TODO: implement CountWordsUpTo
-// Count words in s, but stop after maxWords words are counted
-// Return the count and whether the limit was reached
-func CountWordsUpTo(s string, maxWords int) (count int, limitReached bool) {
-    words := strings.Fields(s)
-    // Use for range and break when count reaches maxWords
-    return
+type StopReason string
+
+const (
+    ReasonComplete StopReason = "complete"
+    ReasonEmpty    StopReason = "empty_line"
+    ReasonError    StopReason = "error_line"
+    ReasonMax      StopReason = "max_lines"
+)
+
+func ParseLogs(lines []string, maxLines int) (int, StopReason) {
+    valid := 0
+    reason := ReasonComplete
+    // TODO: iterate over lines
+    // TODO: if valid >= maxLines: reason=ReasonMax, break
+    // TODO: if line == "": reason=ReasonEmpty, break
+    // TODO: if strings.HasPrefix(line, "ERROR"): reason=ReasonError, break
+    // TODO: otherwise: valid++
+    return valid, reason
 }
 
 func main() {
-    c, lim := CountWordsUpTo("the quick brown fox jumps over the lazy dog", 5)
-    fmt.Println(c, lim) // 5, true
+    logs1 := []string{
+        "INFO: started",
+        "INFO: connected",
+        "ERROR: disk full",
+        "INFO: ignored",
+    }
+    n, r := ParseLogs(logs1, 10)
+    fmt.Printf("valid=%d reason=%s\n", n, r)
 
-    c, lim = CountWordsUpTo("hello world", 10)
-    fmt.Println(c, lim) // 2, false
+    logs2 := []string{"line1", "line2", "line3", "line4"}
+    n2, r2 := ParseLogs(logs2, 2)
+    fmt.Printf("valid=%d reason=%s\n", n2, r2)
 }
 ```
 
+**Expected Output:**
+```
+valid=2 reason=error_line
+valid=2 reason=max_lines
+```
+
+**Evaluation Checklist:**
+- [ ] Correct stop reason returned for all scenarios
+- [ ] Lines AFTER the stop trigger are not counted
+- [ ] `maxLines` limit respected
+- [ ] "ERROR" line itself is not counted as valid
+- [ ] Handles empty input
+
 ---
 
-## Task 6: Matrix Search with Labeled break (Medium)
+### Task 8: Retry with Break on Success
 
-Find a value in a 2D slice using a labeled break to exit both loops.
+**Type:** Implementation
+**Difficulty:** 🟡 Medium
+**Concept:** `break` on success in a fixed-iteration loop
+**Goal:** Retry a function up to `maxAttempts` times. Break immediately on success (nil error). Return the final error or nil.
 
 ```go
 package main
 
 import "fmt"
 
-// TODO: implement FindInMatrix using labeled break
-// Return (row, col, true) if found, or (-1, -1, false) if not found
-// Must use a labeled break to exit both loops when found
-func FindInMatrix(matrix [][]int, target int) (row, col int, found bool) {
-    // Use labeled break (not return) to exit the outer loop
-    // your code here
-}
-
-func main() {
-    m := [][]int{
-        {1, 2, 3},
-        {4, 5, 6},
-        {7, 8, 9},
-    }
-    fmt.Println(FindInMatrix(m, 5)) // 1, 1, true
-    fmt.Println(FindInMatrix(m, 0)) // -1, -1, false
-}
-```
-
-**Constraint:** Must use a labeled `break` (not `return`) to exit the outer loop when found.
-
----
-
-## Task 7: Retry with break (Medium)
-
-Implement a retry mechanism that stops on success or after max attempts.
-
-```go
-package main
-
-import (
-    "fmt"
-    "math/rand"
-)
-
-// TODO: implement Retry
-// Call fn up to maxAttempts times
-// Break immediately on success (nil error)
-// Return last error if all attempts fail, nil if success
+// Retry calls fn up to maxAttempts times.
+// It breaks immediately when fn returns nil.
+// Returns nil if any attempt succeeded, or the last error.
 func Retry(maxAttempts int, fn func() error) error {
     var lastErr error
-    // Use for i := 0; i < maxAttempts; i++ with break on success
+    // TODO: for i := 0; i < maxAttempts; i++
+    // TODO: call fn(); store result in lastErr
+    // TODO: if lastErr == nil: break (success!)
     return lastErr
 }
 
@@ -208,61 +421,95 @@ func main() {
         }
         return fmt.Errorf("attempt %d failed", attempts)
     })
-    fmt.Printf("Result: err=%v, attempts=%d\n", err, attempts)
-    // Result: err=<nil>, attempts=3
+    fmt.Printf("err=%v attempts=%d\n", err, attempts)
+    // err=<nil> attempts=3
 }
 ```
 
+**Expected Output:**
+```
+err=<nil> attempts=3
+```
+
+**Evaluation Checklist:**
+- [ ] `break` stops retrying immediately on success
+- [ ] Function is called exactly 3 times (not 5)
+- [ ] Returns `nil` on success
+- [ ] Returns the last error if all attempts fail
+- [ ] Handles `maxAttempts=0` gracefully
+
 ---
 
-## Task 8: Pipeline with Early Termination (Hard)
+## Senior Tasks
 
-Build a pipeline that processes items but stops on the first error using `break`.
+### Task 9: Pipeline with Early Termination on Error
+
+**Type:** Implementation
+**Difficulty:** 🔴 Hard
+**Concept:** `break` to stop a processing pipeline on first error
+**Goal:** Process each item in a slice through a `transform` function. Stop immediately on the first error. Return all results up to and including the error.
 
 ```go
 package main
 
 import "fmt"
 
-type ProcessResult struct {
+type Result struct {
     Input  int
     Output int
-    Error  error
+    Err    error
 }
 
-// TODO: implement ProcessPipeline
-// For each item, call transform(item)
-// If transform returns an error, add it to results and break
-// Return all results up to and including the first error
-func ProcessPipeline(items []int, transform func(int) (int, error)) []ProcessResult {
-    var results []ProcessResult
-    // Use for range with break on error
+// ProcessPipeline applies transform to each item.
+// Stops on first error (including that error result in the output).
+func ProcessPipeline(items []int, transform func(int) (int, error)) []Result {
+    results := make([]Result, 0, len(items))
+    // TODO: range over items
+    // TODO: call transform(item)
+    // TODO: append Result{item, out, err}
+    // TODO: if err != nil: break (stop pipeline)
     return results
 }
 
 func main() {
-    results := ProcessPipeline(
+    res := ProcessPipeline(
         []int{1, 2, 3, -4, 5},
         func(n int) (int, error) {
-            if n < 0 { return 0, fmt.Errorf("negative: %d", n) }
+            if n < 0 {
+                return 0, fmt.Errorf("negative input: %d", n)
+            }
             return n * 2, nil
         },
     )
-    for _, r := range results {
-        fmt.Printf("in=%d out=%d err=%v\n", r.Input, r.Output, r.Error)
+    for _, r := range res {
+        fmt.Printf("in=%d out=%d err=%v\n", r.Input, r.Output, r.Err)
     }
-    // in=1 out=2 err=<nil>
-    // in=2 out=4 err=<nil>
-    // in=3 out=6 err=<nil>
-    // in=-4 out=0 err=negative: -4
 }
 ```
 
+**Expected Output:**
+```
+in=1 out=2 err=<nil>
+in=2 out=4 err=<nil>
+in=3 out=6 err=<nil>
+in=-4 out=0 err=negative input: -4
+```
+
+**Evaluation Checklist:**
+- [ ] Item 5 is NOT processed
+- [ ] Error result IS included in output
+- [ ] Returns exactly 4 results
+- [ ] `transform` called exactly 4 times
+- [ ] Handles all-success input (no break needed)
+
 ---
 
-## Task 9: Break from Channel Range with Context (Hard)
+### Task 10: Break from Channel Range with Context
 
-Implement a function that reads from a channel and stops when either the channel closes, a count limit is reached, or the context is cancelled.
+**Type:** Concurrency
+**Difficulty:** 🔴 Hard
+**Concept:** Labeled `break` in `for { select }` for graceful shutdown
+**Goal:** Read from a channel until: channel closes, `maxItems` reached, or context cancelled. Use labeled `break` for all exit conditions.
 
 ```go
 package main
@@ -272,95 +519,76 @@ import (
     "fmt"
 )
 
-// TODO: implement ReadUntil
-// Read from ch until:
-// 1. Channel is closed
-// 2. maxItems items have been read (use break)
-// 3. ctx is cancelled
-// Return collected items
+// ReadUntil collects at most maxItems from ch, stopping if ctx is cancelled.
 func ReadUntil(ctx context.Context, ch <-chan int, maxItems int) []int {
-    var items []int
-    // Use for { select { ... } } with labeled break
+    items := make([]int, 0, maxItems)
+    // TODO: label a for loop as "read:"
+    // TODO: select:
+    //   case <-ctx.Done(): break read
+    //   case v, ok := <-ch:
+    //     if !ok: break read
+    //     items = append(items, v)
+    //     if len(items) >= maxItems: break read
     return items
 }
 
 func main() {
-    ctx := context.Background()
     ch := make(chan int, 10)
-    for i := 1; i <= 8; i++ { ch <- i }
+    for i := 1; i <= 8; i++ {
+        ch <- i
+    }
     close(ch)
 
-    items := ReadUntil(ctx, ch, 5)
+    items := ReadUntil(context.Background(), ch, 5)
     fmt.Println(items) // [1 2 3 4 5]
+
+    ch2 := make(chan int, 10)
+    for i := 1; i <= 3; i++ {
+        ch2 <- i
+    }
+    close(ch2)
+    items2 := ReadUntil(context.Background(), ch2, 10)
+    fmt.Println(items2) // [1 2 3]
 }
 ```
 
----
-
-## Task 10: Batch Processor with Timeout (Hard)
-
-Process items in batches. Break from the current batch when a timeout occurs or the batch is full.
-
-```go
-package main
-
-import (
-    "fmt"
-    "time"
-)
-
-// TODO: implement BatchProcess
-// Collect items into batches of size batchSize
-// Process each complete batch
-// If timeout occurs before batch is full, process partial batch and stop
-func BatchProcess(items []int, batchSize int, timeout time.Duration) {
-    var batch []int
-    start := time.Now()
-
-    for _, item := range items {
-        if time.Since(start) >= timeout {
-            fmt.Println("Timeout! Processing partial batch:", batch)
-            break
-        }
-        batch = append(batch, item)
-        if len(batch) == batchSize {
-            fmt.Println("Processing full batch:", batch)
-            batch = nil // reset batch
-        }
-    }
-    if len(batch) > 0 && time.Since(start) < timeout {
-        fmt.Println("Processing final batch:", batch)
-    }
-}
-
-func main() {
-    items := make([]int, 100)
-    for i := range items { items[i] = i + 1 }
-    BatchProcess(items, 5, 1*time.Second)
-}
+**Expected Output:**
+```
+[1 2 3 4 5]
+[1 2 3]
 ```
 
+**Evaluation Checklist:**
+- [ ] Labeled `break` used for all three exit conditions
+- [ ] Stops at `maxItems` when channel has more
+- [ ] Stops when channel closes (fewer items than max)
+- [ ] Stops when context is cancelled
+- [ ] No goroutine leak
+
 ---
 
-## Task 11: Labeled break Search in 3D Slice (Expert)
+### Task 11: Break in 3D Slice Search
 
-Search for a value in a 3D slice using labeled break statements.
+**Type:** Implementation
+**Difficulty:** 🔴 Hard
+**Concept:** Labeled `break` across three levels of nesting
+**Goal:** Search a `[][][]int` for a target value. Must use labeled `break` (not `return`) to exit all three loops.
 
 ```go
 package main
 
 import "fmt"
 
-// TODO: implement Search3D
-// Use labeled break to exit all three loops when found
-// Must use labeled break (not return) for the outer two loops
+// Search3D finds target in cube using labeled break (not return).
+// Returns (x, y, z, true) if found, or (-1, -1, -1, false) otherwise.
 func Search3D(cube [][][]int, target int) (x, y, z int, found bool) {
     x, y, z = -1, -1, -1
-
-    // Label the outermost for loop
-    // Use labeled break when target is found
-    // your code here
-
+    // TODO: label the outermost for loop (e.g., "outer:")
+    // TODO: iterate i over cube
+    // TODO:   iterate j over cube[i]
+    // TODO:     iterate k over cube[i][j]
+    // TODO:       if cube[i][j][k] == target:
+    //               set x,y,z = i,j,k; set found=true; break outer
     return
 }
 
@@ -375,11 +603,27 @@ func main() {
 }
 ```
 
+**Expected Output:**
+```
+1 1 0 true
+-1 -1 -1 false
+```
+
+**Evaluation Checklist:**
+- [ ] Uses labeled `break` on outermost loop (not `return`)
+- [ ] All three loops exit when target found
+- [ ] Correct (x, y, z) coordinates returned
+- [ ] `found=false` when target absent
+- [ ] Does not scan beyond the found position
+
 ---
 
-## Task 12: Event Loop with Break Conditions (Expert)
+### Task 12: Mini Project — Event Loop with Multiple Break Conditions
 
-Implement a simple event loop that breaks under multiple conditions.
+**Type:** Mini Project
+**Difficulty:** 🔴 Hard
+**Concept:** Labeled `break` in a production-style event loop
+**Goal:** Implement an event loop that processes events from a channel. Exit on: "shutdown" event, `maxEvents` processed, or context cancelled. Return event count and stop reason.
 
 ```go
 package main
@@ -395,54 +639,103 @@ type Event struct {
     Payload interface{}
 }
 
-// TODO: implement EventLoop
-// Process events until:
-// 1. "shutdown" event received (break)
-// 2. maxEvents events processed (break)
-// 3. ctx cancelled (return)
-// Return number of events processed and reason for stopping
+// EventLoop processes events until shutdown, maxEvents, or ctx cancellation.
+// Returns count of processed events and reason string.
 func EventLoop(ctx context.Context, events <-chan Event, maxEvents int) (int, string) {
     count := 0
-    reason := ""
-    // Use for { select { ... } } with labeled break
-    _ = reason
+    reason := "unknown"
+    // TODO: label a for loop as "loop:"
+    // TODO: select:
+    //   case <-ctx.Done(): reason = "cancelled"; break loop
+    //   case ev, ok := <-events:
+    //     if !ok: reason = "channel_closed"; break loop
+    //     if ev.Type == "shutdown": reason = "shutdown"; break loop
+    //     count++
+    //     if count >= maxEvents: reason = "max_events"; break loop
     return count, reason
 }
 
 func main() {
     ctx := context.Background()
-    events := make(chan Event, 10)
+    ch := make(chan Event, 10)
 
     go func() {
         for i := 0; i < 5; i++ {
-            events <- Event{"data", i}
+            ch <- Event{Type: "data", Payload: i}
         }
-        events <- Event{"shutdown", nil}
-        events <- Event{"data", 999}
+        ch <- Event{Type: "shutdown", Payload: nil}
+        ch <- Event{Type: "data", Payload: 999} // should never be processed
     }()
 
-    time.Sleep(10 * time.Millisecond)
-    n, reason := EventLoop(ctx, events, 10)
-    fmt.Printf("Processed %d events, stopped: %s\n", n, reason)
-    // Processed 5 events, stopped: shutdown
+    time.Sleep(5 * time.Millisecond) // let goroutine fill the buffer
+    n, reason := EventLoop(ctx, ch, 10)
+    fmt.Printf("processed=%d reason=%s\n", n, reason)
+    // processed=5 reason=shutdown
+
+    // Test maxEvents
+    ch2 := make(chan Event, 10)
+    for i := 0; i < 10; i++ {
+        ch2 <- Event{Type: "data", Payload: i}
+    }
+    n2, reason2 := EventLoop(ctx, ch2, 3)
+    fmt.Printf("processed=%d reason=%s\n", n2, reason2)
+    // processed=3 reason=max_events
 }
 ```
 
+**Expected Output:**
+```
+processed=5 reason=shutdown
+processed=3 reason=max_events
+```
+
+**Evaluation Checklist:**
+- [ ] Labeled `break` used for all exit conditions
+- [ ] "shutdown" event is NOT counted in processed events
+- [ ] Data event after "shutdown" is never processed
+- [ ] `maxEvents` respected
+- [ ] Context cancellation handled
+- [ ] Correct reason returned for each scenario
+
 ---
 
-## Solutions Reference
+## Questions
 
-| Task | Key break Pattern |
-|---|---|
-| 1 | Plain `break` in `for range` after setting result |
-| 2 | `break` when sentinel value found |
-| 3 | Labeled `break` targeting `for` loop from inside `switch` |
-| 4 | `break` in `for range` after duplicate detection |
-| 5 | `break` when count reaches limit |
-| 6 | Labeled `break` (not return) for 2D search |
-| 7 | `break` on success in retry loop |
-| 8 | `break` on first error in pipeline |
-| 9 | Labeled `break` in `for { select { ... } }` |
-| 10 | `break` on timeout in range loop |
-| 11 | Labeled break across 3 nested loops |
-| 12 | Labeled break in event loop with multiple exit conditions |
+### Q1: Why does `break` inside a `switch` not exit the surrounding `for` loop?
+
+`break` always exits the innermost construct. In Go, `switch` is a distinct construct from `for`, so `break` inside `switch` exits the `switch`. The `for` loop sees `break` as not applicable to itself and continues. Use a labeled `break` to target the `for` specifically.
+
+### Q2: When should you prefer `return` over a labeled `break`?
+
+Prefer `return` when:
+- The nested loops are inside a function and you want to return a value immediately.
+- There is no code to run after the loop in the calling function.
+- Extracting to a function makes the code more testable.
+
+Use labeled `break` when:
+- You need to run post-loop cleanup code in the same function.
+- You are inside a closure and cannot return from the outer function.
+- The logic is too tightly coupled to extract cleanly.
+
+### Q3: What is the difference between labeled `break` and `goto`?
+
+Labeled `break` exits a specific construct (loop, switch, select) and continues at the statement after it — always forward movement in code. `goto` jumps to any labeled statement in the same function, including backward jumps that could create arbitrary loops. Go permits `goto` but discourages it; labeled `break` is the idiomatic tool for nested-loop exits.
+
+---
+
+## Summary Table
+
+| Task | Difficulty | Key Concept |
+|------|------------|-------------|
+| 1 — Linear Search | 🟢 | Plain `break` in range loop |
+| 2 — Sentinel Value | 🟢 | `break` on sentinel |
+| 3 — Switch Bug Fix | 🟢 | `break` in switch exits switch only |
+| 4 — First Adult | 🟢 | Flag + `break` (for-else pattern) |
+| 5 — Matrix Search | 🟡 | Labeled `break` (2 nested loops) |
+| 6 — Timeout Reader | 🟡 | Labeled `break` in `for { select }` |
+| 7 — Log Parser | 🟡 | Multiple `break` conditions |
+| 8 — Retry | 🟡 | `break` on success |
+| 9 — Pipeline | 🔴 | `break` on first error |
+| 10 — Channel Read | 🔴 | Labeled `break` + context |
+| 11 — 3D Search | 🔴 | Labeled `break` (3 nested loops) |
+| 12 — Event Loop | 🔴 | Production event loop `break` |
