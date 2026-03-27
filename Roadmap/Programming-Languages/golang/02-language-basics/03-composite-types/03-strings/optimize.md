@@ -1,434 +1,337 @@
-# Strings as Composite Type — Optimize
+# Strings in Go — Optimize
 
-Each exercise has a slow implementation. Your goal is to make it faster by reducing allocations, improving algorithmic complexity, or using more appropriate standard library functions.
+## Exercise 1 — Replace + concatenation with Builder 🟢
 
----
+**Problem:** The following function builds a comma-separated list but is very slow for large inputs.
 
-## Exercise 1 — Replace + Concatenation with strings.Builder 🟢
-
-**Description:** A function joins a slice of strings with a separator. The naive `+=` version has O(n²) time complexity due to repeated string allocation.
-
-**Slow Code:**
 ```go
-func joinStrings(parts []string, sep string) string {
+func joinComma(items []string) string {
     result := ""
-    for i, p := range parts {
+    for i, item := range items {
         if i > 0 {
-            result += sep
+            result += ","
         }
-        result += p
+        result += item
     }
     return result
 }
-// Problem: for n=1000 parts, this does ~999 allocations of growing strings
 ```
 
-<details>
-<summary>Hint</summary>
-
-Use `strings.Builder` with `Grow` to pre-allocate exact capacity. Calculate total size = sum of all part lengths + sep length × (n-1).
-
-</details>
+**Benchmark baseline:** 10000 items → ~50ms, 5000 allocs/op
 
 <details>
 <summary>Optimized Solution</summary>
 
 ```go
-func joinStrings(parts []string, sep string) string {
-    if len(parts) == 0 { return "" }
-    if len(parts) == 1 { return parts[0] }
+func joinComma(items []string) string {
+    // Option 1: strings.Join (simplest)
+    return strings.Join(items, ",")
 
-    // Calculate exact size
-    n := len(sep) * (len(parts) - 1)
-    for _, p := range parts { n += len(p) }
+    // Option 2: strings.Builder with Grow
+    // var sb strings.Builder
+    // total := len(items) - 1 // separators
+    // for _, s := range items { total += len(s) }
+    // sb.Grow(total)
+    // for i, item := range items {
+    //     if i > 0 { sb.WriteByte(',') }
+    //     sb.WriteString(item)
+    // }
+    // return sb.String()
+}
+```
 
-    var sb strings.Builder
-    sb.Grow(n) // single allocation
-    sb.WriteString(parts[0])
-    for _, p := range parts[1:] {
-        sb.WriteString(sep)
-        sb.WriteString(p)
+**Result:** ~0.5ms, 1 alloc/op (the final string only)
+
+**Why:** `strings.Join` pre-calculates the total length and allocates once. The Builder approach with `Grow` achieves the same. Both are O(n) vs the original O(n^2).
+</details>
+
+---
+
+## Exercise 2 — Avoid repeated ToLower in loop 🟢
+
+**Problem:** Case-insensitive deduplication calls ToLower inside a hot loop.
+
+```go
+func deduplicateCaseInsensitive(items []string) []string {
+    seen := make(map[string]bool)
+    var result []string
+    for _, item := range items {
+        key := strings.ToLower(item) // allocates every iteration
+        if !seen[key] {
+            seen[key] = true
+            result = append(result, item)
+        }
     }
+    return result
+}
+```
+
+**Problem:** `strings.ToLower` allocates a new string every call even when the item is already lowercase.
+
+<details>
+<summary>Optimized Solution</summary>
+
+```go
+// Option 1: Accept the cost but avoid double work
+// The current code is actually reasonable. ToLower is O(n) per string.
+// Main optimization: avoid calling ToLower twice if you store lowercased keys
+
+// Option 2: Use strings.EqualFold in a different approach (only if N is tiny)
+
+// Option 3: For ASCII-only data, write a fast no-alloc toLower check
+func isAlreadyLower(s string) bool {
+    for i := 0; i < len(s); i++ {
+        c := s[i]
+        if c >= 'A' && c <= 'Z' {
+            return false
+        }
+    }
+    return true
+}
+
+func deduplicateCaseInsensitive(items []string) []string {
+    seen := make(map[string]bool, len(items))
+    result := make([]string, 0, len(items))
+    for _, item := range items {
+        var key string
+        if isAlreadyLower(item) {
+            key = item // no allocation needed
+        } else {
+            key = strings.ToLower(item)
+        }
+        if !seen[key] {
+            seen[key] = true
+            result = append(result, item)
+        }
+    }
+    return result
+}
+```
+
+**Result:** ~30-50% fewer allocations for mixed-case input where many items are already lowercase.
+</details>
+
+---
+
+## Exercise 3 — Replace chained strings.Replace with NewReplacer 🟡
+
+**Problem:** HTML escaping using chained calls scans the string 5 times.
+
+```go
+func escapeHTML(s string) string {
+    s = strings.Replace(s, "&", "&amp;", -1)
+    s = strings.Replace(s, "<", "&lt;", -1)
+    s = strings.Replace(s, ">", "&gt;", -1)
+    s = strings.Replace(s, "\"", "&#34;", -1)
+    s = strings.Replace(s, "'", "&#39;", -1)
+    return s
+}
+```
+
+**Problem:** 5 passes through the string, 5 intermediate allocations.
+
+<details>
+<summary>Optimized Solution</summary>
+
+```go
+var htmlReplacer = strings.NewReplacer(
+    "&", "&amp;",
+    "<", "&lt;",
+    ">", "&gt;",
+    "\"", "&#34;",
+    "'", "&#39;",
+)
+
+func escapeHTML(s string) string {
+    return htmlReplacer.Replace(s)
+}
+```
+
+**Key points:**
+1. `htmlReplacer` is declared as a package-level variable — it is built once at init time.
+2. `NewReplacer` scans the string in a single pass using a trie internally.
+3. Result: 1 allocation (the output string), 1 pass, ~5x faster for typical HTML.
+
+**Benchmark improvement:**
+- Before: 5 allocs/op
+- After: 1 alloc/op (or 0 if output is written to a Builder via `r.WriteString`)
+</details>
+
+---
+
+## Exercise 4 — Avoid []byte ↔ string roundtrip 🟡
+
+**Problem:** A log formatter unnecessarily converts between string and []byte.
+
+```go
+func formatLogLine(level, message string) string {
+    b := []byte("[")
+    b = append(b, []byte(level)...)
+    b = append(b, []byte("] ")...)
+    b = append(b, []byte(message)...)
+    return string(b)
+}
+```
+
+**Problem:** Every `[]byte(string)` conversion allocates.
+
+<details>
+<summary>Optimized Solution</summary>
+
+```go
+func formatLogLine(level, message string) string {
+    var sb strings.Builder
+    sb.Grow(1 + len(level) + 2 + len(message))
+    sb.WriteByte('[')
+    sb.WriteString(level)
+    sb.WriteString("] ")
+    sb.WriteString(message)
     return sb.String()
 }
-// 1 allocation vs O(n²) allocations
-// Note: strings.Join is the stdlib version of this — use it when possible!
 ```
 
+**Or even simpler for fixed format:**
+```go
+func formatLogLine(level, message string) string {
+    return "[" + level + "] " + message
+}
+// For 3 parts, the compiler may optimize to a single allocation
+```
+
+**Result:** 1 alloc/op (the final string) vs 4+ with the original approach.
 </details>
 
 ---
 
-## Exercise 2 — Replace ToLower+== with EqualFold 🟢
+## Exercise 5 — Eliminate allocation in hot read path 🔴
 
-**Description:** A search function performs case-insensitive comparison by converting both strings to lowercase.
-
-**Slow Code:**
-```go
-func containsCaseInsensitive(haystack, needle string) bool {
-    lh := strings.ToLower(haystack)
-    ln := strings.ToLower(needle)
-    return strings.Contains(lh, ln)
-}
-// Problem: allocates 2 new strings on every call
-```
-
-<details>
-<summary>Hint</summary>
-
-For full equality checks, `strings.EqualFold` is the zero-allocation alternative. For containment, you can use a byte-by-byte approach or `strings.ToLower` on just the needle (amortized), caching it.
-
-</details>
-
-<details>
-<summary>Optimized Solution</summary>
+**Problem:** A high-throughput HTTP router converts request path bytes to string for lookup.
 
 ```go
-// For case-insensitive equality (2 strings):
-func equalCI(a, b string) bool {
-    return strings.EqualFold(a, b) // 0 allocations
+type Router struct {
+    routes map[string]http.HandlerFunc
 }
 
-// For case-insensitive containment, the stdlib doesn't have a direct function.
-// Best approach: normalize needle once, then search:
-type CISearcher struct {
-    needle string // pre-lowercased
-}
-
-func NewCISearcher(needle string) *CISearcher {
-    return &CISearcher{needle: strings.ToLower(needle)} // 1 alloc, done once
-}
-
-func (cs *CISearcher) Contains(haystack string) bool {
-    // Still 1 alloc per call for ToLower(haystack), but needle is pre-computed
-    return strings.Contains(strings.ToLower(haystack), cs.needle)
-}
-```
-
-</details>
-
----
-
-## Exercise 3 — Replace Chained Replace with strings.NewReplacer 🟢
-
-**Description:** A log sanitizer removes multiple sensitive patterns from log lines by chaining `strings.ReplaceAll` calls.
-
-**Slow Code:**
-```go
-func sanitizeLog(line string) string {
-    line = strings.ReplaceAll(line, "password=", "password=***")
-    line = strings.ReplaceAll(line, "token=", "token=***")
-    line = strings.ReplaceAll(line, "secret=", "secret=***")
-    line = strings.ReplaceAll(line, "key=", "key=***")
-    line = strings.ReplaceAll(line, "auth=", "auth=***")
-    return line
-    // Problem: 5 passes over the string, 5 intermediate string allocations
-}
-```
-
-<details>
-<summary>Hint</summary>
-
-`strings.NewReplacer` applies all substitutions in a single pass. Create it once (as a package-level variable) and call `.Replace` on each input.
-
-</details>
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-var logSanitizer = strings.NewReplacer(
-    "password=", "password=***",
-    "token=",    "token=***",
-    "secret=",   "secret=***",
-    "key=",      "key=***",
-    "auth=",     "auth=***",
-)
-
-func sanitizeLog(line string) string {
-    return logSanitizer.Replace(line)
-    // 1 pass over the string
-    // logSanitizer created once — zero overhead on subsequent calls
-}
-```
-
-</details>
-
----
-
-## Exercise 4 — Avoid []byte(s) Conversion for Map Lookup 🟡
-
-**Description:** A router frequently looks up routes using a `[]byte` key. The naive implementation converts to `string` each time.
-
-**Slow Code:**
-```go
-var routes = map[string]http.HandlerFunc{
-    "/api/users":  usersHandler,
-    "/api/orders": ordersHandler,
-    "/health":     healthHandler,
-}
-
-func route(path []byte) http.HandlerFunc {
-    return routes[string(path)] // allocation: []byte → string copy
-}
-// Problem: 1 allocation per request for string(path)
-```
-
-<details>
-<summary>Hint</summary>
-
-Go has a special compiler optimization: `map[string(b)]` where `b` is `[]byte` does NOT allocate when used as a map lookup (not assignment). The compiler passes the `[]byte` data directly to the map hash function.
-
-</details>
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-// The fix is simply: use the map lookup syntax directly.
-// The compiler already optimizes this in modern Go!
-
-func route(path []byte) http.HandlerFunc {
-    return routes[string(path)]
-    // In Go 1.5+: the compiler special-cases map[string(b)] for lookups
-    // to avoid the []byte→string allocation.
-    // Verify: go test -benchmem shows 0 allocs/op
-}
-
-// To explicitly verify, benchmark:
-func BenchmarkRoute(b *testing.B) {
-    path := []byte("/api/users")
-    for i := 0; i < b.N; i++ {
-        _ = routes[string(path)] // 0 allocs in map lookup context
+func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+    path := string(req.URL.Path) // allocation per request!
+    handler, ok := r.routes[path]
+    if ok {
+        handler(w, req)
     }
 }
 ```
 
-</details>
+**Note:** `req.URL.Path` is already a string in the standard library. This example simulates a scenario where you have `[]byte` from a custom parser.
 
----
-
-## Exercise 5 — Zero-Copy string→[]byte for Hashing 🟡
-
-**Description:** A caching system computes a hash key from a string. The naive approach converts `string` to `[]byte` which always allocates.
-
-**Slow Code:**
-```go
-import "crypto/sha256"
-
-func hashKey(s string) [32]byte {
-    b := []byte(s)         // allocation: copies string bytes to mutable []byte
-    return sha256.Sum256(b)
-}
-// Problem: 1 allocation per call to copy the string data
-```
-
-<details>
-<summary>Hint</summary>
-
-Use `unsafe.Slice(unsafe.StringData(s), len(s))` to get a `[]byte` view of the string without allocation. The resulting `[]byte` must NOT be written to — only used for read-only operations like hashing.
-
-</details>
+**Problem (simulated with []byte):** Converting `[]byte` to `string` for every map lookup allocates.
 
 <details>
 <summary>Optimized Solution</summary>
 
 ```go
-import (
-    "crypto/sha256"
-    "unsafe"
-)
+// The compiler already optimizes map[string(b)] lookups in Go 1.6+
+// for the pattern: m[string(byteSlice)]
 
-func hashKey(s string) [32]byte {
-    // Zero-copy: treat string bytes as []byte for read-only hashing
-    // SAFE: sha256.Sum256 only reads the bytes, never writes
-    b := unsafe.Slice(unsafe.StringData(s), len(s))
-    return sha256.Sum256(b)
+type Router struct {
+    routes map[string]http.HandlerFunc
 }
-// 0 allocations vs 1 allocation
-// IMPORTANT: never pass the unsafe []byte to code that might modify it!
+
+func (r *Router) lookup(pathBytes []byte) http.HandlerFunc {
+    // This does NOT allocate — compiler optimization for map key lookup
+    return r.routes[string(pathBytes)]
+}
+
+// For custom hot-path parsers where you control the []byte:
+// Use unsafe zero-copy only if profiling confirms it is necessary
+import "unsafe"
+
+func lookupUnsafe(routes map[string]http.HandlerFunc, path []byte) http.HandlerFunc {
+    // Zero-copy: safe only because map lookup does not retain the string
+    return routes[unsafe.String(unsafe.SliceData(path), len(path))]
+}
 ```
 
+**Result:** The compiler optimization eliminates the allocation in most cases. Measure first before reaching for `unsafe`.
 </details>
 
 ---
 
-## Exercise 6 — Use strings.Reader Instead of []byte Conversion for io.Reader 🟡
+## Exercise 6 — Fix substring memory leak 🔴
 
-**Description:** A function feeds a string to an `io.Reader`-based pipeline. The naive approach converts to `[]byte` first.
+**Problem:** A session store extracts session tokens from large HTTP cookie headers.
 
-**Slow Code:**
 ```go
-func processString(s string, w io.Writer) error {
-    b := []byte(s)                    // allocation: copies all bytes
-    _, err := bytes.NewReader(b).WriteTo(w)
-    return err
+type SessionStore struct {
+    sessions map[string]*Session
 }
-// Problem: allocates a []byte copy of the entire string
+
+func (s *SessionStore) ParseCookie(cookieHeader string) string {
+    // cookieHeader might be 4KB of cookie data
+    i := strings.Index(cookieHeader, "session=")
+    if i < 0 {
+        return ""
+    }
+    i += len("session=")
+    j := strings.Index(cookieHeader[i:], ";")
+    if j < 0 {
+        return cookieHeader[i:]
+    }
+    return cookieHeader[i : i+j] // PROBLEM: keeps 4KB alive!
+}
 ```
 
-<details>
-<summary>Hint</summary>
-
-`strings.NewReader(s)` creates an `io.Reader` from a string without copying the string data. It implements `io.Reader`, `io.WriterTo`, `io.Seeker`, etc.
-
-</details>
+**Problem:** Each extracted token retains the full 4KB cookie header in memory.
 
 <details>
 <summary>Optimized Solution</summary>
 
 ```go
-func processString(s string, w io.Writer) error {
-    _, err := strings.NewReader(s).WriteTo(w)
-    return err
-    // 0 extra allocations for the reader — strings.Reader is 3 fields
-    // The string data is NOT copied
+func (s *SessionStore) ParseCookie(cookieHeader string) string {
+    i := strings.Index(cookieHeader, "session=")
+    if i < 0 {
+        return ""
+    }
+    i += len("session=")
+    j := strings.Index(cookieHeader[i:], ";")
+
+    var token string
+    if j < 0 {
+        token = cookieHeader[i:]
+    } else {
+        token = cookieHeader[i : i+j]
+    }
+
+    // strings.Clone creates an independent copy, releasing the 4KB backing array
+    return strings.Clone(token)
 }
-// strings.NewReader is a 24-byte struct allocation (negligible)
-// vs []byte copy of potentially megabytes
 ```
 
+**Memory impact:**
+- Before: Each active session holds a reference to a 4KB cookie header
+- After: Each active session holds only ~32 bytes for its token
+
+**When sessions number in the millions, this can save gigabytes.**
 </details>
 
 ---
 
-## Exercise 7 — Avoid Repeated strings.ToLower in Hot Loop 🟡
+## Exercise 7 — Reuse Builder across calls 🟡
 
-**Description:** A tag matching system checks if any tag in a list matches a query, case-insensitively. The query is the same for all tags.
+**Problem:** A high-frequency log formatter creates a new Builder for every log entry.
 
-**Slow Code:**
-```go
-func matchesAnyTag(tags []string, query string) bool {
-    for _, tag := range tags {
-        if strings.ToLower(tag) == strings.ToLower(query) { // 2 allocs per iter
-            return true
-        }
-    }
-    return false
-}
-// Problem: allocates 2 strings per tag in the loop
-// If len(tags) = 100, that's 200 allocations per call
-```
-
-<details>
-<summary>Hint</summary>
-
-Pre-lowercase the `query` once outside the loop. Inside the loop, use `strings.EqualFold` (0 allocs) instead of `ToLower` + `==`.
-
-</details>
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-func matchesAnyTag(tags []string, query string) bool {
-    // Use EqualFold: 0 allocations per comparison
-    for _, tag := range tags {
-        if strings.EqualFold(tag, query) {
-            return true
-        }
-    }
-    return false
-}
-// 0 allocations total (EqualFold does in-place comparison)
-// Alternatively, pre-lower query and use strings.ToLower only on each tag:
-func matchesAnyTagAlt(tags []string, query string) bool {
-    ql := strings.ToLower(query) // 1 alloc, outside loop
-    for _, tag := range tags {
-        if strings.ToLower(tag) == ql { // 1 alloc per tag (for tag's lower)
-            return true
-        }
-    }
-    return false
-}
-// EqualFold is still better for the inner comparison
-```
-
-</details>
-
----
-
-## Exercise 8 — Pre-compute strings.NewReplacer 🟢
-
-**Description:** A templating function is called millions of times. It creates a new `strings.NewReplacer` on each call.
-
-**Slow Code:**
-```go
-func renderEmailTemplate(template string, name, company, role string) string {
-    r := strings.NewReplacer( // BUG: creates new Replacer on every call!
-        "{{Name}}", name,
-        "{{Company}}", company,
-        "{{Role}}", role,
-    )
-    return r.Replace(template)
-}
-// Problem: strings.NewReplacer builds an internal trie each time — O(k) overhead
-// where k = number of patterns
-```
-
-<details>
-<summary>Hint</summary>
-
-The *pattern pairs* (the `old → new` mappings) are fixed. Only the replacement values change. Separate concerns: use a fixed replacer for static patterns, or pre-compute a template-specific replacer.
-
-</details>
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-// For variable values, we must create a new Replacer each time.
-// But we can reduce overhead by accepting a map:
-func renderTemplate(tmpl string, vars map[string]string) string {
-    // Build pairs once from the map
-    pairs := make([]string, 0, len(vars)*2)
-    for k, v := range vars {
-        pairs = append(pairs, "{{"+k+"}}", v)
-    }
-    return strings.NewReplacer(pairs...).Replace(tmpl)
-}
-
-// For truly static patterns with static replacements:
-var staticReplacer = strings.NewReplacer(
-    "{{AppName}}", "MyApp",
-    "{{Version}}", "1.0.0",
-    "{{Year}}",    "2026",
-)
-
-func renderStaticTemplate(tmpl string) string {
-    return staticReplacer.Replace(tmpl) // zero overhead, trie built once
-}
-```
-
-</details>
-
----
-
-## Exercise 9 — strings.Builder Reset vs New Instance 🟡
-
-**Description:** A logger creates a new `strings.Builder` for each log line. This causes repeated small allocations.
-
-**Slow Code:**
 ```go
 type Logger struct{}
 
-func (l *Logger) Log(level, msg string) string {
-    var sb strings.Builder // NEW builder each call — new allocation each time
-    sb.WriteString("[")
-    sb.WriteString(level)
-    sb.WriteString("] ")
-    sb.WriteString(msg)
-    return sb.String()
+func (l *Logger) Format(fields map[string]string) string {
+    var sb strings.Builder // new builder each call
+    for k, v := range fields {
+        fmt.Fprintf(&sb, "%s=%s ", k, v)
+    }
+    return strings.TrimSpace(sb.String())
 }
-// Problem: each call allocates a new []byte backing for the Builder
 ```
 
-<details>
-<summary>Hint</summary>
-
-Reuse a `strings.Builder` by storing it as a struct field and calling `Reset()` between uses. After the first call, the internal buffer is already allocated — `Reset()` just sets length to 0, retaining capacity.
-
-</details>
+**Problem:** `strings.Builder` allocates its internal buffer on every call.
 
 <details>
 <summary>Optimized Solution</summary>
@@ -439,160 +342,245 @@ type Logger struct {
     sb strings.Builder
 }
 
-func (l *Logger) Log(level, msg string) string {
+func (l *Logger) Format(fields map[string]string) string {
     l.mu.Lock()
     defer l.mu.Unlock()
 
-    l.sb.Reset() // reuse existing buffer — no allocation after first call!
-    l.sb.WriteString("[")
-    l.sb.WriteString(level)
-    l.sb.WriteString("] ")
-    l.sb.WriteString(msg)
-    return strings.Clone(l.sb.String()) // independent copy for the caller
+    l.sb.Reset() // reset length, keep capacity
+    first := true
+    for k, v := range fields {
+        if !first {
+            l.sb.WriteByte(' ')
+        }
+        l.sb.WriteString(k)
+        l.sb.WriteByte('=')
+        l.sb.WriteString(v)
+        first = false
+    }
+    return l.sb.String()
 }
-// After warmup: 1 alloc per call (for Clone) vs 2 allocs (Builder + String)
-// At high concurrency, use sync.Pool instead of a single mutex
 ```
 
+**Alternative:** Use `sync.Pool` for concurrent, allocation-free reuse:
+```go
+var builderPool = sync.Pool{
+    New: func() interface{} { return new(strings.Builder) },
+}
+
+func Format(fields map[string]string) string {
+    sb := builderPool.Get().(*strings.Builder)
+    sb.Reset()
+    defer builderPool.Put(sb)
+
+    for k, v := range fields {
+        sb.WriteString(k)
+        sb.WriteByte('=')
+        sb.WriteString(v)
+        sb.WriteByte(' ')
+    }
+    return strings.TrimSpace(sb.String())
+}
+```
+
+**Result:** After warm-up, 0 allocations per format call (builder buffer is reused from pool).
 </details>
 
 ---
 
-## Exercise 10 — Avoid fmt.Sprintf for Simple String→Number Conversion 🟢
+## Exercise 8 — Use strings.IndexByte instead of strings.Index 🟡
 
-**Description:** A metrics formatter converts numeric values to strings using `fmt.Sprintf`.
+**Problem:** A CSV parser searches for single-character delimiters using `strings.Index`.
 
-**Slow Code:**
 ```go
-func formatMetric(name string, value int64) string {
-    return name + "=" + fmt.Sprintf("%d", value)
-    // Problem: fmt.Sprintf uses reflection and is 3-5x slower than strconv
+func splitCSV(line string) []string {
+    var fields []string
+    for {
+        i := strings.Index(line, ",") // searches for string ","
+        if i < 0 {
+            fields = append(fields, line)
+            break
+        }
+        fields = append(fields, line[:i])
+        line = line[i+1:]
+    }
+    return fields
 }
 ```
-
-<details>
-<summary>Hint</summary>
-
-Use `strconv.FormatInt` or `strconv.Itoa` for integer-to-string conversion. These are direct numeric conversions without reflection.
-
-</details>
 
 <details>
 <summary>Optimized Solution</summary>
 
 ```go
-import "strconv"
+func splitCSV(line string) []string {
+    var fields []string
+    for {
+        i := strings.IndexByte(line, ',') // single byte search — faster
+        if i < 0 {
+            fields = append(fields, line)
+            break
+        }
+        fields = append(fields, line[:i])
+        line = line[i+1:]
+    }
+    return fields
+}
+```
 
-func formatMetric(name string, value int64) string {
+**Why faster:** `strings.IndexByte` can use SIMD instructions (via `internal/bytealg`) to scan 16 or 32 bytes at a time. `strings.Index(s, ",")` has more setup overhead for the single-character case.
+
+**Benchmark:** For long lines (1000+ bytes), `IndexByte` is typically 2-4x faster than `Index` for single-character separators.
+
+**Best practice for CSV:** Use `encoding/csv` for production CSV parsing.
+</details>
+
+---
+
+## Exercise 9 — Pre-allocate output slice 🟢
+
+**Problem:** A log processor splits each line and collects results without pre-allocating.
+
+```go
+func processLines(data string) []string {
+    lines := strings.Split(data, "\n")
+    var results []string // starts nil, grows dynamically
+    for _, line := range lines {
+        trimmed := strings.TrimSpace(line)
+        if trimmed != "" {
+            results = append(results, trimmed)
+        }
+    }
+    return results
+}
+```
+
+<details>
+<summary>Optimized Solution</summary>
+
+```go
+func processLines(data string) []string {
+    lines := strings.Split(data, "\n")
+    results := make([]string, 0, len(lines)) // pre-allocate with upper bound
+    for _, line := range lines {
+        trimmed := strings.TrimSpace(line)
+        if trimmed != "" {
+            results = append(results, trimmed)
+        }
+    }
+    return results
+}
+```
+
+**Why better:** Pre-allocating with `len(lines)` as capacity avoids repeated `append` reallocations. Even though some lines may be blank (and skipped), the capacity is an upper bound. Trades a small over-allocation for zero reallocations.
+
+**Alternative:** Count non-blank lines first, then allocate exactly:
+```go
+count := 0
+for _, line := range lines {
+    if strings.TrimSpace(line) != "" { count++ }
+}
+results := make([]string, 0, count)
+```
+(2-pass but exact allocation — worth it only if the output is very large and long-lived)
+</details>
+
+---
+
+## Exercise 10 — Replace fmt.Sprintf with direct Builder writes 🟡
+
+**Problem:** A hot path uses `fmt.Sprintf` for simple string formatting inside a tight loop.
+
+```go
+func buildQueryParams(params map[string]string) string {
+    var parts []string
+    for k, v := range params {
+        parts = append(parts, fmt.Sprintf("%s=%s", k, v)) // Sprintf allocates
+    }
+    return strings.Join(parts, "&")
+}
+```
+
+<details>
+<summary>Optimized Solution</summary>
+
+```go
+func buildQueryParams(params map[string]string) string {
     var sb strings.Builder
-    sb.Grow(len(name) + 1 + 20) // 20 digits max for int64
-    sb.WriteString(name)
-    sb.WriteByte('=')
-    sb.WriteString(strconv.FormatInt(value, 10))
+    first := true
+    for k, v := range params {
+        if !first {
+            sb.WriteByte('&')
+        }
+        sb.WriteString(k)
+        sb.WriteByte('=')
+        sb.WriteString(v)
+        first = false
+    }
     return sb.String()
 }
-// strconv.FormatInt: ~10 ns/op
-// fmt.Sprintf("%d"): ~50 ns/op
-// 5x faster, fewer allocations
 ```
 
+**Why better:**
+1. Eliminates the intermediate `[]string` slice (1 alloc per param)
+2. Eliminates `fmt.Sprintf` overhead (format parsing, reflection) for each param
+3. Single final allocation for the result string
+
+**Benchmark improvement:** For 10 params, typically 10x fewer allocations.
+
+**When to keep Sprintf:** When you need number formatting, padding, or complex format verbs. For pure string concatenation, direct Builder writes are always faster.
 </details>
 
 ---
 
-## Exercise 11 — Use strings.Count Instead of Manual Loop 🟢
+## Exercise 11 — Lazy string construction 🔴
 
-**Description:** A text analyzer counts how many times a substring appears.
+**Problem:** Detailed debug log messages are always built, even when debug logging is disabled.
 
-**Slow Code:**
 ```go
-func countOccurrences(text, sub string) int {
-    count := 0
-    pos := 0
-    for {
-        idx := strings.Index(text[pos:], sub)
-        if idx == -1 { break }
-        count++
-        pos += idx + len(sub)
-    }
-    return count
+func processItem(item Item) {
+    log.Printf("Processing item: id=%d, name=%s, tags=%v, meta=%+v",
+        item.ID, item.Name, item.Tags, item.Meta)
+    // ... actual processing
 }
-// Problem: verbose and manually re-slices the string repeatedly
 ```
-
-<details>
-<summary>Hint</summary>
-
-`strings.Count(s, sub)` does exactly this for non-overlapping occurrences. It's implemented in the standard library with optimized byte scanning (uses SIMD on some platforms).
-
-</details>
 
 <details>
 <summary>Optimized Solution</summary>
 
 ```go
-func countOccurrences(text, sub string) int {
-    return strings.Count(text, sub)
-    // One line, optimized implementation, handles edge cases correctly
-    // Note: counts NON-overlapping occurrences
-    // strings.Count("aaa", "aa") = 1, not 2
-}
-```
+// Option 1: Guard with log level check
+const debugEnabled = false // or from config
 
-</details>
-
----
-
-## Exercise 12 — Use bufio.Scanner Over io.ReadAll for Large String Processing 🔴
-
-**Description:** A log processor reads an entire multi-gigabyte log file into memory before processing.
-
-**Slow Code:**
-```go
-func processLogs(r io.Reader) []string {
-    data, err := io.ReadAll(r) // PROBLEM: loads entire file into memory!
-    if err != nil { return nil }
-    lines := strings.Split(string(data), "\n") // PROBLEM: another full copy
-    var errors []string
-    for _, line := range lines {
-        if strings.Contains(line, "ERROR") {
-            errors = append(errors, line)
-        }
+func processItem(item Item) {
+    if debugEnabled {
+        log.Printf("Processing item: id=%d, name=%s, tags=%v, meta=%+v",
+            item.ID, item.Name, item.Tags, item.Meta)
     }
-    return errors
+    // ... actual processing
 }
-// Problem: 2× memory: once for io.ReadAll, once for string(data)
-// For a 1 GB log file: 2 GB RAM peak usage
+
+// Option 2: Lazy stringer interface
+type ItemDebug struct{ item Item }
+
+func (d ItemDebug) String() string {
+    return fmt.Sprintf("id=%d, name=%s, tags=%v", d.item.ID, d.item.Name, d.item.Tags)
+}
+
+func processItem(item Item) {
+    // String() is only called if the log level is active
+    logger.Debug("Processing item", "item", ItemDebug{item})
+}
+
+// Option 3: Use slog (Go 1.21+) with lazy evaluation
+import "log/slog"
+
+func processItem(item Item) {
+    slog.Debug("Processing item",
+        slog.Int("id", item.ID),
+        slog.String("name", item.Name),
+    )
+    // slog skips string formatting entirely if Debug level is disabled
+}
 ```
 
-<details>
-<summary>Hint</summary>
-
-Use `bufio.Scanner` to process one line at a time. This uses O(line_length) memory instead of O(file_size).
-
-</details>
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-import "bufio"
-
-func processLogs(r io.Reader) []string {
-    var errors []string
-    scanner := bufio.NewScanner(r)
-    // Default scanner buffer: 64 KB per line
-    // For very long lines: scanner.Buffer(make([]byte, 1MB), 1MB)
-    for scanner.Scan() {
-        line := scanner.Text() // returns string without heap allocation (in many cases)
-        if strings.Contains(line, "ERROR") {
-            errors = append(errors, line)
-        }
-    }
-    return errors
-}
-// Memory usage: O(max_line_length) instead of O(file_size)
-// For 1 GB log file: ~64 KB peak instead of 2 GB
-```
-
+**Impact:** In production with debug logging disabled, eliminates all string formatting overhead for debug messages — which can represent 30-50% of CPU time in verbose code paths.
 </details>
