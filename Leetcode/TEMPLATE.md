@@ -694,7 +694,8 @@ class Solution:
 > - Step-by-step visualization
 > - Speed control
 > - Custom input entry
-> - **Random Generate** — choose size and range, always generates input with a valid solution
+> - **🎲 Random Generate** — choose size and range, always generates input with a valid solution
+> - **📊 Complexity Chart** — animated bar graph comparing all approaches at a glance
 > - **localStorage** — state is preserved on refresh
 
 ---
@@ -1286,6 +1287,83 @@ if __name__ == "__main__":
         }
 
         /* ============================================================
+           COMPLEXITY CHART — bar graph comparing all approaches
+           ============================================================ */
+        .complexity-chart {
+            margin-top: 20px;
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #1e293b;
+        }
+
+        .chart-title {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .chart-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .chart-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chart-label {
+            min-width: 140px;
+            font-size: 0.82rem;
+            color: #94a3b8;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .chart-bar-wrap {
+            flex: 1;
+            background: #1e293b;
+            border-radius: 6px;
+            height: 26px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chart-bar {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: white;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 0;
+            white-space: nowrap;
+            position: absolute;
+        }
+
+        .chart-bar.brute    { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.opt-sc   { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .chart-bar.optimal  { background: linear-gradient(90deg, #22c55e, #4ade80); }
+
+        .chart-complexity {
+            min-width: 90px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        /* ============================================================
            RESPONSIVE
            ============================================================ */
         @media (max-width: 1024px) {
@@ -1306,6 +1384,9 @@ if __name__ == "__main__":
             .array-element { width: 2.8rem; height: 2.8rem; font-size: 1rem; border-radius: 8px; }
             .step-description { padding: 10px 12px; font-size: 0.82rem; }
             .viz-area { padding: 14px; }
+            .chart-label { min-width: 100px; font-size: 0.75rem; }
+            .chart-complexity { min-width: 70px; font-size: 0.72rem; }
+            .chart-bar { font-size: 0.7rem; }
         }
 
         @media (max-width: 480px) {
@@ -1337,6 +1418,10 @@ if __name__ == "__main__":
             .legend { gap: 8px; margin-top: 10px; }
             .legend-item { font-size: 0.7rem; gap: 4px; }
             .legend-color { width: 12px; height: 12px; }
+            .complexity-chart { padding: 14px; }
+            .chart-label { min-width: 80px; font-size: 0.68rem; }
+            .chart-complexity { display: none; }
+            .chart-bar-wrap { height: 22px; }
         }
     </style>
 </head>
@@ -1458,6 +1543,35 @@ if __name__ == "__main__":
                 <span>Discarded</span>
             </div>
         </div>
+
+        <!-- COMPLEXITY CHART -->
+        <!-- data-w = bar width % (0–100); lower = faster algorithm -->
+        <!-- Color classes: brute (red) | opt-tc (blue) | opt-sc (purple) | optimal (green) -->
+        <div class="complexity-chart">
+            <div class="chart-title">Algorithm Complexity</div>
+            <div class="chart-bars">
+                <div class="chart-row">
+                    <div class="chart-label">Brute Force</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar brute" data-w="90" style="width:0">O({{...}})</div></div>
+                    <div class="chart-complexity">O({{...}}) / O({{...}})</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">TC Optimized</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="40" style="width:0">O({{...}})</div></div>
+                    <div class="chart-complexity">O({{...}}) / O({{...}})</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">SC Optimized</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar opt-sc" data-w="55" style="width:0">O({{...}})</div></div>
+                    <div class="chart-complexity">O({{...}}) / O({{...}})</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">Optimal</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="30" style="width:0">O({{...}})</div></div>
+                    <div class="chart-complexity">O({{...}}) / O({{...}})</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1570,28 +1684,39 @@ if __name__ == "__main__":
         // RANDOM GENERATOR — {{modify according to the problem}}
         // ============================================================
         function generateRandom() {
-            const size = parseInt(document.getElementById('genSize').value);
-            const range = parseInt(document.getElementById('genRange').value);
+            const size  = parseInt(document.getElementById('genSize')?.value  || 6);
+            const range = parseInt(document.getElementById('genRange')?.value || 50);
 
-            // {{Random input generation logic matching the problem}}
-            // IMPORTANT: Must always generate input that has a valid solution!
+            // ── IMPORTANT: always generate input that has a valid answer! ──
             //
-            // Example (Two Sum):
+            // Example A — Array + target (Two Sum style):
             //   const arr = randomArray(size, range);
-            //   const idx1 = randInt(0, size);
-            //   const idx2 = randInt(0, size, idx1); // different from idx1
-            //   const target = arr[idx1] + arr[idx2]; // guaranteed solution
+            //   const i1 = randInt(0, size), i2 = randInt(0, size, i1);
+            //   const target = arr[i1] + arr[i2];          // guaranteed pair
+            //   inputData = { arr, target };
+            //   document.getElementById('customInput').value = `[${arr}], target=${target}`;
             //
-            // Example (Sorted Array):
-            //   const arr = randomArray(size, range).sort((a,b) => a-b);
+            // Example B — Sorted array pair (Median style):
+            //   const a = randomArray(size, range).sort((a,b)=>a-b);
+            //   const b = randomArray(randInt(1,size+1), range).sort((a,b)=>a-b);
+            //   inputData = { nums1: a, nums2: b };
             //
-            // Example (Binary Tree):
-            //   const arr = randomArray(size, range);
-            //   // create tree from arr
+            // Example C — String (Substring / Palindrome style):
+            //   const alpha = 'abcdefghij';
+            //   inputData = Array.from({length: size}, () =>
+            //       alpha[Math.floor(Math.random() * alpha.length)]).join('');
+            //   document.getElementById('customInput').value = inputData;
+            //
+            // Example D — Integer (Reverse / Palindrome Number style):
+            //   inputData = randInt(-range, range + 1);
+            //   document.getElementById('customInput').value = inputData;
+            //
+            // Example E — Linked list (Add Two Numbers style):
+            //   const digits = n => Array.from({length: n}, () => Math.floor(Math.random()*10));
+            //   inputData = { l1: digits(size), l2: digits(randInt(1, size+1)) };
 
-            inputData = {{generated_input}};
+            inputData = {{generated_input}};  // ← replace with one of the examples above
 
-            // Update UI
             document.getElementById('customInput').value = JSON.stringify(inputData);
             reset();
             generateSteps();
@@ -1724,6 +1849,18 @@ if __name__ == "__main__":
             // return html;
             return '';
         }
+
+        // ============================================================
+        // COMPLEXITY CHART — bar animation on load
+        // ============================================================
+        // Each .chart-bar in HTML must have: data-w="N" style="width:0"
+        // where N is 0–100 (lower = faster algorithm).
+        // Color classes: brute (red) | opt-tc (blue) | opt-sc (purple) | optimal (green)
+        setTimeout(() => {
+            document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+                bar.style.width = bar.dataset.w + '%';
+            });
+        }, 400);
 
         // ============================================================
         // INIT — restore state from localStorage

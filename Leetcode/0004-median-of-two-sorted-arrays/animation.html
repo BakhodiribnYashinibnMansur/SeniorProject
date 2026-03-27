@@ -101,6 +101,11 @@
 
         .btn-apply { background: #8b5cf6; color: white; }
         .btn-apply:hover { background: #7c3aed; }
+        .btn-generate { background: #8b5cf6; color: white; }
+        .btn-generate:hover { background: #7c3aed; }
+        .gen-options { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .gen-options label { color: #94a3b8; font-size: 0.8rem; }
+        .gen-options select { padding: 5px 8px; background: #0f172a; color: #e2e8f0; border: 1px solid #334155; border-radius: 4px; font-size: 0.85rem; }
 
         /* PRESET EXAMPLES */
         .presets {
@@ -338,6 +343,20 @@
             border-radius: 4px;
         }
 
+        /* COMPLEXITY CHART */
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px; padding: 18px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 12px; }
+        .chart-row { display: flex; align-items: center; gap: 10px; }
+        .chart-label { min-width: 130px; font-size: 0.8rem; color: #94a3b8; text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 5px; height: 24px; overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 5px; display: flex; align-items: center; padding-left: 8px; font-size: 0.75rem; font-weight: 600; color: white; transition: width 0.8s cubic-bezier(0.16,1,0.3,1); width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.opt-sc { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .chart-bar.optimal { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 95px; font-size: 0.78rem; font-weight: 600; color: #e2e8f0; flex-shrink: 0; }
+
         /* RESPONSIVE */
         @media (max-width: 1024px) {
             .container { padding: 16px; }
@@ -392,6 +411,25 @@
             .presets { gap: 4px; }
             .preset-btn { padding: 4px 8px; font-size: 0.7rem; }
         }
+        /* NAVIGATION */
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 95vw;
+            margin: 0 auto 20px;
+        }
+        .nav-btn {
+            padding: 8px 18px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #334155; }
     </style>
 </head>
 <body>
@@ -399,6 +437,11 @@
     <div class="header">
         <h1>0004. Median of Two Sorted Arrays</h1>
         <p>Hard — Array, Binary Search, Divide and Conquer</p>
+    </div>
+
+    <div class="nav-links">
+        <a href="../0003-longest-substring-without-repeating-characters/animation.html" class="nav-btn">← 0003. Longest Substring</a>
+        <a href="../0005-longest-palindromic-substring/animation.html" class="nav-btn">0005. Longest Palindromic Substring →</a>
     </div>
 
     <div class="tabs" id="tabs">
@@ -413,6 +456,16 @@
             <label>nums2:</label>
             <input type="text" id="nums2Input" placeholder="2" value="2">
             <button class="btn btn-apply" onclick="applyInput()">Apply</button>
+            <button class="btn btn-generate" onclick="generateRandom()">🎲 Generate</button>
+            <div class="gen-options">
+                <label>Size:</label>
+                <select id="genSize">
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                </select>
+            </div>
         </div>
 
         <div class="presets">
@@ -471,6 +524,22 @@
             <div class="legend-item"><div class="legend-color" style="background:#22c55e;"></div><span>Median</span></div>
             <div class="legend-item"><div class="legend-color" style="background:#a78bfa;"></div><span>Comparing</span></div>
         </div>
+
+        <div class="complexity-chart">
+            <div class="chart-title">Algorithm Complexity</div>
+            <div class="chart-bars">
+                <div class="chart-row">
+                    <div class="chart-label">Brute Force (Merge)</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar brute" data-w="90" style="width:0">O((m+n)log(m+n))</div></div>
+                    <div class="chart-complexity">O((m+n)log(m+n)) / O(m+n)</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">Binary Search</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="20" style="width:0">O(log(min(m,n)))</div></div>
+                    <div class="chart-complexity">O(log(min(m,n))) / O(1)</div>
+                </div>
+            </div>
+        </div>
     </div>
 
 <script>
@@ -520,6 +589,19 @@ function parseArray(str) {
 function applyInput() {
     nums1 = parseArray(document.getElementById('nums1Input').value);
     nums2 = parseArray(document.getElementById('nums2Input').value);
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    reset();
+    buildSteps();
+    renderStep();
+}
+
+function generateRandom() {
+    const size = parseInt(document.getElementById('genSize').value);
+    const randSorted = n => Array.from({length: n}, () => Math.floor(Math.random() * 41) - 20).sort((a,b) => a-b);
+    nums1 = randSorted(size);
+    nums2 = randSorted(Math.floor(Math.random() * size) + 1);
+    document.getElementById('nums1Input').value = nums1.join(',');
+    document.getElementById('nums2Input').value = nums2.join(',');
     document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
     reset();
     buildSteps();
@@ -1002,6 +1084,13 @@ function buildCompareBox(label, value, color) {
 // INIT
 // ============================================================
 buildSteps();
+
+// Animate complexity chart bars on load
+setTimeout(() => {
+    document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+        bar.style.width = bar.dataset.w + '%';
+    });
+}, 400);
 </script>
 
 </body>

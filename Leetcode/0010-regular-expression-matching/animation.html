@@ -396,6 +396,40 @@
             margin: 0 auto;
         }
 
+        .btn-generate { background: #8b5cf6; color: white; border-color: #8b5cf6; }
+        .btn-generate:hover { background: #7c3aed; }
+
+        .gen-options {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .gen-options select {
+            padding: 6px 10px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        /* COMPLEXITY CHART */
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px; padding: 18px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 12px; }
+        .chart-row { display: flex; align-items: center; gap: 10px; }
+        .chart-label { min-width: 130px; font-size: 0.8rem; color: #94a3b8; text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 5px; height: 24px; overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 5px; display: flex; align-items: center; padding-left: 8px; font-size: 0.75rem; font-weight: 600; color: white; transition: width 0.8s cubic-bezier(0.16,1,0.3,1); width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.optimal { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 95px; font-size: 0.78rem; font-weight: 600; color: #e2e8f0; flex-shrink: 0; }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
             body { padding: 10px; }
@@ -404,12 +438,36 @@
             .dp-table td { width: 32px; height: 32px; font-size: 0.75rem; }
             .char-box { width: 30px; height: 30px; font-size: 0.85rem; }
         }
+        /* NAVIGATION */
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 95vw;
+            margin: 0 auto 20px;
+        }
+        .nav-btn {
+            padding: 8px 18px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #334155; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>0010. Regular Expression Matching</h1>
         <p>Step-by-step DP table filling animation</p>
+    </div>
+
+    <div class="nav-links">
+        <a href="../0009-palindrome-number/animation.html" class="nav-btn">← 0009. Palindrome Number</a>
+        <span></span>
     </div>
 
     <!-- TABS -->
@@ -428,6 +486,16 @@
             <label>p =</label>
             <input type="text" id="pInput" value="c*a*b" placeholder="pattern...">
             <button class="btn btn-apply" onclick="applyInput()">Apply</button>
+            <button class="btn btn-generate" onclick="generateRandom()">🎲 Generate</button>
+            <div class="gen-options">
+                <label>Pattern:</label>
+                <select id="genType">
+                    <option value="simple" selected>Simple *</option>
+                    <option value="dot">With .</option>
+                    <option value="dotstar">.*</option>
+                    <option value="complex">Complex</option>
+                </select>
+            </div>
         </div>
 
         <!-- PRESETS -->
@@ -550,6 +618,22 @@
                 </div>
             </div>
         </div>
+
+        <div class="complexity-chart">
+            <div class="chart-title">Algorithm Complexity</div>
+            <div class="chart-bars">
+                <div class="chart-row">
+                    <div class="chart-label">Recursion</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar brute" data-w="95" style="width:0">O(2^(m+n))</div></div>
+                    <div class="chart-complexity">O(2^(m+n)) / O(m+n)</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">DP Bottom-Up</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="45" style="width:0">O(m·n)</div></div>
+                    <div class="chart-complexity">O(m·n) / O(m·n)</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -600,6 +684,28 @@
         function applyInput() {
             s = document.getElementById('sInput').value;
             p = document.getElementById('pInput').value;
+            reset();
+        }
+
+        function generateRandom() {
+            const type = document.getElementById('genType').value;
+            const letters = 'abc';
+            const sLen = 2 + Math.floor(Math.random() * 4);
+            let newS = Array.from({length: sLen}, () => letters[Math.floor(Math.random() * letters.length)]).join('');
+            let newP;
+            if (type === 'simple') {
+                newP = newS[0] + '*' + newS.slice(1);
+            } else if (type === 'dot') {
+                newP = '.' + newS.slice(1);
+            } else if (type === 'dotstar') {
+                newP = '.*';
+            } else {
+                newP = newS[0] + '*' + (Math.random() > 0.5 ? '.' : newS[1]) + '*' + newS.slice(2);
+            }
+            document.getElementById('sInput').value = newS;
+            document.getElementById('pInput').value = newP;
+            s = newS;
+            p = newP;
             reset();
         }
 
@@ -1233,6 +1339,13 @@
         }
 
         init();
+
+        // Animate complexity chart bars
+        setTimeout(() => {
+            document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+                bar.style.width = bar.dataset.w + '%';
+            });
+        }, 400);
     </script>
 </body>
 </html>

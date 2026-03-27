@@ -394,6 +394,40 @@
         .legend-color.ac { border-color: #3b82f6; background: #0f172a; box-shadow: 0 0 6px rgba(59,130,246,0.4); }
         .legend-color.cl { border-color: #ef4444; background: #450a0a; }
 
+        .btn-generate { background: #8b5cf6; color: white; border-color: #8b5cf6; }
+        .btn-generate:hover { background: #7c3aed; }
+
+        .gen-options {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .gen-options select {
+            padding: 6px 10px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        /* COMPLEXITY CHART */
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px; padding: 18px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 12px; }
+        .chart-row { display: flex; align-items: center; gap: 10px; }
+        .chart-label { min-width: 130px; font-size: 0.8rem; color: #94a3b8; text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 5px; height: 24px; overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 5px; display: flex; align-items: center; padding-left: 8px; font-size: 0.75rem; font-weight: 600; color: white; transition: width 0.8s cubic-bezier(0.16,1,0.3,1); width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.optimal { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 95px; font-size: 0.78rem; font-weight: 600; color: #e2e8f0; flex-shrink: 0; }
+
         /* RESPONSIVE */
         @media (max-width: 600px) {
             .header h1 { font-size: 1.3rem; }
@@ -401,6 +435,25 @@
             .info-panel { grid-template-columns: 1fr 1fr; }
             .container { padding: 16px; }
         }
+        /* NAVIGATION */
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 95vw;
+            margin: 0 auto 20px;
+        }
+        .nav-btn {
+            padding: 8px 18px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #334155; }
     </style>
 </head>
 <body>
@@ -408,6 +461,11 @@
 <div class="header">
     <h1>0008. String to Integer (atoi)</h1>
     <p>Algorithm for converting a string to a 32-bit signed integer</p>
+</div>
+
+<div class="nav-links">
+    <a href="../0007-reverse-integer/animation.html" class="nav-btn">← 0007. Reverse Integer</a>
+    <a href="../0009-palindrome-number/animation.html" class="nav-btn">0009. Palindrome Number →</a>
 </div>
 
 <!-- TABS -->
@@ -424,6 +482,17 @@
         <div class="input-section">
             <input type="text" id="inputStr" placeholder="Enter a string..." value="   -42">
             <button class="btn btn-purple" onclick="startParsing()">Start</button>
+            <button class="btn btn-generate" onclick="generateRandom()">🎲 Generate</button>
+            <div class="gen-options">
+                <label>Type:</label>
+                <select id="genType">
+                    <option value="simple" selected>Simple</option>
+                    <option value="spaces">With Spaces</option>
+                    <option value="sign">With Sign</option>
+                    <option value="overflow">Overflow</option>
+                    <option value="words">Words Mixed</option>
+                </select>
+            </div>
         </div>
 
         <!-- Examples -->
@@ -493,6 +562,17 @@
         <div class="log-section">
             <h3>Step-by-step log:</h3>
             <div id="logContent"></div>
+        </div>
+
+        <div class="complexity-chart">
+            <div class="chart-title">Algorithm Complexity</div>
+            <div class="chart-bars">
+                <div class="chart-row">
+                    <div class="chart-label">Single Pass</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="35" style="width:0">O(n)</div></div>
+                    <div class="chart-complexity">O(n) / O(1)</div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -949,6 +1029,21 @@ function resetAnimation() {
     document.getElementById('btnPause').disabled = true;
 }
 
+function generateRandom() {
+    const type = document.getElementById('genType').value;
+    let s;
+    const num = Math.floor(Math.random() * 10000);
+    const sign = Math.random() > 0.5 ? '-' : '+';
+    if (type === 'simple') s = String(num);
+    else if (type === 'spaces') s = '   ' + num;
+    else if (type === 'sign') s = sign + num;
+    else if (type === 'overflow') s = (Math.random() > 0.5 ? '' : '-') + '99999999999';
+    else s = 'words ' + num + ' extra';
+    document.getElementById('inputStr').value = s;
+    resetAnimation();
+    startParsing();
+}
+
 // Speed slider listener
 document.getElementById('speedSlider').addEventListener('input', function() {
     document.getElementById('speedLabel').textContent = this.value + 'x';
@@ -1304,6 +1399,13 @@ function runRegex() {
 // INITIALIZE
 // ============================================================
 startParsing();
+
+// Animate complexity chart bars
+setTimeout(() => {
+    document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+        bar.style.width = bar.dataset.w + '%';
+    });
+}, 400);
 </script>
 
 </body>

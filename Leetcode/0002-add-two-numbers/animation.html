@@ -347,6 +347,31 @@
             border-radius: 4px;
         }
 
+        /* COMPLEXITY CHART */
+        .complexity-chart {
+            margin-top: 20px;
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 18px;
+            border: 1px solid #1e293b;
+        }
+        .chart-title {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+        }
+        .chart-bars { display: flex; flex-direction: column; gap: 12px; }
+        .chart-row { display: flex; align-items: center; gap: 10px; }
+        .chart-label { min-width: 130px; font-size: 0.8rem; color: #94a3b8; text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 5px; height: 24px; overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 5px; display: flex; align-items: center; padding-left: 8px; font-size: 0.75rem; font-weight: 600; color: white; transition: width 0.8s cubic-bezier(0.16,1,0.3,1); width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.optimal { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 85px; font-size: 0.78rem; font-weight: 600; color: #e2e8f0; flex-shrink: 0; }
+
         /* RESPONSIVE */
         @media (max-width: 1024px) {
             .container { padding: 16px; }
@@ -399,6 +424,25 @@
             .legend-item { font-size: 0.7rem; gap: 4px; }
             .legend-color { width: 12px; height: 12px; }
         }
+        /* NAVIGATION */
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 95vw;
+            margin: 0 auto 20px;
+        }
+        .nav-btn {
+            padding: 8px 18px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #334155; }
     </style>
 </head>
 <body>
@@ -406,6 +450,11 @@
     <div class="header">
         <h1>0002. Add Two Numbers</h1>
         <p>Medium — Linked List, Math, Recursion</p>
+    </div>
+
+    <div class="nav-links">
+        <a href="../0001-two-sum/animation.html" class="nav-btn">← 0001. Two Sum</a>
+        <a href="../0003-longest-substring-without-repeating-characters/animation.html" class="nav-btn">0003. Longest Substring →</a>
     </div>
 
     <div class="tabs" id="tabs">
@@ -427,6 +476,7 @@
                     <option value="2">9999 + 999 = 10998</option>
                 </select>
             </div>
+            <button class="btn btn-generate" onclick="generateRandom()">🎲 Generate</button>
         </div>
 
         <div class="controls">
@@ -477,6 +527,27 @@
             <div class="legend-item"><div class="legend-color" style="background:#22c55e;"></div><span>Result</span></div>
             <div class="legend-item"><div class="legend-color" style="background:#64748b;"></div><span>Processed</span></div>
         </div>
+
+        <div class="complexity-chart">
+            <div class="chart-title">Algorithm Complexity</div>
+            <div class="chart-bars">
+                <div class="chart-row">
+                    <div class="chart-label">Naive (Array Build)</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar brute" data-w="75" style="width:0">O(m+n)</div></div>
+                    <div class="chart-complexity">O(m+n) / O(m+n)</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">Elementary Math</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="50" style="width:0">O(max(m,n))</div></div>
+                    <div class="chart-complexity">O(max(m,n)) / O(max(m,n))</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">Recursive</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar" style="background:linear-gradient(90deg,#8b5cf6,#a78bfa);width:0" data-w="55">O(max(m,n))</div></div>
+                    <div class="chart-complexity">O(max(m,n)) / O(max(m,n))</div>
+                </div>
+            </div>
+        </div>
     </div>
 
 <script>
@@ -521,6 +592,19 @@ function setPreset() {
     const p = PRESETS[idx];
     l1 = [...p.l1];
     l2 = [...p.l2];
+    document.getElementById('l1Input').value = l1.join(',');
+    document.getElementById('l2Input').value = l2.join(',');
+    reset();
+    generateSteps();
+    renderStep();
+}
+
+function generateRandom() {
+    // Generate two random linked lists (1-6 digits each, 0-9 per digit)
+    const len1 = Math.floor(Math.random() * 5) + 1;
+    const len2 = Math.floor(Math.random() * 5) + 1;
+    l1 = Array.from({length: len1}, () => Math.floor(Math.random() * 10));
+    l2 = Array.from({length: len2}, () => Math.floor(Math.random() * 10));
     document.getElementById('l1Input').value = l1.join(',');
     document.getElementById('l2Input').value = l2.join(',');
     reset();
@@ -981,6 +1065,13 @@ function renderRecursiveStep(s, viz) {
 // ============================================================
 generateSteps();
 renderStep();
+
+// Animate complexity chart bars
+setTimeout(() => {
+    document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+        bar.style.width = bar.dataset.w + '%';
+    });
+}, 300);
 </script>
 
 </body>

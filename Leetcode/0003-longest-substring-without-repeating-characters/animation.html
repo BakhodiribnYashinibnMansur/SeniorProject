@@ -341,6 +341,38 @@
             border-radius: 4px;
         }
 
+        .btn-generate { background: #8b5cf6; color: white; }
+        .btn-generate:hover { background: #7c3aed; }
+        .gen-options { display: flex; align-items: center; gap: 6px; }
+        .gen-options label { color: #94a3b8; font-size: 0.8rem; }
+        .gen-options select { padding: 5px 8px; background: #0f172a; color: #e2e8f0; border: 1px solid #334155; border-radius: 4px; font-size: 0.85rem; }
+
+        /* COMPLEXITY CHART */
+        .complexity-chart {
+            margin-top: 20px;
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 18px;
+            border: 1px solid #1e293b;
+        }
+        .chart-title {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+        }
+        .chart-bars { display: flex; flex-direction: column; gap: 12px; }
+        .chart-row { display: flex; align-items: center; gap: 10px; }
+        .chart-label { min-width: 130px; font-size: 0.8rem; color: #94a3b8; text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 5px; height: 24px; overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 5px; display: flex; align-items: center; padding-left: 8px; font-size: 0.75rem; font-weight: 600; color: white; transition: width 0.8s cubic-bezier(0.16,1,0.3,1); width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.optimal { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 85px; font-size: 0.78rem; font-weight: 600; color: #e2e8f0; flex-shrink: 0; }
+
         /* RESPONSIVE */
         @media (max-width: 1024px) {
             .container { padding: 16px; }
@@ -396,6 +428,25 @@
             .legend-item { font-size: 0.7rem; gap: 4px; }
             .legend-color { width: 12px; height: 12px; }
         }
+        /* NAVIGATION */
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 95vw;
+            margin: 0 auto 20px;
+        }
+        .nav-btn {
+            padding: 8px 18px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #334155; }
     </style>
 </head>
 <body>
@@ -403,6 +454,11 @@
     <div class="header">
         <h1>0003. Longest Substring Without Repeating Characters</h1>
         <p>Medium — Hash Table, String, Sliding Window</p>
+    </div>
+
+    <div class="nav-links">
+        <a href="../0002-add-two-numbers/animation.html" class="nav-btn">← 0002. Add Two Numbers</a>
+        <a href="../0004-median-of-two-sorted-arrays/animation.html" class="nav-btn">0004. Median of Two Sorted Arrays →</a>
     </div>
 
     <div class="tabs" id="tabs">
@@ -415,6 +471,16 @@
         <div class="input-section">
             <input type="text" id="strInput" placeholder="abcabcbb" value="abcabcbb">
             <button class="btn btn-step" onclick="applyInput()">Apply</button>
+            <button class="btn btn-generate" onclick="generateRandom()">🎲 Generate</button>
+            <div class="gen-options">
+                <label>Length:</label>
+                <select id="genLen">
+                    <option value="6">6</option>
+                    <option value="10" selected>10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                </select>
+            </div>
             <div class="preset-options">
                 <label>Presets:</label>
                 <select id="presetSelect" onchange="setPreset()">
@@ -474,6 +540,27 @@
             <div class="legend-item"><div class="legend-color" style="background:#6366f1;"></div><span>Window</span></div>
             <div class="legend-item"><div class="legend-color" style="background:#ef4444;"></div><span>Duplicate</span></div>
             <div class="legend-item"><div class="legend-color" style="background:#22c55e;"></div><span>Best</span></div>
+        </div>
+
+        <div class="complexity-chart">
+            <div class="chart-title">Algorithm Complexity</div>
+            <div class="chart-bars">
+                <div class="chart-row">
+                    <div class="chart-label">Brute Force O(n³)</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar brute" data-w="95" style="width:0">O(n³)</div></div>
+                    <div class="chart-complexity">O(n³) / O(min(n,m))</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">Sliding Window + Set</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="35" style="width:0">O(n)</div></div>
+                    <div class="chart-complexity">O(n) / O(min(n,m))</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">Optimal HashMap</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="25" style="width:0">O(n)</div></div>
+                    <div class="chart-complexity">O(n) / O(min(n,m))</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -539,6 +626,22 @@ function reset() {
     currentStep = 0;
     generateSteps();
     if (steps.length > 0) renderStep();
+}
+
+function generateRandom() {
+    const len = parseInt(document.getElementById('genLen').value);
+    const chars = 'abcdefghijklmnopqrstuvwxyz';
+    // Generate string with some repeated chars to make it interesting
+    let s = '';
+    for (let i = 0; i < len; i++) {
+        s += chars[Math.floor(Math.random() * 10)]; // use only a-j for repetitions
+    }
+    str = s;
+    const inputEl = document.getElementById('strInput') || document.getElementById('customInput') || document.querySelector('input[type="text"]');
+    if (inputEl) inputEl.value = s;
+    reset();
+    generateSteps();
+    renderStep();
 }
 
 function applyInput() {
@@ -1004,6 +1107,13 @@ function escapeHtml(text) {
 // ============================================================
 generateSteps();
 renderStep();
+
+// Animate complexity chart bars
+setTimeout(() => {
+    document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+        bar.style.width = bar.dataset.w + '%';
+    });
+}, 300);
 </script>
 </body>
 </html>

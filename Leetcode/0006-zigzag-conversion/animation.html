@@ -376,12 +376,44 @@
         .cycle-box.diag { background: #7c3aed; color: #c4b5fd; }
         .cycle-box.highlight { box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); transform: scale(1.1); }
 
+        /* COMPLEXITY CHART */
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px; padding: 18px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 12px; }
+        .chart-row { display: flex; align-items: center; gap: 10px; }
+        .chart-label { min-width: 130px; font-size: 0.8rem; color: #94a3b8; text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 5px; height: 24px; overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 5px; display: flex; align-items: center; padding-left: 8px; font-size: 0.75rem; font-weight: 600; color: white; transition: width 0.8s cubic-bezier(0.16,1,0.3,1); width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.optimal { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 95px; font-size: 0.78rem; font-weight: 600; color: #e2e8f0; flex-shrink: 0; }
+
         @media (max-width: 768px) {
             body { padding: 10px; }
             .container { padding: 16px; }
             .char-box, .grid-cell { width: 30px; height: 30px; font-size: 0.8rem; }
             .header h1 { font-size: 1.4rem; }
         }
+        /* NAVIGATION */
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 95vw;
+            margin: 0 auto 20px;
+        }
+        .nav-btn {
+            padding: 8px 18px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #334155; }
     </style>
 </head>
 <body>
@@ -389,6 +421,11 @@
 <div class="header">
     <h1>0006. Zigzag Conversion</h1>
     <p>Writing a string in zigzag form and reading it row by row</p>
+</div>
+
+<div class="nav-links">
+    <a href="../0005-longest-palindromic-substring/animation.html" class="nav-btn">← 0005. Longest Palindromic Substring</a>
+    <a href="../0007-reverse-integer/animation.html" class="nav-btn">0007. Reverse Integer →</a>
 </div>
 
 <div class="tabs">
@@ -402,6 +439,7 @@
         <input type="text" id="strInput" value="PAYPALISHIRING" placeholder="String...">
         <input type="number" id="rowsInput" value="4" min="1" max="10" placeholder="Rows">
         <button class="controls btn-generate" onclick="generate()">Generate</button>
+        <button class="controls btn-generate" onclick="generateRandom()">🎲 Random</button>
     </div>
 
     <div class="controls">
@@ -441,6 +479,22 @@
     <div class="algo-info" id="algoInfo">
         <div class="step-desc">Ready. Press "Play" or "Step".</div>
     </div>
+
+        <div class="complexity-chart">
+            <div class="chart-title">Algorithm Complexity</div>
+            <div class="chart-bars">
+                <div class="chart-row">
+                    <div class="chart-label">Simulate</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="35" style="width:0">O(n)</div></div>
+                    <div class="chart-complexity">O(n) / O(n)</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">Math (Period)</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="35" style="width:0">O(n)</div></div>
+                    <div class="chart-complexity">O(n) / O(n)</div>
+                </div>
+            </div>
+        </div>
 </div>
 
 <script>
@@ -1032,6 +1086,26 @@ function updateSpeed() {
         play();
     }
 }
+
+// ============================================================
+// Generate Random
+// ============================================================
+function generateRandom() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const len = 8 + Math.floor(Math.random() * 8);
+    const s = Array.from({length: len}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    const rows = 2 + Math.floor(Math.random() * 4); // 2-5 rows
+    document.getElementById('strInput').value = s;
+    document.getElementById('rowsInput').value = rows;
+    generate();
+}
+
+// Animate complexity chart bars on load
+setTimeout(() => {
+    document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+        bar.style.width = bar.dataset.w + '%';
+    });
+}, 400);
 
 // ============================================================
 // Init

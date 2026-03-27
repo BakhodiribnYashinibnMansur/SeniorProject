@@ -321,6 +321,40 @@
             color: #ef4444;
         }
 
+        .btn-generate { background: #8b5cf6; color: white; border-color: #8b5cf6; }
+        .btn-generate:hover { background: #7c3aed; }
+
+        .gen-options {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .gen-options select {
+            padding: 6px 10px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        /* COMPLEXITY CHART */
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px; padding: 18px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 12px; }
+        .chart-row { display: flex; align-items: center; gap: 10px; }
+        .chart-label { min-width: 130px; font-size: 0.8rem; color: #94a3b8; text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 5px; height: 24px; overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 5px; display: flex; align-items: center; padding-left: 8px; font-size: 0.75rem; font-weight: 600; color: white; transition: width 0.8s cubic-bezier(0.16,1,0.3,1); width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.optimal { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 95px; font-size: 0.78rem; font-weight: 600; color: #e2e8f0; flex-shrink: 0; }
+
         /* Responsive */
         @media (max-width: 600px) {
             body { padding: 10px; }
@@ -329,12 +363,36 @@
             .digit-box { width: 2.8rem; height: 2.8rem; font-size: 1rem; }
             .tab { padding: 8px 14px; font-size: 0.8rem; }
         }
+        /* NAVIGATION */
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 95vw;
+            margin: 0 auto 20px;
+        }
+        .nav-btn {
+            padding: 8px 18px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #334155; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>0009. Palindrome Number</h1>
         <p>Checking if a number is a palindrome — 3 different approaches</p>
+    </div>
+
+    <div class="nav-links">
+        <a href="../0008-string-to-integer-atoi/animation.html" class="nav-btn">← 0008. String to Integer</a>
+        <a href="../0010-regular-expression-matching/animation.html" class="nav-btn">0010. Regular Expression Matching →</a>
     </div>
 
     <div class="tabs">
@@ -355,6 +413,16 @@
                 <button class="btn-preset" onclick="setPreset(1221)">1221</button>
                 <button class="btn-preset" onclick="setPreset(0)">0</button>
                 <button class="btn-preset" onclick="setPreset(123)">123</button>
+            </div>
+            <button class="btn btn-generate" onclick="generateRandom()">🎲 Generate</button>
+            <div class="gen-options">
+                <label>Type:</label>
+                <select id="genType">
+                    <option value="palindrome" selected>Palindrome</option>
+                    <option value="not">Non-palindrome</option>
+                    <option value="negative">Negative</option>
+                    <option value="any">Any</option>
+                </select>
             </div>
         </div>
 
@@ -381,6 +449,22 @@
         <div class="viz-area" id="vizArea"></div>
 
         <div class="result-display" id="resultDisplay"></div>
+
+        <div class="complexity-chart">
+            <div class="chart-title">Algorithm Complexity</div>
+            <div class="chart-bars">
+                <div class="chart-row">
+                    <div class="chart-label">String Conversion</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="50" style="width:0">O(log x)</div></div>
+                    <div class="chart-complexity">O(log x) / O(log x)</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">Half Reversal</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="40" style="width:0">O(log x)</div></div>
+                    <div class="chart-complexity">O(log x) / O(1)</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -409,6 +493,25 @@
         // ============================================================
         function setPreset(val) {
             document.getElementById('numInput').value = val;
+            reset();
+        }
+
+        function generateRandom() {
+            const type = document.getElementById('genType').value;
+            let x;
+            if (type === 'palindrome') {
+                const half = Math.floor(Math.random() * 999) + 1;
+                const halfStr = String(half);
+                x = parseInt(halfStr + halfStr.split('').reverse().join(''));
+            } else if (type === 'not') {
+                do { x = Math.floor(Math.random() * 99999) + 10; } while (String(x) === String(x).split('').reverse().join(''));
+            } else if (type === 'negative') {
+                x = -(Math.floor(Math.random() * 9999) + 1);
+            } else {
+                x = Math.floor(Math.random() * 999999);
+            }
+            const inputEl = document.querySelector('input[type="text"], input[type="number"]');
+            if (inputEl) inputEl.value = x;
             reset();
         }
 
@@ -970,6 +1073,13 @@
 
             viz.innerHTML = html;
         }
+
+        // Animate complexity chart bars
+        setTimeout(() => {
+            document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+                bar.style.width = bar.dataset.w + '%';
+            });
+        }, 400);
     </script>
 </body>
 </html>

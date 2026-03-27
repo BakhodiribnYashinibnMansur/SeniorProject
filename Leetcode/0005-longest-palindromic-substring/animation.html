@@ -143,6 +143,11 @@
         .btn-step:hover { background: #2563eb; }
         .btn-reset { background: #6b7280; color: white; }
         .btn-reset:hover { background: #4b5563; }
+        .btn-generate { background: #8b5cf6; color: white; }
+        .btn-generate:hover { background: #7c3aed; }
+        .gen-options { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .gen-options label { color: #94a3b8; font-size: 0.8rem; }
+        .gen-options select { padding: 5px 8px; background: #0f172a; color: #e2e8f0; border: 1px solid #334155; border-radius: 4px; font-size: 0.85rem; }
 
         .speed-control { display: flex; align-items: center; gap: 8px; }
         .speed-control label { color: #94a3b8; font-size: 0.85rem; }
@@ -316,6 +321,20 @@
             color: #22c55e;
         }
 
+        /* COMPLEXITY CHART */
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px; padding: 18px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 12px; }
+        .chart-row { display: flex; align-items: center; gap: 10px; }
+        .chart-label { min-width: 130px; font-size: 0.8rem; color: #94a3b8; text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 5px; height: 24px; overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 5px; display: flex; align-items: center; padding-left: 8px; font-size: 0.75rem; font-weight: 600; color: white; transition: width 0.8s cubic-bezier(0.16,1,0.3,1); width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.opt-sc { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .chart-bar.optimal { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 95px; font-size: 0.78rem; font-weight: 600; color: #e2e8f0; flex-shrink: 0; }
+
         /* Responsive */
         @media (max-width: 600px) {
             body { padding: 10px; }
@@ -325,12 +344,36 @@
             .tab { padding: 8px 14px; font-size: 0.8rem; }
             .dp-table th, .dp-table td { width: 2.2rem; height: 2.2rem; font-size: 0.65rem; }
         }
+        /* NAVIGATION */
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 95vw;
+            margin: 0 auto 20px;
+        }
+        .nav-btn {
+            padding: 8px 18px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #334155; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>0005. Longest Palindromic Substring</h1>
         <p>Find the longest palindromic substring in a string — 2 approaches</p>
+    </div>
+
+    <div class="nav-links">
+        <a href="../0004-median-of-two-sorted-arrays/animation.html" class="nav-btn">← 0004. Median of Two Sorted Arrays</a>
+        <a href="../0006-zigzag-conversion/animation.html" class="nav-btn">0006. Zigzag Conversion →</a>
     </div>
 
     <div class="tabs">
@@ -347,6 +390,16 @@
                 <button class="btn-preset" onclick="setPreset('cbbd')">cbbd</button>
                 <button class="btn-preset" onclick="setPreset('a')">a</button>
                 <button class="btn-preset" onclick="setPreset('racecar')">racecar</button>
+            </div>
+            <button class="btn btn-generate" onclick="generateRandom()">🎲 Generate</button>
+            <div class="gen-options">
+                <label>Length:</label>
+                <select id="genLen">
+                    <option value="6">6</option>
+                    <option value="8" selected>8</option>
+                    <option value="12">12</option>
+                    <option value="16">16</option>
+                </select>
             </div>
         </div>
 
@@ -373,6 +426,27 @@
         <div class="viz-area" id="vizArea"></div>
 
         <div class="result-display" id="resultDisplay"></div>
+
+        <div class="complexity-chart">
+            <div class="chart-title">Algorithm Complexity</div>
+            <div class="chart-bars">
+                <div class="chart-row">
+                    <div class="chart-label">Brute Force</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar brute" data-w="95" style="width:0">O(n³)</div></div>
+                    <div class="chart-complexity">O(n³) / O(1)</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">Dynamic Programming</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="65" style="width:0">O(n²)</div></div>
+                    <div class="chart-complexity">O(n²) / O(n²)</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">Expand Around Center</div>
+                    <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="60" style="width:0">O(n²)</div></div>
+                    <div class="chart-complexity">O(n²) / O(1)</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -401,6 +475,17 @@
         // ============================================================
         function setPreset(val) {
             document.getElementById('strInput').value = val;
+            reset();
+        }
+
+        // ============================================================
+        // Generate Random
+        // ============================================================
+        function generateRandom() {
+            const len = parseInt(document.getElementById('genLen').value);
+            const alpha = 'aabbbccddeeff';
+            let s = Array.from({length: len}, () => alpha[Math.floor(Math.random() * alpha.length)]).join('');
+            document.getElementById('strInput').value = s;
             reset();
         }
 
@@ -778,6 +863,13 @@
         function deepCopyDP(dp) {
             return dp.map(row => [...row]);
         }
+
+        // Animate complexity chart bars on load
+        setTimeout(() => {
+            document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+                bar.style.width = bar.dataset.w + '%';
+            });
+        }, 400);
 
         // ============================================================
         // Render current step
