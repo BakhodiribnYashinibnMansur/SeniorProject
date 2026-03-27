@@ -1,887 +1,1072 @@
-# Slice Capacity and Growth — Optimization Exercises
+# Slice Capacity and Growth — Performance Optimization
+
+> **Format:** Each exercise includes difficulty, description, slow code, a benchmark, a hint, and the optimized solution with explanation.
 
 ---
 
-## Overview
+## Difficulty Key
 
-10 optimization exercises. Each starts with a working but inefficient implementation. Your goal is to optimize it for fewer allocations, lower memory usage, or better throughput. Solutions are hidden in `<details>` blocks.
+- 🟢 Easy — straightforward pre-allocation
+- 🟡 Medium — structural changes required
+- 🔴 Hard — advanced techniques (pooling, zero-alloc, SIMD-friendly layout)
 
 ---
 
-## Exercise 1: Eliminate Reallocations in a Loop
+## Exercise 1 — Pre-allocate Before a Loop 🟢
 
-**Problem**: The following function builds a result slice with many reallocations.
+**Description:** The function builds a result slice inside a loop but starts with no capacity, causing repeated reallocations.
+
+**Slow Code:**
 
 ```go
 package main
 
-import "fmt"
-
-func squares(n int) []int {
-    var result []int  // starts nil, grows dynamically
-    for i := 1; i <= n; i++ {
+func squaresSlowly(n int) []int {
+    var result []int          // cap=0, will reallocate ~log2(n) times
+    for i := 0; i < n; i++ {
         result = append(result, i*i)
     }
     return result
 }
-
-func main() {
-    fmt.Println(squares(10))
-}
 ```
 
-**Benchmark baseline** (n=10000):
-```
-BenchmarkSquares-8    2000    987654 ns/op    357632 B/op    14 allocs/op
-```
-
-**Goal**: Reduce to 1 alloc/op.
-
-<details>
-<summary>Optimized Solution</summary>
+**Benchmark:**
 
 ```go
-func squares(n int) []int {
-    result := make([]int, n)  // pre-allocate exact size, use direct index
-    for i := range result {
-        result[i] = (i + 1) * (i + 1)
-    }
-    return result
-}
-```
+package main_test
 
-**Why**: We know the exact count (`n`), so `make([]int, n)` gives us `len=n, cap=n`. We use direct index assignment instead of `append` — this avoids the capacity check branch on every iteration.
+import "testing"
 
-**Benchmark result**:
-```
-BenchmarkSquaresOpt-8    8000    156789 ns/op    81920 B/op    1 alloc/op
-```
-
-Improvement: **6x faster**, **14→1 allocs**.
-</details>
-
----
-
-## Exercise 2: Reuse Buffer in Hot Loop
-
-**Problem**: A request handler creates a new `[]byte` buffer on every request.
-
-```go
-package main
-
-import (
-    "fmt"
-    "testing"
-)
-
-func handleRequest(data []byte) []byte {
-    buf := []byte{}  // new allocation every call
-    buf = append(buf, []byte("PREFIX:")...)
-    buf = append(buf, data...)
-    buf = append(buf, []byte(":SUFFIX")...)
-    return buf
-}
-
-func BenchmarkHandle(b *testing.B) {
-    data := []byte("some-request-data")
-    b.ResetTimer()
+func BenchmarkSquaresSlow(b *testing.B) {
+    b.ReportAllocs()
     for i := 0; i < b.N; i++ {
-        result := handleRequest(data)
-        _ = result
+        _ = squaresSlowly(10000)
+    }
+}
+
+func BenchmarkSquaresFast(b *testing.B) {
+    b.ReportAllocs()
+    for i := 0; i < b.N; i++ {
+        _ = squaresFast(10000)
     }
 }
 ```
 
-**Goal**: Reduce to 0 allocs/op for the hot path using a reusable buffer.
+**Expected results:**
+```
+BenchmarkSquaresSlow-8    5000    320000 ns/op    386105 B/op    14 allocs/op
+BenchmarkSquaresFast-8   20000     72000 ns/op     81920 B/op     1 allocs/op
+```
+
+<details>
+<summary>Hint</summary>
+
+You know `n` before the loop starts. Use `make([]int, 0, n)` to allocate exactly enough capacity upfront. The only allocation needed is the one `make` call.
+</details>
 
 <details>
 <summary>Optimized Solution</summary>
-
-```go
-import "sync"
-
-var bufPool = sync.Pool{
-    New: func() interface{} {
-        b := make([]byte, 0, 256)
-        return &b
-    },
-}
-
-func handleRequestFast(data []byte) []byte {
-    bp := bufPool.Get().(*[]byte)
-    buf := (*bp)[:0]  // reset length, keep capacity
-
-    buf = append(buf, "PREFIX:"...)
-    buf = append(buf, data...)
-    buf = append(buf, ":SUFFIX"...)
-
-    // Return independent copy, put buffer back
-    result := make([]byte, len(buf))
-    copy(result, buf)
-
-    *bp = buf
-    bufPool.Put(bp)
-    return result
-}
-```
-
-**Why**: `sync.Pool` recycles the working buffer across calls. The `[:0]` reset preserves capacity. We still allocate for the `result`, but eliminate the intermediate 3+ allocations.
-
-**Note**: If the caller can guarantee they'll use the result before the next call, you could skip the final `copy` and return `buf` directly — but that's only safe in single-goroutine contexts.
-</details>
-
----
-
-## Exercise 3: Avoid Intermediate Slice in Filter-Map Pipeline
-
-**Problem**: A two-stage pipeline filters then transforms — creating two intermediate slices.
 
 ```go
 package main
 
-import "fmt"
-
-type Item struct {
-    ID    int
-    Value float64
-    Valid bool
-}
-
-func pipeline(items []Item) []float64 {
-    // Stage 1: filter
-    valid := make([]Item, 0)
-    for _, item := range items {
-        if item.Valid {
-            valid = append(valid, item)
-        }
-    }
-
-    // Stage 2: transform
-    result := make([]float64, 0)
-    for _, item := range valid {
-        result = append(result, item.Value*2)
+func squaresFast(n int) []int {
+    result := make([]int, 0, n) // pre-allocate exactly n slots
+    for i := 0; i < n; i++ {
+        result = append(result, i*i) // never reallocates
     }
     return result
 }
 
-func main() {
-    items := make([]Item, 1000)
-    for i := range items {
-        items[i] = Item{i, float64(i), i%2 == 0}
-    }
-    fmt.Println(len(pipeline(items)))
-}
-```
-
-**Goal**: Eliminate the intermediate `valid` slice. Pre-allocate `result` with the right capacity.
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-func pipelineOpt(items []Item) []float64 {
-    // Count valid items first (two-pass approach)
-    n := 0
-    for _, item := range items {
-        if item.Valid {
-            n++
-        }
-    }
-
-    // Combine filter and transform in one pass with exact pre-allocation
-    result := make([]float64, 0, n)
-    for _, item := range items {
-        if item.Valid {
-            result = append(result, item.Value*2)
-        }
+// Even better: use make with length and direct index assignment
+func squaresFastest(n int) []int {
+    result := make([]int, n) // len=n, no append needed
+    for i := 0; i < n; i++ {
+        result[i] = i * i
     }
     return result
 }
 ```
 
-**Why**: 
-- Eliminates `valid` slice entirely (saves 1 allocation + copying)
-- Two-pass counts first to get exact capacity for `result`
-- One loop instead of two for the actual work
-
-**Trade-off**: Two iterations over input vs one. For CPU-bound transforms this may not always win; benchmark your specific case.
+**Why it's faster:**
+- `make([]int, 0, n)`: 1 allocation instead of ~14.
+- `make([]int, n)` + index assignment: same 1 allocation, slightly faster because it avoids the `append` bounds check overhead.
+- Total bytes copied: 0 (no reallocation means no memmove).
 </details>
 
 ---
 
-## Exercise 4: Reduce GC Pressure from []string Building
+## Exercise 2 — Use `copy` to Break Backing Array Sharing 🟢
 
-**Problem**: A log formatter builds comma-separated strings from a slice of errors.
+**Description:** The function returns a subslice of a large buffer. It's fast but keeps the entire large buffer alive in memory, increasing GC pause time.
+
+**Slow Code:**
 
 ```go
 package main
 
-import (
-    "fmt"
-    "strings"
-)
-
-func formatErrors(errs []error) string {
-    parts := []string{}
-    for _, err := range errs {
-        parts = append(parts, err.Error())
-    }
-    return strings.Join(parts, ", ")
+func extractHeader(data []byte) []byte {
+    // Fast but leaks 1MB backing array
+    return data[:64]
 }
 
-func main() {
-    errs := []error{fmt.Errorf("err1"), fmt.Errorf("err2"), fmt.Errorf("err3")}
-    fmt.Println(formatErrors(errs))
+var globalCache [][]byte
+
+func cacheHeader(data []byte) {
+    header := extractHeader(data) // 64 bytes visible, 1MB held
+    globalCache = append(globalCache, header)
 }
 ```
 
-**Goal**: Eliminate the `[]string` intermediate slice entirely.
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-import (
-    "strings"
-)
-
-func formatErrorsOpt(errs []error) string {
-    var sb strings.Builder
-    for i, err := range errs {
-        if i > 0 {
-            sb.WriteString(", ")
-        }
-        sb.WriteString(err.Error())
-    }
-    return sb.String()
-}
-```
-
-**Why**: `strings.Builder` uses a single `[]byte` that grows internally with Go's standard growth strategy. We avoid allocating `[]string` entirely. `strings.Builder.String()` returns the string without an extra copy (in modern Go).
-
-**Further optimization** if error count is known:
-```go
-func formatErrorsFast(errs []error) string {
-    if len(errs) == 0 {
-        return ""
-    }
-    var sb strings.Builder
-    // Estimate capacity: avg 20 chars per error + 2 for ", "
-    sb.Grow(len(errs) * 22)
-    for i, err := range errs {
-        if i > 0 {
-            sb.WriteString(", ")
-        }
-        sb.WriteString(err.Error())
-    }
-    return sb.String()
-}
-```
-</details>
-
----
-
-## Exercise 5: Fix Slice Pool to Avoid Size Class Waste
-
-**Problem**: A byte pool always allocates 4096-byte buffers, wasting memory for small requests.
-
-```go
-package main
-
-import "sync"
-
-type BytePool struct {
-    pool sync.Pool
-}
-
-func NewBytePool() *BytePool {
-    return &BytePool{
-        pool: sync.Pool{
-            New: func() interface{} {
-                b := make([]byte, 4096)
-                return &b
-            },
-        },
-    }
-}
-
-func (p *BytePool) Get(n int) []byte {
-    b := p.pool.Get().(*[]byte)
-    if cap(*b) < n {
-        // Allocate a new slice if pooled one is too small
-        nb := make([]byte, n)
-        return nb
-    }
-    return (*b)[:n]
-}
-
-func (p *BytePool) Put(b []byte) {
-    p.pool.Put(&b)
-}
-```
-
-**Problems**: 
-1. `Put` stores a copy of the slice header — the pool doesn't actually hold the original pointer
-2. No zeroing on return — data leaks between callers
-3. Discards buffers that grew beyond 4096
-
-**Goal**: Fix all three issues.
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-type BytePool struct {
-    pool sync.Pool
-}
-
-func NewBytePool() *BytePool {
-    return &BytePool{
-        pool: sync.Pool{
-            New: func() interface{} {
-                b := make([]byte, 0, 4096)
-                return &b  // store pointer to slice
-            },
-        },
-    }
-}
-
-func (p *BytePool) Get(n int) []byte {
-    bp := p.pool.Get().(*[]byte)
-    b := *bp
-    if cap(b) < n {
-        // Return a newly allocated slice, discard the pooled one
-        p.pool.Put(bp)  // return pooled slice even if not used
-        return make([]byte, n)
-    }
-    b = b[:n]
-    // Zero the buffer to prevent data leaks between callers
-    for i := range b {
-        b[i] = 0
-    }
-    // Or: copy(b, make([]byte, n)) — but loop is often faster for small n
-    return b
-}
-
-func (p *BytePool) Put(b []byte) {
-    bp := p.pool.Get().(*[]byte)  // get a wrapper
-    *bp = b[:0]  // reset length, keep cap
-    p.pool.Put(bp)
-}
-```
-
-**Even better zeroing for large buffers**:
-```go
-import "unsafe"
-
-// Use runtime-internal memclr via slice trick
-func zeroSlice(b []byte) {
-    b = b[:cap(b)]
-    for i := range b {
-        b[i] = 0
-    }
-}
-// Or use: _ = b[:cap(b)] then bulk zero via copy from a zero slice
-```
-</details>
-
----
-
-## Exercise 6: Optimize JSON Encoding of Large Slice
-
-**Problem**: A function serializes a large slice to JSON with unnecessary string allocations.
-
-```go
-package main
-
-import (
-    "encoding/json"
-    "fmt"
-    "strings"
-)
-
-func encodeIDs(ids []int64) string {
-    parts := make([]string, len(ids))
-    for i, id := range ids {
-        parts[i] = fmt.Sprintf(`%d`, id)
-    }
-    return "[" + strings.Join(parts, ",") + "]"
-}
-```
-
-**Goal**: Use `encoding/json` directly with pre-allocated buffer, eliminating `[]string`.
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-import (
-    "bytes"
-    "encoding/json"
-    "strconv"
-)
-
-func encodeIDsFast(ids []int64) []byte {
-    // Estimate: avg 8 chars per int64 + 1 comma + brackets
-    buf := bytes.NewBuffer(make([]byte, 0, len(ids)*9+2))
-    buf.WriteByte('[')
-    for i, id := range ids {
-        if i > 0 {
-            buf.WriteByte(',')
-        }
-        buf.WriteString(strconv.FormatInt(id, 10))
-    }
-    buf.WriteByte(']')
-    return buf.Bytes()
-}
-
-// Even faster: direct []byte manipulation
-func encodeIDsFastest(ids []int64) []byte {
-    if len(ids) == 0 {
-        return []byte("[]")
-    }
-    buf := make([]byte, 0, len(ids)*9+2)
-    buf = append(buf, '[')
-    for i, id := range ids {
-        if i > 0 {
-            buf = append(buf, ',')
-        }
-        buf = strconv.AppendInt(buf, id, 10)  // appends directly, no allocation
-    }
-    buf = append(buf, ']')
-    return buf
-}
-```
-
-**Key technique**: `strconv.AppendInt` appends digits directly to a `[]byte` without allocating a string — this is the pattern used throughout Go's standard library.
-</details>
-
----
-
-## Exercise 7: Reduce Allocations in Sliding Average
-
-**Problem**: A sliding average calculation creates new slices on every window.
-
-```go
-package main
-
-import "fmt"
-
-func slidingAverage(data []float64, window int) []float64 {
-    if len(data) < window {
-        return nil
-    }
-    results := []float64{}
-    for i := 0; i <= len(data)-window; i++ {
-        chunk := data[i : i+window]  // sub-slice (no allocation)
-        sum := 0.0
-        for _, v := range chunk {
-            sum += v
-        }
-        results = append(results, sum/float64(window))
-    }
-    return results
-}
-
-func main() {
-    data := make([]float64, 10000)
-    for i := range data {
-        data[i] = float64(i)
-    }
-    avgs := slidingAverage(data, 100)
-    fmt.Println(len(avgs))  // 9901
-}
-```
-
-**Goal**: 
-1. Pre-allocate `results` with exact size
-2. Use incremental sum update instead of re-summing each window
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-func slidingAverageOpt(data []float64, window int) []float64 {
-    n := len(data) - window + 1
-    if n <= 0 {
-        return nil
-    }
-
-    results := make([]float64, n)  // exact pre-allocation
-
-    // Initialize sum for first window
-    sum := 0.0
-    for i := 0; i < window; i++ {
-        sum += data[i]
-    }
-    results[0] = sum / float64(window)
-
-    // Slide: add new element, remove old element — O(1) per step
-    for i := 1; i < n; i++ {
-        sum += data[i+window-1]   // add incoming element
-        sum -= data[i-1]           // remove outgoing element
-        results[i] = sum / float64(window)
-    }
-    return results
-}
-```
-
-**Improvements**:
-1. `make([]float64, n)` → exact 1 allocation, no `append` overhead
-2. Incremental sum: O(n) total instead of O(n*window)
-3. No sub-slice creation (the original sub-slice was free, but the re-sum was expensive)
-
-**Benchmark comparison** (n=100000, window=100):
-```
-BenchmarkSlidingAvgOriginal-8   100   10234567 ns/op   1 alloc
-BenchmarkSlidingAvgOpt-8       1000    1023456 ns/op   1 alloc
-```
-10x faster for large windows.
-</details>
-
----
-
-## Exercise 8: Optimize Deduplication
-
-**Problem**: A deduplication function creates multiple intermediate data structures.
-
-```go
-package main
-
-import "fmt"
-
-func dedupe(items []int) []int {
-    seen := map[int]bool{}
-    result := []int{}
-    for _, v := range items {
-        if !seen[v] {
-            seen[v] = true
-            result = append(result, v)
-        }
-    }
-    return result
-}
-
-func main() {
-    items := make([]int, 10000)
-    for i := range items {
-        items[i] = i % 100  // 100 unique values, heavily repeated
-    }
-    fmt.Println(len(dedupe(items)))  // 100
-}
-```
-
-**Goal**: Pre-allocate map and result slice; reduce total allocations.
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-func dedupeOpt(items []int) []int {
-    if len(items) == 0 {
-        return nil
-    }
-    // Pre-allocate map with estimated size
-    seen := make(map[int]struct{}, len(items)/2)  // struct{} saves memory vs bool
-    // Pre-allocate result — worst case: all unique
-    result := make([]int, 0, len(items))
-
-    for _, v := range items {
-        if _, ok := seen[v]; !ok {
-            seen[v] = struct{}{}
-            result = append(result, v)
-        }
-    }
-    return result[:len(result):len(result)]  // clip to exact size
-}
-```
-
-**Changes**:
-1. `map[int]struct{}` instead of `map[int]bool` — struct{} uses 0 bytes as value
-2. `make(map[int]struct{}, n)` — pre-allocated map avoids rehashing
-3. `make([]int, 0, len(items))` — worst-case pre-allocation
-4. Three-index clip at the end to release unused capacity
-
-**Further optimization**: If items are sortable, sort first then dedupe with O(1) space:
-```go
-import "sort"
-
-func dedupeSorted(items []int) []int {
-    if len(items) == 0 {
-        return nil
-    }
-    sorted := make([]int, len(items))
-    copy(sorted, items)
-    sort.Ints(sorted)
-
-    result := sorted[:1]  // first element always included
-    for _, v := range sorted[1:] {
-        if v != result[len(result)-1] {
-            result = append(result, v)
-        }
-    }
-    return result
-}
-```
-</details>
-
----
-
-## Exercise 9: Optimize Concurrent Result Collection
-
-**Problem**: Multiple goroutines collect results into a shared slice with a mutex, causing contention.
-
-```go
-package main
-
-import (
-    "fmt"
-    "sync"
-)
-
-func processParallel(items []int) []int {
-    var mu sync.Mutex
-    var results []int
-
-    var wg sync.WaitGroup
-    for _, item := range items {
-        wg.Add(1)
-        go func(v int) {
-            defer wg.Done()
-            processed := v * v
-            mu.Lock()
-            results = append(results, processed)  // contended!
-            mu.Unlock()
-        }(item)
-    }
-    wg.Wait()
-    return results
-}
-```
-
-**Problems**:
-1. Mutex contention on every append
-2. Result slice may reallocate under lock
-3. Order is non-deterministic
-
-**Goal**: Pre-allocate result, eliminate mutex, write to pre-assigned indices.
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-func processParallelOpt(items []int) []int {
-    results := make([]int, len(items))  // pre-allocated, exact size
-
-    var wg sync.WaitGroup
-    for i, item := range items {
-        wg.Add(1)
-        go func(idx, v int) {
-            defer wg.Done()
-            results[idx] = v * v  // no lock needed: each goroutine owns its index
-        }(i, item)
-    }
-    wg.Wait()
-    return results
-}
-```
-
-**Why this is safe**: Each goroutine writes to a distinct index in `results`. The Go memory model guarantees that `wg.Wait()` happens-after all goroutine completions (via the `Done` → `Wait` happens-before edge), so all writes are visible to the caller after `Wait()`.
-
-**Benchmark comparison**:
-```
-BenchmarkParallelMutex-8    500   3456789 ns/op   10000 allocs/op
-BenchmarkParallelOpt-8     2000    876543 ns/op       1 alloc/op
-```
-
-4x faster, 10000x fewer allocations.
-
-**Worker pool pattern** (for CPU-bound work, bounded goroutines):
-```go
-func processWithWorkers(items []int, workers int) []int {
-    results := make([]int, len(items))
-    jobs := make(chan int, workers)
-
-    var wg sync.WaitGroup
-    for w := 0; w < workers; w++ {
-        wg.Add(1)
-        go func() {
-            defer wg.Done()
-            for idx := range jobs {
-                results[idx] = items[idx] * items[idx]
-            }
-        }()
-    }
-
-    for i := range items {
-        jobs <- i
-    }
-    close(jobs)
-    wg.Wait()
-    return results
-}
-```
-</details>
-
----
-
-## Exercise 10: Optimize HTTP Response Body Aggregation
-
-**Problem**: An HTTP client aggregates response chunks inefficiently.
-
-```go
-package main
-
-import (
-    "bytes"
-    "fmt"
-    "io"
-    "strings"
-)
-
-func readBody(r io.Reader) ([]byte, error) {
-    var result []byte
-    buf := make([]byte, 512)
-    for {
-        n, err := r.Read(buf)
-        if n > 0 {
-            result = append(result, buf[:n]...)  // copy each chunk
-        }
-        if err == io.EOF {
-            break
-        }
-        if err != nil {
-            return nil, err
-        }
-    }
-    return result, nil
-}
-
-func main() {
-    // Simulate a 1MB response
-    body := strings.NewReader(strings.Repeat("x", 1<<20))
-    data, _ := readBody(body)
-    fmt.Println(len(data))
-}
-```
-
-**Problems**:
-1. `result` grows with multiple reallocations (no pre-allocation)
-2. Each `append(result, buf[:n]...)` copies data twice: read→buf, buf→result
-3. Small read buffer causes many read syscalls
-
-**Goal**: Pre-allocate based on Content-Length (when available), use `bytes.Buffer` or direct `io.ReadFull` pattern.
-
-<details>
-<summary>Optimized Solution</summary>
-
-```go
-import (
-    "bytes"
-    "io"
-    "net/http"
-)
-
-// When Content-Length is known:
-func readBodyWithLength(resp *http.Response) ([]byte, error) {
-    size := resp.ContentLength
-    if size < 0 {
-        size = 32 * 1024  // default 32KB if unknown
-    }
-    buf := bytes.NewBuffer(make([]byte, 0, size))
-    _, err := io.Copy(buf, resp.Body)
-    return buf.Bytes(), err
-}
-
-// Fastest pattern: io.ReadAll with pre-growth
-func readBodyFast(r io.Reader, sizeHint int64) ([]byte, error) {
-    if sizeHint <= 0 {
-        sizeHint = 32 * 1024
-    }
-    buf := make([]byte, 0, sizeHint)
-    for {
-        // Grow if needed
-        if len(buf) == cap(buf) {
-            buf = append(buf, 0)[:len(buf)]  // trigger growth
-        }
-        n, err := r.Read(buf[len(buf):cap(buf)])  // read directly into spare cap
-        buf = buf[:len(buf)+n]
-        if err == io.EOF {
-            return buf, nil
-        }
-        if err != nil {
-            return nil, err
-        }
-    }
-}
-
-// Simplest optimized version using standard library:
-func readBodySimple(r io.Reader, sizeHint int64) ([]byte, error) {
-    // bytes.Buffer handles growth internally
-    var buf bytes.Buffer
-    if sizeHint > 0 {
-        buf.Grow(int(sizeHint))  // pre-grow to avoid reallocations
-    }
-    _, err := io.Copy(&buf, r)
-    return buf.Bytes(), err
-}
-```
-
-**Key technique**: Reading directly into spare capacity (`buf[len(buf):cap(buf)]`) eliminates the intermediate read buffer entirely — one copy instead of two.
-</details>
-
----
-
-## Summary: Optimization Patterns Used
-
-| Exercise | Pattern | Alloc Improvement |
-|----------|---------|------------------|
-| 1 | Pre-allocate exact size + direct index | 14 → 1 |
-| 2 | `sync.Pool` buffer reuse | N → ~0 |
-| 3 | Two-pass + combine stages | 3 → 1 |
-| 4 | `strings.Builder` instead of `[]string` | N → 1 |
-| 5 | Fixed pool with zeroing | varied |
-| 6 | `strconv.AppendInt` for zero-copy int→bytes | N → 1 |
-| 7 | Incremental sum + exact pre-alloc | 1 (10x CPU speedup) |
-| 8 | Map pre-alloc + `struct{}` value + clip | smaller, faster |
-| 9 | Pre-sized result + index-based write | N → 1 |
-| 10 | Read into spare cap + size hint | N → 1-2 |
-
----
-
-## Benchmarking Template
-
-Use this template to measure your optimizations:
+**Benchmark:**
 
 ```go
 package main_test
 
 import (
+    "runtime"
     "testing"
 )
 
-func BenchmarkOriginal(b *testing.B) {
+func BenchmarkCacheLeaky(b *testing.B) {
     b.ReportAllocs()
     for i := 0; i < b.N; i++ {
-        result := original(testInput)
-        _ = result
+        data := make([]byte, 1_000_000)
+        cacheHeaderLeaky(data)
     }
+    runtime.GC()
+    b.ReportMetric(float64(len(globalCacheLeaky))*1e6, "bytes-held")
 }
-
-func BenchmarkOptimized(b *testing.B) {
-    b.ReportAllocs()
-    for i := 0; i < b.N; i++ {
-        result := optimized(testInput)
-        _ = result
-    }
-}
-
-// Run: go test -bench=. -benchmem -count=5 | tee bench.txt
-// Compare: benchstat bench.txt
 ```
 
-**Interpreting results**:
-- `ns/op`: nanoseconds per operation (lower is better)
-- `B/op`: bytes allocated per operation (lower is better)
-- `allocs/op`: number of heap allocations per operation (lower is better)
-- Use `benchstat` for statistical comparison between original and optimized
+<details>
+<summary>Hint</summary>
+
+Instead of returning `data[:64]`, copy those 64 bytes into a fresh allocation. The original 1MB buffer will then be eligible for GC after the function returns.
+</details>
+
+<details>
+<summary>Optimized Solution</summary>
+
+```go
+package main
+
+func extractHeaderFast(data []byte) []byte {
+    // Allocates only 64 bytes; original data becomes GC-eligible
+    header := make([]byte, 64)
+    copy(header, data[:64])
+    return header
+}
+
+// One-liner alternative:
+func extractHeaderOneliner(data []byte) []byte {
+    return append([]byte(nil), data[:64]...)
+}
+
+var globalCacheFast [][]byte
+
+func cacheHeaderFast(data []byte) {
+    header := extractHeaderFast(data)
+    globalCacheFast = append(globalCacheFast, header)
+}
+```
+
+**Why it's better:**
+- Each cached entry holds only 64 bytes instead of 1MB.
+- After `extractHeaderFast` returns, the 1MB `data` buffer is unreachable and GC-collectible.
+- Trade-off: one small allocation per call (64 bytes) vs keeping 1MB alive indefinitely.
+- For 1000 cached entries: 64KB held vs 1GB held. Dramatic GC improvement.
+</details>
+
+---
+
+## Exercise 3 — Avoid Growing a Slice in the Hot Path 🟡
+
+**Description:** A function is called thousands of times per second. It builds a temporary result slice on each call, causing excessive heap allocation.
+
+**Slow Code:**
+
+```go
+package main
+
+import "strings"
+
+// Called ~100,000 times per second
+func parseFields(line string) []string {
+    var fields []string            // allocation on every call
+    for _, f := range strings.Split(line, "\t") {
+        f = strings.TrimSpace(f)
+        if f != "" {
+            fields = append(fields, f) // possible reallocation
+        }
+    }
+    return fields
+}
+```
+
+**Benchmark:**
+
+```go
+package main_test
+
+import "testing"
+
+const testLine = "  go  \t  fast  \t  simple  \t  concurrent  "
+
+func BenchmarkParseFieldsSlow(b *testing.B) {
+    b.ReportAllocs()
+    for i := 0; i < b.N; i++ {
+        _ = parseFields(testLine)
+    }
+}
+
+func BenchmarkParseFieldsFast(b *testing.B) {
+    b.ReportAllocs()
+    for i := 0; i < b.N; i++ {
+        _ = parseFieldsFast(testLine)
+    }
+}
+```
+
+**Expected improvement:**
+```
+BenchmarkParseFieldsSlow-8   500000   2400 ns/op   320 B/op   4 allocs/op
+BenchmarkParseFieldsFast-8  2000000    600 ns/op    64 B/op   1 allocs/op
+```
+
+<details>
+<summary>Hint</summary>
+
+Two improvements: (1) Accept a `[]string` buffer parameter so the caller can reuse it across calls. (2) Pre-allocate using a capacity hint from `strings.Count` or a fixed reasonable size.
+</details>
+
+<details>
+<summary>Optimized Solution</summary>
+
+```go
+package main
+
+import "strings"
+
+// Caller provides a buffer for reuse — zero allocs when buffer is large enough
+func parseFieldsFast(line string) []string {
+    // Count separators for capacity hint (one pass, no allocation)
+    n := strings.Count(line, "\t") + 1
+    fields := make([]string, 0, n)
+
+    start := 0
+    for i := 0; i <= len(line); i++ {
+        if i == len(line) || line[i] == '\t' {
+            f := strings.TrimSpace(line[start:i])
+            if f != "" {
+                fields = append(fields, f)
+            }
+            start = i + 1
+        }
+    }
+    return fields
+}
+
+// Zero-alloc version: caller provides and reuses the buffer
+func parseFieldsZeroAlloc(line string, buf []string) []string {
+    buf = buf[:0] // reset length, keep capacity
+    start := 0
+    for i := 0; i <= len(line); i++ {
+        if i == len(line) || line[i] == '\t' {
+            f := strings.TrimSpace(line[start:i])
+            if f != "" {
+                buf = append(buf, f)
+            }
+            start = i + 1
+        }
+    }
+    return buf
+}
+
+// Usage of zero-alloc version:
+// buf := make([]string, 0, 16)
+// for _, line := range lines {
+//     result := parseFieldsZeroAlloc(line, buf)
+//     process(result)
+// }
+```
+
+**Why it's faster:**
+- `strings.Split` allocates a new `[]string` on every call — eliminated.
+- Buffer reuse (`buf[:0]`) zeroes out `len` but keeps the backing array — zero allocation when buffer is large enough.
+- Capacity hint from `strings.Count` avoids reallocation inside the function.
+</details>
+
+---
+
+## Exercise 4 — Pool of Slices with `sync.Pool` 🟡
+
+**Description:** A JSON encoder allocates a `[]byte` buffer on every call. Under high load, this floods the GC. Implement a buffer pool.
+
+**Slow Code:**
+
+```go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+)
+
+type Event struct {
+    ID   int
+    Name string
+}
+
+func encodeEventSlow(e Event) ([]byte, error) {
+    return json.Marshal(e) // allocates every call
+}
+
+func main() {
+    e := Event{ID: 1, Name: "login"}
+    data, _ := encodeEventSlow(e)
+    fmt.Println(string(data))
+}
+```
+
+**Benchmark:**
+
+```go
+package main_test
+
+import "testing"
+
+func BenchmarkEncodeSlow(b *testing.B) {
+    b.ReportAllocs()
+    e := Event{ID: 1, Name: "login"}
+    for i := 0; i < b.N; i++ {
+        data, _ := encodeEventSlow(e)
+        _ = data
+    }
+}
+
+func BenchmarkEncodeFast(b *testing.B) {
+    b.ReportAllocs()
+    e := Event{ID: 1, Name: "login"}
+    for i := 0; i < b.N; i++ {
+        data, _ := encodeEventFast(e)
+        _ = data
+    }
+}
+```
+
+<details>
+<summary>Hint</summary>
+
+Use `sync.Pool` to maintain a pool of `*bytes.Buffer` objects. Get a buffer from the pool, encode into it, copy out the result, then return the buffer to the pool. Reset the buffer (not the backing array) before returning.
+</details>
+
+<details>
+<summary>Optimized Solution</summary>
+
+```go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "sync"
+)
+
+type Event struct {
+    ID   int
+    Name string
+}
+
+var bufPool = sync.Pool{
+    New: func() interface{} {
+        return bytes.NewBuffer(make([]byte, 0, 256))
+    },
+}
+
+func encodeEventFast(e Event) ([]byte, error) {
+    buf := bufPool.Get().(*bytes.Buffer)
+    buf.Reset() // resets len to 0, keeps backing array
+
+    if err := json.NewEncoder(buf).Encode(e); err != nil {
+        bufPool.Put(buf)
+        return nil, err
+    }
+
+    // Copy result BEFORE returning buffer to pool
+    result := make([]byte, buf.Len())
+    copy(result, buf.Bytes())
+
+    bufPool.Put(buf)
+    return result, nil
+}
+
+func main() {
+    e := Event{ID: 1, Name: "login"}
+    data, _ := encodeEventFast(e)
+    fmt.Println(string(data))
+}
+```
+
+**Why it's better:**
+- The `bytes.Buffer` backing array is reused across calls — no repeated heap allocation for the encode buffer.
+- Only the final result (small, exact-size) is allocated fresh.
+- Under high concurrency, `sync.Pool` keeps per-P free lists, reducing lock contention.
+- Note: `sync.Pool` entries are cleared between GC cycles — pool is for temporary reuse, not permanent caching.
+</details>
+
+---
+
+## Exercise 5 — Two-Pass Algorithm to Avoid Reallocation 🟡
+
+**Description:** The function builds a result slice by appending, but the final size is deterministic. A two-pass approach avoids any reallocation.
+
+**Slow Code:**
+
+```go
+package main
+
+func filterAndDouble(s []int) []int {
+    var result []int // unknown size → reallocates during append
+    for _, v := range s {
+        if v > 0 {
+            result = append(result, v*2)
+        }
+    }
+    return result
+}
+```
+
+**Benchmark:**
+
+```go
+package main_test
+
+import "testing"
+
+func BenchmarkFilterSlow(b *testing.B) {
+    b.ReportAllocs()
+    data := make([]int, 10000)
+    for i := range data {
+        data[i] = i - 5000 // half negative, half positive
+    }
+    for i := 0; i < b.N; i++ {
+        _ = filterAndDouble(data)
+    }
+}
+```
+
+<details>
+<summary>Hint</summary>
+
+Do two passes over the input: first count how many elements pass the filter to get the exact result size, then allocate and fill. Two O(n) passes is still O(n) total — and eliminates all reallocations.
+</details>
+
+<details>
+<summary>Optimized Solution</summary>
+
+```go
+package main
+
+// Two-pass: count, then allocate and fill
+func filterAndDoubleFast(s []int) []int {
+    // Pass 1: count matching elements
+    count := 0
+    for _, v := range s {
+        if v > 0 {
+            count++
+        }
+    }
+
+    // Single allocation with exact size
+    result := make([]int, 0, count)
+
+    // Pass 2: fill result
+    for _, v := range s {
+        if v > 0 {
+            result = append(result, v*2)
+        }
+    }
+    return result
+}
+
+// Alternative: in-place if you can modify the input
+func filterAndDoubleInPlace(s []int) []int {
+    w := 0
+    for _, v := range s {
+        if v > 0 {
+            s[w] = v * 2
+            w++
+        }
+    }
+    return s[:w] // no allocation at all
+}
+```
+
+**Why it's better:**
+- Two-pass: 1 allocation (exact size) vs ~log2(n/2) allocations.
+- In-place: 0 allocations — modifies original slice, appropriate when the input is no longer needed.
+- Trade-off for two-pass: double the iteration time vs fewer allocations. For large n or expensive elements, the allocation savings usually win.
+</details>
+
+---
+
+## Exercise 6 — Capacity Hints for Maps Built from Slices 🟡
+
+**Description:** Building a map from a slice is slow because the map starts small and resizes repeatedly.
+
+**Slow Code:**
+
+```go
+package main
+
+import "fmt"
+
+func buildIndex(users []string) map[string]int {
+    index := make(map[string]int) // starts small, grows ~8x
+    for i, u := range users {
+        index[u] = i
+    }
+    return index
+}
+
+func main() {
+    users := make([]string, 10000)
+    for i := range users {
+        users[i] = fmt.Sprintf("user%d", i)
+    }
+    idx := buildIndex(users)
+    fmt.Println(len(idx))
+}
+```
+
+**Benchmark:**
+
+```go
+package main_test
+
+import (
+    "fmt"
+    "testing"
+)
+
+func BenchmarkBuildIndexSlow(b *testing.B) {
+    b.ReportAllocs()
+    users := make([]string, 10000)
+    for i := range users {
+        users[i] = fmt.Sprintf("user%d", i)
+    }
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        _ = buildIndex(users)
+    }
+}
+```
+
+<details>
+<summary>Hint</summary>
+
+`make(map[K]V, hint)` accepts a size hint. Pass `len(users)` as the hint to pre-allocate the map's internal hash table, avoiding rehashing during insertion.
+</details>
+
+<details>
+<summary>Optimized Solution</summary>
+
+```go
+package main
+
+import "fmt"
+
+func buildIndexFast(users []string) map[string]int {
+    index := make(map[string]int, len(users)) // pre-allocate with hint
+    for i, u := range users {
+        index[u] = i
+    }
+    return index
+}
+
+func main() {
+    users := make([]string, 10000)
+    for i := range users {
+        users[i] = fmt.Sprintf("user%d", i)
+    }
+    idx := buildIndexFast(users)
+    fmt.Println(len(idx)) // 10000
+}
+```
+
+**Why it's better:**
+- `make(map[K]V, n)` pre-allocates the internal hash buckets for `n` elements.
+- Without the hint, the map starts with 8 buckets and rehashes (realloc + rehash all keys) ~log2(n/8) times.
+- With `n=10000`: ~10 rehashes without hint → 0 rehashes with hint.
+- Benchmark improvement: typically 30–50% fewer allocations, 20–40% faster for large maps.
+- The hint is a lower bound — Go may allocate slightly more to avoid immediate collisions.
+</details>
+
+---
+
+## Exercise 7 — Avoid Slice Growth in Recursive Functions 🔴
+
+**Description:** A recursive tree walker builds a path slice by appending, creating a new allocation at each level of recursion.
+
+**Slow Code:**
+
+```go
+package main
+
+import "fmt"
+
+type TreeNode struct {
+    Val   int
+    Left  *TreeNode
+    Right *TreeNode
+}
+
+func findPaths(node *TreeNode, target int) [][]int {
+    if node == nil {
+        return nil
+    }
+    var results [][]int
+    var dfs func(n *TreeNode, path []int)
+    dfs = func(n *TreeNode, path []int) {
+        path = append(path, n.Val) // allocates new backing array if needed
+        if n.Left == nil && n.Right == nil {
+            sum := 0
+            for _, v := range path {
+                sum += v
+            }
+            if sum == target {
+                result := make([]int, len(path))
+                copy(result, path)
+                results = append(results, result)
+            }
+            return
+        }
+        if n.Left != nil {
+            dfs(n.Left, path)
+        }
+        if n.Right != nil {
+            dfs(n.Right, path)
+        }
+    }
+    dfs(node, nil)
+    return results
+}
+
+func main() {
+    root := &TreeNode{Val: 5,
+        Left:  &TreeNode{Val: 4, Left: &TreeNode{Val: 11, Left: &TreeNode{Val: 7}, Right: &TreeNode{Val: 2}}},
+        Right: &TreeNode{Val: 8, Left: &TreeNode{Val: 13}, Right: &TreeNode{Val: 4, Right: &TreeNode{Val: 1}}},
+    }
+    fmt.Println(findPaths(root, 22))
+}
+```
+
+<details>
+<summary>Hint</summary>
+
+Pre-allocate the path slice with the maximum possible depth (height of the tree). Pass it as a slice with its current length tracked via a depth parameter, then truncate it on backtrack (`path = path[:depth]`). This reuses the single backing array across all recursion levels.
+</details>
+
+<details>
+<summary>Optimized Solution</summary>
+
+```go
+package main
+
+import "fmt"
+
+type TreeNode struct {
+    Val   int
+    Left  *TreeNode
+    Right *TreeNode
+}
+
+func treeHeight(n *TreeNode) int {
+    if n == nil {
+        return 0
+    }
+    l, r := treeHeight(n.Left), treeHeight(n.Right)
+    if l > r {
+        return l + 1
+    }
+    return r + 1
+}
+
+func findPathsFast(node *TreeNode, target int) [][]int {
+    if node == nil {
+        return nil
+    }
+    // Pre-allocate path with max depth — reused across all recursion levels
+    maxDepth := treeHeight(node)
+    path := make([]int, 0, maxDepth) // single allocation for path
+
+    var results [][]int
+    var dfs func(n *TreeNode, depth int, sum int)
+
+    dfs = func(n *TreeNode, depth int, sum int) {
+        // Extend path at current depth (reuses backing array up to maxDepth)
+        path = path[:depth+1]
+        path[depth] = n.Val
+        sum += n.Val
+
+        if n.Left == nil && n.Right == nil {
+            if sum == target {
+                result := make([]int, depth+1)
+                copy(result, path[:depth+1])
+                results = append(results, result)
+            }
+            return
+        }
+        if n.Left != nil {
+            dfs(n.Left, depth+1, sum)
+        }
+        if n.Right != nil {
+            dfs(n.Right, depth+1, sum)
+        }
+        // Backtrack: restore depth (path[:depth] implicitly on next call)
+    }
+
+    dfs(node, 0, 0)
+    return results
+}
+
+func main() {
+    root := &TreeNode{Val: 5,
+        Left:  &TreeNode{Val: 4, Left: &TreeNode{Val: 11, Left: &TreeNode{Val: 7}, Right: &TreeNode{Val: 2}}},
+        Right: &TreeNode{Val: 8, Left: &TreeNode{Val: 13}, Right: &TreeNode{Val: 4, Right: &TreeNode{Val: 1}}},
+    }
+    fmt.Println(findPathsFast(root, 22)) // [[5 4 11 2] [5 8 4 1]]
+}
+```
+
+**Why it's better:**
+- Original: `append(path, n.Val)` may allocate a new backing array at each level (O(height) allocations per path, O(height * leaves) total).
+- Optimized: `path[:depth+1]` reuses the pre-allocated backing array — no allocation per recursion level.
+- The `path[depth] = n.Val` assignment is a single array write — no bounds check failure because `depth < maxDepth = cap(path)`.
+</details>
+
+---
+
+## Exercise 8 — Replace `append` with Index Assignment in Known-Size Loops 🟢
+
+**Description:** The function uses `append` in a loop where the final size is already known, adding unnecessary overhead per iteration.
+
+**Slow Code:**
+
+```go
+package main
+
+func multiply(a, b []float64) []float64 {
+    if len(a) != len(b) {
+        return nil
+    }
+    result := make([]float64, 0, len(a))
+    for i := range a {
+        result = append(result, a[i]*b[i]) // append overhead per iteration
+    }
+    return result
+}
+```
+
+<details>
+<summary>Hint</summary>
+
+When you pre-allocate with `make([]T, n)` (not `make([]T, 0, n)`), you can use direct index assignment `result[i] = ...` which is faster than `append` because it skips the length/capacity check.
+</details>
+
+<details>
+<summary>Optimized Solution</summary>
+
+```go
+package main
+
+import "fmt"
+
+func multiplyFast(a, b []float64) []float64 {
+    if len(a) != len(b) {
+        return nil
+    }
+    result := make([]float64, len(a)) // len=n, not 0
+    for i := range a {
+        result[i] = a[i] * b[i] // direct assignment — no bounds or cap check
+    }
+    return result
+}
+
+func main() {
+    a := []float64{1, 2, 3, 4, 5}
+    b := []float64{2, 3, 4, 5, 6}
+    fmt.Println(multiplyFast(a, b)) // [2 6 12 20 30]
+}
+```
+
+**Why it's faster:**
+- `append(result, x)` must check: is `len < cap`? increment len. Write value. (3 operations + potential cap check branch)
+- `result[i] = x` is a single bounds-checked write.
+- The compiler can often eliminate the bounds check for `result[i]` when iterating `for i := range a` and `len(result) == len(a)`.
+- For SIMD auto-vectorization: direct index loops are much more likely to be vectorized by the compiler than append-based loops.
+
+**Benchmark:**
+```go
+func BenchmarkMultiplySlow(b *testing.B) {
+    b.ReportAllocs()
+    a := make([]float64, 10000)
+    bv := make([]float64, 10000)
+    for i := range a { a[i] = float64(i); bv[i] = float64(i) }
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        _ = multiply(a, bv)
+    }
+}
+// vs BenchmarkMultiplyFast: ~15-20% faster, same 1 alloc/op
+```
+</details>
+
+---
+
+## Exercise 9 — Batch Processing to Reduce Per-Item Allocation 🔴
+
+**Description:** A streaming processor calls a function per record, each call allocating a small result slice. Batching records reduces allocation overhead dramatically.
+
+**Slow Code:**
+
+```go
+package main
+
+import "fmt"
+
+type Record struct {
+    Fields []string
+}
+
+func processRecord(r Record) []int {
+    result := make([]int, len(r.Fields)) // 1 alloc per record
+    for i, f := range r.Fields {
+        result[i] = len(f)
+    }
+    return result
+}
+
+func processStreamSlow(records []Record) [][]int {
+    results := make([][]int, len(records))
+    for i, r := range records {
+        results[i] = processRecord(r)
+    }
+    return results
+}
+
+func main() {
+    records := []Record{
+        {Fields: []string{"go", "is", "fast"}},
+        {Fields: []string{"slices", "are", "efficient"}},
+    }
+    fmt.Println(processStreamSlow(records))
+}
+```
+
+<details>
+<summary>Hint</summary>
+
+Use a single large backing array for all results and hand out subslices of it. First compute the total number of fields across all records. Then allocate one flat `[]int` of that size, and use `flat[offset:offset+len(r.Fields)]` for each record's result.
+</details>
+
+<details>
+<summary>Optimized Solution</summary>
+
+```go
+package main
+
+import "fmt"
+
+type Record struct {
+    Fields []string
+}
+
+// processStreamFast uses a single backing array for all results.
+func processStreamFast(records []Record) [][]int {
+    // Pass 1: count total fields
+    total := 0
+    for _, r := range records {
+        total += len(r.Fields)
+    }
+
+    // Single allocation for all field lengths
+    flat := make([]int, total)
+    results := make([][]int, len(records))
+
+    offset := 0
+    for i, r := range records {
+        n := len(r.Fields)
+        // Assign a slice of flat to this record — no extra allocation
+        results[i] = flat[offset : offset+n]
+        for j, f := range r.Fields {
+            flat[offset+j] = len(f)
+        }
+        offset += n
+    }
+
+    return results
+}
+
+func main() {
+    records := []Record{
+        {Fields: []string{"go", "is", "fast"}},
+        {Fields: []string{"slices", "are", "efficient"}},
+    }
+    fmt.Println(processStreamFast(records))
+    // [[2 2 4] [6 3 9]]
+}
+```
+
+**Why it's better:**
+- Original: 1 allocation per record → O(n) allocations for n records.
+- Optimized: 2 allocations total (one for `flat`, one for `results` slice of slices) regardless of n.
+- For 100,000 records: ~100,000 allocations → 2 allocations. Massive GC pressure reduction.
+- All field-length data is contiguous in `flat` — cache-friendly access pattern.
+</details>
+
+---
+
+## Exercise 10 — Use Stack-Allocated Array as Slice Backing 🔴
+
+**Description:** A function that processes at most 8 items uses a heap-allocated slice. Replace it with a stack-allocated array to eliminate the heap allocation entirely.
+
+**Slow Code:**
+
+```go
+package main
+
+import (
+    "fmt"
+    "strings"
+)
+
+func splitPath(path string) []string {
+    parts := strings.Split(path, "/") // heap allocation
+    var result []string               // heap allocation
+    for _, p := range parts {
+        if p != "" {
+            result = append(result, p)
+        }
+    }
+    return result
+}
+
+func main() {
+    fmt.Println(splitPath("/usr/local/bin/go"))
+}
+```
+
+<details>
+<summary>Hint</summary>
+
+Declare a fixed-size array on the stack: `var buf [8]string`. Take a slice of it: `result := buf[:0]`. Append into the slice — as long as you never exceed 8 elements, no heap allocation occurs. For safety, return a copy if the caller retains the result.
+</details>
+
+<details>
+<summary>Optimized Solution</summary>
+
+```go
+package main
+
+import (
+    "fmt"
+    "strings"
+)
+
+// splitPathFast uses a stack-allocated backing array for paths with <= 8 components.
+func splitPathFast(path string) []string {
+    var buf [8]string              // stack-allocated array — zero heap cost
+    result := buf[:0]              // slice backed by the stack array
+
+    start := 0
+    if len(path) > 0 && path[0] == '/' {
+        start = 1
+    }
+    for i := start; i <= len(path); i++ {
+        if i == len(path) || path[i] == '/' {
+            if i > start {
+                if len(result) < len(buf) {
+                    result = append(result, path[start:i])
+                }
+            }
+            start = i + 1
+        }
+    }
+
+    // If caller retains result beyond this function, copy to heap.
+    // For immediate use (no escape), this is zero-alloc.
+    return result
+}
+
+// For callers that need to store the result:
+func splitPathSafe(path string) []string {
+    // Use fast version for parsing, copy to heap for storage
+    fast := splitPathFast(path)
+    out := make([]string, len(fast))
+    copy(out, fast)
+    return out
+}
+
+func main() {
+    // Direct use — zero alloc (if compiler determines result doesn't escape)
+    parts := splitPathFast("/usr/local/bin/go")
+    fmt.Println(parts) // [usr local bin go]
+
+    // Stored use — one alloc for the output
+    stored := splitPathSafe("/etc/ssl/certs")
+    fmt.Println(stored) // [etc ssl certs]
+
+    _ = strings.Split // suppress import
+}
+```
+
+**Why it's better:**
+- Stack allocation is essentially free — just decrement the stack pointer.
+- No GC involvement for stack-allocated objects.
+- For hot paths processing many short paths, this eliminates millions of small allocations per second.
+- Caveat: if the slice escapes to the heap (e.g., stored in a global, passed to an interface), the compiler will heap-allocate `buf` anyway. Use `go build -gcflags="-m"` to check.
+
+**Benchmark:**
+```go
+func BenchmarkSplitSlow(b *testing.B) {
+    b.ReportAllocs()
+    for i := 0; i < b.N; i++ {
+        _ = splitPath("/usr/local/bin/go")
+    }
+}
+func BenchmarkSplitFast(b *testing.B) {
+    b.ReportAllocs()
+    for i := 0; i < b.N; i++ {
+        _ = splitPathFast("/usr/local/bin/go")
+    }
+}
+// Expected: slow=3 allocs/op, fast=0 allocs/op
+```
+</details>
+
+---
+
+## Summary Table
+
+| Exercise | Technique | Alloc Reduction |
+|----------|-----------|-----------------|
+| 1 | Pre-allocate before loop | 14 → 1 allocs |
+| 2 | `copy` to break backing array sharing | Prevents MB-scale leaks |
+| 3 | Buffer reuse + capacity hint | 4 → 0 allocs (with reuse) |
+| 4 | `sync.Pool` for buffer reuse | Near-zero allocs at scale |
+| 5 | Two-pass count + allocate | log2(n) → 1 alloc |
+| 6 | Map capacity hint | ~10 rehashes → 0 rehashes |
+| 7 | Pre-allocated path + backtrack | O(height) → 1 alloc |
+| 8 | Direct index vs `append` | Same allocs, faster access |
+| 9 | Single flat backing array | O(n) → 2 allocs |
+| 10 | Stack-allocated backing array | heap alloc → 0 allocs |
+
+**General rules:**
+1. If you know the size upfront, use `make([]T, n)` or `make([]T, 0, n)`.
+2. If the function is called frequently, accept a `buf []T` parameter and reset with `buf[:0]`.
+3. If allocations are measured in the hot path, consider `sync.Pool`.
+4. Never return a subslice of a large buffer — always `copy` to a new slice.
+5. Use `go test -bench=. -benchmem` to measure; never optimize without measuring.
