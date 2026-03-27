@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0002. Add Two Numbers — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        .input-l1 { width: 160px; }
+        .input-l2 { width: 160px; }
+
+        .btn-generate { background: #8b5cf6; color: white; }
+        .btn-generate:hover { background: #7c3aed; }
+
+        .preset-options {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .preset-options label { color: #94a3b8; font-size: 0.8rem; }
+
+        .preset-options select {
+            padding: 5px 8px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-pause:hover { background: #dc2626; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-reset:hover { background: #4b5563; }
+
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select {
+            padding: 6px 10px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 4px;
+        }
+
+        /* STEP DESCRIPTION */
+        .step-description {
+            background: #0f172a;
+            border-left: 3px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 50px;
+            white-space: pre-line;
+        }
+
+        /* VIZ AREA */
+        .viz-area {
+            min-height: 200px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        /* LINKED LIST NODES */
+        .list-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            flex-wrap: nowrap;
+        }
+
+        .list-row::-webkit-scrollbar { height: 6px; }
+        .list-row::-webkit-scrollbar-track { background: #1e293b; border-radius: 3px; }
+        .list-row::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+        .node-box {
+            width: 3.5rem;
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            transition: all 0.35s ease;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .node-default { background: #334155; color: #e2e8f0; }
+        .node-active { background: #3b82f6; color: white; box-shadow: 0 0 16px rgba(59,130,246,0.5); transform: scale(1.08); }
+        .node-carry { background: #f59e0b; color: #0f172a; box-shadow: 0 0 16px rgba(245,158,11,0.4); }
+        .node-result { background: #22c55e; color: white; box-shadow: 0 0 16px rgba(34,197,94,0.5); }
+        .node-processed { background: #64748b; color: #cbd5e1; opacity: 0.6; }
+        .node-null { background: transparent; border: 2px dashed #475569; color: #475569; font-size: 0.8rem; }
+
+        .arrow {
+            color: #475569;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            transition: color 0.3s;
+        }
+
+        .arrow-active { color: #3b82f6; }
+        .arrow-result { color: #22c55e; }
+
+        /* CARRY DISPLAY */
+        .carry-display {
+            background: #1e293b;
+            border: 2px solid #f59e0b;
+            border-radius: 10px;
+            padding: 8px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+
+        .carry-label { color: #f59e0b; font-weight: 600; }
+        .carry-value { color: #fbbf24; font-weight: 700; font-size: 1.2rem; }
+
+        /* CALC BOX */
+        .calc-box {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            text-align: center;
+            font-size: 1.1rem;
+            border: 1px solid #334155;
+        }
+
+        .calc-box .formula { color: #94a3b8; }
+        .calc-box .result { font-weight: 700; margin-left: 8px; }
+
+        /* RECURSIVE STACK */
+        .stack-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 16px;
+        }
+
+        .stack-frame {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            transition: all 0.35s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stack-frame.active {
+            border-color: #a78bfa;
+            box-shadow: 0 0 12px rgba(167,139,250,0.3);
+            background: #2d2050;
+        }
+
+        .stack-frame.returning {
+            border-color: #22c55e;
+            box-shadow: 0 0 12px rgba(34,197,94,0.3);
+            background: #1a2e1a;
+        }
+
+        .stack-depth {
+            color: #a78bfa;
+            font-weight: 700;
+            font-size: 0.75rem;
+            min-width: 50px;
+        }
+
+        .stack-info { color: #cbd5e1; }
+
+        /* INFO PANEL */
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .info-box h3 {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .info-box .value { font-size: 1.1rem; font-weight: 700; }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .container { padding: 16px; }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header h1 { font-size: 1.4rem; }
+            .header { margin-bottom: 16px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .container { padding: 14px; }
+            .tab { padding: 8px 14px; font-size: 0.8rem; }
+            .btn { padding: 7px 12px; font-size: 0.8rem; }
+            .input-section { gap: 6px; }
+            .input-l1, .input-l2 { width: 120px; }
+            .input-section input { padding: 6px 10px; font-size: 0.8rem; }
+            .node-box { width: 2.8rem; height: 2.8rem; font-size: 1rem; border-radius: 8px; }
+            .step-description { padding: 10px 12px; font-size: 0.82rem; }
+            .viz-area { padding: 14px; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 6px; }
+            .header h1 { font-size: 1.1rem; }
+            .header p { font-size: 0.8rem; }
+            .header { margin-bottom: 10px; }
+            .tabs { gap: 2px; margin-bottom: 12px; }
+            .tab { padding: 6px 10px; font-size: 0.72rem; }
+            .container { padding: 10px; border-radius: 8px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .info-box { padding: 8px; }
+            .info-box h3 { font-size: 0.6rem; }
+            .info-box .value { font-size: 0.9rem; }
+            .input-section { flex-direction: column; align-items: stretch; }
+            .input-section input { width: 100%; }
+            .input-l1, .input-l2 { width: 100%; }
+            .preset-options { flex-wrap: wrap; justify-content: center; }
+            .controls { gap: 6px; }
+            .btn { padding: 6px 10px; font-size: 0.75rem; }
+            .speed-control { width: 100%; justify-content: center; }
+            .step-description { padding: 8px 10px; font-size: 0.78rem; min-height: 40px; }
+            .viz-area { padding: 10px; min-height: 150px; }
+            .node-box { width: 2.4rem; height: 2.4rem; font-size: 0.85rem; border-radius: 6px; }
+            .list-row { gap: 2px; }
+            .arrow { font-size: 1rem; }
+            .carry-display { padding: 6px 10px; font-size: 0.82rem; }
+            .calc-box { padding: 8px 12px; font-size: 0.9rem; }
+            .stack-frame { padding: 8px 10px; font-size: 0.78rem; }
+            .legend { gap: 8px; margin-top: 10px; }
+            .legend-item { font-size: 0.7rem; gap: 4px; }
+            .legend-color { width: 12px; height: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>0002. Add Two Numbers</h1>
+        <p>Medium — Linked List, Math, Recursion</p>
+    </div>
+
+    <div class="tabs" id="tabs">
+        <div class="tab active" data-tab="iterative">Elementary Math</div>
+        <div class="tab" data-tab="recursive">Recursive</div>
+    </div>
+
+    <div class="container">
+        <div class="input-section">
+            <input type="text" class="input-l1" id="l1Input" placeholder="2,4,3" value="2,4,3">
+            <span style="color:#64748b;">+</span>
+            <input type="text" class="input-l2" id="l2Input" placeholder="5,6,4" value="5,6,4">
+            <button class="btn btn-step" onclick="applyInput()">Apply</button>
+            <div class="preset-options">
+                <label>Preset:</label>
+                <select id="presetSelect" onchange="setPreset()">
+                    <option value="0">342 + 465 = 807</option>
+                    <option value="1">0 + 0 = 0</option>
+                    <option value="2">9999 + 999 = 10998</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-play" onclick="play()">&#9654; Play</button>
+            <button class="btn btn-pause" onclick="pause()">&#9646;&#9646; Pause</button>
+            <button class="btn btn-step" onclick="stepForward()">&#9197; Step</button>
+            <button class="btn btn-reset" onclick="reset()">&#8634; Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <select id="speed" onchange="updateSpeed()">
+                    <option value="2000">Slow</option>
+                    <option value="1000" selected>Normal</option>
+                    <option value="500">Fast</option>
+                    <option value="200">Very Fast</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="step-description" id="stepDesc">
+            &#9654; Press "Play" or use "Step" to walk through step by step.
+        </div>
+
+        <div class="viz-area" id="vizArea"></div>
+
+        <div class="info-panel">
+            <div class="info-box">
+                <h3>Step</h3>
+                <div class="value" id="stepCounter">0 / 0</div>
+            </div>
+            <div class="info-box">
+                <h3>Operations</h3>
+                <div class="value" id="opsCounter">0</div>
+            </div>
+            <div class="info-box">
+                <h3>Time</h3>
+                <div class="value" id="timeComp">&mdash;</div>
+            </div>
+            <div class="info-box">
+                <h3>Space</h3>
+                <div class="value" id="spaceComp">&mdash;</div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color" style="background:#334155;"></div><span>Default</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#3b82f6;"></div><span>Active</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#f59e0b;"></div><span>Carry</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#22c55e;"></div><span>Result</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#64748b;"></div><span>Processed</span></div>
+        </div>
+    </div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let currentTab = 'iterative';
+let steps = [];
+let currentStep = 0;
+let isPlaying = false;
+let playInterval = null;
+let speed = 1000;
+
+const PRESETS = [
+    { l1: [2,4,3], l2: [5,6,4] },
+    { l1: [0],     l2: [0] },
+    { l1: [9,9,9,9], l2: [9,9,9] }
+];
+
+let l1 = [2,4,3];
+let l2 = [5,6,4];
+
+// ============================================================
+// TABS
+// ============================================================
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentTab = tab.dataset.tab;
+        reset();
+        generateSteps();
+        renderStep();
+    });
+});
+
+// ============================================================
+// PRESETS & INPUT
+// ============================================================
+function setPreset() {
+    const idx = parseInt(document.getElementById('presetSelect').value);
+    const p = PRESETS[idx];
+    l1 = [...p.l1];
+    l2 = [...p.l2];
+    document.getElementById('l1Input').value = l1.join(',');
+    document.getElementById('l2Input').value = l2.join(',');
+    reset();
+    generateSteps();
+    renderStep();
+}
+
+function applyInput() {
+    try {
+        const l1Str = document.getElementById('l1Input').value.replace(/[\[\]]/g, '');
+        const l2Str = document.getElementById('l2Input').value.replace(/[\[\]]/g, '');
+        l1 = l1Str.split(',').map(s => parseInt(s.trim()));
+        l2 = l2Str.split(',').map(s => parseInt(s.trim()));
+        if (l1.some(isNaN) || l2.some(isNaN)) throw new Error('Invalid');
+        if (l1.some(v => v < 0 || v > 9) || l2.some(v => v < 0 || v > 9)) throw new Error('Digits must be 0-9');
+        reset();
+        generateSteps();
+        renderStep();
+    } catch(e) {
+        document.getElementById('stepDesc').textContent = 'Invalid format! Use single digits 0-9, e.g.: 2,4,3';
+    }
+}
+
+// ============================================================
+// CONTROLS
+// ============================================================
+function play() {
+    if (isPlaying) return;
+    isPlaying = true;
+    playInterval = setInterval(() => {
+        if (currentStep < steps.length - 1) {
+            currentStep++;
+            renderStep();
+        } else {
+            pause();
+        }
+    }, speed);
+}
+
+function pause() {
+    isPlaying = false;
+    if (playInterval) clearInterval(playInterval);
+}
+
+function stepForward() {
+    pause();
+    if (currentStep < steps.length - 1) {
+        currentStep++;
+        renderStep();
+    }
+}
+
+function reset() {
+    pause();
+    currentStep = 0;
+    if (steps.length > 0) renderStep();
+}
+
+function updateSpeed() {
+    speed = parseInt(document.getElementById('speed').value);
+    if (isPlaying) { pause(); play(); }
+}
+
+// ============================================================
+// HELPER: convert list array to number string
+// ============================================================
+function listToNumber(arr) {
+    return parseInt([...arr].reverse().join('')) || 0;
+}
+
+function listToDisplay(arr) {
+    return arr.join(' -> ') + ' -> null';
+}
+
+// ============================================================
+// GENERATE STEPS
+// ============================================================
+function generateSteps() {
+    steps = [];
+    if (currentTab === 'iterative') {
+        buildIterativeSteps();
+    } else if (currentTab === 'recursive') {
+        buildRecursiveSteps();
+    }
+    if (steps.length === 0) {
+        steps.push({ desc: 'No steps to show.', l1States: [], l2States: [], resultNodes: [], carry: 0, ops: 0 });
+    }
+}
+
+// ============================================================
+// ITERATIVE (Elementary Math) STEPS
+// ============================================================
+function buildIterativeSteps() {
+    const maxLen = Math.max(l1.length, l2.length);
+    let carry = 0;
+    let result = [];
+    let ops = 0;
+
+    // Node states: 'default', 'active', 'processed'
+    let l1States = l1.map(() => 'default');
+    let l2States = l2.map(() => 'default');
+
+    // Initial step
+    steps.push({
+        desc: `Initialize:\nL1 = ${listToDisplay(l1)}  (represents ${listToNumber(l1)})\nL2 = ${listToDisplay(l2)}  (represents ${listToNumber(l2)})\ncarry = 0, result = empty`,
+        l1States: [...l1States],
+        l2States: [...l2States],
+        resultNodes: [],
+        carry: 0,
+        activeIdx: -1,
+        ops: 0,
+        calc: null
+    });
+
+    for (let i = 0; i < maxLen || carry > 0; i++) {
+        const v1 = i < l1.length ? l1[i] : 0;
+        const v2 = i < l2.length ? l2[i] : 0;
+
+        // Mark active nodes
+        l1States = l1.map((_, idx) => idx < i ? 'processed' : idx === i ? 'active' : 'default');
+        l2States = l2.map((_, idx) => idx < i ? 'processed' : idx === i ? 'active' : 'default');
+
+        const sum = v1 + v2 + carry;
+        const digit = sum % 10;
+        const newCarry = Math.floor(sum / 10);
+        ops++;
+
+        const v1Label = i < l1.length ? `L1[${i}]=${v1}` : `L1=null(0)`;
+        const v2Label = i < l2.length ? `L2[${i}]=${v2}` : `L2=null(0)`;
+
+        // Step: show the addition
+        steps.push({
+            desc: `Step ${i + 1}: Read ${v1Label}, ${v2Label}\nsum = ${v1} + ${v2} + carry(${carry}) = ${sum}\ndigit = ${sum} % 10 = ${digit}, new carry = ${Math.floor(sum / 10)}`,
+            l1States: [...l1States],
+            l2States: [...l2States],
+            resultNodes: [...result],
+            carry: carry,
+            activeIdx: i,
+            ops: ops,
+            calc: { v1, v2, carry, sum, digit, newCarry }
+        });
+
+        result.push(digit);
+        carry = newCarry;
+
+        // Step: show result updated
+        steps.push({
+            desc: `Append digit ${digit} to result list.\nResult so far: ${listToDisplay(result)}${carry > 0 ? `\nCarry ${carry} will propagate to next position.` : ''}`,
+            l1States: [...l1States],
+            l2States: [...l2States],
+            resultNodes: [...result],
+            carry: carry,
+            activeIdx: i,
+            ops: ops,
+            calc: null
+        });
+    }
+
+    // Mark all as processed
+    l1States = l1.map(() => 'processed');
+    l2States = l2.map(() => 'processed');
+
+    const num1 = listToNumber(l1);
+    const num2 = listToNumber(l2);
+    const total = num1 + num2;
+
+    steps.push({
+        desc: `Done! ${num1} + ${num2} = ${total}\nResult linked list: ${listToDisplay(result)}\nTime: O(max(m,n)) | Space: O(max(m,n))`,
+        l1States: [...l1States],
+        l2States: [...l2States],
+        resultNodes: [...result],
+        carry: 0,
+        activeIdx: -1,
+        ops: ops,
+        calc: null,
+        done: true
+    });
+}
+
+// ============================================================
+// RECURSIVE STEPS
+// ============================================================
+function buildRecursiveSteps() {
+    let ops = 0;
+    let result = [];
+    let stackFrames = [];
+
+    // We simulate the recursion iteratively but show the call stack
+    const maxLen = Math.max(l1.length, l2.length);
+    let carry = 0;
+
+    let l1States = l1.map(() => 'default');
+    let l2States = l2.map(() => 'default');
+
+    steps.push({
+        desc: `Recursive approach:\nCall addTwoNumbers(L1, L2, carry=0)\nWe recurse through both lists, passing carry forward.`,
+        l1States: [...l1States],
+        l2States: [...l2States],
+        resultNodes: [],
+        carry: 0,
+        activeIdx: -1,
+        ops: 0,
+        stackFrames: [],
+        phase: 'intro'
+    });
+
+    // Build the call stack going down
+    let frames = [];
+    let carries = [0];
+    let digits = [];
+
+    for (let i = 0; i <= maxLen || (i === maxLen && carry > 0); i++) {
+        const v1 = i < l1.length ? l1[i] : 0;
+        const v2 = i < l2.length ? l2[i] : 0;
+        const sum = v1 + v2 + carry;
+        const digit = sum % 10;
+        const newCarry = Math.floor(sum / 10);
+        ops++;
+
+        l1States = l1.map((_, idx) => idx < i ? 'processed' : idx === i ? 'active' : 'default');
+        l2States = l2.map((_, idx) => idx < i ? 'processed' : idx === i ? 'active' : 'default');
+
+        const v1Label = i < l1.length ? String(v1) : 'null';
+        const v2Label = i < l2.length ? String(v2) : 'null';
+
+        frames.push({
+            depth: i,
+            label: `addTwo(${v1Label}, ${v2Label}, carry=${carry})`,
+            sum: sum,
+            digit: digit,
+            state: 'active'
+        });
+
+        // Show the recursive call
+        steps.push({
+            desc: `Depth ${i}: Call addTwo(${v1Label}, ${v2Label}, carry=${carry})\nsum = ${v1} + ${v2} + ${carry} = ${sum}\ndigit = ${digit}, carry = ${newCarry}`,
+            l1States: [...l1States],
+            l2States: [...l2States],
+            resultNodes: [...result],
+            carry: carry,
+            activeIdx: i,
+            ops: ops,
+            stackFrames: frames.map((f, idx) => ({
+                ...f,
+                state: idx === frames.length - 1 ? 'active' : 'waiting'
+            })),
+            phase: 'descend'
+        });
+
+        digits.push(digit);
+        carry = newCarry;
+        carries.push(carry);
+
+        // If this is the base case (no more nodes and no carry)
+        if (i + 1 >= maxLen && carry === 0) {
+            break;
+        }
+        // If carry remains but we've passed both lists
+        if (i + 1 >= maxLen && carry > 0) {
+            // One more iteration will handle the carry
+            continue;
+        }
+    }
+
+    // Now show the unwinding / returning phase
+    let builtResult = [];
+    for (let i = frames.length - 1; i >= 0; i--) {
+        builtResult.unshift(digits[i]);
+
+        const returningFrames = frames.map((f, idx) => ({
+            ...f,
+            state: idx <= i ? (idx === i ? 'returning' : 'waiting') : 'returning'
+        }));
+
+        l1States = l1.map(() => 'processed');
+        l2States = l2.map(() => 'processed');
+
+        steps.push({
+            desc: `Return from depth ${i}: node.val = ${digits[i]}\nBuilding result list as recursion unwinds.`,
+            l1States: [...l1States],
+            l2States: [...l2States],
+            resultNodes: [...builtResult],
+            carry: 0,
+            activeIdx: -1,
+            ops: ops,
+            stackFrames: returningFrames,
+            phase: 'return'
+        });
+    }
+
+    const correctResult = digits;
+
+    const num1 = listToNumber(l1);
+    const num2 = listToNumber(l2);
+    const total = num1 + num2;
+
+    steps.push({
+        desc: `Done! ${num1} + ${num2} = ${total}\nResult linked list: ${listToDisplay(correctResult)}\nTime: O(max(m,n)) | Space: O(max(m,n)) — recursion stack`,
+        l1States: l1.map(() => 'processed'),
+        l2States: l2.map(() => 'processed'),
+        resultNodes: [...correctResult],
+        carry: 0,
+        activeIdx: -1,
+        ops: ops,
+        stackFrames: [],
+        phase: 'done',
+        done: true
+    });
+}
+
+// ============================================================
+// RENDER STEP
+// ============================================================
+function renderStep() {
+    if (steps.length === 0) return;
+    const s = steps[currentStep];
+    const viz = document.getElementById('vizArea');
+    const desc = document.getElementById('stepDesc');
+
+    desc.textContent = s.desc;
+    document.getElementById('stepCounter').textContent = `${currentStep} / ${steps.length - 1}`;
+    document.getElementById('opsCounter').textContent = s.ops;
+
+    if (currentTab === 'iterative') {
+        document.getElementById('timeComp').textContent = 'O(max(m,n))';
+        document.getElementById('spaceComp').textContent = 'O(max(m,n))';
+        renderIterativeStep(s, viz);
+    } else {
+        document.getElementById('timeComp').textContent = 'O(max(m,n))';
+        document.getElementById('spaceComp').textContent = 'O(max(m,n))';
+        renderRecursiveStep(s, viz);
+    }
+}
+
+// ============================================================
+// RENDER: LINKED LIST ROW
+// ============================================================
+function renderListRow(label, arr, states, activeIdx) {
+    let html = `<div class="section-label">${label}</div><div class="list-row">`;
+    for (let i = 0; i < arr.length; i++) {
+        const state = states[i] || 'default';
+        let cls = 'node-default';
+        if (state === 'active') cls = 'node-active';
+        else if (state === 'processed') cls = 'node-processed';
+
+        html += `<div class="node-box ${cls}">${arr[i]}</div>`;
+        html += `<span class="arrow ${state === 'active' ? 'arrow-active' : ''}">&rarr;</span>`;
+    }
+    html += `<div class="node-box node-null">null</div>`;
+    html += `</div>`;
+    return html;
+}
+
+function renderResultRow(resultNodes) {
+    if (resultNodes.length === 0) {
+        return `<div class="section-label">Result</div><div class="list-row"><div class="node-box node-null" style="border-color:#22c55e55;">empty</div></div>`;
+    }
+    let html = `<div class="section-label">Result</div><div class="list-row">`;
+    for (let i = 0; i < resultNodes.length; i++) {
+        const isLast = i === resultNodes.length - 1;
+        html += `<div class="node-box node-result">${resultNodes[i]}</div>`;
+        html += `<span class="arrow arrow-result">&rarr;</span>`;
+    }
+    html += `<div class="node-box node-null" style="border-color:#22c55e55;">null</div>`;
+    html += `</div>`;
+    return html;
+}
+
+// ============================================================
+// RENDER: ITERATIVE
+// ============================================================
+function renderIterativeStep(s, viz) {
+    let html = '';
+
+    html += renderListRow('L1 (first number)', l1, s.l1States, s.activeIdx);
+    html += renderListRow('L2 (second number)', l2, s.l2States, s.activeIdx);
+
+    // Carry display
+    html += `<div class="carry-display">
+        <span class="carry-label">Carry:</span>
+        <span class="carry-value">${s.carry}</span>
+    </div>`;
+
+    // Calculation box
+    if (s.calc) {
+        const c = s.calc;
+        html += `<div class="calc-box">
+            <span class="formula">${c.v1} + ${c.v2} + ${c.carry} = ${c.sum}</span>
+            <span class="result" style="color:#22c55e;">digit=${c.digit}</span>
+            <span class="result" style="color:#f59e0b;">carry=${c.newCarry}</span>
+        </div>`;
+    }
+
+    html += renderResultRow(s.resultNodes);
+
+    if (s.done) {
+        const num1 = listToNumber(l1);
+        const num2 = listToNumber(l2);
+        html += `<div class="calc-box" style="border-color:#22c55e; margin-top:12px;">
+            <span style="color:#22c55e; font-weight:700; font-size:1.2rem;">&#10003; ${num1} + ${num2} = ${num1 + num2}</span>
+        </div>`;
+    }
+
+    viz.innerHTML = html;
+}
+
+// ============================================================
+// RENDER: RECURSIVE
+// ============================================================
+function renderRecursiveStep(s, viz) {
+    let html = '';
+
+    html += renderListRow('L1 (first number)', l1, s.l1States, s.activeIdx);
+    html += renderListRow('L2 (second number)', l2, s.l2States, s.activeIdx);
+
+    // Carry display
+    if (s.phase === 'descend' || s.phase === 'intro') {
+        html += `<div class="carry-display">
+            <span class="carry-label">Carry:</span>
+            <span class="carry-value">${s.carry}</span>
+        </div>`;
+    }
+
+    // Call stack
+    if (s.stackFrames && s.stackFrames.length > 0) {
+        html += `<div class="section-label">Recursion Call Stack</div>`;
+        html += `<div class="stack-container">`;
+        for (let i = s.stackFrames.length - 1; i >= 0; i--) {
+            const f = s.stackFrames[i];
+            let cls = '';
+            if (f.state === 'active') cls = 'active';
+            else if (f.state === 'returning') cls = 'returning';
+
+            const indent = '&nbsp;'.repeat(f.depth * 4);
+            html += `<div class="stack-frame ${cls}">
+                <span class="stack-depth">depth ${f.depth}</span>
+                <span class="stack-info">${indent}${f.label}  &rarr;  digit=${f.digit}</span>
+            </div>`;
+        }
+        html += `</div>`;
+    }
+
+    html += renderResultRow(s.resultNodes);
+
+    if (s.done) {
+        const num1 = listToNumber(l1);
+        const num2 = listToNumber(l2);
+        html += `<div class="calc-box" style="border-color:#22c55e; margin-top:12px;">
+            <span style="color:#22c55e; font-weight:700; font-size:1.2rem;">&#10003; ${num1} + ${num2} = ${num1 + num2}</span>
+        </div>`;
+    }
+
+    viz.innerHTML = html;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+generateSteps();
+renderStep();
+</script>
+
+</body>
+</html>

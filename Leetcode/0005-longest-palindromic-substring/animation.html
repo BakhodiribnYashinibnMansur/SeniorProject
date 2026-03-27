@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0005. Longest Palindromic Substring — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 160px;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        .preset-btns {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-preset {
+            padding: 6px 12px;
+            background: #334155;
+            color: #94a3b8;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .btn-preset:hover { background: #475569; color: #e2e8f0; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-pause:hover { background: #dc2626; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-reset:hover { background: #4b5563; }
+
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select {
+            padding: 6px 10px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 4px;
+        }
+
+        /* STEP DESCRIPTION */
+        .step-description {
+            background: #0f172a;
+            border-left: 3px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 50px;
+            white-space: pre-line;
+        }
+
+        /* VIZ AREA */
+        .viz-area {
+            min-height: 250px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        /* CHARACTER DISPLAY */
+        .char-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .char-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .char-box {
+            width: 3.5rem;
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            transition: all 0.35s ease;
+            position: relative;
+        }
+
+        .char-idx {
+            font-size: 0.7rem;
+            color: #475569;
+        }
+
+        .char-ptr {
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-height: 18px;
+        }
+
+        /* Character Colors */
+        .c-default { background: #334155; color: #e2e8f0; }
+        .c-center { background: #8b5cf6; color: white; box-shadow: 0 0 16px rgba(139,92,246,0.5); }
+        .c-left { background: #3b82f6; color: white; box-shadow: 0 0 16px rgba(59,130,246,0.5); }
+        .c-right { background: #f59e0b; color: #0f172a; box-shadow: 0 0 16px rgba(245,158,11,0.4); }
+        .c-match { background: #22c55e; color: white; box-shadow: 0 0 20px rgba(34,197,94,0.6); transform: scale(1.08); }
+        .c-mismatch { background: #ef4444; color: white; box-shadow: 0 0 16px rgba(239,68,68,0.5); }
+        .c-best { background: #22c55e; color: white; box-shadow: 0 0 14px rgba(34,197,94,0.4); }
+        .c-current-palin { background: #8b5cf6; color: white; box-shadow: 0 0 14px rgba(139,92,246,0.3); }
+
+        /* Variables display */
+        .vars-section {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .var-box {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 20px;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .var-box .var-name {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .var-box .var-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* DP Table */
+        .dp-table-wrap {
+            overflow-x: auto;
+            margin-top: 16px;
+        }
+
+        .dp-table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        .dp-table th, .dp-table td {
+            width: 2.8rem;
+            height: 2.8rem;
+            text-align: center;
+            font-size: 0.75rem;
+            border: 1px solid #334155;
+            transition: all 0.35s ease;
+        }
+
+        .dp-table th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .dp-cell-true { background: #166534; color: #22c55e; font-weight: 700; }
+        .dp-cell-false { background: #1e293b; color: #475569; }
+        .dp-cell-current { background: #7c3aed; color: white; font-weight: 700; box-shadow: inset 0 0 12px rgba(139,92,246,0.5); }
+        .dp-cell-empty { background: #0f172a; color: #334155; }
+        .dp-cell-best { background: #15803d; color: #4ade80; font-weight: 700; box-shadow: inset 0 0 12px rgba(34,197,94,0.4); }
+
+        /* Result display */
+        .result-display {
+            text-align: center;
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: none;
+        }
+
+        .result-true {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid #22c55e;
+            color: #22c55e;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 16px; }
+            .header h1 { font-size: 1.4rem; }
+            .char-box { width: 2.8rem; height: 2.8rem; font-size: 1rem; }
+            .tab { padding: 8px 14px; font-size: 0.8rem; }
+            .dp-table th, .dp-table td { width: 2.2rem; height: 2.2rem; font-size: 0.65rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0005. Longest Palindromic Substring</h1>
+        <p>Find the longest palindromic substring in a string — 2 approaches</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab(0)">Expand Around Center</div>
+        <div class="tab" onclick="switchTab(1)">Dynamic Programming</div>
+    </div>
+
+    <div class="container">
+        <div class="input-section">
+            <label>s =</label>
+            <input type="text" id="strInput" value="babad" placeholder="Enter a string...">
+            <div class="preset-btns">
+                <button class="btn-preset" onclick="setPreset('babad')">babad</button>
+                <button class="btn-preset" onclick="setPreset('cbbd')">cbbd</button>
+                <button class="btn-preset" onclick="setPreset('a')">a</button>
+                <button class="btn-preset" onclick="setPreset('racecar')">racecar</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-play" id="btnPlay" onclick="play()">Play</button>
+            <button class="btn btn-pause" id="btnPause" onclick="pause()" style="display:none">Pause</button>
+            <button class="btn btn-step" onclick="step()">Step</button>
+            <button class="btn btn-reset" onclick="reset()">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <select id="speedSelect" onchange="updateSpeed()">
+                    <option value="2000">0.5x</option>
+                    <option value="1000" selected>1x</option>
+                    <option value="500">2x</option>
+                    <option value="250">4x</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="step-description" id="stepDesc">
+            Press "Play" or "Step" to start the animation.
+        </div>
+
+        <div class="viz-area" id="vizArea"></div>
+
+        <div class="result-display" id="resultDisplay"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        // State
+        // ============================================================
+        let currentTab = 0;
+        let steps = [];
+        let currentStep = -1;
+        let timer = null;
+        let speed = 1000;
+
+        // ============================================================
+        // Tab switching
+        // ============================================================
+        function switchTab(idx) {
+            currentTab = idx;
+            document.querySelectorAll('.tab').forEach((t, i) => {
+                t.classList.toggle('active', i === idx);
+            });
+            reset();
+        }
+
+        // ============================================================
+        // Presets
+        // ============================================================
+        function setPreset(val) {
+            document.getElementById('strInput').value = val;
+            reset();
+        }
+
+        // ============================================================
+        // Speed
+        // ============================================================
+        function updateSpeed() {
+            speed = parseInt(document.getElementById('speedSelect').value);
+        }
+
+        // ============================================================
+        // Controls
+        // ============================================================
+        function play() {
+            if (currentStep === -1) buildSteps();
+            if (currentStep >= steps.length - 1) return;
+            document.getElementById('btnPlay').style.display = 'none';
+            document.getElementById('btnPause').style.display = '';
+            timer = setInterval(() => {
+                if (currentStep >= steps.length - 1) {
+                    pause();
+                    return;
+                }
+                currentStep++;
+                renderStep();
+            }, speed);
+        }
+
+        function pause() {
+            clearInterval(timer);
+            timer = null;
+            document.getElementById('btnPlay').style.display = '';
+            document.getElementById('btnPause').style.display = 'none';
+        }
+
+        function step() {
+            if (currentStep === -1) buildSteps();
+            if (currentStep >= steps.length - 1) return;
+            pause();
+            currentStep++;
+            renderStep();
+        }
+
+        function reset() {
+            pause();
+            steps = [];
+            currentStep = -1;
+            document.getElementById('stepDesc').textContent = 'Press "Play" or "Step" to start the animation.';
+            document.getElementById('vizArea').innerHTML = '';
+            document.getElementById('resultDisplay').style.display = 'none';
+        }
+
+        // ============================================================
+        // Build steps for each approach
+        // ============================================================
+        function buildSteps() {
+            const s = document.getElementById('strInput').value;
+            if (!s || s.length === 0) {
+                document.getElementById('stepDesc').textContent = 'Please enter a valid string.';
+                return;
+            }
+            steps = [];
+            if (currentTab === 0) buildExpandSteps(s);
+            else buildDPSteps(s);
+        }
+
+        // ============================================================
+        // Approach 1: Expand Around Center
+        // ============================================================
+        function buildExpandSteps(s) {
+            const chars = s.split('');
+            const n = chars.length;
+            let bestStart = 0;
+            let bestEnd = 0;
+
+            steps.push({
+                desc: `Input: s = "${s}" (length ${n})\nWe try every possible center and expand outward while characters match.\nThere are ${2 * n - 1} possible centers (each character + each gap).`,
+                chars: chars,
+                highlights: {},
+                pointers: {},
+                bestStart: 0,
+                bestEnd: 0,
+                bestStr: chars[0]
+            });
+
+            for (let center = 0; center < 2 * n - 1; center++) {
+                let left, right;
+                if (center % 2 === 0) {
+                    // Odd-length palindrome centered at index center/2
+                    const ci = center / 2;
+                    left = ci;
+                    right = ci;
+
+                    steps.push({
+                        desc: `Center ${center}: single character "${chars[ci]}" at index ${ci}\nExpanding from center (odd-length palindrome)`,
+                        chars: chars,
+                        highlights: { [ci]: 'c-center' },
+                        pointers: { [ci]: 'C' },
+                        bestStart: bestStart,
+                        bestEnd: bestEnd,
+                        bestStr: s.substring(bestStart, bestEnd + 1)
+                    });
+                } else {
+                    // Even-length palindrome centered between index (center-1)/2 and (center+1)/2
+                    left = Math.floor(center / 2);
+                    right = left + 1;
+
+                    steps.push({
+                        desc: `Center ${center}: gap between index ${left} ("${chars[left]}") and ${right} ("${chars[right]}")\nExpanding from center (even-length palindrome)`,
+                        chars: chars,
+                        highlights: { [left]: 'c-left', [right]: 'c-right' },
+                        pointers: { [left]: 'L', [right]: 'R' },
+                        bestStart: bestStart,
+                        bestEnd: bestEnd,
+                        bestStr: s.substring(bestStart, bestEnd + 1)
+                    });
+
+                    // Check if the two center chars match
+                    if (chars[left] !== chars[right]) {
+                        steps.push({
+                            desc: `"${chars[left]}" != "${chars[right]}" — mismatch at center.\nNo palindrome here. Move to next center.`,
+                            chars: chars,
+                            highlights: { [left]: 'c-mismatch', [right]: 'c-mismatch' },
+                            pointers: { [left]: 'L', [right]: 'R' },
+                            bestStart: bestStart,
+                            bestEnd: bestEnd,
+                            bestStr: s.substring(bestStart, bestEnd + 1)
+                        });
+                        continue;
+                    }
+                }
+
+                // Expand outward
+                while (left >= 0 && right < n && chars[left] === chars[right]) {
+                    const palinStr = s.substring(left, right + 1);
+                    const hl = {};
+                    for (let k = left; k <= right; k++) hl[k] = 'c-current-palin';
+                    if (left !== right) {
+                        hl[left] = 'c-left';
+                        hl[right] = 'c-right';
+                    }
+
+                    steps.push({
+                        desc: `Expand: left=${left} ("${chars[left]}"), right=${right} ("${chars[right]}") — match!\nCurrent palindrome: "${palinStr}" (length ${right - left + 1})`,
+                        chars: chars,
+                        highlights: hl,
+                        pointers: buildPointers(left, right, center),
+                        bestStart: bestStart,
+                        bestEnd: bestEnd,
+                        bestStr: s.substring(bestStart, bestEnd + 1),
+                        currentPalin: { start: left, end: right }
+                    });
+
+                    // Update best
+                    if (right - left > bestEnd - bestStart) {
+                        bestStart = left;
+                        bestEnd = right;
+
+                        const bestHl = {};
+                        for (let k = bestStart; k <= bestEnd; k++) bestHl[k] = 'c-match';
+
+                        steps.push({
+                            desc: `New best palindrome found: "${s.substring(bestStart, bestEnd + 1)}" (length ${bestEnd - bestStart + 1})\nUpdated best: start=${bestStart}, end=${bestEnd}`,
+                            chars: chars,
+                            highlights: bestHl,
+                            pointers: {},
+                            bestStart: bestStart,
+                            bestEnd: bestEnd,
+                            bestStr: s.substring(bestStart, bestEnd + 1)
+                        });
+                    }
+
+                    left--;
+                    right++;
+                }
+
+                // Show mismatch or boundary
+                if (left >= 0 && right < n) {
+                    steps.push({
+                        desc: `Expand: left=${left} ("${chars[left]}"), right=${right} ("${chars[right]}") — mismatch!\nStop expanding this center.`,
+                        chars: chars,
+                        highlights: { [left]: 'c-mismatch', [right]: 'c-mismatch' },
+                        pointers: { [left]: 'L', [right]: 'R' },
+                        bestStart: bestStart,
+                        bestEnd: bestEnd,
+                        bestStr: s.substring(bestStart, bestEnd + 1)
+                    });
+                } else if (left < 0 || right >= n) {
+                    steps.push({
+                        desc: `Reached boundary (left=${left}, right=${right}).\nStop expanding this center.`,
+                        chars: chars,
+                        highlights: {},
+                        pointers: {},
+                        bestStart: bestStart,
+                        bestEnd: bestEnd,
+                        bestStr: s.substring(bestStart, bestEnd + 1)
+                    });
+                }
+            }
+
+            // Final result
+            const resultHl = {};
+            for (let k = bestStart; k <= bestEnd; k++) resultHl[k] = 'c-match';
+
+            steps.push({
+                desc: `All centers checked!\nLongest palindromic substring: "${s.substring(bestStart, bestEnd + 1)}" (length ${bestEnd - bestStart + 1})`,
+                chars: chars,
+                highlights: resultHl,
+                pointers: {},
+                bestStart: bestStart,
+                bestEnd: bestEnd,
+                bestStr: s.substring(bestStart, bestEnd + 1),
+                result: s.substring(bestStart, bestEnd + 1)
+            });
+        }
+
+        function buildPointers(left, right, center) {
+            const ptrs = {};
+            if (left === right) {
+                ptrs[left] = 'C';
+            } else {
+                ptrs[left] = 'L';
+                ptrs[right] = 'R';
+            }
+            return ptrs;
+        }
+
+        // ============================================================
+        // Approach 2: Dynamic Programming
+        // ============================================================
+        function buildDPSteps(s) {
+            const chars = s.split('');
+            const n = chars.length;
+
+            // Initialize DP table
+            const dp = [];
+            for (let i = 0; i < n; i++) {
+                dp[i] = new Array(n).fill(false);
+            }
+
+            let bestStart = 0;
+            let bestEnd = 0;
+
+            steps.push({
+                desc: `Input: s = "${s}" (length ${n})\nDP approach: dp[i][j] = true if s[i..j] is a palindrome.\nWe fill the table for increasing substring lengths.`,
+                chars: chars,
+                dp: deepCopyDP(dp),
+                highlights: {},
+                currentCell: null,
+                bestStart: 0,
+                bestEnd: 0,
+                bestStr: chars[0]
+            });
+
+            // Length 1: all single characters are palindromes
+            for (let i = 0; i < n; i++) {
+                dp[i][i] = true;
+            }
+
+            steps.push({
+                desc: `Length 1: Every single character is a palindrome.\nSet dp[i][i] = true for all i.`,
+                chars: chars,
+                dp: deepCopyDP(dp),
+                highlights: {},
+                currentCell: null,
+                bestStart: 0,
+                bestEnd: 0,
+                bestStr: chars[0],
+                highlightDiag: true
+            });
+
+            // Length 2
+            for (let i = 0; i < n - 1; i++) {
+                if (chars[i] === chars[i + 1]) {
+                    dp[i][i + 1] = true;
+                    if (1 > bestEnd - bestStart) {
+                        bestStart = i;
+                        bestEnd = i + 1;
+                    }
+
+                    steps.push({
+                        desc: `Length 2: s[${i}]="${chars[i]}", s[${i + 1}]="${chars[i + 1]}" — match!\ndp[${i}][${i + 1}] = true\nPalindrome: "${s.substring(i, i + 2)}"`,
+                        chars: chars,
+                        dp: deepCopyDP(dp),
+                        highlights: { [i]: 'c-match', [i + 1]: 'c-match' },
+                        currentCell: { r: i, c: i + 1 },
+                        bestStart: bestStart,
+                        bestEnd: bestEnd,
+                        bestStr: s.substring(bestStart, bestEnd + 1)
+                    });
+                } else {
+                    steps.push({
+                        desc: `Length 2: s[${i}]="${chars[i]}", s[${i + 1}]="${chars[i + 1]}" — no match.\ndp[${i}][${i + 1}] = false`,
+                        chars: chars,
+                        dp: deepCopyDP(dp),
+                        highlights: { [i]: 'c-mismatch', [i + 1]: 'c-mismatch' },
+                        currentCell: { r: i, c: i + 1 },
+                        bestStart: bestStart,
+                        bestEnd: bestEnd,
+                        bestStr: s.substring(bestStart, bestEnd + 1)
+                    });
+                }
+            }
+
+            // Length 3+
+            for (let len = 3; len <= n; len++) {
+                for (let i = 0; i <= n - len; i++) {
+                    const j = i + len - 1;
+
+                    const outerMatch = chars[i] === chars[j];
+                    const innerPalin = dp[i + 1][j - 1];
+
+                    if (outerMatch && innerPalin) {
+                        dp[i][j] = true;
+                        if (j - i > bestEnd - bestStart) {
+                            bestStart = i;
+                            bestEnd = j;
+                        }
+
+                        const hl = {};
+                        for (let k = i; k <= j; k++) hl[k] = 'c-match';
+
+                        steps.push({
+                            desc: `Length ${len}: s[${i}]="${chars[i]}", s[${j}]="${chars[j]}" — outer match!\ndp[${i + 1}][${j - 1}] = true (inner is palindrome)\ndp[${i}][${j}] = true | Palindrome: "${s.substring(i, j + 1)}"`,
+                            chars: chars,
+                            dp: deepCopyDP(dp),
+                            highlights: hl,
+                            currentCell: { r: i, c: j },
+                            bestStart: bestStart,
+                            bestEnd: bestEnd,
+                            bestStr: s.substring(bestStart, bestEnd + 1),
+                            innerCell: { r: i + 1, c: j - 1 }
+                        });
+                    } else {
+                        dp[i][j] = false;
+
+                        let reason;
+                        if (!outerMatch) {
+                            reason = `s[${i}]="${chars[i]}" != s[${j}]="${chars[j]}" — outer mismatch`;
+                        } else {
+                            reason = `s[${i}]="${chars[i]}" == s[${j}]="${chars[j]}" but dp[${i + 1}][${j - 1}] = false`;
+                        }
+
+                        steps.push({
+                            desc: `Length ${len}: ${reason}\ndp[${i}][${j}] = false`,
+                            chars: chars,
+                            dp: deepCopyDP(dp),
+                            highlights: { [i]: outerMatch ? 'c-left' : 'c-mismatch', [j]: outerMatch ? 'c-right' : 'c-mismatch' },
+                            currentCell: { r: i, c: j },
+                            bestStart: bestStart,
+                            bestEnd: bestEnd,
+                            bestStr: s.substring(bestStart, bestEnd + 1)
+                        });
+                    }
+                }
+            }
+
+            // Final result
+            const resultHl = {};
+            for (let k = bestStart; k <= bestEnd; k++) resultHl[k] = 'c-match';
+
+            steps.push({
+                desc: `DP table complete!\nLongest palindromic substring: "${s.substring(bestStart, bestEnd + 1)}" (length ${bestEnd - bestStart + 1})`,
+                chars: chars,
+                dp: deepCopyDP(dp),
+                highlights: resultHl,
+                currentCell: null,
+                bestStart: bestStart,
+                bestEnd: bestEnd,
+                bestStr: s.substring(bestStart, bestEnd + 1),
+                result: s.substring(bestStart, bestEnd + 1)
+            });
+        }
+
+        function deepCopyDP(dp) {
+            return dp.map(row => [...row]);
+        }
+
+        // ============================================================
+        // Render current step
+        // ============================================================
+        function renderStep() {
+            if (currentStep < 0 || currentStep >= steps.length) return;
+            const s = steps[currentStep];
+            document.getElementById('stepDesc').textContent = s.desc;
+
+            const viz = document.getElementById('vizArea');
+            const resultEl = document.getElementById('resultDisplay');
+
+            if (currentTab === 0) renderExpandStep(viz, s);
+            else renderDPStep(viz, s);
+
+            // Show result
+            if (s.result !== undefined) {
+                resultEl.style.display = 'block';
+                resultEl.className = 'result-display result-true';
+                resultEl.textContent = 'Result: "' + s.result + '"';
+            } else {
+                resultEl.style.display = 'none';
+            }
+        }
+
+        // ============================================================
+        // Render: Expand Around Center
+        // ============================================================
+        function renderExpandStep(viz, s) {
+            let html = '<div class="section-label">Character Array</div>';
+            html += '<div class="char-row">';
+
+            for (let i = 0; i < s.chars.length; i++) {
+                let cls = 'c-default';
+                if (s.highlights && s.highlights[i]) cls = s.highlights[i];
+
+                const ptr = (s.pointers && s.pointers[i]) || '';
+                let ptrColor = '#64748b';
+                if (ptr === 'L') ptrColor = '#3b82f6';
+                else if (ptr === 'R') ptrColor = '#f59e0b';
+                else if (ptr === 'C') ptrColor = '#8b5cf6';
+
+                html += `<div class="char-cell">
+                    <div class="char-ptr" style="color:${ptrColor}">${ptr}</div>
+                    <div class="char-box ${cls}">${s.chars[i]}</div>
+                    <div class="char-idx">[${i}]</div>
+                </div>`;
+            }
+
+            html += '</div>';
+
+            // Best palindrome display
+            html += '<div class="vars-section">';
+            html += `<div class="var-box">
+                <div class="var-name">Best Palindrome</div>
+                <div class="var-value" style="color:#22c55e; font-size:1.2rem;">"${s.bestStr}"</div>
+            </div>`;
+            html += `<div class="var-box">
+                <div class="var-name">Best Length</div>
+                <div class="var-value" style="color:#22c55e;">${s.bestEnd - s.bestStart + 1}</div>
+            </div>`;
+            html += `<div class="var-box">
+                <div class="var-name">Range</div>
+                <div class="var-value" style="color:#a78bfa;">[${s.bestStart}, ${s.bestEnd}]</div>
+            </div>`;
+            html += '</div>';
+
+            // Show best palindrome chars highlighted below
+            if (s.bestEnd > s.bestStart || s.result) {
+                html += '<div style="margin-top:20px"><div class="section-label">Best Palindrome Found</div>';
+                html += '<div class="char-row">';
+                for (let i = s.bestStart; i <= s.bestEnd; i++) {
+                    html += `<div class="char-cell">
+                        <div class="char-box c-best">${s.chars[i]}</div>
+                        <div class="char-idx">[${i}]</div>
+                    </div>`;
+                }
+                html += '</div></div>';
+            }
+
+            viz.innerHTML = html;
+        }
+
+        // ============================================================
+        // Render: Dynamic Programming
+        // ============================================================
+        function renderDPStep(viz, s) {
+            const n = s.chars.length;
+
+            let html = '<div class="section-label">Character Array</div>';
+            html += '<div class="char-row">';
+
+            for (let i = 0; i < n; i++) {
+                let cls = 'c-default';
+                if (s.highlights && s.highlights[i]) cls = s.highlights[i];
+
+                html += `<div class="char-cell">
+                    <div class="char-box ${cls}">${s.chars[i]}</div>
+                    <div class="char-idx">[${i}]</div>
+                </div>`;
+            }
+            html += '</div>';
+
+            // DP Table
+            if (s.dp) {
+                html += '<div style="margin-top:20px"><div class="section-label">DP Table — dp[i][j] = is s[i..j] a palindrome?</div>';
+                html += '<div class="dp-table-wrap"><table class="dp-table">';
+
+                // Header row
+                html += '<tr><th>i\\j</th>';
+                for (let j = 0; j < n; j++) {
+                    html += `<th>${s.chars[j]}<br><span style="color:#475569">${j}</span></th>`;
+                }
+                html += '</tr>';
+
+                for (let i = 0; i < n; i++) {
+                    html += `<tr><th>${s.chars[i]}<br><span style="color:#475569">${i}</span></th>`;
+                    for (let j = 0; j < n; j++) {
+                        if (j < i) {
+                            html += '<td class="dp-cell-empty">-</td>';
+                        } else {
+                            let cellCls = 'dp-cell-empty';
+                            let cellVal = '-';
+
+                            if (s.dp[i][j] === true || s.dp[i][j] === false) {
+                                cellCls = s.dp[i][j] ? 'dp-cell-true' : 'dp-cell-false';
+                                cellVal = s.dp[i][j] ? 'T' : 'F';
+                            }
+
+                            // Highlight current cell being evaluated
+                            if (s.currentCell && s.currentCell.r === i && s.currentCell.c === j) {
+                                cellCls = 'dp-cell-current';
+                            }
+
+                            // Highlight inner cell reference
+                            if (s.innerCell && s.innerCell.r === i && s.innerCell.c === j) {
+                                cellCls = 'dp-cell-best';
+                            }
+
+                            // Highlight diagonal for length-1 step
+                            if (s.highlightDiag && i === j) {
+                                cellCls = 'dp-cell-best';
+                            }
+
+                            // Highlight best palindrome cells in final step
+                            if (s.result && s.dp[i][j] === true && i === s.bestStart && j === s.bestEnd) {
+                                cellCls = 'dp-cell-best';
+                            }
+
+                            html += `<td class="${cellCls}">${cellVal}</td>`;
+                        }
+                    }
+                    html += '</tr>';
+                }
+
+                html += '</table></div></div>';
+            }
+
+            // Variables
+            html += '<div class="vars-section">';
+            html += `<div class="var-box">
+                <div class="var-name">Best Palindrome</div>
+                <div class="var-value" style="color:#22c55e; font-size:1.2rem;">"${s.bestStr}"</div>
+            </div>`;
+            html += `<div class="var-box">
+                <div class="var-name">Best Length</div>
+                <div class="var-value" style="color:#22c55e;">${s.bestEnd - s.bestStart + 1}</div>
+            </div>`;
+            html += `<div class="var-box">
+                <div class="var-name">Range</div>
+                <div class="var-value" style="color:#a78bfa;">[${s.bestStart}, ${s.bestEnd}]</div>
+            </div>`;
+            html += '</div>';
+
+            viz.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

@@ -502,18 +502,18 @@
             <button class="btn btn-step" onclick="stepForward()">&#9197; Step</button>
             <button class="btn btn-reset" onclick="reset()">&#8634; Reset</button>
             <div class="speed-control">
-                <label>Tezlik:</label>
+                <label>Speed:</label>
                 <select id="speed" onchange="updateSpeed()">
-                    <option value="2000">Sekin</option>
+                    <option value="2000">Slow</option>
                     <option value="1000" selected>Normal</option>
-                    <option value="500">Tez</option>
-                    <option value="200">Juda tez</option>
+                    <option value="500">Fast</option>
+                    <option value="200">Very Fast</option>
                 </select>
             </div>
         </div>
 
         <div class="step-description" id="stepDesc">
-            &#9654; "Play" bosing yoki "Step" bilan qadam-baqadam ko'ring.
+            &#9654; Press "Play" or use "Step" to walk through step by step.
         </div>
 
         <div class="viz-area" id="vizArea"></div>
@@ -524,7 +524,7 @@
                 <div class="value" id="stepCounter">0 / 0</div>
             </div>
             <div class="info-box">
-                <h3>Operatsiyalar</h3>
+                <h3>Operations</h3>
                 <div class="value" id="opsCounter">0</div>
             </div>
             <div class="info-box">
@@ -600,7 +600,7 @@ function generateRandom() {
     const size = parseInt(document.getElementById('genSize').value);
     const range = parseInt(document.getElementById('genRange').value);
 
-    // Random massiv yaratish
+    // Generate random array
     const arr = [];
     const usedValues = new Set();
     for (let i = 0; i < size; i++) {
@@ -612,8 +612,8 @@ function generateRandom() {
         arr.push(val);
     }
 
-    // Random ikkita indeks tanlab, ularning yig'indisini target qilish
-    // Bu har doim yechim mavjud bo'lishini kafolatlaydi
+    // Pick two random indices and set their sum as the target
+    // This guarantees a solution always exists
     const idx1 = Math.floor(Math.random() * size);
     let idx2;
     do {
@@ -622,13 +622,13 @@ function generateRandom() {
 
     const newTarget = arr[idx1] + arr[idx2];
 
-    // UI ni yangilash
+    // Update UI
     nums = arr;
     target = newTarget;
     document.getElementById('arrInput').value = nums.join(',');
     document.getElementById('targetInput').value = target;
 
-    // Animatsiyani qayta boshlash
+    // Restart animation
     reset();
     generateSteps();
     renderStep();
@@ -709,7 +709,7 @@ function generateBrute() {
     // Initial
     steps.push({
         arr: [...nums], hl: {}, ptrs: {},
-        desc: `Massiv: [${nums}], target = ${target}\nBrute Force: har bir juftlikni tekshiramiz (nested loop)`,
+        desc: `Array: [${nums}], target = ${target}\nBrute Force: check every pair (nested loop)`,
         ops: 0, hashmap: null,
         time: 'O(n\u00B2)', space: 'O(1)'
     });
@@ -720,7 +720,7 @@ function generateBrute() {
             arr: [...nums],
             hl: {[i]: 'active'},
             ptrs: {[i]: {label: 'i', cls: 'ptr-i'}},
-            desc: `i = ${i}, nums[${i}] = ${nums[i]}\nIchki loop boshlanadi: j = ${i+1} dan ${n-1} gacha`,
+            desc: `i = ${i}, nums[${i}] = ${nums[i]}\nInner loop starts: j = ${i+1} to ${n-1}`,
             ops, hashmap: null,
             time: 'O(n\u00B2)', space: 'O(1)',
             calc: null
@@ -736,7 +736,7 @@ function generateBrute() {
                 hl: {[i]: found ? 'found' : 'active', [j]: found ? 'found' : 'comparing'},
                 ptrs: {[i]: {label: 'i', cls: 'ptr-i'}, [j]: {label: 'j', cls: 'ptr-j'}},
                 desc: found
-                    ? `nums[${i}] + nums[${j}] = ${nums[i]} + ${nums[j]} = ${sum} == ${target} \u2705 TOPILDI!\nJavob: [${i}, ${j}]`
+                    ? `nums[${i}] + nums[${j}] = ${nums[i]} + ${nums[j]} = ${sum} == ${target} \u2705 FOUND!\nAnswer: [${i}, ${j}]`
                     : `nums[${i}] + nums[${j}] = ${nums[i]} + ${nums[j]} = ${sum} \u2260 ${target} \u274C`,
                 ops, hashmap: null,
                 time: 'O(n\u00B2)', space: 'O(1)',
@@ -755,7 +755,7 @@ function generateHashMap() {
 
     steps.push({
         arr: [...nums], hl: {}, ptrs: {},
-        desc: `Massiv: [${nums}], target = ${target}\nOne-pass Hash Map: har bir element uchun complement ni qidiramiz`,
+        desc: `Array: [${nums}], target = ${target}\nOne-pass Hash Map: search for complement of each element`,
         ops: 0, hashmap: {}, time: 'O(n)', space: 'O(n)', calc: null
     });
 
@@ -770,7 +770,7 @@ function generateHashMap() {
                 arr: [...nums],
                 hl: {[j]: 'found', [i]: 'found'},
                 ptrs: {[i]: {label: 'i', cls: 'ptr-i'}},
-                desc: `i = ${i}, nums[${i}] = ${nums[i]}, complement = ${target} - ${nums[i]} = ${complement}\ncomplement ${complement} Hash Map da BOR! index = ${j} \u2705 TOPILDI!\nJavob: [${j}, ${i}]`,
+                desc: `i = ${i}, nums[${i}] = ${nums[i]}, complement = ${target} - ${nums[i]} = ${complement}\ncomplement ${complement} EXISTS in Hash Map! index = ${j} \u2705 FOUND!\nAnswer: [${j}, ${i}]`,
                 ops, hashmap: {...seen, ['_hl']: complement},
                 time: 'O(n)', space: 'O(n)',
                 calc: { a: nums[j], b: nums[i], sum: target, found: true }
@@ -783,7 +783,7 @@ function generateHashMap() {
             arr: [...nums],
             hl: {[i]: 'active'},
             ptrs: {[i]: {label: 'i', cls: 'ptr-i'}},
-            desc: `i = ${i}, nums[${i}] = ${nums[i]}, complement = ${target} - ${nums[i]} = ${complement}\ncomplement ${complement} Hash Map da yo'q \u274C\n\u2192 nums[${i}] = ${nums[i]} ni Hash Map ga qo'shamiz (key: ${nums[i]}, value: ${i})`,
+            desc: `i = ${i}, nums[${i}] = ${nums[i]}, complement = ${target} - ${nums[i]} = ${complement}\ncomplement ${complement} NOT in Hash Map \u274C\n\u2192 add nums[${i}] = ${nums[i]} to Hash Map (key: ${nums[i]}, value: ${i})`,
             ops, hashmap: {...seen, ['_new']: nums[i]},
             time: 'O(n)', space: 'O(n)',
             calc: { a: nums[i], complement, found: false }
@@ -796,7 +796,7 @@ function generateHashMap() {
             arr: [...nums],
             hl: {[i]: 'visited'},
             ptrs: {[i]: {label: 'i', cls: 'ptr-i'}},
-            desc: `Hash Map yangilandi: {${Object.entries(seen).map(([k,v]) => k+':'+v).join(', ')}}\nKeyingi elementga o'tamiz...`,
+            desc: `Hash Map updated: {${Object.entries(seen).map(([k,v]) => k+':'+v).join(', ')}}\nMoving to next element...`,
             ops, hashmap: {...seen},
             time: 'O(n)', space: 'O(n)',
             calc: null
@@ -814,14 +814,14 @@ function generateTwoPointers() {
 
     steps.push({
         arr: [...nums], hl: {}, ptrs: {},
-        desc: `Original: [${nums}], target = ${target}\nAvval sort qilamiz, keyin Two Pointers ishlatamiz`,
+        desc: `Original: [${nums}], target = ${target}\nFirst sort the array, then use Two Pointers`,
         ops: 0, hashmap: null, isSorted: false,
         time: 'O(n log n)', space: 'O(n)', calc: null
     });
 
     steps.push({
         arr: sortedVals, hl: {}, ptrs: {},
-        desc: `Sorted: [${sortedVals}]\nOriginal indekslar: [${sorted.map(s => s.idx)}]\nleft = 0, right = ${n-1}`,
+        desc: `Sorted: [${sortedVals}]\nOriginal indices: [${sorted.map(s => s.idx)}]\nleft = 0, right = ${n-1}`,
         ops: 0, hashmap: null, isSorted: true,
         time: 'O(n log n)', space: 'O(n)', calc: null,
         origIdx: sorted.map(s => s.idx)
@@ -837,7 +837,7 @@ function generateTwoPointers() {
         let desc, nextAction;
         if (found) {
             const oi = sorted[left].idx, oj = sorted[right].idx;
-            desc = `left=${left} (val=${sorted[left].val}), right=${right} (val=${sorted[right].val})\nsum = ${sorted[left].val} + ${sorted[right].val} = ${sum} == ${target} \u2705 TOPILDI!\nOriginal indekslar: [${Math.min(oi,oj)}, ${Math.max(oi,oj)}]`;
+            desc = `left=${left} (val=${sorted[left].val}), right=${right} (val=${sorted[right].val})\nsum = ${sorted[left].val} + ${sorted[right].val} = ${sum} == ${target} \u2705 FOUND!\nOriginal indices: [${Math.min(oi,oj)}, ${Math.max(oi,oj)}]`;
         } else if (sum < target) {
             desc = `left=${left} (val=${sorted[left].val}), right=${right} (val=${sorted[right].val})\nsum = ${sorted[left].val} + ${sorted[right].val} = ${sum} < ${target} \u2192 left++`;
         } else {
@@ -890,7 +890,7 @@ function generateCompare() {
 
     steps.push({
         type: 'compare',
-        desc: `Massiv: [${nums}] (${n} ta element), target = ${target}\n\nBrute Force: ${bruteOps} operatsiya (worst case: ${bruteWorst})\nHash Map:    ${hashOps} operatsiya (worst case: ${hashWorst})\n\nHash Map ${bruteOps > hashOps ? Math.round(bruteOps/hashOps) + 'x' : ''} tez!`,
+        desc: `Array: [${nums}] (${n} elements), target = ${target}\n\nBrute Force: ${bruteOps} operations (worst case: ${bruteWorst})\nHash Map:    ${hashOps} operations (worst case: ${hashWorst})\n\nHash Map ${bruteOps > hashOps ? Math.round(bruteOps/hashOps) + 'x' : ''} faster!`,
         bruteOps, hashOps, bruteWorst, hashWorst, n,
         ops: 0
     });
@@ -901,7 +901,7 @@ function generateCompare() {
 // ============================================================
 function renderStep() {
     if (steps.length === 0) return;
-    // Qadam o'zgargan sari localStorage ga saqlaymiz
+    // Save state to localStorage on each step change
     saveState();
     const step = steps[currentStep];
 
@@ -921,7 +921,7 @@ function renderStep() {
     let html = '';
 
     // Array
-    html += '<div class="section-label">Massiv</div>';
+    html += '<div class="section-label">Array</div>';
     html += '<div class="array-container">';
     step.arr.forEach((val, idx) => {
         const cls = step.hl[idx] || 'default';
@@ -945,7 +945,7 @@ function renderStep() {
                 : `<span class="result result-no"> \u2260 ${target} \u274C</span>`;
         } else if (step.calc.complement !== undefined) {
             html += `<span class="formula">complement = ${target} - ${step.calc.a} = ${step.calc.complement}</span>`;
-            html += `<span class="result result-no"> Hash Map da yo'q</span>`;
+            html += `<span class="result result-no"> not in Hash Map</span>`;
         }
         html += '</div>';
     }
@@ -956,11 +956,11 @@ function renderStep() {
         const newKey = hm['_new'];
         const hlKey = hm['_hl'];
         html += '<div class="hashmap-container">';
-        html += '<div class="section-label">Hash Map (key: qiymat \u2192 value: indeks)</div>';
+        html += '<div class="section-label">Hash Map (key: value \u2192 value: index)</div>';
         html += '<div class="hashmap-grid">';
         const entries = Object.entries(hm).filter(([k]) => k !== '_new' && k !== '_hl');
         if (entries.length === 0) {
-            html += '<div style="color:#475569;font-style:italic;">{ bo\'sh }</div>';
+            html += '<div style="color:#475569;font-style:italic;">{ empty }</div>';
         }
         entries.forEach(([key, val]) => {
             const isNew = parseInt(key) === newKey;
@@ -990,7 +990,7 @@ function renderCompare(viz, step) {
                 <h3>Brute Force</h3>
                 <div style="color:#64748b;text-align:center;font-size:0.85rem;">O(n\u00B2)</div>
                 <div class="compare-ops ops-brute">${step.bruteOps}</div>
-                <div style="text-align:center;color:#94a3b8;font-size:0.85rem;">operatsiya</div>
+                <div style="text-align:center;color:#94a3b8;font-size:0.85rem;">operations</div>
                 <div style="background:#1e293b;border-radius:6px;height:24px;margin-top:12px;overflow:hidden;">
                     <div class="compare-bar bar-brute" style="width:${Math.max(bruteW, 5)}%;height:100%;"></div>
                 </div>
@@ -1000,7 +1000,7 @@ function renderCompare(viz, step) {
                 <h3>Hash Map</h3>
                 <div style="color:#64748b;text-align:center;font-size:0.85rem;">O(n)</div>
                 <div class="compare-ops ops-optimal">${step.hashOps}</div>
-                <div style="text-align:center;color:#94a3b8;font-size:0.85rem;">operatsiya</div>
+                <div style="text-align:center;color:#94a3b8;font-size:0.85rem;">operations</div>
                 <div style="background:#1e293b;border-radius:6px;height:24px;margin-top:12px;overflow:hidden;">
                     <div class="compare-bar bar-optimal" style="width:${Math.max(hashW, 5)}%;height:100%;"></div>
                 </div>
@@ -1010,8 +1010,8 @@ function renderCompare(viz, step) {
         <div style="text-align:center;margin-top:20px;padding:16px;background:#0f172a;border-radius:8px;">
             <div style="font-size:1.2rem;font-weight:700;">
                 ${step.bruteOps > step.hashOps
-                    ? `Hash Map <span style="color:#22c55e">${Math.round(step.bruteOps/step.hashOps)}x</span> tez!`
-                    : `Bu input uchun deyarli teng`}
+                    ? `Hash Map <span style="color:#22c55e">${Math.round(step.bruteOps/step.hashOps)}x</span> faster!`
+                    : `Nearly equal for this input`}
             </div>
             <div style="color:#94a3b8;margin-top:8px;font-size:0.85rem;">
                 n = ${step.n} | Brute worst = n(n-1)/2 = ${step.bruteWorst} | Hash worst = n = ${step.hashWorst}
@@ -1021,25 +1021,25 @@ function renderCompare(viz, step) {
 }
 
 // ============================================================
-// INIT — localStorage dan state ni tiklash
+// INIT — restore state from localStorage
 // ============================================================
 
-// Input maydonlarini tiklash
+// Restore input fields
 document.getElementById('arrInput').value = nums.join(',');
 document.getElementById('targetInput').value = target;
 
-// Speed selectni tiklash
+// Restore speed select
 document.getElementById('speed').value = speed;
 
-// Aktiv tab ni tiklash
+// Restore active tab
 document.querySelectorAll('.tab').forEach(t => {
     t.classList.toggle('active', t.dataset.tab === currentTab);
 });
 
-// Steps generatsiya va renderStep
+// Generate steps and render
 generateSteps();
 
-// currentStep chegaradan chiqib ketmasin
+// Ensure currentStep stays within bounds
 if (currentStep >= steps.length) currentStep = 0;
 
 renderStep();

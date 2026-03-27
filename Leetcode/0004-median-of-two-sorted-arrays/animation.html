@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0004. Median of Two Sorted Arrays — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        #nums1Input { width: 180px; }
+        #nums2Input { width: 180px; }
+
+        .btn-apply { background: #8b5cf6; color: white; }
+        .btn-apply:hover { background: #7c3aed; }
+
+        /* PRESET EXAMPLES */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 5px 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-family: 'Courier New', monospace;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover { border-color: #60a5fa; color: #60a5fa; }
+        .preset-btn.active { border-color: #3b82f6; color: #3b82f6; background: #1e293b; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-pause:hover { background: #dc2626; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-reset:hover { background: #4b5563; }
+
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select {
+            padding: 6px 10px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        /* STEP DESCRIPTION */
+        .step-description {
+            background: #0f172a;
+            border-left: 3px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 50px;
+            white-space: pre-line;
+        }
+
+        /* VIZ AREA */
+        .viz-area {
+            min-height: 200px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        /* ARRAY */
+        .array-container {
+            display: flex;
+            gap: 6px;
+            justify-content: flex-start;
+            flex-wrap: nowrap;
+            margin-bottom: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .array-container::-webkit-scrollbar { height: 6px; }
+        .array-container::-webkit-scrollbar-track { background: #1e293b; border-radius: 3px; }
+        .array-container::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+        .array-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .array-element {
+            width: 3.5rem;
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            transition: all 0.35s ease;
+            position: relative;
+        }
+
+        .idx-label { font-size: 0.7rem; color: #475569; }
+        .ptr-label { font-size: 0.75rem; font-weight: 700; min-height: 18px; }
+
+        /* Colors */
+        .el-default { background: #334155; color: #e2e8f0; }
+        .el-left { background: #3b82f6; color: white; box-shadow: 0 0 12px rgba(59,130,246,0.4); }
+        .el-right { background: #f59e0b; color: #0f172a; box-shadow: 0 0 12px rgba(245,158,11,0.4); }
+        .el-median { background: #22c55e; color: white; box-shadow: 0 0 20px rgba(34,197,94,0.6); transform: scale(1.15); }
+        .el-compare { background: #a78bfa; color: white; box-shadow: 0 0 16px rgba(167,139,250,0.5); }
+        .el-merged { background: #6366f1; color: white; }
+        .el-inactive { background: #1e293b; color: #475569; opacity: 0.5; }
+        .el-current { background: #3b82f6; color: white; box-shadow: 0 0 16px rgba(59,130,246,0.5); transform: scale(1.08); }
+
+        .ptr-low { color: #22c55e; }
+        .ptr-high { color: #ef4444; }
+        .ptr-mid { color: #f59e0b; }
+        .ptr-i { color: #3b82f6; }
+        .ptr-j { color: #a78bfa; }
+
+        /* PARTITION LINE */
+        .partition-marker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .partition-line {
+            width: 4px;
+            height: 3.5rem;
+            background: #ef4444;
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(239,68,68,0.5);
+        }
+
+        .partition-label {
+            font-size: 0.7rem;
+            color: #ef4444;
+            font-weight: 700;
+            min-height: 18px;
+        }
+
+        /* INFO PANEL */
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .info-box h3 {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .info-box .value { font-size: 1.1rem; font-weight: 700; }
+
+        /* RESULT BOX */
+        .result-box {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            text-align: center;
+            font-size: 1.1rem;
+            border: 1px solid #334155;
+        }
+
+        .result-box .label-text { color: #94a3b8; }
+        .result-box .result-value { font-weight: 700; margin-left: 8px; color: #22c55e; }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .container { padding: 16px; }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header h1 { font-size: 1.4rem; }
+            .header { margin-bottom: 16px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .container { padding: 14px; }
+            .tab { padding: 8px 14px; font-size: 0.8rem; }
+            .btn { padding: 7px 12px; font-size: 0.8rem; }
+            .input-section { gap: 6px; }
+            #nums1Input, #nums2Input { width: 140px; }
+            .input-section input { padding: 6px 10px; font-size: 0.8rem; }
+            .array-element { width: 2.8rem; height: 2.8rem; font-size: 1rem; border-radius: 8px; }
+            .step-description { padding: 10px 12px; font-size: 0.82rem; }
+            .viz-area { padding: 14px; }
+            .partition-line { height: 2.8rem; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 6px; }
+            .header h1 { font-size: 1.1rem; }
+            .header p { font-size: 0.8rem; }
+            .header { margin-bottom: 10px; }
+            .tabs { gap: 2px; margin-bottom: 12px; }
+            .tab { padding: 6px 10px; font-size: 0.72rem; }
+            .container { padding: 10px; border-radius: 8px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .info-box { padding: 8px; }
+            .info-box h3 { font-size: 0.6rem; }
+            .info-box .value { font-size: 0.9rem; }
+            .input-section { flex-direction: column; align-items: stretch; }
+            .input-section input { width: 100%; }
+            #nums1Input, #nums2Input { width: 100%; }
+            .controls { gap: 6px; }
+            .btn { padding: 6px 10px; font-size: 0.75rem; }
+            .speed-control { width: 100%; justify-content: center; }
+            .step-description { padding: 8px 10px; font-size: 0.78rem; min-height: 40px; }
+            .viz-area { padding: 10px; min-height: 150px; }
+            .array-element { width: 2.4rem; height: 2.4rem; font-size: 0.85rem; border-radius: 6px; }
+            .idx-label { font-size: 0.6rem; }
+            .ptr-label { font-size: 0.65rem; }
+            .array-container { gap: 4px; }
+            .partition-line { height: 2.4rem; }
+            .result-box { padding: 8px 12px; font-size: 0.9rem; }
+            .legend { gap: 8px; margin-top: 10px; }
+            .legend-item { font-size: 0.7rem; gap: 4px; }
+            .legend-color { width: 12px; height: 12px; }
+            .presets { gap: 4px; }
+            .preset-btn { padding: 4px 8px; font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>0004. Median of Two Sorted Arrays</h1>
+        <p>Hard — Array, Binary Search, Divide and Conquer</p>
+    </div>
+
+    <div class="tabs" id="tabs">
+        <div class="tab active" data-tab="merge">Merge & Find</div>
+        <div class="tab" data-tab="binary">Binary Search (Optimal)</div>
+    </div>
+
+    <div class="container">
+        <div class="input-section">
+            <label>nums1:</label>
+            <input type="text" id="nums1Input" placeholder="1,3" value="1,3">
+            <label>nums2:</label>
+            <input type="text" id="nums2Input" placeholder="2" value="2">
+            <button class="btn btn-apply" onclick="applyInput()">Apply</button>
+        </div>
+
+        <div class="presets">
+            <button class="preset-btn active" onclick="setPreset(0)">[1,3] + [2] = 2.0</button>
+            <button class="preset-btn" onclick="setPreset(1)">[1,2] + [3,4] = 2.5</button>
+            <button class="preset-btn" onclick="setPreset(2)">[0,0] + [0,0] = 0.0</button>
+            <button class="preset-btn" onclick="setPreset(3)">[1,3,5,7] + [2,4,6,8] = 4.5</button>
+            <button class="preset-btn" onclick="setPreset(4)">[2] + [] = 2.0</button>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-play" onclick="play()">&#9654; Play</button>
+            <button class="btn btn-pause" onclick="pause()">&#9646;&#9646; Pause</button>
+            <button class="btn btn-step" onclick="stepForward()">&#9197; Step</button>
+            <button class="btn btn-reset" onclick="reset()">&#8634; Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <select id="speed" onchange="updateSpeed()">
+                    <option value="2000">Slow</option>
+                    <option value="1000" selected>Normal</option>
+                    <option value="500">Fast</option>
+                    <option value="200">Very Fast</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="step-description" id="stepDesc">
+            &#9654; Press "Play" or use "Step" to walk through step by step.
+        </div>
+
+        <div class="viz-area" id="vizArea"></div>
+
+        <div class="info-panel">
+            <div class="info-box">
+                <h3>Step</h3>
+                <div class="value" id="stepCounter">0 / 0</div>
+            </div>
+            <div class="info-box">
+                <h3>Operations</h3>
+                <div class="value" id="opsCounter">0</div>
+            </div>
+            <div class="info-box">
+                <h3>Time</h3>
+                <div class="value" id="timeComp">&mdash;</div>
+            </div>
+            <div class="info-box">
+                <h3>Space</h3>
+                <div class="value" id="spaceComp">&mdash;</div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color" style="background:#334155;"></div><span>Default</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#3b82f6;"></div><span>Left Partition</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#f59e0b;"></div><span>Right Partition</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#22c55e;"></div><span>Median</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#a78bfa;"></div><span>Comparing</span></div>
+        </div>
+    </div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let currentTab = 'merge';
+let steps = [];
+let currentStep = 0;
+let isPlaying = false;
+let playInterval = null;
+let speed = 1000;
+let nums1 = [1, 3];
+let nums2 = [2];
+
+const PRESETS = [
+    { n1: [1,3], n2: [2] },
+    { n1: [1,2], n2: [3,4] },
+    { n1: [0,0], n2: [0,0] },
+    { n1: [1,3,5,7], n2: [2,4,6,8] },
+    { n1: [2], n2: [] },
+];
+
+// ============================================================
+// TABS
+// ============================================================
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentTab = tab.dataset.tab;
+        reset();
+        buildSteps();
+        renderStep();
+    });
+});
+
+// ============================================================
+// INPUT
+// ============================================================
+function parseArray(str) {
+    str = str.replace(/[\[\]]/g, '').trim();
+    if (str === '') return [];
+    return str.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n));
+}
+
+function applyInput() {
+    nums1 = parseArray(document.getElementById('nums1Input').value);
+    nums2 = parseArray(document.getElementById('nums2Input').value);
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    reset();
+    buildSteps();
+    renderStep();
+}
+
+function setPreset(idx) {
+    nums1 = [...PRESETS[idx].n1];
+    nums2 = [...PRESETS[idx].n2];
+    document.getElementById('nums1Input').value = nums1.join(',');
+    document.getElementById('nums2Input').value = nums2.join(',');
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.preset-btn')[idx].classList.add('active');
+    reset();
+    buildSteps();
+    renderStep();
+}
+
+// ============================================================
+// CONTROLS
+// ============================================================
+function updateSpeed() {
+    speed = parseInt(document.getElementById('speed').value);
+    if (isPlaying) { pause(); play(); }
+}
+
+function play() {
+    if (isPlaying) return;
+    if (steps.length === 0) buildSteps();
+    if (currentStep >= steps.length - 1) { currentStep = 0; }
+    isPlaying = true;
+    playInterval = setInterval(() => {
+        if (currentStep < steps.length - 1) {
+            currentStep++;
+            renderStep();
+        } else {
+            pause();
+        }
+    }, speed);
+}
+
+function pause() {
+    isPlaying = false;
+    if (playInterval) { clearInterval(playInterval); playInterval = null; }
+}
+
+function stepForward() {
+    pause();
+    if (steps.length === 0) buildSteps();
+    if (currentStep < steps.length - 1) {
+        currentStep++;
+        renderStep();
+    }
+}
+
+function reset() {
+    pause();
+    currentStep = 0;
+    steps = [];
+    document.getElementById('stepDesc').innerHTML = '&#9654; Press "Play" or use "Step" to walk through step by step.';
+    document.getElementById('vizArea').innerHTML = '';
+    document.getElementById('stepCounter').textContent = '0 / 0';
+    document.getElementById('opsCounter').textContent = '0';
+    document.getElementById('timeComp').innerHTML = '&mdash;';
+    document.getElementById('spaceComp').innerHTML = '&mdash;';
+}
+
+// ============================================================
+// BUILD STEPS — dispatch to approach
+// ============================================================
+function buildSteps() {
+    steps = [];
+    if (currentTab === 'merge') {
+        buildMergeSteps();
+    } else {
+        buildBinarySteps();
+    }
+}
+
+// ============================================================
+// APPROACH 1: MERGE & FIND
+// ============================================================
+function buildMergeSteps() {
+    const a = [...nums1], b = [...nums2];
+    const total = a.length + b.length;
+
+    if (total === 0) {
+        steps.push({ desc: 'Both arrays are empty. No median exists.', nums1State: [], nums2State: [], merged: [], i: -1, j: -1, mergeIdx: -1, medianIndices: [], ops: 0 });
+        return;
+    }
+
+    let merged = [];
+    let i = 0, j = 0, ops = 0;
+
+    steps.push({
+        desc: `Starting Merge & Find approach.\nnums1 = [${a.join(', ')}]  (length ${a.length})\nnums2 = [${b.join(', ')}]  (length ${b.length})\nTotal elements: ${total}. Median position(s): ${total % 2 === 1 ? Math.floor(total/2) : Math.floor(total/2)-1 + ' and ' + Math.floor(total/2)}.`,
+        nums1State: a.map((v,idx) => ({val: v, cls: 'el-default'})),
+        nums2State: b.map((v,idx) => ({val: v, cls: 'el-default'})),
+        merged: [], i, j, medianIndices: [], ops
+    });
+
+    while (i < a.length && j < b.length) {
+        ops++;
+        const pickLeft = a[i] <= b[j];
+        steps.push({
+            desc: `Compare nums1[${i}]=${a[i]} vs nums2[${j}]=${b[j]}.\n${pickLeft ? `nums1[${i}]=${a[i]} is smaller or equal, add to merged.` : `nums2[${j}]=${b[j]} is smaller, add to merged.`}`,
+            nums1State: a.map((v,idx) => ({val: v, cls: idx === i ? 'el-compare' : idx < i ? 'el-inactive' : 'el-default'})),
+            nums2State: b.map((v,idx) => ({val: v, cls: idx === j ? 'el-compare' : idx < j ? 'el-inactive' : 'el-default'})),
+            merged: [...merged, { val: pickLeft ? a[i] : b[j], cls: 'el-current' }],
+            i, j, medianIndices: [], ops
+        });
+        if (pickLeft) { merged.push({val: a[i], cls: 'el-merged'}); i++; }
+        else { merged.push({val: b[j], cls: 'el-merged'}); j++; }
+    }
+
+    while (i < a.length) {
+        ops++;
+        steps.push({
+            desc: `nums2 exhausted. Append nums1[${i}]=${a[i]} to merged array.`,
+            nums1State: a.map((v,idx) => ({val: v, cls: idx === i ? 'el-current' : idx < i ? 'el-inactive' : 'el-default'})),
+            nums2State: b.map((v,idx) => ({val: v, cls: 'el-inactive'})),
+            merged: [...merged, {val: a[i], cls: 'el-current'}],
+            i, j, medianIndices: [], ops
+        });
+        merged.push({val: a[i], cls: 'el-merged'}); i++;
+    }
+
+    while (j < b.length) {
+        ops++;
+        steps.push({
+            desc: `nums1 exhausted. Append nums2[${j}]=${b[j]} to merged array.`,
+            nums1State: a.map((v,idx) => ({val: v, cls: 'el-inactive'})),
+            nums2State: b.map((v,idx) => ({val: v, cls: idx === j ? 'el-current' : idx < j ? 'el-inactive' : 'el-default'})),
+            merged: [...merged, {val: b[j], cls: 'el-current'}],
+            i, j, medianIndices: [], ops
+        });
+        merged.push({val: b[j], cls: 'el-merged'}); j++;
+    }
+
+    // Find median
+    const medianIndices = [];
+    let median;
+    if (total % 2 === 1) {
+        const mid = Math.floor(total / 2);
+        medianIndices.push(mid);
+        median = merged[mid].val;
+    } else {
+        const mid1 = Math.floor(total / 2) - 1;
+        const mid2 = Math.floor(total / 2);
+        medianIndices.push(mid1, mid2);
+        median = (merged[mid1].val + merged[mid2].val) / 2;
+    }
+
+    const finalMerged = merged.map((m, idx) => ({
+        val: m.val,
+        cls: medianIndices.includes(idx) ? 'el-median' : 'el-merged'
+    }));
+
+    steps.push({
+        desc: `Merge complete! Merged array: [${merged.map(m=>m.val).join(', ')}]\n${total % 2 === 1 ? `Odd total (${total}): median = merged[${medianIndices[0]}] = ${median}` : `Even total (${total}): median = (merged[${medianIndices[0]}] + merged[${medianIndices[1]}]) / 2 = ${median}`}`,
+        nums1State: a.map((v) => ({val: v, cls: 'el-inactive'})),
+        nums2State: b.map((v) => ({val: v, cls: 'el-inactive'})),
+        merged: finalMerged,
+        i: a.length, j: b.length, medianIndices, ops,
+        result: median
+    });
+}
+
+// ============================================================
+// APPROACH 2: BINARY SEARCH
+// ============================================================
+function buildBinarySteps() {
+    // Ensure a is the smaller array
+    let a = [...nums1], b = [...nums2];
+    let swapped = false;
+    if (a.length > b.length) { [a, b] = [b, a]; swapped = true; }
+
+    const m = a.length, n = b.length;
+    const total = m + n;
+
+    if (total === 0) {
+        steps.push({ desc: 'Both arrays are empty. No median exists.', a, b, swapped, partA: -1, partB: -1, low: 0, high: 0, ops: 0 });
+        return;
+    }
+
+    steps.push({
+        desc: `Binary Search approach: partition the smaller array.\n${swapped ? `Swapped: A=[${a.join(',')}] (was nums2), B=[${b.join(',')}] (was nums1)` : `A=[${a.join(',')}] (nums1), B=[${b.join(',')}] (nums2)`}\nWe binary search on A (length ${m}). Half = ${Math.floor((m + n + 1) / 2)}.`,
+        a, b, swapped, partA: -1, partB: -1, low: 0, high: m, ops: 0,
+        aHighlight: [], bHighlight: []
+    });
+
+    let low = 0, high = m;
+    const half = Math.floor((total + 1) / 2);
+    let ops = 0;
+    let found = false;
+
+    while (low <= high) {
+        const partA = Math.floor((low + high) / 2);
+        const partB = half - partA;
+        ops++;
+
+        const leftA = partA > 0 ? a[partA - 1] : -Infinity;
+        const rightA = partA < m ? a[partA] : Infinity;
+        const leftB = partB > 0 ? b[partB - 1] : -Infinity;
+        const rightB = partB < n ? b[partB] : Infinity;
+
+        // Build highlight arrays
+        const aHL = a.map((v, idx) => {
+            if (idx === partA - 1 || idx === partA) return 'compare';
+            if (idx < partA) return 'left';
+            return 'right';
+        });
+        const bHL = b.map((v, idx) => {
+            if (idx === partB - 1 || idx === partB) return 'compare';
+            if (idx < partB) return 'left';
+            return 'right';
+        });
+
+        steps.push({
+            desc: `Binary search: low=${low}, high=${high}, partA=${partA}, partB=${partB}\nleftA=${leftA === -Infinity ? '-inf' : leftA}, rightA=${rightA === Infinity ? '+inf' : rightA}\nleftB=${leftB === -Infinity ? '-inf' : leftB}, rightB=${rightB === Infinity ? '+inf' : rightB}`,
+            a, b, swapped, partA, partB, low, high, ops,
+            aHighlight: aHL, bHighlight: bHL,
+            leftA, rightA, leftB, rightB
+        });
+
+        if (leftA <= rightB && leftB <= rightA) {
+            // Found correct partition
+            let median;
+            const maxLeft = Math.max(leftA, leftB);
+            const minRight = Math.min(rightA, rightB);
+
+            if (total % 2 === 1) {
+                median = maxLeft;
+            } else {
+                median = (maxLeft + minRight) / 2;
+            }
+
+            steps.push({
+                desc: `Correct partition found! leftA(${leftA === -Infinity ? '-inf' : leftA}) <= rightB(${rightB === Infinity ? '+inf' : rightB}) AND leftB(${leftB === -Infinity ? '-inf' : leftB}) <= rightA(${rightA === Infinity ? '+inf' : rightA})\nmaxLeft = max(${leftA === -Infinity ? '-inf' : leftA}, ${leftB === -Infinity ? '-inf' : leftB}) = ${maxLeft === -Infinity ? '-inf' : maxLeft}\nminRight = min(${rightA === Infinity ? '+inf' : rightA}, ${rightB === Infinity ? '+inf' : rightB}) = ${minRight === Infinity ? '+inf' : minRight}\n${total % 2 === 1 ? `Odd total: median = maxLeft = ${median}` : `Even total: median = (${maxLeft} + ${minRight}) / 2 = ${median}`}`,
+                a, b, swapped, partA, partB, low, high, ops,
+                aHighlight: aHL, bHighlight: bHL,
+                leftA, rightA, leftB, rightB,
+                result: median, foundPartition: true
+            });
+            found = true;
+            break;
+        } else if (leftA > rightB) {
+            steps.push({
+                desc: `leftA(${leftA}) > rightB(${rightB === Infinity ? '+inf' : rightB}): partition A is too far right.\nMove high = ${partA} - 1 = ${partA - 1}.`,
+                a, b, swapped, partA, partB, low, high: partA - 1, ops,
+                aHighlight: aHL, bHighlight: bHL,
+                leftA, rightA, leftB, rightB, moveDir: 'left'
+            });
+            high = partA - 1;
+        } else {
+            steps.push({
+                desc: `leftB(${leftB}) > rightA(${rightA === Infinity ? '+inf' : rightA}): partition A is too far left.\nMove low = ${partA} + 1 = ${partA + 1}.`,
+                a, b, swapped, partA, partB, low: partA + 1, high, ops,
+                aHighlight: aHL, bHighlight: bHL,
+                leftA, rightA, leftB, rightB, moveDir: 'right'
+            });
+            low = partA + 1;
+        }
+    }
+}
+
+// ============================================================
+// RENDER STEP — dispatch to approach
+// ============================================================
+function renderStep() {
+    if (steps.length === 0) return;
+    const s = steps[currentStep];
+    document.getElementById('stepDesc').textContent = s.desc;
+    document.getElementById('stepCounter').textContent = `${currentStep + 1} / ${steps.length}`;
+    document.getElementById('opsCounter').textContent = s.ops;
+
+    if (currentTab === 'merge') {
+        document.getElementById('timeComp').textContent = 'O(m+n)';
+        document.getElementById('spaceComp').textContent = 'O(m+n)';
+        renderMergeStep(s);
+    } else {
+        document.getElementById('timeComp').textContent = 'O(log min(m,n))';
+        document.getElementById('spaceComp').textContent = 'O(1)';
+        renderBinaryStep(s);
+    }
+}
+
+// ============================================================
+// RENDER: MERGE APPROACH
+// ============================================================
+function renderMergeStep(s) {
+    const viz = document.getElementById('vizArea');
+    let html = '';
+
+    // nums1
+    html += '<div class="section-label">nums1</div>';
+    html += '<div class="array-container">';
+    if (s.nums1State.length === 0) {
+        html += '<span style="color:#64748b;font-size:0.85rem;">[ empty ]</span>';
+    }
+    s.nums1State.forEach((el, idx) => {
+        html += `<div class="array-cell">
+            <div class="ptr-label ptr-i">${idx === s.i ? 'i' : ''}</div>
+            <div class="array-element ${el.cls}">${el.val}</div>
+            <div class="idx-label">${idx}</div>
+        </div>`;
+    });
+    html += '</div>';
+
+    // nums2
+    html += '<div class="section-label" style="margin-top:16px;">nums2</div>';
+    html += '<div class="array-container">';
+    if (s.nums2State.length === 0) {
+        html += '<span style="color:#64748b;font-size:0.85rem;">[ empty ]</span>';
+    }
+    s.nums2State.forEach((el, idx) => {
+        html += `<div class="array-cell">
+            <div class="ptr-label ptr-j">${idx === s.j ? 'j' : ''}</div>
+            <div class="array-element ${el.cls}">${el.val}</div>
+            <div class="idx-label">${idx}</div>
+        </div>`;
+    });
+    html += '</div>';
+
+    // merged
+    if (s.merged && s.merged.length > 0) {
+        html += '<div class="section-label" style="margin-top:16px;">Merged Array</div>';
+        html += '<div class="array-container">';
+        s.merged.forEach((el, idx) => {
+            html += `<div class="array-cell">
+                <div class="ptr-label" style="color:#22c55e;">${s.medianIndices && s.medianIndices.includes(idx) ? 'M' : ''}</div>
+                <div class="array-element ${el.cls}">${el.val}</div>
+                <div class="idx-label">${idx}</div>
+            </div>`;
+        });
+        html += '</div>';
+    }
+
+    // Result
+    if (s.result !== undefined) {
+        html += `<div class="result-box">
+            <span class="label-text">Median =</span>
+            <span class="result-value">${s.result}</span>
+        </div>`;
+    }
+
+    viz.innerHTML = html;
+}
+
+// ============================================================
+// RENDER: BINARY SEARCH APPROACH
+// ============================================================
+function renderBinaryStep(s) {
+    const viz = document.getElementById('vizArea');
+    let html = '';
+
+    const aLabel = s.swapped ? 'A (nums2 — smaller)' : 'A (nums1 — smaller)';
+    const bLabel = s.swapped ? 'B (nums1 — larger)' : 'B (nums2 — larger)';
+
+    // Array A with partition
+    html += `<div class="section-label">${aLabel}</div>`;
+    html += '<div class="array-container">';
+    if (s.a.length === 0) {
+        html += '<span style="color:#64748b;font-size:0.85rem;">[ empty ]</span>';
+    }
+    s.a.forEach((v, idx) => {
+        if (s.partA >= 0 && idx === s.partA) {
+            html += `<div class="partition-marker">
+                <div class="partition-label">|</div>
+                <div class="partition-line"></div>
+                <div class="partition-label">P</div>
+            </div>`;
+        }
+        let cls = 'el-default';
+        if (s.aHighlight && s.aHighlight[idx]) {
+            if (s.aHighlight[idx] === 'compare') cls = 'el-compare';
+            else if (s.aHighlight[idx] === 'left') cls = 'el-left';
+            else if (s.aHighlight[idx] === 'right') cls = 'el-right';
+        }
+        if (s.foundPartition && (idx === s.partA - 1 || idx === s.partA)) cls = 'el-median';
+        let ptrText = '';
+        if (idx === s.low && idx === s.high) ptrText = 'L,H';
+        else if (idx === s.low) ptrText = 'L';
+        else if (idx === s.high) ptrText = 'H';
+
+        html += `<div class="array-cell">
+            <div class="ptr-label" style="color:${idx === s.low ? '#22c55e' : '#ef4444'};">${ptrText}</div>
+            <div class="array-element ${cls}">${v}</div>
+            <div class="idx-label">${idx}</div>
+        </div>`;
+    });
+    if (s.partA >= 0 && s.partA === s.a.length) {
+        html += `<div class="partition-marker">
+            <div class="partition-label">|</div>
+            <div class="partition-line"></div>
+            <div class="partition-label">P</div>
+        </div>`;
+    }
+    html += '</div>';
+
+    // Array B with partition
+    html += `<div class="section-label" style="margin-top:16px;">${bLabel}</div>`;
+    html += '<div class="array-container">';
+    if (s.b.length === 0) {
+        html += '<span style="color:#64748b;font-size:0.85rem;">[ empty ]</span>';
+    }
+    s.b.forEach((v, idx) => {
+        if (s.partB >= 0 && idx === s.partB) {
+            html += `<div class="partition-marker">
+                <div class="partition-label">|</div>
+                <div class="partition-line"></div>
+                <div class="partition-label">P</div>
+            </div>`;
+        }
+        let cls = 'el-default';
+        if (s.bHighlight && s.bHighlight[idx]) {
+            if (s.bHighlight[idx] === 'compare') cls = 'el-compare';
+            else if (s.bHighlight[idx] === 'left') cls = 'el-left';
+            else if (s.bHighlight[idx] === 'right') cls = 'el-right';
+        }
+        if (s.foundPartition && (idx === s.partB - 1 || idx === s.partB)) cls = 'el-median';
+
+        html += `<div class="array-cell">
+            <div class="ptr-label">&nbsp;</div>
+            <div class="array-element ${cls}">${v}</div>
+            <div class="idx-label">${idx}</div>
+        </div>`;
+    });
+    if (s.partB >= 0 && s.partB === s.b.length) {
+        html += `<div class="partition-marker">
+            <div class="partition-label">|</div>
+            <div class="partition-line"></div>
+            <div class="partition-label">P</div>
+        </div>`;
+    }
+    html += '</div>';
+
+    // Partition comparison values
+    if (s.leftA !== undefined) {
+        html += '<div style="margin-top:20px; display:flex; gap:20px; justify-content:center; flex-wrap:wrap;">';
+        html += buildCompareBox('leftA', s.leftA, '#3b82f6');
+        html += buildCompareBox('rightA', s.rightA, '#f59e0b');
+        html += buildCompareBox('leftB', s.leftB, '#3b82f6');
+        html += buildCompareBox('rightB', s.rightB, '#f59e0b');
+        html += '</div>';
+
+        // Condition checks
+        html += '<div style="margin-top:12px; text-align:center; font-size:0.9rem; color:#94a3b8;">';
+        const la = s.leftA === -Infinity ? '-\u221E' : s.leftA;
+        const ra = s.rightA === Infinity ? '+\u221E' : s.rightA;
+        const lb = s.leftB === -Infinity ? '-\u221E' : s.leftB;
+        const rb = s.rightB === Infinity ? '+\u221E' : s.rightB;
+        const cond1 = s.leftA <= s.rightB;
+        const cond2 = s.leftB <= s.rightA;
+        html += `<span>leftA(${la}) &le; rightB(${rb}): <strong style="color:${cond1 ? '#22c55e' : '#ef4444'};">${cond1 ? 'YES' : 'NO'}</strong></span>`;
+        html += `<span style="margin-left:20px;">leftB(${lb}) &le; rightA(${ra}): <strong style="color:${cond2 ? '#22c55e' : '#ef4444'};">${cond2 ? 'YES' : 'NO'}</strong></span>`;
+        html += '</div>';
+    }
+
+    // Result
+    if (s.result !== undefined) {
+        html += `<div class="result-box">
+            <span class="label-text">Median =</span>
+            <span class="result-value">${s.result}</span>
+        </div>`;
+    }
+
+    viz.innerHTML = html;
+}
+
+function buildCompareBox(label, value, color) {
+    const display = value === -Infinity ? '-\u221E' : value === Infinity ? '+\u221E' : value;
+    return `<div style="background:#1e293b; border:1px solid #334155; border-radius:8px; padding:8px 16px; text-align:center; min-width:80px;">
+        <div style="font-size:0.7rem; color:#64748b; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">${label}</div>
+        <div style="font-size:1.2rem; font-weight:700; color:${color};">${display}</div>
+    </div>`;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+buildSteps();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0008. String to Integer (atoi) — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 280px;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        /* BUTTONS */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+        .btn-primary { background: #3b82f6; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: #22c55e; }
+        .btn-success:hover { background: #16a34a; }
+        .btn-warning { background: #f59e0b; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-danger { background: #ef4444; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-purple { background: #8b5cf6; }
+        .btn-purple:hover { background: #7c3aed; }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        /* STRING DISPLAY */
+        .string-display {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .char-box {
+            width: 44px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .char-box.whitespace { color: #64748b; }
+        .char-box.sign { border-color: #f59e0b; background: #422006; color: #fbbf24; }
+        .char-box.digit { border-color: #22c55e; background: #052e16; color: #4ade80; }
+        .char-box.ignored { border-color: #475569; color: #475569; opacity: 0.5; }
+        .char-box.active { border-color: #3b82f6; box-shadow: 0 0 12px rgba(59, 130, 246, 0.5); }
+        .char-box.processed-ws { border-color: #64748b; background: #1e293b; color: #64748b; }
+        .char-box.clamped { border-color: #ef4444; background: #450a0a; color: #f87171; }
+
+        .char-index {
+            position: absolute;
+            top: -18px;
+            font-size: 0.65rem;
+            color: #64748b;
+        }
+
+        /* POINTER */
+        .pointer {
+            position: absolute;
+            bottom: -24px;
+            font-size: 0.75rem;
+            color: #3b82f6;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        /* INFO PANELS */
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .info-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .info-card .label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .info-card .value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .info-card .value.positive { color: #4ade80; }
+        .info-card .value.negative { color: #f87171; }
+        .info-card .value.neutral { color: #60a5fa; }
+
+        /* LOG */
+        .log-section {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .log-section h3 {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .log-entry {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            border-bottom: 1px solid #1e293b;
+            animation: fadeIn 0.3s;
+        }
+
+        .log-entry.skip { color: #64748b; }
+        .log-entry.sign-log { color: #fbbf24; }
+        .log-entry.digit-log { color: #4ade80; }
+        .log-entry.stop { color: #f87171; }
+        .log-entry.result { color: #60a5fa; font-weight: 700; }
+        .log-entry.overflow { color: #f87171; font-weight: 700; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* DFA SECTION */
+        .dfa-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .dfa-svg {
+            max-width: 100%;
+        }
+
+        .dfa-state {
+            transition: all 0.3s;
+        }
+
+        .dfa-state circle {
+            fill: #0f172a;
+            stroke: #334155;
+            stroke-width: 2;
+            transition: all 0.3s;
+        }
+
+        .dfa-state.active circle {
+            fill: #1e3a5f;
+            stroke: #3b82f6;
+            stroke-width: 3;
+            filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5));
+        }
+
+        .dfa-state text {
+            fill: #94a3b8;
+            font-size: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .dfa-state.active text {
+            fill: #60a5fa;
+            font-weight: 700;
+        }
+
+        .dfa-arrow {
+            stroke: #475569;
+            stroke-width: 1.5;
+            fill: none;
+            marker-end: url(#arrowhead);
+            transition: all 0.3s;
+        }
+
+        .dfa-arrow.active {
+            stroke: #3b82f6;
+            stroke-width: 2.5;
+            marker-end: url(#arrowhead-active);
+        }
+
+        .dfa-arrow-label {
+            fill: #64748b;
+            font-size: 10px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+
+        .dfa-arrow-label.active {
+            fill: #60a5fa;
+            font-weight: 700;
+        }
+
+        /* EXAMPLE BUTTONS */
+        .examples {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .example-btn {
+            padding: 4px 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: 'Courier New', monospace;
+            transition: all 0.2s;
+        }
+
+        .example-btn:hover {
+            border-color: #3b82f6;
+            color: #60a5fa;
+        }
+
+        /* TAB CONTENT */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            border: 2px solid;
+        }
+
+        .legend-color.ws { border-color: #64748b; background: #1e293b; }
+        .legend-color.sg { border-color: #f59e0b; background: #422006; }
+        .legend-color.dg { border-color: #22c55e; background: #052e16; }
+        .legend-color.ig { border-color: #475569; background: #0f172a; opacity: 0.5; }
+        .legend-color.ac { border-color: #3b82f6; background: #0f172a; box-shadow: 0 0 6px rgba(59,130,246,0.4); }
+        .legend-color.cl { border-color: #ef4444; background: #450a0a; }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.3rem; }
+            .char-box { width: 34px; height: 40px; font-size: 1rem; }
+            .info-panel { grid-template-columns: 1fr 1fr; }
+            .container { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>0008. String to Integer (atoi)</h1>
+    <p>Algorithm for converting a string to a 32-bit signed integer</p>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+    <div class="tab active" onclick="switchTab('parsing')">Step-by-step Parsing</div>
+    <div class="tab" onclick="switchTab('dfa')">State Machine (DFA)</div>
+    <div class="tab" onclick="switchTab('regex')">Regex</div>
+</div>
+
+<!-- ==================== TAB 1: STEP-BY-STEP PARSING ==================== -->
+<div id="tab-parsing" class="tab-content active">
+    <div class="container">
+        <!-- Input -->
+        <div class="input-section">
+            <input type="text" id="inputStr" placeholder="Enter a string..." value="   -42">
+            <button class="btn btn-purple" onclick="startParsing()">Start</button>
+        </div>
+
+        <!-- Examples -->
+        <div class="examples">
+            <span style="color:#94a3b8;font-size:0.8rem;">Examples:</span>
+            <div class="example-btn" onclick="setExample('42')">"42"</div>
+            <div class="example-btn" onclick="setExample('   -42')">"   -42"</div>
+            <div class="example-btn" onclick="setExample('4193 with words')">"4193 with words"</div>
+            <div class="example-btn" onclick="setExample('words and 987')">"words and 987"</div>
+            <div class="example-btn" onclick="setExample('-91283472332')">"-91283472332"</div>
+            <div class="example-btn" onclick="setExample('+1')">"+1"</div>
+            <div class="example-btn" onclick="setExample('  +  42')">"  +  42"</div>
+            <div class="example-btn" onclick="setExample('')">""</div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-success" id="btnPlay" onclick="play()">Play</button>
+            <button class="btn btn-warning" id="btnPause" onclick="pause()" disabled>Pause</button>
+            <button class="btn btn-primary" id="btnStep" onclick="step()">Step</button>
+            <button class="btn btn-danger" id="btnReset" onclick="resetAnimation()">Reset</button>
+            <div class="speed-control">
+                <span>Speed:</span>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <span id="speedLabel">5x</span>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color ac"></div> Active</div>
+            <div class="legend-item"><div class="legend-color ws"></div> Whitespace</div>
+            <div class="legend-item"><div class="legend-color sg"></div> Sign</div>
+            <div class="legend-item"><div class="legend-color dg"></div> Digit</div>
+            <div class="legend-item"><div class="legend-color ig"></div> Ignored</div>
+            <div class="legend-item"><div class="legend-color cl"></div> Overflow</div>
+        </div>
+
+        <!-- String Display -->
+        <div class="string-display" id="stringDisplay"></div>
+
+        <!-- Info Panel -->
+        <div class="info-panel">
+            <div class="info-card">
+                <div class="label">Index (i)</div>
+                <div class="value neutral" id="infoIndex">0</div>
+            </div>
+            <div class="info-card">
+                <div class="label">Phase</div>
+                <div class="value neutral" id="infoPhase">Ready</div>
+            </div>
+            <div class="info-card">
+                <div class="label">Sign</div>
+                <div class="value positive" id="infoSign">+1</div>
+            </div>
+            <div class="info-card">
+                <div class="label">Result</div>
+                <div class="value neutral" id="infoResult">0</div>
+            </div>
+            <div class="info-card">
+                <div class="label">Final</div>
+                <div class="value neutral" id="infoFinal">—</div>
+            </div>
+        </div>
+
+        <!-- Log -->
+        <div class="log-section">
+            <h3>Step-by-step log:</h3>
+            <div id="logContent"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== TAB 2: DFA ==================== -->
+<div id="tab-dfa" class="tab-content">
+    <div class="container">
+        <!-- Input -->
+        <div class="input-section">
+            <input type="text" id="dfaInputStr" placeholder="Enter a string..." value="   -42">
+            <button class="btn btn-purple" onclick="startDFA()">Start</button>
+        </div>
+
+        <!-- Examples -->
+        <div class="examples">
+            <span style="color:#94a3b8;font-size:0.8rem;">Examples:</span>
+            <div class="example-btn" onclick="setDFAExample('42')">"42"</div>
+            <div class="example-btn" onclick="setDFAExample('   -42')">"   -42"</div>
+            <div class="example-btn" onclick="setDFAExample('4193 with words')">"4193 with words"</div>
+            <div class="example-btn" onclick="setDFAExample('words and 987')">"words and 987"</div>
+            <div class="example-btn" onclick="setDFAExample('-91283472332')">"-91283472332"</div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-success" id="dfaBtnPlay" onclick="dfaPlay()">Play</button>
+            <button class="btn btn-warning" id="dfaBtnPause" onclick="dfaPause()" disabled>Pause</button>
+            <button class="btn btn-primary" id="dfaBtnStep" onclick="dfaStep()">Step</button>
+            <button class="btn btn-danger" id="dfaBtnReset" onclick="dfaReset()">Reset</button>
+            <div class="speed-control">
+                <span>Speed:</span>
+                <input type="range" id="dfaSpeedSlider" min="1" max="10" value="5">
+                <span id="dfaSpeedLabel">5x</span>
+            </div>
+        </div>
+
+        <!-- DFA Diagram -->
+        <div class="dfa-container">
+            <svg class="dfa-svg" viewBox="0 0 620 280" width="620" height="280">
+                <defs>
+                    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                        <polygon points="0 0, 8 3, 0 6" fill="#475569" />
+                    </marker>
+                    <marker id="arrowhead-active" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                        <polygon points="0 0, 8 3, 0 6" fill="#3b82f6" />
+                    </marker>
+                </defs>
+
+                <!-- Arrows -->
+                <!-- start -> start (space) - self loop -->
+                <path id="arrow-start-start" class="dfa-arrow" d="M 90,80 C 70,30 130,30 110,80" />
+                <text id="label-start-start" class="dfa-arrow-label" x="90" y="28">' '</text>
+
+                <!-- start -> signed -->
+                <path id="arrow-start-signed" class="dfa-arrow" d="M 130,100 L 220,100" />
+                <text id="label-start-signed" class="dfa-arrow-label" x="155" y="92">+/-</text>
+
+                <!-- start -> in_number -->
+                <path id="arrow-start-number" class="dfa-arrow" d="M 130,115 C 180,170 280,170 340,125" />
+                <text id="label-start-number" class="dfa-arrow-label" x="210" y="175">0-9</text>
+
+                <!-- start -> end -->
+                <path id="arrow-start-end" class="dfa-arrow" d="M 115,130 C 150,220 420,250 500,150" />
+                <text id="label-start-end" class="dfa-arrow-label" x="280" y="240">other</text>
+
+                <!-- signed -> in_number -->
+                <path id="arrow-signed-number" class="dfa-arrow" d="M 290,100 L 340,100" />
+                <text id="label-signed-number" class="dfa-arrow-label" x="295" y="92">0-9</text>
+
+                <!-- signed -> end -->
+                <path id="arrow-signed-end" class="dfa-arrow" d="M 270,130 C 310,200 430,200 500,140" />
+                <text id="label-signed-end" class="dfa-arrow-label" x="360" y="205">other</text>
+
+                <!-- in_number -> in_number (digit) - self loop -->
+                <path id="arrow-number-number" class="dfa-arrow" d="M 370,78 C 350,28 410,28 390,78" />
+                <text id="label-number-number" class="dfa-arrow-label" x="365" y="25">0-9</text>
+
+                <!-- in_number -> end -->
+                <path id="arrow-number-end" class="dfa-arrow" d="M 410,100 L 480,100" />
+                <text id="label-number-end" class="dfa-arrow-label" x="425" y="92">other</text>
+
+                <!-- States -->
+                <g id="state-start" class="dfa-state active">
+                    <circle cx="100" cy="105" r="30" />
+                    <text x="100" y="102" text-anchor="middle" font-size="11">q0</text>
+                    <text x="100" y="116" text-anchor="middle" font-size="9">start</text>
+                </g>
+
+                <g id="state-signed" class="dfa-state">
+                    <circle cx="255" cy="105" r="30" />
+                    <text x="255" y="102" text-anchor="middle" font-size="11">q1</text>
+                    <text x="255" y="116" text-anchor="middle" font-size="9">signed</text>
+                </g>
+
+                <g id="state-number" class="dfa-state">
+                    <circle cx="380" cy="105" r="30" />
+                    <text x="380" y="102" text-anchor="middle" font-size="11">q2</text>
+                    <text x="380" y="116" text-anchor="middle" font-size="9">number</text>
+                </g>
+
+                <g id="state-end" class="dfa-state">
+                    <circle cx="510" cy="105" r="30" />
+                    <circle cx="510" cy="105" r="25" fill="none" stroke="#334155" stroke-width="1.5" />
+                    <text x="510" y="102" text-anchor="middle" font-size="11">qd</text>
+                    <text x="510" y="116" text-anchor="middle" font-size="9">end</text>
+                </g>
+
+                <!-- Entry arrow -->
+                <line x1="30" y1="105" x2="68" y2="105" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowhead)" />
+            </svg>
+        </div>
+
+        <!-- String Display for DFA -->
+        <div class="string-display" id="dfaStringDisplay"></div>
+
+        <!-- DFA Info Panel -->
+        <div class="info-panel">
+            <div class="info-card">
+                <div class="label">Current State</div>
+                <div class="value neutral" id="dfaInfoState">q0 (start)</div>
+            </div>
+            <div class="info-card">
+                <div class="label">Character</div>
+                <div class="value neutral" id="dfaInfoChar">—</div>
+            </div>
+            <div class="info-card">
+                <div class="label">Sign</div>
+                <div class="value positive" id="dfaInfoSign">+1</div>
+            </div>
+            <div class="info-card">
+                <div class="label">Result</div>
+                <div class="value neutral" id="dfaInfoResult">0</div>
+            </div>
+        </div>
+
+        <!-- DFA Log -->
+        <div class="log-section">
+            <h3>DFA Transitions:</h3>
+            <div id="dfaLogContent"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== TAB 3: REGEX ==================== -->
+<div id="tab-regex" class="tab-content">
+    <div class="container">
+        <!-- Input -->
+        <div class="input-section">
+            <input type="text" id="regexInputStr" placeholder="Enter a string..." value="   -42">
+            <button class="btn btn-purple" onclick="startRegex()">Start</button>
+        </div>
+
+        <!-- Examples -->
+        <div class="examples">
+            <span style="color:#94a3b8;font-size:0.8rem;">Examples:</span>
+            <div class="example-btn" onclick="setRegexExample('42')">"42"</div>
+            <div class="example-btn" onclick="setRegexExample('   -42')">"   -42"</div>
+            <div class="example-btn" onclick="setRegexExample('4193 with words')">"4193 with words"</div>
+            <div class="example-btn" onclick="setRegexExample('words and 987')">"words and 987"</div>
+            <div class="example-btn" onclick="setRegexExample('-91283472332')">"-91283472332"</div>
+        </div>
+
+        <!-- Regex Pattern Display -->
+        <div style="text-align:center; margin: 16px 0;">
+            <div style="font-size:0.85rem; color:#94a3b8; margin-bottom:8px;">Regex Pattern:</div>
+            <div style="display:inline-block; background:#0f172a; border:1px solid #334155; border-radius:8px; padding:12px 24px; font-family:'Courier New',monospace; font-size:1.1rem;">
+                <span style="color:#64748b;">^</span><span id="rxWs" style="color:#94a3b8;">\s*</span><span style="color:#64748b;">(</span><span id="rxSign" style="color:#94a3b8;">[+-]?</span><span id="rxDigits" style="color:#94a3b8;">\d+</span><span style="color:#64748b;">)</span>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-success" onclick="runRegex()">Run</button>
+        </div>
+
+        <!-- String Display for Regex -->
+        <div class="string-display" id="regexStringDisplay"></div>
+
+        <!-- Regex Info Panel -->
+        <div class="info-panel">
+            <div class="info-card">
+                <div class="label">Match</div>
+                <div class="value neutral" id="regexInfoMatch">—</div>
+            </div>
+            <div class="info-card">
+                <div class="label">Parsed Integer</div>
+                <div class="value neutral" id="regexInfoParsed">—</div>
+            </div>
+            <div class="info-card">
+                <div class="label">Clamped</div>
+                <div class="value neutral" id="regexInfoClamped">—</div>
+            </div>
+        </div>
+
+        <!-- Regex Log -->
+        <div class="log-section">
+            <h3>Regex process:</h3>
+            <div id="regexLogContent"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// CONSTANTS
+// ============================================================
+const INT_MAX = 2147483647;
+const INT_MIN = -2147483648;
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+function switchTab(tabName) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+
+    const tabs = document.querySelectorAll('.tab');
+    const map = { 'parsing': 0, 'dfa': 1, 'regex': 2 };
+    tabs[map[tabName]].classList.add('active');
+    document.getElementById('tab-' + tabName).classList.add('active');
+}
+
+// ============================================================
+// TAB 1: STEP-BY-STEP PARSING
+// ============================================================
+let parseState = null;
+let parseTimer = null;
+
+function setExample(val) {
+    document.getElementById('inputStr').value = val;
+}
+
+function buildCharBoxes(containerId, str) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    if (str.length === 0) {
+        container.innerHTML = '<div style="color:#64748b;font-size:0.9rem;">( Empty string )</div>';
+        return;
+    }
+    for (let i = 0; i < str.length; i++) {
+        const box = document.createElement('div');
+        box.className = 'char-box';
+        box.id = containerId + '-char-' + i;
+
+        const indexLabel = document.createElement('span');
+        indexLabel.className = 'char-index';
+        indexLabel.textContent = i;
+        box.appendChild(indexLabel);
+
+        const ch = str[i] === ' ' ? '\u2423' : str[i];
+        box.appendChild(document.createTextNode(ch));
+        container.appendChild(box);
+    }
+}
+
+function startParsing() {
+    resetAnimation();
+    const s = document.getElementById('inputStr').value;
+
+    // Build animation steps
+    const steps = [];
+    let i = 0, n = s.length;
+
+    // Handle empty string
+    if (n === 0) {
+        steps.push({ type: 'result', index: -1, phase: 'Done', sign: 1, result: 0, msg: 'Empty string — result: 0' });
+        parseState = { s, steps, stepIndex: 0 };
+        buildCharBoxes('stringDisplay', s);
+        return;
+    }
+
+    // Step 1: Skip whitespace
+    while (i < n && s[i] === ' ') {
+        steps.push({ type: 'whitespace', index: i, phase: 'Whitespace', msg: `i=${i}: '${s[i]}' — whitespace, skipping` });
+        i++;
+    }
+
+    if (i >= n) {
+        steps.push({ type: 'result', index: i, phase: 'Done', sign: 1, result: 0, msg: 'Only whitespace — result: 0' });
+        parseState = { s, steps, stepIndex: 0, sign: 1, result: 0 };
+        buildCharBoxes('stringDisplay', s);
+        return;
+    }
+
+    // Step 2: Check sign
+    let sign = 1;
+    if (s[i] === '+' || s[i] === '-') {
+        sign = s[i] === '-' ? -1 : 1;
+        steps.push({ type: 'sign', index: i, phase: 'Sign', sign, msg: `i=${i}: '${s[i]}' — sign: ${sign === 1 ? '+1' : '-1'}` });
+        i++;
+    }
+
+    // Step 3: Read digits
+    let result = 0;
+    let overflowed = false;
+    let digitFound = false;
+
+    while (i < n && s[i] >= '0' && s[i] <= '9') {
+        digitFound = true;
+        const digit = parseInt(s[i]);
+
+        // Check overflow
+        if (result > Math.floor(INT_MAX / 10) || (result === Math.floor(INT_MAX / 10) && digit > 7)) {
+            const clampVal = sign === 1 ? INT_MAX : INT_MIN;
+            steps.push({
+                type: 'overflow', index: i, phase: 'Overflow!', sign, result: clampVal,
+                msg: `i=${i}: '${s[i]}' — OVERFLOW! ${result}*10+${digit} > INT_MAX. Clamp: ${clampVal}`
+            });
+            overflowed = true;
+            break;
+        }
+
+        result = result * 10 + digit;
+        steps.push({
+            type: 'digit', index: i, phase: 'Reading digit', sign, result,
+            msg: `i=${i}: '${s[i]}' — digit. result = ${result}`
+        });
+        i++;
+    }
+
+    if (!overflowed) {
+        // Mark remaining characters as ignored
+        if (i < n && !(s[i] >= '0' && s[i] <= '9')) {
+            steps.push({
+                type: 'stop', index: i, phase: 'Stop', sign, result,
+                msg: `i=${i}: '${s[i]}' — not a digit, STOP`
+            });
+        }
+
+        const finalVal = sign * result;
+        steps.push({
+            type: 'result', index: i, phase: 'Done!', sign, result: finalVal,
+            msg: `Result: ${sign === 1 ? '+' : '-'}1 * ${result} = ${finalVal}`
+        });
+    }
+
+    parseState = { s, steps, stepIndex: 0, currentIndex: -1, sign: 1, result: 0 };
+    buildCharBoxes('stringDisplay', s);
+}
+
+function getSpeed() {
+    const val = document.getElementById('speedSlider').value;
+    document.getElementById('speedLabel').textContent = val + 'x';
+    return 1200 - (val * 100);
+}
+
+function play() {
+    if (!parseState || parseState.stepIndex >= parseState.steps.length) {
+        startParsing();
+    }
+    document.getElementById('btnPlay').disabled = true;
+    document.getElementById('btnPause').disabled = false;
+
+    function tick() {
+        if (!parseState || parseState.stepIndex >= parseState.steps.length) {
+            pause();
+            return;
+        }
+        step();
+        parseTimer = setTimeout(tick, getSpeed());
+    }
+    tick();
+}
+
+function pause() {
+    clearTimeout(parseTimer);
+    parseTimer = null;
+    document.getElementById('btnPlay').disabled = false;
+    document.getElementById('btnPause').disabled = true;
+}
+
+function step() {
+    if (!parseState) startParsing();
+    if (!parseState || parseState.stepIndex >= parseState.steps.length) return;
+
+    const s = parseState.s;
+    const st = parseState.steps[parseState.stepIndex];
+
+    // Update character box styling
+    if (st.index >= 0 && st.index < s.length) {
+        // Remove active from all
+        for (let j = 0; j < s.length; j++) {
+            const box = document.getElementById('stringDisplay-char-' + j);
+            if (box) box.classList.remove('active');
+        }
+
+        const box = document.getElementById('stringDisplay-char-' + st.index);
+        if (box) {
+            box.classList.add('active');
+            if (st.type === 'whitespace') box.classList.add('processed-ws');
+            if (st.type === 'sign') box.classList.add('sign');
+            if (st.type === 'digit') box.classList.add('digit');
+            if (st.type === 'overflow') box.classList.add('clamped');
+            if (st.type === 'stop') {
+                box.classList.add('ignored');
+                // Mark all remaining as ignored
+                for (let j = st.index; j < s.length; j++) {
+                    const b = document.getElementById('stringDisplay-char-' + j);
+                    if (b) b.classList.add('ignored');
+                }
+            }
+        }
+    }
+
+    // Update info panel
+    document.getElementById('infoIndex').textContent = st.index >= 0 ? st.index : '—';
+    document.getElementById('infoPhase').textContent = st.phase;
+
+    if (st.sign !== undefined) {
+        document.getElementById('infoSign').textContent = st.sign === 1 ? '+1' : '-1';
+        document.getElementById('infoSign').className = 'value ' + (st.sign === 1 ? 'positive' : 'negative');
+    }
+
+    if (st.result !== undefined) {
+        document.getElementById('infoResult').textContent = st.result;
+    }
+
+    if (st.type === 'result' || st.type === 'overflow') {
+        const val = st.result;
+        document.getElementById('infoFinal').textContent = val;
+        document.getElementById('infoFinal').className = 'value ' + (val >= 0 ? 'positive' : 'negative');
+    }
+
+    // Add log entry
+    const logDiv = document.getElementById('logContent');
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    if (st.type === 'whitespace') entry.classList.add('skip');
+    if (st.type === 'sign') entry.classList.add('sign-log');
+    if (st.type === 'digit') entry.classList.add('digit-log');
+    if (st.type === 'stop') entry.classList.add('stop');
+    if (st.type === 'result') entry.classList.add('result');
+    if (st.type === 'overflow') entry.classList.add('overflow');
+    entry.textContent = st.msg;
+    logDiv.appendChild(entry);
+    logDiv.scrollTop = logDiv.scrollHeight;
+
+    parseState.stepIndex++;
+}
+
+function resetAnimation() {
+    pause();
+    parseState = null;
+    document.getElementById('stringDisplay').innerHTML = '';
+    document.getElementById('logContent').innerHTML = '';
+    document.getElementById('infoIndex').textContent = '0';
+    document.getElementById('infoPhase').textContent = 'Ready';
+    document.getElementById('infoSign').textContent = '+1';
+    document.getElementById('infoSign').className = 'value positive';
+    document.getElementById('infoResult').textContent = '0';
+    document.getElementById('infoFinal').textContent = '—';
+    document.getElementById('infoFinal').className = 'value neutral';
+    document.getElementById('btnPlay').disabled = false;
+    document.getElementById('btnPause').disabled = true;
+}
+
+// Speed slider listener
+document.getElementById('speedSlider').addEventListener('input', function() {
+    document.getElementById('speedLabel').textContent = this.value + 'x';
+});
+
+// ============================================================
+// TAB 2: DFA
+// ============================================================
+let dfaState = null;
+let dfaTimer = null;
+
+const DFA_TRANSITIONS = {
+    'start':     { ' ': 'start', 'sign': 'signed', 'digit': 'in_number', 'other': 'end' },
+    'signed':    { ' ': 'end',   'sign': 'end',    'digit': 'in_number', 'other': 'end' },
+    'in_number': { ' ': 'end',   'sign': 'end',    'digit': 'in_number', 'other': 'end' },
+    'end':       { ' ': 'end',   'sign': 'end',    'digit': 'end',       'other': 'end' }
+};
+
+const STATE_DISPLAY = { 'start': 'q0 (start)', 'signed': 'q1 (signed)', 'in_number': 'q2 (number)', 'end': 'qd (end)' };
+const STATE_SVG_IDS = { 'start': 'state-start', 'signed': 'state-signed', 'in_number': 'state-number', 'end': 'state-end' };
+
+// Arrow IDs mapping: fromState-toState -> arrow element id
+const ARROW_IDS = {
+    'start-start': 'arrow-start-start',
+    'start-signed': 'arrow-start-signed',
+    'start-in_number': 'arrow-start-number',
+    'start-end': 'arrow-start-end',
+    'signed-in_number': 'arrow-signed-number',
+    'signed-end': 'arrow-signed-end',
+    'in_number-in_number': 'arrow-number-number',
+    'in_number-end': 'arrow-number-end'
+};
+
+const LABEL_IDS = {
+    'start-start': 'label-start-start',
+    'start-signed': 'label-start-signed',
+    'start-in_number': 'label-start-number',
+    'start-end': 'label-start-end',
+    'signed-in_number': 'label-signed-number',
+    'signed-end': 'label-signed-end',
+    'in_number-in_number': 'label-number-number',
+    'in_number-end': 'label-number-end'
+};
+
+function setDFAExample(val) {
+    document.getElementById('dfaInputStr').value = val;
+}
+
+function classifyChar(ch) {
+    if (ch === ' ') return ' ';
+    if (ch === '+' || ch === '-') return 'sign';
+    if (ch >= '0' && ch <= '9') return 'digit';
+    return 'other';
+}
+
+function startDFA() {
+    dfaReset();
+    const s = document.getElementById('dfaInputStr').value;
+
+    const steps = [];
+    let state = 'start';
+    let sign = 1;
+    let result = 0;
+
+    for (let i = 0; i < s.length; i++) {
+        const ch = s[i];
+        const charType = classifyChar(ch);
+        const prevState = state;
+        state = DFA_TRANSITIONS[prevState][charType];
+
+        let stepResult = result;
+        let stepSign = sign;
+
+        if (state === 'signed') {
+            sign = ch === '-' ? -1 : 1;
+            stepSign = sign;
+        } else if (state === 'in_number') {
+            const digit = parseInt(ch);
+            if (result > Math.floor(INT_MAX / 10) || (result === Math.floor(INT_MAX / 10) && digit > 7)) {
+                const clampVal = sign === 1 ? INT_MAX : INT_MIN;
+                steps.push({
+                    index: i, ch, charType, prevState, nextState: 'end', sign, result: clampVal,
+                    overflow: true,
+                    msg: `'${ch === ' ' ? '\\u2423' : ch}' [${charType}]: ${prevState} -> OVERFLOW! Clamp: ${clampVal}`
+                });
+                break;
+            }
+            result = result * 10 + digit;
+            stepResult = result;
+        }
+
+        steps.push({
+            index: i, ch, charType, prevState, nextState: state, sign: stepSign, result: stepResult,
+            overflow: false,
+            msg: `'${ch === ' ' ? '\\u2423' : ch}' [${charType}]: ${prevState} -> ${state}${state === 'in_number' ? ', result=' + stepResult : ''}`
+        });
+
+        if (state === 'end') break;
+    }
+
+    // Final
+    const finalResult = steps.length > 0 && steps[steps.length - 1].overflow
+        ? steps[steps.length - 1].result
+        : sign * result;
+
+    steps.push({
+        index: -1, ch: '', charType: '', prevState: state, nextState: 'done',
+        sign, result: finalResult, overflow: false,
+        msg: `Result: ${finalResult}`
+    });
+
+    dfaState = { s, steps, stepIndex: 0 };
+    buildCharBoxes('dfaStringDisplay', s);
+    highlightDFAState('start');
+}
+
+function highlightDFAState(stateName) {
+    // Reset all states
+    Object.values(STATE_SVG_IDS).forEach(id => {
+        document.getElementById(id).classList.remove('active');
+    });
+    // Reset all arrows
+    Object.values(ARROW_IDS).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+    });
+    Object.values(LABEL_IDS).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+    });
+
+    // Highlight current state
+    if (STATE_SVG_IDS[stateName]) {
+        document.getElementById(STATE_SVG_IDS[stateName]).classList.add('active');
+    }
+}
+
+function highlightDFAArrow(from, to) {
+    const key = from + '-' + to;
+    const arrowEl = document.getElementById(ARROW_IDS[key]);
+    const labelEl = document.getElementById(LABEL_IDS[key]);
+    if (arrowEl) arrowEl.classList.add('active');
+    if (labelEl) labelEl.classList.add('active');
+}
+
+function getDFASpeed() {
+    const val = document.getElementById('dfaSpeedSlider').value;
+    document.getElementById('dfaSpeedLabel').textContent = val + 'x';
+    return 1200 - (val * 100);
+}
+
+function dfaPlay() {
+    if (!dfaState || dfaState.stepIndex >= dfaState.steps.length) {
+        startDFA();
+    }
+    document.getElementById('dfaBtnPlay').disabled = true;
+    document.getElementById('dfaBtnPause').disabled = false;
+
+    function tick() {
+        if (!dfaState || dfaState.stepIndex >= dfaState.steps.length) {
+            dfaPause();
+            return;
+        }
+        dfaStep();
+        dfaTimer = setTimeout(tick, getDFASpeed());
+    }
+    tick();
+}
+
+function dfaPause() {
+    clearTimeout(dfaTimer);
+    dfaTimer = null;
+    document.getElementById('dfaBtnPlay').disabled = false;
+    document.getElementById('dfaBtnPause').disabled = true;
+}
+
+function dfaStep() {
+    if (!dfaState) startDFA();
+    if (!dfaState || dfaState.stepIndex >= dfaState.steps.length) return;
+
+    const st = dfaState.steps[dfaState.stepIndex];
+    const s = dfaState.s;
+
+    // Highlight character
+    if (st.index >= 0 && st.index < s.length) {
+        for (let j = 0; j < s.length; j++) {
+            const box = document.getElementById('dfaStringDisplay-char-' + j);
+            if (box) box.classList.remove('active');
+        }
+        const box = document.getElementById('dfaStringDisplay-char-' + st.index);
+        if (box) {
+            box.classList.add('active');
+            if (st.charType === ' ') box.classList.add('processed-ws');
+            if (st.charType === 'sign') box.classList.add('sign');
+            if (st.charType === 'digit') box.classList.add('digit');
+            if (st.nextState === 'end' && st.charType === 'other') box.classList.add('ignored');
+            if (st.overflow) box.classList.add('clamped');
+        }
+    }
+
+    // Highlight DFA state and arrow
+    const targetState = st.nextState === 'done' ? st.prevState : st.nextState;
+    highlightDFAState(targetState);
+    if (st.prevState && st.nextState && st.nextState !== 'done') {
+        highlightDFAArrow(st.prevState, st.nextState);
+    }
+
+    // Update info
+    document.getElementById('dfaInfoState').textContent = STATE_DISPLAY[targetState] || 'Done';
+    document.getElementById('dfaInfoChar').textContent = st.ch === ' ' ? '" "' : (st.ch || '—');
+    document.getElementById('dfaInfoSign').textContent = st.sign === 1 ? '+1' : '-1';
+    document.getElementById('dfaInfoSign').className = 'value ' + (st.sign === 1 ? 'positive' : 'negative');
+    document.getElementById('dfaInfoResult').textContent = st.result;
+
+    // Log
+    const logDiv = document.getElementById('dfaLogContent');
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    if (st.overflow) entry.classList.add('overflow');
+    else if (st.nextState === 'done') entry.classList.add('result');
+    else if (st.nextState === 'end') entry.classList.add('stop');
+    else if (st.charType === ' ') entry.classList.add('skip');
+    else if (st.charType === 'sign') entry.classList.add('sign-log');
+    else if (st.charType === 'digit') entry.classList.add('digit-log');
+    entry.textContent = st.msg;
+    logDiv.appendChild(entry);
+    logDiv.scrollTop = logDiv.scrollHeight;
+
+    dfaState.stepIndex++;
+}
+
+function dfaReset() {
+    dfaPause();
+    dfaState = null;
+    document.getElementById('dfaStringDisplay').innerHTML = '';
+    document.getElementById('dfaLogContent').innerHTML = '';
+    document.getElementById('dfaInfoState').textContent = 'q0 (start)';
+    document.getElementById('dfaInfoChar').textContent = '—';
+    document.getElementById('dfaInfoSign').textContent = '+1';
+    document.getElementById('dfaInfoSign').className = 'value positive';
+    document.getElementById('dfaInfoResult').textContent = '0';
+    highlightDFAState('start');
+    document.getElementById('dfaBtnPlay').disabled = false;
+    document.getElementById('dfaBtnPause').disabled = true;
+}
+
+document.getElementById('dfaSpeedSlider').addEventListener('input', function() {
+    document.getElementById('dfaSpeedLabel').textContent = this.value + 'x';
+});
+
+// ============================================================
+// TAB 3: REGEX
+// ============================================================
+function setRegexExample(val) {
+    document.getElementById('regexInputStr').value = val;
+}
+
+function startRegex() { runRegex(); }
+
+function runRegex() {
+    const s = document.getElementById('regexInputStr').value;
+    const logDiv = document.getElementById('regexLogContent');
+    logDiv.innerHTML = '';
+
+    buildCharBoxes('regexStringDisplay', s);
+
+    const addLog = (msg, cls) => {
+        const entry = document.createElement('div');
+        entry.className = 'log-entry ' + (cls || '');
+        entry.textContent = msg;
+        logDiv.appendChild(entry);
+    };
+
+    addLog(`Input: "${s}"`);
+    addLog(`Pattern: ^\\s*([+-]?\\d+)`);
+
+    // Highlight regex parts
+    const rxWs = document.getElementById('rxWs');
+    const rxSign = document.getElementById('rxSign');
+    const rxDigits = document.getElementById('rxDigits');
+    rxWs.style.color = '#94a3b8';
+    rxSign.style.color = '#94a3b8';
+    rxDigits.style.color = '#94a3b8';
+
+    // Apply regex
+    const match = s.match(/^\s*([+-]?\d+)/);
+
+    if (!match) {
+        addLog('No match found — result: 0', 'stop');
+        document.getElementById('regexInfoMatch').textContent = 'null';
+        document.getElementById('regexInfoParsed').textContent = '0';
+        document.getElementById('regexInfoClamped').textContent = '0';
+        return;
+    }
+
+    const fullMatch = match[0];
+    const group1 = match[1];
+
+    addLog(`To'liq match: "${fullMatch}"`, 'digit-log');
+    addLog(`Group 1 (number): "${group1}"`, 'digit-log');
+
+    // Highlight matched characters
+    let matchEnd = fullMatch.length;
+    for (let i = 0; i < s.length; i++) {
+        const box = document.getElementById('regexStringDisplay-char-' + i);
+        if (!box) continue;
+
+        if (i < matchEnd) {
+            // Find where group1 starts within the full match
+            const g1Start = fullMatch.indexOf(group1);
+            if (i < g1Start) {
+                box.classList.add('processed-ws');
+                rxWs.style.color = '#64748b';
+            } else {
+                // Within group1
+                const g1Offset = i - g1Start;
+                if (group1[g1Offset] === '+' || group1[g1Offset] === '-') {
+                    box.classList.add('sign');
+                    rxSign.style.color = '#fbbf24';
+                } else {
+                    box.classList.add('digit');
+                    rxDigits.style.color = '#4ade80';
+                }
+            }
+        } else {
+            box.classList.add('ignored');
+        }
+    }
+
+    // Parse and clamp
+    let num = parseInt(group1, 10);
+    addLog(`parseInt("${group1}") = ${num}`, 'sign-log');
+
+    document.getElementById('regexInfoMatch').textContent = `"${group1}"`;
+    document.getElementById('regexInfoParsed').textContent = num;
+
+    let clamped = num;
+    if (num > INT_MAX) {
+        clamped = INT_MAX;
+        addLog(`${num} > INT_MAX (2147483647) — clamp: ${INT_MAX}`, 'overflow');
+    } else if (num < INT_MIN) {
+        clamped = INT_MIN;
+        addLog(`${num} < INT_MIN (-2147483648) — clamp: ${INT_MIN}`, 'overflow');
+    } else {
+        addLog(`${num} within range — no clamping needed`, 'result');
+    }
+
+    document.getElementById('regexInfoClamped').textContent = clamped;
+    addLog(`Result: ${clamped}`, 'result');
+}
+
+// ============================================================
+// INITIALIZE
+// ============================================================
+startParsing();
+</script>
+
+</body>
+</html>

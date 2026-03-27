@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0007. Reverse Integer — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 200px;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        .input-section label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .btn:hover { background: #475569; }
+        .btn-play { background: #22c55e; color: white; border-color: #22c55e; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #eab308; color: #0f172a; border-color: #eab308; }
+        .btn-pause:hover { background: #ca8a04; }
+        .btn-step { background: #3b82f6; color: white; border-color: #3b82f6; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #ef4444; color: white; border-color: #ef4444; }
+        .btn-reset:hover { background: #dc2626; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 80px;
+            accent-color: #3b82f6;
+        }
+
+        /* VISUALIZATION */
+        .viz-area {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .digit-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .digit-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            min-width: 80px;
+            text-align: right;
+            margin-right: 10px;
+            font-family: monospace;
+        }
+
+        .digit-box {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            transition: all 0.4s ease;
+            border: 2px solid #334155;
+            background: #0f172a;
+        }
+
+        .digit-box.highlight {
+            border-color: #f59e0b;
+            background: #78350f;
+            color: #fbbf24;
+            transform: scale(1.15);
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .digit-box.popped {
+            border-color: #22c55e;
+            background: #14532d;
+            color: #4ade80;
+            animation: popAnim 0.4s ease;
+        }
+
+        .digit-box.pushed {
+            border-color: #3b82f6;
+            background: #1e3a5f;
+            color: #60a5fa;
+            animation: pushAnim 0.4s ease;
+        }
+
+        .digit-box.done {
+            border-color: #22c55e;
+            background: #14532d;
+            color: #4ade80;
+        }
+
+        .digit-box.overflow {
+            border-color: #ef4444;
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+
+        .digit-box.empty {
+            border-color: #1e293b;
+            background: #0f172a;
+            color: #334155;
+        }
+
+        .sign-box {
+            width: 32px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f59e0b;
+        }
+
+        @keyframes popAnim {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3) translateY(-10px); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes pushAnim {
+            0% { transform: scale(0.5) translateY(10px); opacity: 0.3; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        /* ARROW */
+        .arrow-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .arrow {
+            font-size: 2rem;
+            color: #f59e0b;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* FORMULA */
+        .formula-section {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px 24px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            text-align: center;
+            border: 1px solid #334155;
+            min-width: 300px;
+        }
+
+        .formula-section .op {
+            color: #f59e0b;
+        }
+
+        .formula-section .val {
+            color: #60a5fa;
+            font-weight: 700;
+        }
+
+        .formula-section .res {
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        /* STATUS */
+        .status-bar {
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            border: 1px solid #334155;
+            background: #0f172a;
+        }
+
+        .status-bar.success { border-color: #22c55e; color: #4ade80; }
+        .status-bar.error { border-color: #ef4444; color: #fca5a5; }
+        .status-bar.info { border-color: #3b82f6; color: #60a5fa; }
+
+        /* OVERFLOW GAUGE */
+        .overflow-section {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 10px;
+        }
+
+        .overflow-gauge {
+            position: relative;
+            height: 40px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .overflow-gauge .safe-zone {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #14532d, #166534, #14532d);
+            transition: all 0.4s;
+        }
+
+        .overflow-gauge .marker {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: #f59e0b;
+            transition: left 0.4s;
+            z-index: 2;
+        }
+
+        .overflow-gauge .marker::after {
+            content: attr(data-val);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: #f59e0b;
+            white-space: nowrap;
+            padding-bottom: 4px;
+        }
+
+        .overflow-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #64748b;
+            margin-top: 4px;
+            font-family: monospace;
+        }
+
+        .overflow-title {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+
+        /* STEP COUNTER */
+        .step-counter {
+            font-size: 0.85rem;
+            color: #64748b;
+            text-align: center;
+        }
+
+        /* TAB CONTENT */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.3rem; }
+            .digit-box { width: 36px; height: 36px; font-size: 1rem; }
+            .digit-label { min-width: 60px; font-size: 0.7rem; }
+            .formula-section { font-size: 0.8rem; padding: 12px; min-width: auto; }
+            .container { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>0007. Reverse Integer</h1>
+    <p>Reversing digits — with overflow handling</p>
+</div>
+
+<div class="tabs">
+    <div class="tab active" data-tab="math">Math (Pop & Push)</div>
+    <div class="tab" data-tab="overflow">Overflow Check</div>
+    <div class="tab" data-tab="string">String Conversion</div>
+</div>
+
+<div class="container">
+    <!-- Input Section -->
+    <div class="input-section">
+        <label for="numInput">x =</label>
+        <input type="number" id="numInput" value="123" placeholder="Enter a number...">
+        <button class="btn btn-step" onclick="initAnimation()">Start</button>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="btn btn-play" id="playBtn" onclick="play()">&#9654; Play</button>
+        <button class="btn btn-pause" id="pauseBtn" onclick="pause()" style="display:none">&#10074;&#10074; Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">&#9654;| Step</button>
+        <button class="btn btn-reset" onclick="resetAnimation()">&#8634; Reset</button>
+        <div class="speed-control">
+            <span>Speed:</span>
+            <input type="range" id="speedRange" min="1" max="5" value="3">
+            <span id="speedLabel">3x</span>
+        </div>
+    </div>
+
+    <div class="step-counter" id="stepCounter">Step: 0 / 0</div>
+
+    <!-- Tab: Math (Pop & Push) -->
+    <div class="tab-content active" id="tab-math">
+        <div class="viz-area" id="mathViz">
+            <div class="digit-row">
+                <span class="digit-label">x =</span>
+                <div id="xDigits"></div>
+            </div>
+            <div class="arrow-section">
+                <span id="mathFormula" class="formula-section">
+                    We extract digits one by one and build the reversed number
+                </span>
+            </div>
+            <div class="digit-row">
+                <span class="digit-label">result =</span>
+                <div id="resultDigits"></div>
+            </div>
+            <div class="overflow-section" id="overflowSection">
+                <div class="overflow-title">32-bit Integer limit</div>
+                <div class="overflow-gauge">
+                    <div class="safe-zone" id="safeZone"></div>
+                    <div class="marker" id="resultMarker" data-val="0"></div>
+                </div>
+                <div class="overflow-labels">
+                    <span>-2,147,483,648</span>
+                    <span>0</span>
+                    <span>2,147,483,647</span>
+                </div>
+            </div>
+            <div class="status-bar info" id="mathStatus">
+                Enter a number and press "Start"
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Overflow Check -->
+    <div class="tab-content" id="tab-overflow">
+        <div class="viz-area" id="overflowViz">
+            <div class="formula-section" id="overflowFormula" style="min-width: 400px; text-align: left;">
+                <div style="margin-bottom: 10px; color: #94a3b8;">Overflow check (at each step):</div>
+                <div id="overflowCheck1" style="margin-bottom: 6px;">
+                    <span class="op">result</span> > <span class="val">INT_MAX / 10</span> (214748364)?
+                </div>
+                <div id="overflowCheck2" style="margin-bottom: 6px;">
+                    <span class="op">result</span> == <span class="val">214748364</span> va <span class="op">pop</span> > <span class="val">7</span>?
+                </div>
+                <div style="margin-top: 12px; border-top: 1px solid #334155; padding-top: 10px;" id="overflowResult">
+                    Result: <span class="res">Not started yet</span>
+                </div>
+            </div>
+            <div class="digit-row">
+                <span class="digit-label">x =</span>
+                <div id="xDigitsOF"></div>
+            </div>
+            <div class="digit-row">
+                <span class="digit-label">result =</span>
+                <div id="resultDigitsOF"></div>
+            </div>
+            <div class="formula-section" id="overflowStepFormula">
+                Overflow check is shown at each step
+            </div>
+            <div class="status-bar info" id="overflowStatus">
+                Enter a number and press "Start"
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: String Conversion -->
+    <div class="tab-content" id="tab-string">
+        <div class="viz-area" id="stringViz">
+            <div class="digit-row">
+                <span class="digit-label">Original:</span>
+                <div id="strOriginal"></div>
+            </div>
+            <div class="arrow-section">
+                <span class="arrow">&#8595;</span>
+                <span>Convert to string and reverse</span>
+            </div>
+            <div class="digit-row">
+                <span class="digit-label">Reversed:</span>
+                <div id="strReversed"></div>
+            </div>
+            <div class="formula-section" id="strFormula">
+                str(abs(x))[::-1] — Reverse using Python slicing
+            </div>
+            <div class="status-bar info" id="strStatus">
+                Enter a number and press "Start"
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // State
+    // ============================================================
+    let currentTab = 'math';
+    let steps = [];
+    let currentStep = 0;
+    let isPlaying = false;
+    let playTimer = null;
+    let originalX = 123;
+
+    const INT_MAX = 2147483647;
+    const INT_MIN = -2147483648;
+
+    // ============================================================
+    // Tab Switching
+    // ============================================================
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            tab.classList.add('active');
+            const tabId = tab.getAttribute('data-tab');
+            document.getElementById('tab-' + tabId).classList.add('active');
+            currentTab = tabId;
+            resetAnimation();
+        });
+    });
+
+    // ============================================================
+    // Speed Control
+    // ============================================================
+    document.getElementById('speedRange').addEventListener('input', function() {
+        document.getElementById('speedLabel').textContent = this.value + 'x';
+    });
+
+    function getDelay() {
+        const speed = parseInt(document.getElementById('speedRange').value);
+        return [2000, 1500, 1000, 600, 300][speed - 1];
+    }
+
+    // ============================================================
+    // Digit Box Helpers
+    // ============================================================
+    function createDigitBoxes(container, digits, classes) {
+        const el = typeof container === 'string' ? document.getElementById(container) : container;
+        el.innerHTML = '';
+        const row = document.createElement('div');
+        row.style.display = 'flex';
+        row.style.gap = '6px';
+        digits.forEach((d, i) => {
+            const box = document.createElement('div');
+            box.className = 'digit-box ' + (classes[i] || '');
+            box.textContent = d;
+            row.appendChild(box);
+        });
+        el.appendChild(row);
+    }
+
+    function numberToDigits(n) {
+        if (n === 0) return ['0'];
+        const s = Math.abs(n).toString();
+        return s.split('');
+    }
+
+    // ============================================================
+    // Generate Steps for Math Approach
+    // ============================================================
+    function generateMathSteps(x) {
+        const steps = [];
+        const sign = x >= 0 ? 1 : -1;
+        let workX = Math.abs(x);
+        let result = 0;
+        const origDigits = numberToDigits(x);
+
+        steps.push({
+            type: 'init',
+            x: workX,
+            result: 0,
+            sign: sign,
+            message: `Start: x = ${x}, result = 0`,
+            popDigit: null,
+            xDigits: numberToDigits(workX),
+            resultDigits: ['0'],
+            highlightX: -1,
+            highlightR: -1
+        });
+
+        let stepNum = 0;
+        while (workX !== 0) {
+            stepNum++;
+            const pop = workX % 10;
+            const oldX = workX;
+            workX = Math.floor(workX / 10);
+            const oldResult = result;
+
+            // Check overflow
+            if (result > Math.floor(INT_MAX / 10) ||
+                (result === Math.floor(INT_MAX / 10) && pop > 7)) {
+                steps.push({
+                    type: 'overflow',
+                    x: workX,
+                    result: result,
+                    sign: sign,
+                    pop: pop,
+                    message: `OVERFLOW! result(${result}) * 10 + ${pop} > INT_MAX (2147483647)`,
+                    xDigits: workX === 0 ? ['0'] : numberToDigits(workX),
+                    resultDigits: numberToDigits(result),
+                    highlightX: -1,
+                    highlightR: -1,
+                    overflowDetected: true
+                });
+                return steps;
+            }
+
+            result = result * 10 + pop;
+
+            const xDigs = workX === 0 ? ['0'] : numberToDigits(workX);
+            const rDigs = numberToDigits(result);
+
+            steps.push({
+                type: 'pop',
+                x: workX,
+                result: result,
+                sign: sign,
+                pop: pop,
+                oldX: oldX,
+                oldResult: oldResult,
+                message: `Step ${stepNum}: pop = ${oldX} % 10 = ${pop}, x = ${oldX} / 10 = ${workX}`,
+                xDigits: xDigs,
+                resultDigits: rDigs,
+                highlightX: xDigs.length - 1,
+                highlightR: rDigs.length - 1
+            });
+
+            steps.push({
+                type: 'push',
+                x: workX,
+                result: result,
+                sign: sign,
+                pop: pop,
+                oldResult: oldResult,
+                message: `result = ${oldResult} * 10 + ${pop} = ${result}`,
+                xDigits: xDigs,
+                resultDigits: rDigs,
+                highlightX: -1,
+                highlightR: rDigs.length - 1
+            });
+        }
+
+        const finalResult = result * sign;
+        const isOverflow = finalResult > INT_MAX || finalResult < INT_MIN;
+
+        steps.push({
+            type: 'done',
+            x: 0,
+            result: result,
+            finalResult: finalResult,
+            sign: sign,
+            message: isOverflow
+                ? `Result: ${finalResult} — OVERFLOW! return 0`
+                : `Result: ${finalResult}`,
+            xDigits: ['0'],
+            resultDigits: numberToDigits(result),
+            highlightX: -1,
+            highlightR: -1,
+            isOverflow: isOverflow
+        });
+
+        return steps;
+    }
+
+    // ============================================================
+    // Generate Steps for String Approach
+    // ============================================================
+    function generateStringSteps(x) {
+        const steps = [];
+        const sign = x >= 0 ? 1 : -1;
+        const absStr = Math.abs(x).toString();
+        const chars = absStr.split('');
+
+        steps.push({
+            type: 'init',
+            original: chars.slice(),
+            reversed: chars.map(() => '_'),
+            message: `str(abs(${x})) = "${absStr}"`,
+            highlight: -1
+        });
+
+        const rev = [];
+        for (let i = chars.length - 1; i >= 0; i--) {
+            rev.push(chars[i]);
+            const reversed = rev.concat(chars.slice(0, chars.length - rev.length).map(() => '_'));
+            steps.push({
+                type: 'swap',
+                original: chars.slice(),
+                reversed: reversed,
+                message: `chars[${i}] = '${chars[i]}' → added to reversed[${rev.length - 1}]`,
+                highlightOrig: i,
+                highlightRev: rev.length - 1
+            });
+        }
+
+        const reversedStr = chars.slice().reverse().join('');
+        const result = parseInt(reversedStr) * sign;
+        const isOverflow = result > INT_MAX || result < INT_MIN;
+
+        steps.push({
+            type: 'done',
+            original: chars.slice(),
+            reversed: reversedStr.split(''),
+            message: isOverflow
+                ? `int("${reversedStr}") * ${sign} = ${result} — OVERFLOW! return 0`
+                : `int("${reversedStr}") * ${sign} = ${result}`,
+            isOverflow: isOverflow,
+            result: result
+        });
+
+        return steps;
+    }
+
+    // ============================================================
+    // Render Math Step
+    // ============================================================
+    function renderMathStep(step) {
+        const sign = step.sign < 0 ? '-' : '';
+
+        // X digits
+        const xClasses = step.xDigits.map((_, i) => {
+            if (step.type === 'pop' && i === step.xDigits.length - 1) return 'highlight';
+            if (step.type === 'overflow' || (step.type === 'done' && step.isOverflow)) return 'overflow';
+            if (step.type === 'done' && !step.isOverflow) return 'done';
+            return '';
+        });
+        createDigitBoxes('xDigits', step.xDigits, xClasses);
+
+        // Result digits
+        const rClasses = step.resultDigits.map((_, i) => {
+            if (step.type === 'push' && i === step.resultDigits.length - 1) return 'pushed';
+            if (step.type === 'pop' && i === step.resultDigits.length - 1) return 'popped';
+            if (step.type === 'overflow' || (step.type === 'done' && step.isOverflow)) return 'overflow';
+            if (step.type === 'done' && !step.isOverflow) return 'done';
+            return '';
+        });
+        createDigitBoxes('resultDigits', step.resultDigits, rClasses);
+
+        // Formula
+        const formula = document.getElementById('mathFormula');
+        if (step.type === 'init') {
+            formula.innerHTML = `<span class="op">x</span> = <span class="val">${sign}${Math.abs(step.x === undefined ? originalX : step.x)}</span>, <span class="op">result</span> = <span class="val">0</span>`;
+        } else if (step.type === 'pop') {
+            formula.innerHTML = `<span class="op">pop</span> = <span class="val">${step.oldX}</span> % 10 = <span class="res">${step.pop}</span> &nbsp;|&nbsp; <span class="op">x</span> = <span class="val">${step.oldX}</span> / 10 = <span class="res">${step.x}</span>`;
+        } else if (step.type === 'push') {
+            formula.innerHTML = `<span class="op">result</span> = <span class="val">${step.oldResult}</span> * 10 + <span class="val">${step.pop}</span> = <span class="res">${step.result}</span>`;
+        } else if (step.type === 'overflow') {
+            formula.innerHTML = `<span style="color:#ef4444;font-weight:700;">OVERFLOW!</span> <span class="val">${step.result}</span> * 10 + <span class="val">${step.pop}</span> > <span class="val">2,147,483,647</span>`;
+        } else if (step.type === 'done') {
+            if (step.isOverflow) {
+                formula.innerHTML = `<span style="color:#ef4444;font-weight:700;">OVERFLOW!</span> Result: <span class="val">${step.finalResult}</span> → return <span class="res">0</span>`;
+            } else {
+                formula.innerHTML = `Result: <span class="res">${step.finalResult}</span>`;
+            }
+        }
+
+        // Overflow gauge
+        updateOverflowGauge(step.result * (step.sign || 1), step.type === 'overflow' || (step.type === 'done' && step.isOverflow));
+
+        // Status
+        const status = document.getElementById('mathStatus');
+        status.textContent = step.message;
+        if (step.type === 'done' && !step.isOverflow) {
+            status.className = 'status-bar success';
+        } else if (step.type === 'overflow' || (step.type === 'done' && step.isOverflow)) {
+            status.className = 'status-bar error';
+        } else {
+            status.className = 'status-bar info';
+        }
+    }
+
+    // ============================================================
+    // Render Overflow Step (reuses math steps with extra info)
+    // ============================================================
+    function renderOverflowStep(step) {
+        const sign = step.sign < 0 ? '-' : '';
+        const maxDiv10 = Math.floor(INT_MAX / 10); // 214748364
+
+        // X digits
+        const xClasses = step.xDigits.map(() => '');
+        createDigitBoxes('xDigitsOF', step.xDigits, xClasses);
+
+        // Result digits
+        const rClasses = step.resultDigits.map((_, i) => {
+            if (step.type === 'overflow') return 'overflow';
+            if (step.type === 'done' && step.isOverflow) return 'overflow';
+            if (step.type === 'done' && !step.isOverflow) return 'done';
+            if (step.type === 'push' && i === step.resultDigits.length - 1) return 'pushed';
+            return '';
+        });
+        createDigitBoxes('resultDigitsOF', step.resultDigits, rClasses);
+
+        // Overflow check display
+        const check1 = document.getElementById('overflowCheck1');
+        const check2 = document.getElementById('overflowCheck2');
+        const overflowResult = document.getElementById('overflowResult');
+
+        if (step.type === 'init') {
+            check1.innerHTML = `<span class="op">result</span> (0) > <span class="val">${maxDiv10}</span>? <span class="res">No</span>`;
+            check2.innerHTML = `<span class="op">result</span> (0) == <span class="val">${maxDiv10}</span> va <span class="op">pop</span> > <span class="val">7</span>? <span class="res">No</span>`;
+            overflowResult.innerHTML = `Result: <span class="res">Safe ✅</span>`;
+        } else if (step.type === 'pop' || step.type === 'push') {
+            const r = step.oldResult !== undefined ? step.oldResult : step.result;
+            const p = step.pop !== undefined ? step.pop : '?';
+            const isGt = r > maxDiv10;
+            const isEqAndGt = r === maxDiv10 && p > 7;
+            check1.innerHTML = `<span class="op">result</span> (${r}) > <span class="val">${maxDiv10}</span>? <span class="res">${isGt ? 'YES → OVERFLOW' : 'Yo\'q'}</span>`;
+            check2.innerHTML = `<span class="op">result</span> (${r}) == <span class="val">${maxDiv10}</span> va <span class="op">pop</span> (${p}) > <span class="val">7</span>? <span class="res">${isEqAndGt ? 'YES → OVERFLOW' : 'Yo\'q'}</span>`;
+            overflowResult.innerHTML = isGt || isEqAndGt
+                ? `Result: <span style="color:#ef4444;font-weight:700;">OVERFLOW ❌</span>`
+                : `Result: <span class="res">Safe ✅</span>`;
+        } else if (step.type === 'overflow') {
+            check1.innerHTML = `<span class="op">result</span> (${step.result}) > <span class="val">${maxDiv10}</span>? <span style="color:#ef4444;font-weight:700;">YES!</span>`;
+            check2.innerHTML = ``;
+            overflowResult.innerHTML = `Result: <span style="color:#ef4444;font-weight:700;">OVERFLOW detected! return 0 ❌</span>`;
+        } else if (step.type === 'done') {
+            if (step.isOverflow) {
+                overflowResult.innerHTML = `Result: <span style="color:#ef4444;font-weight:700;">OVERFLOW! return 0 ❌</span>`;
+            } else {
+                overflowResult.innerHTML = `Result: <span class="res">${step.finalResult} ✅</span>`;
+            }
+        }
+
+        // Step formula
+        const sf = document.getElementById('overflowStepFormula');
+        sf.textContent = step.message;
+
+        // Status
+        const status = document.getElementById('overflowStatus');
+        status.textContent = step.message;
+        if (step.type === 'done' && !step.isOverflow) {
+            status.className = 'status-bar success';
+        } else if (step.type === 'overflow' || (step.type === 'done' && step.isOverflow)) {
+            status.className = 'status-bar error';
+        } else {
+            status.className = 'status-bar info';
+        }
+    }
+
+    // ============================================================
+    // Render String Step
+    // ============================================================
+    function renderStringStep(step) {
+        const origClasses = step.original.map((_, i) => {
+            if (step.highlightOrig === i) return 'highlight';
+            if (step.type === 'done' && !step.isOverflow) return 'done';
+            if (step.type === 'done' && step.isOverflow) return 'overflow';
+            return '';
+        });
+        createDigitBoxes('strOriginal', step.original, origClasses);
+
+        const revClasses = step.reversed.map((d, i) => {
+            if (d === '_') return 'empty';
+            if (step.highlightRev === i) return 'pushed';
+            if (step.type === 'done' && !step.isOverflow) return 'done';
+            if (step.type === 'done' && step.isOverflow) return 'overflow';
+            return '';
+        });
+        createDigitBoxes('strReversed', step.reversed, revClasses);
+
+        const formula = document.getElementById('strFormula');
+        formula.textContent = step.message;
+
+        const status = document.getElementById('strStatus');
+        status.textContent = step.message;
+        if (step.type === 'done' && !step.isOverflow) {
+            status.className = 'status-bar success';
+        } else if (step.type === 'done' && step.isOverflow) {
+            status.className = 'status-bar error';
+        } else {
+            status.className = 'status-bar info';
+        }
+    }
+
+    // ============================================================
+    // Overflow Gauge
+    // ============================================================
+    function updateOverflowGauge(value, isOverflow) {
+        const safeZone = document.getElementById('safeZone');
+        const marker = document.getElementById('resultMarker');
+
+        // Map value to 0-100% position
+        // Range: INT_MIN to INT_MAX
+        const range = INT_MAX - INT_MIN;
+        let pos = ((value - INT_MIN) / range) * 100;
+        pos = Math.max(0, Math.min(100, pos));
+
+        safeZone.style.left = '0%';
+        safeZone.style.width = '100%';
+        safeZone.style.opacity = '0.3';
+
+        marker.style.left = pos + '%';
+        marker.setAttribute('data-val', value.toLocaleString());
+
+        if (isOverflow) {
+            marker.style.background = '#ef4444';
+        } else {
+            marker.style.background = '#f59e0b';
+        }
+    }
+
+    // ============================================================
+    // Init / Render / Step / Play / Pause / Reset
+    // ============================================================
+    function initAnimation() {
+        pause();
+        originalX = parseInt(document.getElementById('numInput').value) || 0;
+        currentStep = 0;
+
+        if (currentTab === 'math' || currentTab === 'overflow') {
+            steps = generateMathSteps(originalX);
+        } else if (currentTab === 'string') {
+            steps = generateStringSteps(originalX);
+        }
+
+        renderCurrentStep();
+    }
+
+    function renderCurrentStep() {
+        if (steps.length === 0) return;
+        const step = steps[currentStep];
+
+        document.getElementById('stepCounter').textContent =
+            `Step: ${currentStep} / ${steps.length - 1}`;
+
+        if (currentTab === 'math') {
+            renderMathStep(step);
+        } else if (currentTab === 'overflow') {
+            renderOverflowStep(step);
+        } else if (currentTab === 'string') {
+            renderStringStep(step);
+        }
+    }
+
+    function stepForward() {
+        if (steps.length === 0) {
+            initAnimation();
+            return;
+        }
+        if (currentStep < steps.length - 1) {
+            currentStep++;
+            renderCurrentStep();
+        } else {
+            pause();
+        }
+    }
+
+    function play() {
+        if (steps.length === 0) initAnimation();
+        isPlaying = true;
+        document.getElementById('playBtn').style.display = 'none';
+        document.getElementById('pauseBtn').style.display = 'inline-block';
+
+        function tick() {
+            if (!isPlaying) return;
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                renderCurrentStep();
+                playTimer = setTimeout(tick, getDelay());
+            } else {
+                pause();
+            }
+        }
+        playTimer = setTimeout(tick, getDelay());
+    }
+
+    function pause() {
+        isPlaying = false;
+        if (playTimer) clearTimeout(playTimer);
+        document.getElementById('playBtn').style.display = 'inline-block';
+        document.getElementById('pauseBtn').style.display = 'none';
+    }
+
+    function resetAnimation() {
+        pause();
+        currentStep = 0;
+        steps = [];
+        document.getElementById('stepCounter').textContent = 'Step: 0 / 0';
+
+        // Clear all viz areas
+        ['xDigits', 'resultDigits', 'xDigitsOF', 'resultDigitsOF', 'strOriginal', 'strReversed'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = '';
+        });
+
+        ['mathFormula'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = 'We extract digits one by one and build the reversed number';
+        });
+
+        ['mathStatus', 'overflowStatus', 'strStatus'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.textContent = 'Enter a number and press "Start"';
+                el.className = 'status-bar info';
+            }
+        });
+
+        updateOverflowGauge(0, false);
+    }
+
+    // ============================================================
+    // Keyboard Shortcuts
+    // ============================================================
+    document.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT') return;
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            isPlaying ? pause() : play();
+        } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            stepForward();
+        } else if (e.key === 'r' || e.key === 'R') {
+            resetAnimation();
+        }
+    });
+
+    // ============================================================
+    // Init on load
+    // ============================================================
+    updateOverflowGauge(0, false);
+</script>
+
+</body>
+</html>

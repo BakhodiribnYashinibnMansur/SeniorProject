@@ -1,83 +1,83 @@
 # Leetcode Template — Universal Guide
 
-> Har bir Leetcode masala uchun universal template.
-> Barcha yechimlar **3 tilda: Go, Java, Python** da beriladi.
-> Har bir masala **interaktiv HTML/CSS/JS animatsiya** bilan tushuntiriladi.
+> Universal template for every Leetcode problem.
+> All solutions are provided in **3 languages: Go, Java, Python**.
+> Each problem is explained with an **interactive HTML/CSS/JS animation**.
 
-## Qoida: 1 Masala = 1 Folder
+## Rule: 1 Problem = 1 Folder
 
-> **MUHIM:** Har bir Leetcode masala o'zining alohida papkasida bo'lishi **SHART**.
-> Hech qachon bitta papkaga 2 ta masala qo'ymang.
-> Folder nomi: `XXXX-problem-name` formatda (4 raqamli, kebab-case).
+> **IMPORTANT:** Each Leetcode problem **MUST** be in its own separate folder.
+> Never put 2 problems in one folder.
+> Folder name format: `XXXX-problem-name` (4-digit, kebab-case).
 
 ## Overview
 
 | | Description |
 |---|---|
-| **Purpose** | Leetcode masalalarini tizimli yechish uchun universal template |
-| **Rule** | **1 masala = 1 folder** — har bir masala o'z papkasida |
-| **Files per problem** | 5 fayl: `solution.md`, `solution.go`, `solution.java`, `solution.py`, `animation.html` |
-| **Languages** | Barcha kod **Go**, **Java**, **Python** (shu tartibda) |
-| **Visualization** | Har bir masala `animation.html` — standalone interaktiv animatsiya |
-| **Code Fences** | `go`, `java`, `python` implementatsiyalar uchun, `text` pseudocode uchun |
+| **Purpose** | Universal template for systematically solving Leetcode problems |
+| **Rule** | **1 problem = 1 folder** — each problem in its own folder |
+| **Files per problem** | 5 files: `solution.md`, `solution.go`, `solution.java`, `solution.py`, `animation.html` |
+| **Languages** | All code in **Go**, **Java**, **Python** (in this order) |
+| **Visualization** | Each problem has `animation.html` — standalone interactive animation |
+| **Code Fences** | `go`, `java`, `python` for implementations, `text` for pseudocode |
 
 ### Problem Folder Structure
 
-> **1 masala = 1 folder.** Barcha fayllar bitta papka ichida.
+> **1 problem = 1 folder.** All files inside a single folder.
 
 ```
 Leetcode/
-├── TEMPLATE.md                    ← Shu template fayl
+├── TEMPLATE.md                    ← This template file
 │
-├── 0001-two-sum/                  ← 1-masala = 1 folder
-│   ├── solution.md                ← Masala tahlili + barcha yechimlar
-│   ├── solution.go                ← Optimal yechim (Go)
-│   ├── solution.java              ← Optimal yechim (Java)
-│   ├── solution.py                ← Optimal yechim (Python)
-│   └── animation.html             ← Interaktiv animatsiya
+├── 0001-two-sum/                  ← Problem 1 = 1 folder
+│   ├── solution.md                ← Problem analysis + all solutions
+│   ├── solution.go                ← Optimal solution (Go)
+│   ├── solution.java              ← Optimal solution (Java)
+│   ├── solution.py                ← Optimal solution (Python)
+│   └── animation.html             ← Interactive animation
 │
-├── 0015-3sum/                     ← 2-masala = alohida folder
+├── 0015-3sum/                     ← Problem 2 = separate folder
 │   ├── solution.md
 │   ├── solution.go
 │   ├── solution.java
 │   ├── solution.py
 │   └── animation.html
 │
-├── 0042-trapping-rain-water/      ← 3-masala = alohida folder
+├── 0042-trapping-rain-water/      ← Problem 3 = separate folder
 │   ├── solution.md
 │   ├── solution.go
 │   ├── solution.java
 │   ├── solution.py
 │   └── animation.html
 │
-└── ...                            ← Har bir masala shu formatda
+└── ...                            ← Each problem follows this format
 ```
 
-### Folder nomlash qoidalari
+### Folder Naming Rules
 
-| Qoida | Misol | Izoh |
+| Rule | Example | Notes |
 |---|---|---|
-| 4 raqamli prefix | `0001-`, `0042-`, `0121-` | Tartibda turishi uchun |
-| kebab-case | `two-sum`, `valid-parentheses` | Bo'sh joy yo'q, kichik harf |
-| Leetcode slug bilan bir xil | `trapping-rain-water` | URL dan olish mumkin |
+| 4-digit prefix | `0001-`, `0042-`, `0121-` | For proper ordering |
+| kebab-case | `two-sum`, `valid-parentheses` | No spaces, lowercase |
+| Same as Leetcode slug | `trapping-rain-water` | Can be taken from URL |
 
 ```
-✅ TO'G'RI:
+CORRECT:
   0001-two-sum/
   0042-trapping-rain-water/
   0121-best-time-to-buy-and-sell-stock/
 
-❌ XATO:
-  two-sum/                  ← raqam yo'q
-  1-two-sum/                ← 4 raqamli emas
-  0001_two_sum/             ← underscore emas, kebab-case kerak
-  0001-TwoSum/              ← camelCase emas, kebab-case kerak
-  problems/0001-two-sum/    ← ichma-ich papka kerak emas
+WRONG:
+  two-sum/                  ← no number
+  1-two-sum/                ← not 4-digit
+  0001_two_sum/             ← not underscore, use kebab-case
+  0001-TwoSum/              ← not camelCase, use kebab-case
+  problems/0001-two-sum/    ← no nested folders needed
 ```
 
 ## Multi-Language Code Block Convention
 
-> **MUHIM:** Har bir yechim ALBATTA 3 tilda, shu tartibda berilishi kerak:
+> **IMPORTANT:** Each solution MUST be provided in 3 languages, in this order:
 
 ```
 ### Example: {{title}}
@@ -129,16 +129,12 @@ Leetcode/
 | | |
 |---|---|
 | **Leetcode** | [{{XXXX}}. {{Problem Name}}](https://leetcode.com/problems/{{problem-slug}}/) |
-| **Difficulty** | 🟢 Easy / 🟡 Medium / 🔴 Hard |
+| **Difficulty** | Easy / Medium / Hard |
 | **Tags** | `Array`, `Hash Table`, `Two Pointers`, `...` |
 
 ### Description (English)
 
 > {{Copy the problem description from Leetcode here}}
-
-### Tavsif (O'zbekcha)
-
-> {{Masalaning o'zbek tilidagi tarjimasi — oddiy, tushunarli tilda}}
 
 ### Examples
 
@@ -158,103 +154,103 @@ Explanation: {{explanation}}
 
 ## Problem Breakdown
 
-> **Maqsad:** Masalani mayda bo'laklarga ajratib, qadam-baqadam tushuntirish.
-> Har bir qadamni alohida, oddiy tilda tushuntirib bering.
+> **Goal:** Break the problem into small pieces and explain step by step.
+> Explain each step separately, in simple language.
 
-### 1. Nimani so'rayapti?
+### 1. What is being asked?
 
-{{Masalaning mohiyatini 2-3 gapda oddiy tilda tushuntiring.
-Texnik terminlarsiz, go'yo do'stingizga tushuntirayotgandek yozing.}}
+{{Explain the essence of the problem in 2-3 sentences in simple language.
+Write as if you are explaining to a friend, without technical jargon.}}
 
-### 2. Input nima?
+### 2. What is the input?
 
 | Parameter | Type | Description |
 |---|---|---|
-| `{{param1}}` | `{{type}}` | {{tavsif}} |
-| `{{param2}}` | `{{type}}` | {{tavsif}} |
+| `{{param1}}` | `{{type}}` | {{description}} |
+| `{{param2}}` | `{{type}}` | {{description}} |
 
-{{Input haqida muhim kuzatuvlar:}}
-- {{Tartiblangan mi? Tartiblanmagan mi?}}
-- {{Dublikatlar bor mi?}}
-- {{Bo'sh bo'lishi mumkin mi?}}
+{{Important observations about the input:}}
+- {{Is it sorted? Unsorted?}}
+- {{Are there duplicates?}}
+- {{Can it be empty?}}
 
-### 3. Output nima?
+### 3. What is the output?
 
-{{Kutilayotgan natijani aniq tushuntiring:}}
-- {{Qanday turdagi natija? (son, massiv, boolean, string)}}
-- {{Natija tartibi muhim mi?}}
-- {{Bir nechta to'g'ri javob bo'lishi mumkin mi?}}
+{{Clearly explain the expected result:}}
+- {{What type of result? (number, array, boolean, string)}}
+- {{Does the order of the result matter?}}
+- {{Can there be multiple correct answers?}}
 
-### 4. Cheklovlar (Constraints) tahlili
+### 4. Constraints Analysis
 
-| Constraint | Ahamiyati |
+| Constraint | Significance |
 |---|---|
-| `{{constraint}}` | {{Bu nimani anglatadi — qanday algoritmlar ishlaydi/ishlamaydi}} |
-| `n <= 10^4` | O(n²) ishlaydi, lekin O(n³) TLE beradi |
-| `n <= 10^5` | O(n log n) yoki O(n) kerak |
-| `n <= 10^6` | Faqat O(n) ishlaydi |
+| `{{constraint}}` | {{What this means — which algorithms work/don't work}} |
+| `n <= 10^4` | O(n^2) works, but O(n^3) gives TLE |
+| `n <= 10^5` | O(n log n) or O(n) needed |
+| `n <= 10^6` | Only O(n) works |
 
-### 5. Misollarni qadam-baqadam tahlil qilish
+### 5. Step-by-step example analysis
 
 #### Example 1: `{{input}}`
 
 ```text
-Boshlang'ich holat: {{initial state}}
+Initial state: {{initial state}}
 
-Qadam 1: {{qadam tavsifi}}
-         {{hozirgi holat}}
+Step 1: {{step description}}
+         {{current state}}
 
-Qadam 2: {{qadam tavsifi}}
-         {{hozirgi holat}}
+Step 2: {{step description}}
+         {{current state}}
 
-Qadam 3: {{qadam tavsifi}}
-         {{hozirgi holat}}
+Step 3: {{step description}}
+         {{current state}}
 
 ...
 
-Natija: {{output}}
+Result: {{output}}
 ```
 
 #### Example 2: `{{input}}`
 
 ```text
-{{Xuddi shunday qadam-baqadam tahlil}}
+{{Same step-by-step analysis}}
 ```
 
-### 6. Muhim kuzatuvlar (Key Observations)
+### 6. Key Observations
 
-> {{Yechimga olib boradigan eng muhim fikrlarni yozing.
-> Har bir kuzatuvni alohida punkt qilib, nima uchun muhimligini tushuntiring.}}
+> {{Write the most important insights that lead to the solution.
+> List each observation as a separate point and explain why it is important.}}
 
-1. **{{Kuzatuv 1}}** — {{nima uchun muhim}}
-2. **{{Kuzatuv 2}}** — {{nima uchun muhim}}
-3. **{{Kuzatuv 3}}** — {{nima uchun muhim}}
+1. **{{Observation 1}}** — {{why it is important}}
+2. **{{Observation 2}}** — {{why it is important}}
+3. **{{Observation 3}}** — {{why it is important}}
 
-### 7. Pattern aniqlash
+### 7. Pattern Identification
 
-| Pattern | Nima uchun mos | Misol |
+| Pattern | Why it fits | Example |
 |---|---|---|
 | {{Two Pointers}} | {{sorted array, opposite ends}} | {{Two Sum II}} |
 | {{Sliding Window}} | {{subarray, consecutive elements}} | {{Max Subarray}} |
-| {{Hash Map}} | {{O(1) lookup kerak}} | {{Two Sum}} |
+| {{Hash Map}} | {{O(1) lookup needed}} | {{Two Sum}} |
 
-**Tanlangan pattern:** `{{Pattern Name}}`
-**Sabab:** {{Nima uchun bu pattern eng mos}}
+**Chosen pattern:** `{{Pattern Name}}`
+**Reason:** {{Why this pattern is the best fit}}
 
 ---
 
 ## Approach 1: Brute Force
 
-### Fikrlash jarayoni
+### Thought Process
 
-> {{Eng oddiy — birinchi xayolga kelgan yechimni tushuntiring.
-> "Agar hech qanday optimallashtirish o'ylamasak, eng sodda usul nima?"}}
+> {{Explain the simplest — the first solution that comes to mind.
+> "If we don't think about any optimizations, what is the simplest approach?"}}
 
-### Algoritm (qadam-baqadam)
+### Algorithm (step by step)
 
-1. {{Qadam 1}}
-2. {{Qadam 2}}
-3. {{Qadam 3}}
+1. {{Step 1}}
+2. {{Step 2}}
+3. {{Step 3}}
 4. ...
 
 ### Pseudocode
@@ -270,10 +266,10 @@ function solve(input):
 
 ### Complexity
 
-| | Complexity | Izoh |
+| | Complexity | Notes |
 |---|---|---|
-| **Time** | O({{...}}) | {{Nima uchun? Nested loop? Har bir element uchun qayta ishlash?}} |
-| **Space** | O({{...}}) | {{Qo'shimcha xotira ishlatilmoqdami?}} |
+| **Time** | O({{...}}) | {{Why? Nested loop? Reprocessing for each element?}} |
+| **Space** | O({{...}}) | {{Is additional memory being used?}} |
 
 ### Implementation
 
@@ -336,39 +332,39 @@ class Solution:
 ```text
 Input: {{example input}}
 
-Qadam 1: i=0
-  ├── j=1: {{holat}} → {{natija}}
-  ├── j=2: {{holat}} → {{natija}}
-  └── j=3: {{holat}} → {{natija}}
+Step 1: i=0
+  ├── j=1: {{state}} → {{result}}
+  ├── j=2: {{state}} → {{result}}
+  └── j=3: {{state}} → {{result}}
 
-Qadam 2: i=1
-  ├── j=2: {{holat}} → {{natija}} ✅ TOPILDI!
-  └── return {{natija}}
+Step 2: i=1
+  ├── j=2: {{state}} → {{result}} FOUND!
+  └── return {{result}}
 
-Jami operatsiyalar: {{soni}}
+Total operations: {{count}}
 ```
 
 ---
 
 ## Approach 2: Time Complexity Optimization
 
-### Brute Force ning muammosi
+### Problem with Brute Force
 
-> {{Brute Force ning qayeri sekin? Nima uchun?
-> Masalan: "Har bir element uchun qolgan barcha elementlarni tekshiryapmiz — bu O(n²).
-> Agar bitta o'tishda topsa bo'lmaydimi?"}}
+> {{What is slow about Brute Force? Why?
+> For example: "We are checking all remaining elements for each element — this is O(n^2).
+> Can we find it in a single pass?"}}
 
-### Optimallashtirish g'oyasi
+### Optimization Idea
 
-> {{Qanday qilib tezlashtiramiz?
-> Masalan: "Hash Map ishlatib, oldin ko'rgan elementlarni eslab qolamiz.
-> Shunda har bir element uchun O(1) da tekshiramiz, jami O(n)."}}
+> {{How do we speed it up?
+> For example: "Using a Hash Map, we remember previously seen elements.
+> Then we check each element in O(1), total O(n)."}}
 
-### Algoritm (qadam-baqadam)
+### Algorithm (step by step)
 
-1. {{Qadam 1}}
-2. {{Qadam 2}}
-3. {{Qadam 3}}
+1. {{Step 1}}
+2. {{Step 2}}
+3. {{Step 3}}
 
 ### Pseudocode
 
@@ -385,10 +381,10 @@ function solve_optimized(input):
 
 ### Complexity
 
-| | Complexity | Izoh |
+| | Complexity | Notes |
 |---|---|---|
-| **Time** | O({{...}}) | {{Nima o'zgardi? Nima uchun tezroq?}} |
-| **Space** | O({{...}}) | {{Qo'shimcha xotira — trade-off}} |
+| **Time** | O({{...}}) | {{What changed? Why is it faster?}} |
+| **Space** | O({{...}}) | {{Additional memory — trade-off}} |
 
 ### Implementation
 
@@ -444,38 +440,38 @@ Input: {{example input}}
 
 seen = {}
 
-Qadam 1: element={{val}}, complement={{val}}
-         seen da bor mi? ❌ Yo'q
+Step 1: element={{val}}, complement={{val}}
+         In seen? No
          seen = {{{val}}: 0}
 
-Qadam 2: element={{val}}, complement={{val}}
-         seen da bor mi? ✅ Ha! Index: {{idx}}
+Step 2: element={{val}}, complement={{val}}
+         In seen? Yes! Index: {{idx}}
          return [{{idx}}, 1]
 
-Jami operatsiyalar: {{soni}} (Brute Force: {{soni}} → {{x}} marta tez!)
+Total operations: {{count}} (Brute Force: {{count}} → {{x}} times faster!)
 ```
 
 ---
 
 ## Approach 3: Space Complexity Optimization
 
-### Oldingi yechimning muammosi
+### Problem with Previous Solution
 
-> {{Xotirani qayerda ko'p ishlatyapmiz?
-> Masalan: "Hash Map O(n) qo'shimcha xotira oladi.
-> Agar input sorted bo'lsa, Two Pointers bilan O(1) xotira ishlatamiz."}}
+> {{Where is memory usage high?
+> For example: "Hash Map takes O(n) additional memory.
+> If the input is sorted, we can use Two Pointers with O(1) memory."}}
 
-### Optimallashtirish g'oyasi
+### Optimization Idea
 
-> {{Qanday qilib xotirani kamaytiramiz?
-> Masalan: "Input ni sort qilib, Two Pointers ishlatamiz.
-> Yoki in-place algoritmdan foydalanamiz."}}
+> {{How do we reduce memory?
+> For example: "We sort the input and use Two Pointers.
+> Or we use an in-place algorithm."}}
 
-### Algoritm (qadam-baqadam)
+### Algorithm (step by step)
 
-1. {{Qadam 1}}
-2. {{Qadam 2}}
-3. {{Qadam 3}}
+1. {{Step 1}}
+2. {{Step 2}}
+3. {{Step 3}}
 
 ### Pseudocode
 
@@ -496,10 +492,10 @@ function solve_space_optimized(input):
 
 ### Complexity
 
-| | Complexity | Izoh |
+| | Complexity | Notes |
 |---|---|---|
-| **Time** | O({{...}}) | {{Sort + scan yoki faqat scan?}} |
-| **Space** | O({{...}}) | {{In-place? Qo'shimcha xotira yo'q?}} |
+| **Time** | O({{...}}) | {{Sort + scan or just scan?}} |
+| **Space** | O({{...}}) | {{In-place? No additional memory?}} |
 
 ### Implementation
 
@@ -555,34 +551,34 @@ Input: {{example input}} (sorted: {{sorted input}})
 
 left=0 (val={{val}}), right={{n-1}} (val={{val}})
 
-Qadam 1: sum = {{val}} + {{val}} = {{sum}}
+Step 1: sum = {{val}} + {{val}} = {{sum}}
          {{sum}} > target → right-- → right={{n-2}}
 
-Qadam 2: sum = {{val}} + {{val}} = {{sum}}
-         {{sum}} == target ✅ → return [{{left}}, {{right}}]
+Step 2: sum = {{val}} + {{val}} = {{sum}}
+         {{sum}} == target → return [{{left}}, {{right}}]
 
-Jami operatsiyalar: {{soni}}
-Xotira: O(1) (oldingi: O(n) → {{x}} marta kam!)
+Total operations: {{count}}
+Memory: O(1) (previous: O(n) → {{x}} times less!)
 ```
 
 ---
 
 ## Approach 4: Alternative Solution
 
-> {{Agar boshqa yondashuvlar mavjud bo'lsa, shu yerda yozing.
-> Masalan: Bit Manipulation, Math formula, Monotonic Stack, Binary Search, va h.k.
-> Har bir alternative approach uchun yangi "Approach N" bo'limi oching.}}
+> {{If other approaches exist, write them here.
+> For example: Bit Manipulation, Math formula, Monotonic Stack, Binary Search, etc.
+> Open a new "Approach N" section for each alternative approach.}}
 
-### G'oya
+### Idea
 
-> {{Bu yondashuvning mohiyati}}
+> {{The essence of this approach}}
 
 ### Complexity
 
-| | Complexity | Izoh |
+| | Complexity | Notes |
 |---|---|---|
-| **Time** | O({{...}}) | {{tavsif}} |
-| **Space** | O({{...}}) | {{tavsif}} |
+| **Time** | O({{...}}) | {{description}} |
+| **Space** | O({{...}}) | {{description}} |
 
 ### Implementation
 
@@ -625,81 +621,81 @@ class Solution:
 
 | # | Approach | Time | Space | Pros | Cons |
 |---|---|---|---|---|---|
-| 1 | Brute Force | O({{...}}) | O({{...}}) | {{Sodda, tushunish oson}} | {{Sekin}} |
-| 2 | TC Optimized | O({{...}}) | O({{...}}) | {{Tez}} | {{Ko'p xotira}} |
-| 3 | SC Optimized | O({{...}}) | O({{...}}) | {{Kam xotira}} | {{Sort kerak / cheklov bor}} |
+| 1 | Brute Force | O({{...}}) | O({{...}}) | {{Simple, easy to understand}} | {{Slow}} |
+| 2 | TC Optimized | O({{...}}) | O({{...}}) | {{Fast}} | {{More memory}} |
+| 3 | SC Optimized | O({{...}}) | O({{...}}) | {{Less memory}} | {{Requires sorting / has limitations}} |
 | 4 | Alternative | O({{...}}) | O({{...}}) | {{...}} | {{...}} |
 
-### Qaysi yechimni tanlash kerak?
+### Which solution to choose?
 
-- **Interview da:** {{TC Optimized — tezkor va tushuntirish oson}}
-- **Production da:** {{Vaziyatga qarab — katta data = SC Optimized, tez javob = TC Optimized}}
-- **Leetcode da:** {{TC Optimized — tezlik muhimroq}}
+- **In an interview:** {{TC Optimized — fast and easy to explain}}
+- **In production:** {{Depends on the situation — large data = SC Optimized, fast response = TC Optimized}}
+- **On Leetcode:** {{TC Optimized — speed matters more}}
 
 ---
 
 ## Edge Cases
 
-| # | Case | Input | Expected Output | Sabab |
+| # | Case | Input | Expected Output | Reason |
 |---|---|---|---|---|
-| 1 | Bo'sh input | `{{}}` | `{{}}` | {{Chegaraviy holat}} |
-| 2 | Bitta element | `{{[x]}}` | `{{}}` | {{Minimal input}} |
-| 3 | Barcha bir xil | `{{[x,x,x]}}` | `{{}}` | {{Dublikatlar}} |
-| 4 | Salbiy sonlar | `{{[-1,-2]}}` | `{{}}` | {{Manfiy qiymatlar}} |
-| 5 | Juda katta input | `n = 10^5` | — | {{TLE tekshirish}} |
-| 6 | Minimal/Maximal qiymatlar | `{{INT_MIN, INT_MAX}}` | `{{}}` | {{Overflow xavfi}} |
+| 1 | Empty input | `{{}}` | `{{}}` | {{Boundary condition}} |
+| 2 | Single element | `{{[x]}}` | `{{}}` | {{Minimal input}} |
+| 3 | All identical | `{{[x,x,x]}}` | `{{}}` | {{Duplicates}} |
+| 4 | Negative numbers | `{{[-1,-2]}}` | `{{}}` | {{Negative values}} |
+| 5 | Very large input | `n = 10^5` | — | {{TLE check}} |
+| 6 | Min/Max values | `{{INT_MIN, INT_MAX}}` | `{{}}` | {{Overflow risk}} |
 
 ---
 
 ## Common Mistakes
 
-### Xato 1: {{Xato nomi}}
+### Mistake 1: {{Mistake name}}
 
 ```python
-# ❌ XATO
-{{xato kod}}
+# WRONG
+{{wrong code}}
 
-# ✅ TO'G'RI
-{{to'g'ri kod}}
+# CORRECT
+{{correct code}}
 ```
 
-**Sabab:** {{Nima uchun bu xato va qanday tuzatiladi}}
+**Reason:** {{Why this is wrong and how to fix it}}
 
-### Xato 2: {{Xato nomi}}
+### Mistake 2: {{Mistake name}}
 
 ```python
-# ❌ XATO
-{{xato kod}}
+# WRONG
+{{wrong code}}
 
-# ✅ TO'G'RI
-{{to'g'ri kod}}
+# CORRECT
+{{correct code}}
 ```
 
-**Sabab:** {{Nima uchun bu xato va qanday tuzatiladi}}
+**Reason:** {{Why this is wrong and how to fix it}}
 
 ---
 
 ## Related Problems
 
-| # | Problem | Difficulty | O'xshashligi |
+| # | Problem | Difficulty | Similarity |
 |---|---|---|---|
-| 1 | [{{XXXX}}. {{Name}}](https://leetcode.com/problems/{{slug}}/) | {{Easy/Medium/Hard}} | {{Qanday bog'liq}} |
-| 2 | [{{XXXX}}. {{Name}}](https://leetcode.com/problems/{{slug}}/) | {{Easy/Medium/Hard}} | {{Qanday bog'liq}} |
-| 3 | [{{XXXX}}. {{Name}}](https://leetcode.com/problems/{{slug}}/) | {{Easy/Medium/Hard}} | {{Qanday bog'liq}} |
+| 1 | [{{XXXX}}. {{Name}}](https://leetcode.com/problems/{{slug}}/) | {{Easy/Medium/Hard}} | {{How it is related}} |
+| 2 | [{{XXXX}}. {{Name}}](https://leetcode.com/problems/{{slug}}/) | {{Easy/Medium/Hard}} | {{How it is related}} |
+| 3 | [{{XXXX}}. {{Name}}](https://leetcode.com/problems/{{slug}}/) | {{Easy/Medium/Hard}} | {{How it is related}} |
 
 ---
 
 ## Visual Animation
 
-> 📺 Interaktiv animatsiya: [animation.html](./animation.html)
+> Interactive animation: [animation.html](./animation.html)
 >
-> Animatsiyada:
-> - Har bir yechim uchun alohida tab
-> - Step-by-step vizualizatsiya
-> - Tezlik boshqaruvi
-> - Custom input kiritish imkoniyati
-> - **Random Generate** — size va range tanlash, har doim yechimi bor input yaratish
-> - **localStorage** — refresh bo'lganda state saqlanib qoladi
+> The animation includes:
+> - Separate tab for each solution
+> - Step-by-step visualization
+> - Speed control
+> - Custom input entry
+> - **Random Generate** — choose size and range, always generates input with a valid solution
+> - **localStorage** — state is preserved on refresh
 
 ---
 ---
@@ -747,10 +743,10 @@ func main() {
 	passed, failed := 0, 0
 	test := func(name string, got, expected interface{}) {
 		if reflect.DeepEqual(got, expected) {
-			fmt.Printf("✅ PASS: %s\n", name)
+			fmt.Printf("PASS: %s\n", name)
 			passed++
 		} else {
-			fmt.Printf("❌ FAIL: %s\n  Got:      %v\n  Expected: %v\n", name, got, expected)
+			fmt.Printf("FAIL: %s\n  Got:      %v\n  Expected: %v\n", name, got, expected)
 			failed++
 		}
 	}
@@ -771,7 +767,7 @@ func main() {
 	test("{{description}}", {{functionName}}({{input5}}), {{expected5}})
 
 	// Results
-	fmt.Printf("\n📊 Results: %d passed, %d failed, %d total\n", passed, failed, passed+failed)
+	fmt.Printf("\nResults: %d passed, %d failed, %d total\n", passed, failed, passed+failed)
 }
 ```
 
@@ -819,10 +815,10 @@ class Solution {
     // Test helper method — for arrays
     static void test(String name, int[] got, int[] expected) {
         if (Arrays.equals(got, expected)) {
-            System.out.printf("✅ PASS: %s%n", name);
+            System.out.printf("PASS: %s%n", name);
             passed++;
         } else {
-            System.out.printf("❌ FAIL: %s%n  Got:      %s%n  Expected: %s%n",
+            System.out.printf("FAIL: %s%n  Got:      %s%n  Expected: %s%n",
                 name, Arrays.toString(got), Arrays.toString(expected));
             failed++;
         }
@@ -831,10 +827,10 @@ class Solution {
     // Test helper method — for general objects
     static void test(String name, Object got, Object expected) {
         if (Objects.equals(got, expected)) {
-            System.out.printf("✅ PASS: %s%n", name);
+            System.out.printf("PASS: %s%n", name);
             passed++;
         } else {
-            System.out.printf("❌ FAIL: %s%n  Got:      %s%n  Expected: %s%n",
+            System.out.printf("FAIL: %s%n  Got:      %s%n  Expected: %s%n",
                 name, got, expected);
             failed++;
         }
@@ -859,7 +855,7 @@ class Solution {
         test("{{description}}", sol.{{functionName}}({{input5}}), {{expected5}});
 
         // Results
-        System.out.printf("%n📊 Results: %d passed, %d failed, %d total%n",
+        System.out.printf("%nResults: %d passed, %d failed, %d total%n",
             passed, failed, passed + failed);
     }
 }
@@ -912,10 +908,10 @@ if __name__ == "__main__":
     def test(name: str, got, expected):
         global passed, failed
         if got == expected:
-            print(f"✅ PASS: {name}")
+            print(f"PASS: {name}")
             passed += 1
         else:
-            print(f"❌ FAIL: {name}")
+            print(f"FAIL: {name}")
             print(f"  Got:      {got}")
             print(f"  Expected: {expected}")
             failed += 1
@@ -936,7 +932,7 @@ if __name__ == "__main__":
     test("{{description}}", sol.{{function_name}}({{input5}}), {{expected5}})
 
     # Results
-    print(f"\n📊 Results: {passed} passed, {failed} failed, {passed + failed} total")
+    print(f"\nResults: {passed} passed, {failed} failed, {passed + failed} total")
 ```
 
 ---
@@ -944,8 +940,8 @@ if __name__ == "__main__":
 
 # TEMPLATE 5 — `animation.html`
 
-> Standalone HTML fayl — tashqi kutubxonalarsiz.
-> Brauzerda ochib to'g'ridan-to'g'ri ishlaydi.
+> Standalone HTML file — no external libraries.
+> Opens directly in a browser.
 
 ```html
 <!DOCTYPE html>
@@ -990,7 +986,7 @@ if __name__ == "__main__":
         }
 
         /* ============================================================
-           TABS — har bir approach uchun alohida tab
+           TABS — separate tab for each approach
            ============================================================ */
         .tabs {
             display: flex;
@@ -1032,7 +1028,7 @@ if __name__ == "__main__":
         }
 
         /* ============================================================
-           CONTROLS — tezlik, play/pause, step, reset
+           CONTROLS — speed, play/pause, step, reset
            ============================================================ */
         .controls {
             display: flex;
@@ -1082,7 +1078,7 @@ if __name__ == "__main__":
         }
 
         /* ============================================================
-           INPUT — custom input kiritish
+           INPUT — custom input entry
            ============================================================ */
         .input-section {
             display: flex;
@@ -1365,7 +1361,7 @@ if __name__ == "__main__":
 
         <!-- INPUT -->
         <div class="input-section">
-            <input type="text" id="customInput" placeholder="Masalan: [2,7,11,15], target=9">
+            <input type="text" id="customInput" placeholder="Example: [2,7,11,15], target=9">
             <button class="btn btn-step" onclick="applyInput()">Apply</button>
             <button class="btn btn-generate" onclick="generateRandom()">&#127922; Generate</button>
             <div class="gen-options">
@@ -1390,29 +1386,29 @@ if __name__ == "__main__":
 
         <!-- CONTROLS -->
         <div class="controls">
-            <button class="btn btn-play" id="playBtn" onclick="play()">▶ Play</button>
-            <button class="btn btn-pause" onclick="pause()">⏸ Pause</button>
-            <button class="btn btn-step" onclick="stepForward()">⏭ Step</button>
-            <button class="btn btn-reset" onclick="reset()">↺ Reset</button>
+            <button class="btn btn-play" id="playBtn" onclick="play()">Play</button>
+            <button class="btn btn-pause" onclick="pause()">Pause</button>
+            <button class="btn btn-step" onclick="stepForward()">Step</button>
+            <button class="btn btn-reset" onclick="reset()">Reset</button>
             <div class="speed-control">
-                <label>Tezlik:</label>
+                <label>Speed:</label>
                 <select id="speed" onchange="updateSpeed()">
-                    <option value="2000">🐢 Sekin</option>
-                    <option value="1000" selected>🚶 Normal</option>
-                    <option value="500">🏃 Tez</option>
-                    <option value="200">⚡ Juda tez</option>
+                    <option value="2000">Slow</option>
+                    <option value="1000" selected>Normal</option>
+                    <option value="500">Fast</option>
+                    <option value="200">Very Fast</option>
                 </select>
             </div>
         </div>
 
         <!-- STEP DESCRIPTION -->
         <div class="step-description" id="stepDesc">
-            ▶ "Play" bosing yoki "Step" bilan qadam-baqadam ko'ring.
+            Press "Play" or use "Step" to go step by step.
         </div>
 
         <!-- VISUALIZATION AREA -->
         <div class="viz-area" id="vizArea">
-            <!-- {{JavaScript orqali dinamik render qilinadi}} -->
+            <!-- {{Dynamically rendered via JavaScript}} -->
         </div>
 
         <!-- INFO PANEL -->
@@ -1422,7 +1418,7 @@ if __name__ == "__main__":
                 <div class="value" id="stepCounter">0 / 0</div>
             </div>
             <div class="info-box">
-                <h3>Operatsiyalar</h3>
+                <h3>Operations</h3>
                 <div class="value" id="opsCounter">0</div>
             </div>
             <div class="info-box">
@@ -1466,7 +1462,7 @@ if __name__ == "__main__":
 
     <script>
         // ============================================================
-        // LOCAL STORAGE — state ni saqlash / yuklash
+        // LOCAL STORAGE — save / load state
         // ============================================================
         const STORAGE_KEY = '{{problem-slug}}_animation_state';
 
@@ -1493,7 +1489,7 @@ if __name__ == "__main__":
         let isPlaying = false;
         let playInterval = null;
         let speed = saved ? saved.speed : 1000;
-        // {{Masalaga mos default input}}
+        // {{Default input matching the problem}}
         let inputData = saved ? saved.inputData : {{default_input}};
 
         // ============================================================
@@ -1557,7 +1553,7 @@ if __name__ == "__main__":
 
         function applyInput() {
             const raw = document.getElementById('customInput').value;
-            // {{Parse custom input — masalaga qarab o'zgartiring}}
+            // {{Parse custom input — modify according to the problem}}
             try {
                 // Example: "[2,7,11,15], target=9" → {arr: [2,7,11,15], target: 9}
                 inputData = parseInput(raw);
@@ -1566,36 +1562,36 @@ if __name__ == "__main__":
                 renderStep();
                 saveState();
             } catch(e) {
-                document.getElementById('stepDesc').textContent = '❌ Noto\'g\'ri format. Masalan: [2,7,11,15], target=9';
+                document.getElementById('stepDesc').textContent = 'Invalid format. Example: [2,7,11,15], target=9';
             }
         }
 
         // ============================================================
-        // RANDOM GENERATOR — {{masalaga qarab o'zgartiring}}
+        // RANDOM GENERATOR — {{modify according to the problem}}
         // ============================================================
         function generateRandom() {
             const size = parseInt(document.getElementById('genSize').value);
             const range = parseInt(document.getElementById('genRange').value);
 
-            // {{Masalaga mos random input yaratish logikasi}}
-            // MUHIM: Har doim yechimi mavjud bo'lgan input yaratish kerak!
+            // {{Random input generation logic matching the problem}}
+            // IMPORTANT: Must always generate input that has a valid solution!
             //
-            // Misol (Two Sum):
+            // Example (Two Sum):
             //   const arr = randomArray(size, range);
             //   const idx1 = randInt(0, size);
-            //   const idx2 = randInt(0, size, idx1); // idx1 dan farqli
-            //   const target = arr[idx1] + arr[idx2]; // kafolatli yechim
+            //   const idx2 = randInt(0, size, idx1); // different from idx1
+            //   const target = arr[idx1] + arr[idx2]; // guaranteed solution
             //
-            // Misol (Sorted Array):
+            // Example (Sorted Array):
             //   const arr = randomArray(size, range).sort((a,b) => a-b);
             //
-            // Misol (Binary Tree):
+            // Example (Binary Tree):
             //   const arr = randomArray(size, range);
-            //   // tree ni arr dan yaratish
+            //   // create tree from arr
 
             inputData = {{generated_input}};
 
-            // UI ni yangilash
+            // Update UI
             document.getElementById('customInput').value = JSON.stringify(inputData);
             reset();
             generateSteps();
@@ -1603,7 +1599,7 @@ if __name__ == "__main__":
             saveState();
         }
 
-        // Yordamchi: random massiv
+        // Helper: random array
         function randomArray(size, range) {
             const arr = [];
             const used = new Set();
@@ -1617,7 +1613,7 @@ if __name__ == "__main__":
             return arr;
         }
 
-        // Yordamchi: random int [min, max) exclude bilan
+        // Helper: random int [min, max) with exclude
         function randInt(min, max, exclude) {
             let val;
             do { val = Math.floor(Math.random() * (max - min)) + min; }
@@ -1626,11 +1622,11 @@ if __name__ == "__main__":
         }
 
         // ============================================================
-        // PARSE INPUT — {{masalaga qarab o'zgartiring}}
+        // PARSE INPUT — {{modify according to the problem}}
         // ============================================================
         function parseInput(raw) {
-            // {{Bu funksiyani masalaga qarab yozing}}
-            // Misol:
+            // {{Write this function according to the problem}}
+            // Example:
             // const match = raw.match(/\[(.*?)\].*?=\s*(\d+)/);
             // const arr = match[1].split(',').map(Number);
             // const target = parseInt(match[2]);
@@ -1638,7 +1634,7 @@ if __name__ == "__main__":
         }
 
         // ============================================================
-        // GENERATE STEPS — {{masalaga qarab yozing}}
+        // GENERATE STEPS — {{write according to the problem}}
         // ============================================================
         function generateSteps() {
             steps = [];
@@ -1655,28 +1651,28 @@ if __name__ == "__main__":
         }
 
         function generateBruteForceSteps() {
-            // {{Brute Force algoritmining har bir qadamini steps massiviga push qiling}}
-            // Har bir step:
+            // {{Push each step of the Brute Force algorithm into the steps array}}
+            // Each step:
             // {
-            //     array: [...],           // massiv holati
-            //     highlights: {0: 'active', 1: 'comparing', ...},  // element ranglari
+            //     array: [...],           // array state
+            //     highlights: {0: 'active', 1: 'comparing', ...},  // element colors
             //     pointers: {0: {label: 'i', class: 'pointer-i'}, 1: {label: 'j', class: 'pointer-j'}},
-            //     description: "i=0, j=1: 2+7=9 == 9 ✅ Topildi!",
-            //     ops: 1,                 // operatsiyalar soni
-            //     extraData: {}           // qo'shimcha ma'lumot (hash map, stack, etc.)
+            //     description: "i=0, j=1: 2+7=9 == 9 Found!",
+            //     ops: 1,                 // number of operations
+            //     extraData: {}           // additional data (hash map, stack, etc.)
             // }
         }
 
         function generateOptimizedSteps() {
-            // {{TC Optimized algoritmining qadamlari}}
+            // {{TC Optimized algorithm steps}}
         }
 
         function generateSpaceOptimizedSteps() {
-            // {{SC Optimized algoritmining qadamlari}}
+            // {{SC Optimized algorithm steps}}
         }
 
         function generateComparisonSteps() {
-            // {{Ikkala algoritmni parallel ko'rsatish}}
+            // {{Show both algorithms in parallel}}
         }
 
         // ============================================================
@@ -1713,7 +1709,7 @@ if __name__ == "__main__":
             });
             html += '</div>';
 
-            // {{Qo'shimcha vizualizatsiya — hash map, stack, tree, graph, etc.}}
+            // {{Additional visualization — hash map, stack, tree, graph, etc.}}
             if (step.extraData) {
                 html += renderExtraData(step.extraData);
             }
@@ -1722,29 +1718,29 @@ if __name__ == "__main__":
         }
 
         function renderExtraData(data) {
-            // {{Masalaga qarab qo'shimcha ma'lumotlarni render qiling}}
-            // Misol: Hash Map vizualizatsiyasi
+            // {{Render additional data according to the problem}}
+            // Example: Hash Map visualization
             // let html = '<div class="hash-map">...</div>';
             // return html;
             return '';
         }
 
         // ============================================================
-        // INIT — localStorage dan state ni tiklash
+        // INIT — restore state from localStorage
         // ============================================================
 
-        // UI elementlarini saved state dan tiklash
+        // Restore UI elements from saved state
         if (saved) {
             document.getElementById('customInput').value = JSON.stringify(inputData);
             document.getElementById('speed').value = speed;
         }
 
-        // Aktiv tab ni tiklash
+        // Restore active tab
         document.querySelectorAll('.tab').forEach(t => {
             t.classList.toggle('active', t.dataset.tab === currentTab);
         });
 
-        // Steps generatsiya va render
+        // Generate steps and render
         generateSteps();
         if (currentStep >= steps.length) currentStep = 0;
         renderStep();
@@ -1757,15 +1753,15 @@ if __name__ == "__main__":
 ---
 ---
 
-# QUICK REFERENCE — Barcha Template'lar
+# QUICK REFERENCE — All Templates
 
-| # | Fayl | Maqsad |
+| # | File | Purpose |
 |---|---|---|
-| 1 | `solution.md` | Masala tahlili + 4+ yechim (Brute → TC Opt → SC Opt → Alt) 3 tilda |
-| 2 | `solution.go` | Eng yaxshi yechim — Go (to'liq, test bilan) |
-| 3 | `solution.java` | Eng yaxshi yechim — Java (to'liq, test bilan) |
-| 4 | `solution.py` | Eng yaxshi yechim — Python (to'liq, test bilan) |
-| 5 | `animation.html` | Interaktiv vizual animatsiya (tab, step, speed, input) |
+| 1 | `solution.md` | Problem analysis + 4+ solutions (Brute → TC Opt → SC Opt → Alt) in 3 languages |
+| 2 | `solution.go` | Best solution — Go (complete, with tests) |
+| 3 | `solution.java` | Best solution — Java (complete, with tests) |
+| 4 | `solution.py` | Best solution — Python (complete, with tests) |
+| 5 | `animation.html` | Interactive visual animation (tabs, steps, speed, input) |
 
 ## Naming Convention
 
@@ -1789,18 +1785,18 @@ Leetcode/
 
 ## Placeholders
 
-| Placeholder | Tavsif |
+| Placeholder | Description |
 |---|---|
-| `{{XXXX}}` | Leetcode masala raqami (4 raqamli: 0001, 0042, 0121) |
-| `{{Problem Name}}` | Masala nomi (inglizcha) |
-| `{{problem-slug}}` | URL slug (masalan: `two-sum`) |
-| `{{functionName}}` | Go/Java funksiya nomi (camelCase) |
-| `{{function_name}}` | Python funksiya nomi (snake_case) |
-| `{{params}}` | Funksiya parametrlari |
-| `{{returnType}}` | Qaytarish turi |
-| `{{return_type}}` | Python qaytarish turi |
-| `{{code}}` | Implementatsiya kodi |
-| `{{result}}` | Natija |
-| `{{tavsif}}` | O'zbekcha izoh |
-| `{{...}}` | Complexity notation (masalan: n, n², n log n) |
-| `{{default_input}}` | Animatsiya uchun default input |
+| `{{XXXX}}` | Leetcode problem number (4-digit: 0001, 0042, 0121) |
+| `{{Problem Name}}` | Problem name (in English) |
+| `{{problem-slug}}` | URL slug (e.g.: `two-sum`) |
+| `{{functionName}}` | Go/Java function name (camelCase) |
+| `{{function_name}}` | Python function name (snake_case) |
+| `{{params}}` | Function parameters |
+| `{{returnType}}` | Return type |
+| `{{return_type}}` | Python return type |
+| `{{code}}` | Implementation code |
+| `{{result}}` | Result |
+| `{{description}}` | Description/explanation |
+| `{{...}}` | Complexity notation (e.g.: n, n^2, n log n) |
+| `{{default_input}}` | Default input for the animation |

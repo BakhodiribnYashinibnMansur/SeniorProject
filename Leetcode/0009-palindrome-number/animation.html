@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0009. Palindrome Number — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 160px;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        .preset-btns {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-preset {
+            padding: 6px 12px;
+            background: #334155;
+            color: #94a3b8;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .btn-preset:hover { background: #475569; color: #e2e8f0; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-pause:hover { background: #dc2626; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-reset:hover { background: #4b5563; }
+
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select {
+            padding: 6px 10px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 4px;
+        }
+
+        /* STEP DESCRIPTION */
+        .step-description {
+            background: #0f172a;
+            border-left: 3px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 50px;
+            white-space: pre-line;
+        }
+
+        /* VIZ AREA */
+        .viz-area {
+            min-height: 250px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        /* DIGIT DISPLAY */
+        .digit-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .digit-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .digit-box {
+            width: 3.5rem;
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            transition: all 0.35s ease;
+            position: relative;
+        }
+
+        .digit-idx {
+            font-size: 0.7rem;
+            color: #475569;
+        }
+
+        .digit-ptr {
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-height: 18px;
+        }
+
+        /* Digit Colors */
+        .d-default { background: #334155; color: #e2e8f0; }
+        .d-left { background: #3b82f6; color: white; box-shadow: 0 0 16px rgba(59,130,246,0.5); }
+        .d-right { background: #f59e0b; color: #0f172a; box-shadow: 0 0 16px rgba(245,158,11,0.4); }
+        .d-match { background: #22c55e; color: white; box-shadow: 0 0 20px rgba(34,197,94,0.6); transform: scale(1.08); }
+        .d-mismatch { background: #ef4444; color: white; box-shadow: 0 0 16px rgba(239,68,68,0.5); }
+        .d-middle { background: #8b5cf6; color: white; box-shadow: 0 0 16px rgba(139,92,246,0.4); }
+        .d-processed { background: #1e293b; color: #64748b; }
+        .d-active { background: #3b82f6; color: white; box-shadow: 0 0 16px rgba(59,130,246,0.5); transform: scale(1.08); }
+        .d-highlight { background: #f59e0b; color: #0f172a; box-shadow: 0 0 16px rgba(245,158,11,0.4); transform: scale(1.08); }
+
+        /* Split indicator */
+        .split-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 16px 0;
+            gap: 12px;
+        }
+
+        .split-line .line {
+            flex: 1;
+            height: 2px;
+            border-radius: 1px;
+        }
+
+        .split-line .line-left { background: linear-gradient(to right, transparent, #3b82f6); }
+        .split-line .line-right { background: linear-gradient(to left, transparent, #f59e0b); }
+
+        .split-line .label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        /* Variables display */
+        .vars-section {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .var-box {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 20px;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .var-box .var-name {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .var-box .var-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .var-box.var-x .var-value { color: #3b82f6; }
+        .var-box.var-rev .var-value { color: #f59e0b; }
+        .var-box.var-digit .var-value { color: #a78bfa; }
+        .var-box.var-result .var-value { color: #22c55e; }
+        .var-box.var-result.is-false .var-value { color: #ef4444; }
+
+        /* Result display */
+        .result-display {
+            text-align: center;
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: none;
+        }
+
+        .result-true {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid #22c55e;
+            color: #22c55e;
+        }
+
+        .result-false {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 16px; }
+            .header h1 { font-size: 1.4rem; }
+            .digit-box { width: 2.8rem; height: 2.8rem; font-size: 1rem; }
+            .tab { padding: 8px 14px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0009. Palindrome Number</h1>
+        <p>Checking if a number is a palindrome — 3 different approaches</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab(0)">String Conversion</div>
+        <div class="tab" onclick="switchTab(1)">Full Reversal</div>
+        <div class="tab" onclick="switchTab(2)">Half Reversal</div>
+    </div>
+
+    <div class="container">
+        <div class="input-section">
+            <label>x =</label>
+            <input type="number" id="numInput" value="12321" placeholder="Enter a number...">
+            <div class="preset-btns">
+                <button class="btn-preset" onclick="setPreset(121)">121</button>
+                <button class="btn-preset" onclick="setPreset(-121)">-121</button>
+                <button class="btn-preset" onclick="setPreset(10)">10</button>
+                <button class="btn-preset" onclick="setPreset(12321)">12321</button>
+                <button class="btn-preset" onclick="setPreset(1221)">1221</button>
+                <button class="btn-preset" onclick="setPreset(0)">0</button>
+                <button class="btn-preset" onclick="setPreset(123)">123</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-play" id="btnPlay" onclick="play()">Play</button>
+            <button class="btn btn-pause" id="btnPause" onclick="pause()" style="display:none">Pause</button>
+            <button class="btn btn-step" onclick="step()">Step</button>
+            <button class="btn btn-reset" onclick="reset()">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <select id="speedSelect" onchange="updateSpeed()">
+                    <option value="2000">0.5x</option>
+                    <option value="1000" selected>1x</option>
+                    <option value="500">2x</option>
+                    <option value="250">4x</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="step-description" id="stepDesc">
+            Press "Play" or "Step" to start the animation.
+        </div>
+
+        <div class="viz-area" id="vizArea"></div>
+
+        <div class="result-display" id="resultDisplay"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        // State
+        // ============================================================
+        let currentTab = 0;
+        let steps = [];
+        let currentStep = -1;
+        let timer = null;
+        let speed = 1000;
+
+        // ============================================================
+        // Tab switching
+        // ============================================================
+        function switchTab(idx) {
+            currentTab = idx;
+            document.querySelectorAll('.tab').forEach((t, i) => {
+                t.classList.toggle('active', i === idx);
+            });
+            reset();
+        }
+
+        // ============================================================
+        // Presets
+        // ============================================================
+        function setPreset(val) {
+            document.getElementById('numInput').value = val;
+            reset();
+        }
+
+        // ============================================================
+        // Speed
+        // ============================================================
+        function updateSpeed() {
+            speed = parseInt(document.getElementById('speedSelect').value);
+        }
+
+        // ============================================================
+        // Controls
+        // ============================================================
+        function play() {
+            if (currentStep === -1) buildSteps();
+            if (currentStep >= steps.length - 1) return;
+            document.getElementById('btnPlay').style.display = 'none';
+            document.getElementById('btnPause').style.display = '';
+            timer = setInterval(() => {
+                if (currentStep >= steps.length - 1) {
+                    pause();
+                    return;
+                }
+                currentStep++;
+                renderStep();
+            }, speed);
+        }
+
+        function pause() {
+            clearInterval(timer);
+            timer = null;
+            document.getElementById('btnPlay').style.display = '';
+            document.getElementById('btnPause').style.display = 'none';
+        }
+
+        function step() {
+            if (currentStep === -1) buildSteps();
+            if (currentStep >= steps.length - 1) return;
+            pause();
+            currentStep++;
+            renderStep();
+        }
+
+        function reset() {
+            pause();
+            steps = [];
+            currentStep = -1;
+            document.getElementById('stepDesc').textContent = 'Press "Play" or "Step" to start the animation.';
+            document.getElementById('vizArea').innerHTML = '';
+            document.getElementById('resultDisplay').style.display = 'none';
+        }
+
+        // ============================================================
+        // Build steps for each approach
+        // ============================================================
+        function buildSteps() {
+            const x = parseInt(document.getElementById('numInput').value);
+            if (isNaN(x)) {
+                document.getElementById('stepDesc').textContent = 'Please enter a valid number.';
+                return;
+            }
+            steps = [];
+            if (currentTab === 0) buildStringSteps(x);
+            else if (currentTab === 1) buildFullReversalSteps(x);
+            else buildHalfReversalSteps(x);
+        }
+
+        // ============================================================
+        // Approach 1: String Conversion
+        // ============================================================
+        function buildStringSteps(x) {
+            const digits = String(Math.abs(x)).split('');
+            const isNeg = x < 0;
+
+            steps.push({
+                desc: `Initial: x = ${x}\nWe examine the number as a string.`,
+                digits: digits,
+                highlights: {},
+                pointers: {},
+                vars: { x: x },
+                negative: isNeg
+            });
+
+            if (isNeg) {
+                steps.push({
+                    desc: `x = ${x} — negative number!\nNegative numbers are never palindromes.\nResult: false`,
+                    digits: digits,
+                    highlights: {},
+                    pointers: {},
+                    vars: { x: x },
+                    negative: true,
+                    result: false
+                });
+                return;
+            }
+
+            // Two pointers comparison
+            let left = 0, right = digits.length - 1;
+            let isPalin = true;
+
+            while (left < right) {
+                steps.push({
+                    desc: `Two Pointers: left=${left} ("${digits[left]}"), right=${right} ("${digits[right]}")\nComparing: ${digits[left]} ${digits[left] === digits[right] ? '==' : '!='} ${digits[right]}`,
+                    digits: digits,
+                    highlights: { [left]: 'd-left', [right]: 'd-right' },
+                    pointers: { [left]: 'L', [right]: 'R' },
+                    vars: { x: x, left: left, right: right },
+                    matchedPairs: steps.filter(s => s.matchIdx).map(s => s.matchIdx).flat()
+                });
+
+                if (digits[left] === digits[right]) {
+                    steps.push({
+                        desc: `${digits[left]} == ${digits[right]} — matched!\nleft++, right--`,
+                        digits: digits,
+                        highlights: { [left]: 'd-match', [right]: 'd-match' },
+                        pointers: { [left]: 'L', [right]: 'R' },
+                        vars: { x: x, left: left, right: right },
+                        matchIdx: [left, right]
+                    });
+                } else {
+                    isPalin = false;
+                    steps.push({
+                        desc: `${digits[left]} != ${digits[right]} — mismatch!\nResult: false`,
+                        digits: digits,
+                        highlights: { [left]: 'd-mismatch', [right]: 'd-mismatch' },
+                        pointers: { [left]: 'L', [right]: 'R' },
+                        vars: { x: x, left: left, right: right },
+                        result: false
+                    });
+                    return;
+                }
+
+                left++;
+                right--;
+            }
+
+            // Middle element for odd length
+            if (left === right) {
+                steps.push({
+                    desc: `Middle element: index=${left} ("${digits[left]}")\nNo need to check the middle element.`,
+                    digits: digits,
+                    highlights: { [left]: 'd-middle' },
+                    pointers: { [left]: 'M' },
+                    vars: { x: x }
+                });
+            }
+
+            steps.push({
+                desc: `All pairs matched!\nx = ${x} is a palindrome.\nResult: true`,
+                digits: digits,
+                highlights: Object.fromEntries(digits.map((_, i) => [i, 'd-match'])),
+                pointers: {},
+                vars: { x: x },
+                result: true
+            });
+        }
+
+        // ============================================================
+        // Approach 2: Full Number Reversal
+        // ============================================================
+        function buildFullReversalSteps(x) {
+            const isNeg = x < 0;
+            const digits = String(Math.abs(x)).split('');
+
+            steps.push({
+                desc: `Initial: x = ${x}\nWe reverse the entire number mathematically.`,
+                type: 'full',
+                original: x,
+                currentX: Math.abs(x),
+                reversed: 0,
+                digit: null,
+                digits: digits,
+                digitHighlight: -1
+            });
+
+            if (isNeg) {
+                steps.push({
+                    desc: `x = ${x} — negative number!\nNegative numbers are never palindromes.\nResult: false`,
+                    type: 'full',
+                    original: x,
+                    currentX: x,
+                    reversed: 0,
+                    digit: null,
+                    digits: digits,
+                    digitHighlight: -1,
+                    result: false
+                });
+                return;
+            }
+
+            let curr = x;
+            let rev = 0;
+            let digitIdx = digits.length - 1;
+
+            while (curr > 0) {
+                const d = curr % 10;
+
+                steps.push({
+                    desc: `Extract digit: ${curr} % 10 = ${d}\nLast digit: ${d}`,
+                    type: 'full',
+                    original: x,
+                    currentX: curr,
+                    reversed: rev,
+                    digit: d,
+                    digits: digits,
+                    digitHighlight: digitIdx,
+                    phase: 'extract'
+                });
+
+                rev = rev * 10 + d;
+                curr = Math.floor(curr / 10);
+
+                steps.push({
+                    desc: `reversed = ${Math.floor((rev - d) / 10)} * 10 + ${d} = ${rev}\nx = ${Math.floor((curr * 10 + d) / 1)} / 10 = ${curr}`,
+                    type: 'full',
+                    original: x,
+                    currentX: curr,
+                    reversed: rev,
+                    digit: d,
+                    digits: digits,
+                    digitHighlight: digitIdx,
+                    phase: 'append'
+                });
+
+                digitIdx--;
+            }
+
+            const isPalin = x === rev;
+            steps.push({
+                desc: `Comparison: original(${x}) ${isPalin ? '==' : '!='} reversed(${rev})\nResult: ${isPalin}`,
+                type: 'full',
+                original: x,
+                currentX: 0,
+                reversed: rev,
+                digit: null,
+                digits: digits,
+                digitHighlight: -1,
+                result: isPalin
+            });
+        }
+
+        // ============================================================
+        // Approach 3: Half Number Reversal
+        // ============================================================
+        function buildHalfReversalSteps(x) {
+            const isNeg = x < 0;
+            const digits = String(Math.abs(x)).split('');
+
+            steps.push({
+                desc: `Initial: x = ${x}\nWe only reverse the second half.`,
+                type: 'half',
+                original: x,
+                currentX: x,
+                reversed: 0,
+                digits: digits,
+                splitAt: -1
+            });
+
+            if (isNeg) {
+                steps.push({
+                    desc: `x = ${x} — negative number!\nNegative numbers are never palindromes.\nResult: false`,
+                    type: 'half',
+                    original: x,
+                    currentX: x,
+                    reversed: 0,
+                    digits: digits,
+                    splitAt: -1,
+                    result: false
+                });
+                return;
+            }
+
+            if (x !== 0 && x % 10 === 0) {
+                steps.push({
+                    desc: `x = ${x} — last digit is 0!\nNumbers ending with 0 are not palindromes (except 0 itself).\nResult: false`,
+                    type: 'half',
+                    original: x,
+                    currentX: x,
+                    reversed: 0,
+                    digits: digits,
+                    splitAt: -1,
+                    result: false
+                });
+                return;
+            }
+
+            let curr = x;
+            let rev = 0;
+            let iteration = 0;
+
+            while (curr > rev) {
+                const d = curr % 10;
+                const oldRev = rev;
+                const oldCurr = curr;
+
+                steps.push({
+                    desc: `Step ${iteration + 1}: x = ${curr}, reversed = ${rev}\nx(${curr}) > reversed(${rev}) — continue\nLast digit: ${curr} % 10 = ${d}`,
+                    type: 'half',
+                    original: x,
+                    currentX: curr,
+                    reversed: rev,
+                    digits: digits,
+                    splitAt: digits.length - iteration,
+                    extractDigit: d,
+                    phase: 'extract'
+                });
+
+                rev = rev * 10 + d;
+                curr = Math.floor(curr / 10);
+
+                steps.push({
+                    desc: `reversed = ${oldRev} * 10 + ${d} = ${rev}\nx = ${oldCurr} / 10 = ${curr}\n\nFirst half: ${curr} | Reversed second half: ${rev}`,
+                    type: 'half',
+                    original: x,
+                    currentX: curr,
+                    reversed: rev,
+                    digits: digits,
+                    splitAt: digits.length - iteration - 1,
+                    phase: 'update'
+                });
+
+                iteration++;
+            }
+
+            const isEvenMatch = curr === rev;
+            const isOddMatch = curr === Math.floor(rev / 10);
+            const isPalin = isEvenMatch || isOddMatch;
+
+            let desc = `Stop: x(${curr}) <= reversed(${rev})\n`;
+            if (digits.length % 2 === 0) {
+                desc += `Even length: x(${curr}) == reversed(${rev})? ${isEvenMatch ? 'YES' : 'NO'}`;
+            } else {
+                desc += `Odd length: x(${curr}) == reversed/10(${Math.floor(rev / 10)})? ${isOddMatch ? 'YES' : 'NO'}`;
+                desc += `\n(We discard the middle digit)`;
+            }
+            desc += `\nResult: ${isPalin}`;
+
+            steps.push({
+                desc: desc,
+                type: 'half',
+                original: x,
+                currentX: curr,
+                reversed: rev,
+                digits: digits,
+                splitAt: Math.floor(digits.length / 2),
+                result: isPalin,
+                phase: 'compare'
+            });
+        }
+
+        // ============================================================
+        // Render current step
+        // ============================================================
+        function renderStep() {
+            if (currentStep < 0 || currentStep >= steps.length) return;
+            const s = steps[currentStep];
+            document.getElementById('stepDesc').textContent = s.desc;
+
+            const viz = document.getElementById('vizArea');
+            const resultEl = document.getElementById('resultDisplay');
+
+            if (currentTab === 0) renderStringStep(viz, s);
+            else if (currentTab === 1) renderFullStep(viz, s);
+            else renderHalfStep(viz, s);
+
+            // Show result
+            if (s.result !== undefined) {
+                resultEl.style.display = 'block';
+                resultEl.className = 'result-display ' + (s.result ? 'result-true' : 'result-false');
+                resultEl.textContent = s.result ? 'PALINDROME (true)' : 'NOT A PALINDROME (false)';
+            } else {
+                resultEl.style.display = 'none';
+            }
+        }
+
+        // ============================================================
+        // Render: String Conversion
+        // ============================================================
+        function renderStringStep(viz, s) {
+            const allMatched = steps.slice(0, currentStep + 1)
+                .filter(st => st.matchIdx)
+                .map(st => st.matchIdx)
+                .flat();
+
+            let html = '<div class="section-label">String representation</div>';
+            html += '<div class="digit-row">';
+
+            if (s.negative) {
+                html += `<div class="digit-cell">
+                    <div class="digit-ptr" style="color:#ef4444">-</div>
+                    <div class="digit-box d-mismatch">-</div>
+                    <div class="digit-idx"></div>
+                </div>`;
+            }
+
+            for (let i = 0; i < s.digits.length; i++) {
+                let cls = 'd-default';
+                if (s.highlights && s.highlights[i]) cls = s.highlights[i];
+                else if (allMatched.includes(i)) cls = 'd-match';
+
+                const ptr = (s.pointers && s.pointers[i]) || '';
+                let ptrColor = '#64748b';
+                if (ptr === 'L') ptrColor = '#3b82f6';
+                else if (ptr === 'R') ptrColor = '#f59e0b';
+                else if (ptr === 'M') ptrColor = '#8b5cf6';
+
+                html += `<div class="digit-cell">
+                    <div class="digit-ptr" style="color:${ptrColor}">${ptr}</div>
+                    <div class="digit-box ${cls}">${s.digits[i]}</div>
+                    <div class="digit-idx">[${i}]</div>
+                </div>`;
+            }
+
+            html += '</div>';
+            viz.innerHTML = html;
+        }
+
+        // ============================================================
+        // Render: Full Reversal
+        // ============================================================
+        function renderFullStep(viz, s) {
+            let html = '<div class="section-label">Digits</div>';
+            html += '<div class="digit-row">';
+
+            for (let i = 0; i < s.digits.length; i++) {
+                let cls = 'd-default';
+                if (i === s.digitHighlight && s.phase === 'extract') cls = 'd-highlight';
+                else if (i === s.digitHighlight && s.phase === 'append') cls = 'd-active';
+                else if (i > s.digitHighlight && s.digitHighlight >= 0) cls = 'd-processed';
+
+                if (s.result === true) cls = 'd-match';
+                else if (s.result === false) cls = 'd-mismatch';
+
+                html += `<div class="digit-cell">
+                    <div class="digit-box ${cls}">${s.digits[i]}</div>
+                    <div class="digit-idx">[${i}]</div>
+                </div>`;
+            }
+
+            html += '</div>';
+
+            // Variables
+            html += '<div class="vars-section">';
+            html += `<div class="var-box var-x">
+                <div class="var-name">x (remaining)</div>
+                <div class="var-value">${s.currentX}</div>
+            </div>`;
+            if (s.digit !== null) {
+                html += `<div class="var-box" style="border-color:#a78bfa">
+                    <div class="var-name">digit</div>
+                    <div class="var-value" style="color:#a78bfa">${s.digit}</div>
+                </div>`;
+            }
+            html += `<div class="var-box var-rev">
+                <div class="var-name">reversed</div>
+                <div class="var-value">${s.reversed}</div>
+            </div>`;
+            html += '</div>';
+
+            // Show reversed digits
+            if (s.reversed > 0) {
+                const revDigits = String(s.reversed).split('');
+                html += '<div style="margin-top:20px"><div class="section-label">Reversed number</div>';
+                html += '<div class="digit-row">';
+                for (let i = 0; i < revDigits.length; i++) {
+                    html += `<div class="digit-cell">
+                        <div class="digit-box" style="background:#92400e;color:#fbbf24">${revDigits[i]}</div>
+                    </div>`;
+                }
+                html += '</div></div>';
+            }
+
+            viz.innerHTML = html;
+        }
+
+        // ============================================================
+        // Render: Half Reversal
+        // ============================================================
+        function renderHalfStep(viz, s) {
+            const splitAt = s.splitAt >= 0 ? s.splitAt : s.digits.length;
+
+            let html = '<div class="section-label">Digits of the number</div>';
+            html += '<div class="digit-row">';
+
+            for (let i = 0; i < s.digits.length; i++) {
+                let cls = 'd-default';
+
+                if (s.result === true) {
+                    cls = 'd-match';
+                } else if (s.result === false) {
+                    cls = 'd-mismatch';
+                } else if (s.phase === 'extract' && i === s.digits.length - 1 - (steps.slice(0, currentStep).filter(st => st.phase === 'update').length)) {
+                    cls = 'd-highlight';
+                } else if (i < splitAt) {
+                    cls = 'd-left';
+                } else {
+                    cls = 'd-processed';
+                }
+
+                html += `<div class="digit-cell">
+                    <div class="digit-box ${cls}">${s.digits[i]}</div>
+                    <div class="digit-idx">[${i}]</div>
+                </div>`;
+            }
+            html += '</div>';
+
+            // Split line
+            if (splitAt > 0 && splitAt < s.digits.length && s.result === undefined) {
+                html += `<div class="split-line">
+                    <div class="line line-left"></div>
+                    <div class="label">First half | Second half</div>
+                    <div class="line line-right"></div>
+                </div>`;
+            }
+
+            // Variables
+            html += '<div class="vars-section">';
+            html += `<div class="var-box var-x">
+                <div class="var-name">x (first half)</div>
+                <div class="var-value">${s.currentX}</div>
+            </div>`;
+            html += `<div class="var-box var-rev">
+                <div class="var-name">reversed (second half)</div>
+                <div class="var-value">${s.reversed}</div>
+            </div>`;
+            html += '</div>';
+
+            // Show first half and reversed second half side by side
+            if (s.phase === 'compare' || s.phase === 'update') {
+                const firstHalf = String(s.currentX).split('');
+                const revHalf = String(s.reversed).split('');
+
+                html += '<div style="margin-top:20px; display:flex; gap:40px; justify-content:center; flex-wrap:wrap">';
+
+                // First half
+                html += '<div>';
+                html += '<div class="section-label" style="text-align:center">First half (x)</div>';
+                html += '<div class="digit-row">';
+                for (const d of firstHalf) {
+                    html += `<div class="digit-cell">
+                        <div class="digit-box d-left">${d}</div>
+                    </div>`;
+                }
+                html += '</div></div>';
+
+                // Reversed half
+                html += '<div>';
+                html += '<div class="section-label" style="text-align:center">Reversed second half</div>';
+                html += '<div class="digit-row">';
+                for (const d of revHalf) {
+                    html += `<div class="digit-cell">
+                        <div class="digit-box" style="background:#92400e;color:#fbbf24">${d}</div>
+                    </div>`;
+                }
+                html += '</div></div>';
+
+                html += '</div>';
+            }
+
+            viz.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

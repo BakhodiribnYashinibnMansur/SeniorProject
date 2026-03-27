@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0003. Longest Substring Without Repeating Characters — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        #strInput { width: 240px; }
+
+        .preset-options {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .preset-options label { color: #94a3b8; font-size: 0.8rem; }
+
+        .preset-options select {
+            padding: 5px 8px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-pause:hover { background: #dc2626; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-reset:hover { background: #4b5563; }
+
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select {
+            padding: 6px 10px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 4px;
+        }
+
+        /* STEP DESCRIPTION */
+        .step-description {
+            background: #0f172a;
+            border-left: 3px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 50px;
+            white-space: pre-line;
+        }
+
+        /* VIZ AREA */
+        .viz-area {
+            min-height: 200px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        /* ARRAY */
+        .array-container {
+            display: flex;
+            gap: 6px;
+            justify-content: flex-start;
+            flex-wrap: nowrap;
+            margin-bottom: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .array-container::-webkit-scrollbar { height: 6px; }
+        .array-container::-webkit-scrollbar-track { background: #1e293b; border-radius: 3px; }
+        .array-container::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+        .array-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .array-element {
+            width: 3.5rem;
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            transition: all 0.35s ease;
+            position: relative;
+        }
+
+        .idx-label { font-size: 0.7rem; color: #475569; }
+
+        .ptr-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-height: 18px;
+        }
+
+        /* Colors */
+        .el-default { background: #334155; color: #e2e8f0; }
+        .el-left { background: #3b82f6; color: white; box-shadow: 0 0 16px rgba(59,130,246,0.5); transform: scale(1.08); }
+        .el-right { background: #f59e0b; color: #0f172a; box-shadow: 0 0 16px rgba(245,158,11,0.4); }
+        .el-window { background: #6366f1; color: white; }
+        .el-duplicate { background: #ef4444; color: white; box-shadow: 0 0 16px rgba(239,68,68,0.5); transform: scale(1.08); }
+        .el-best { background: #22c55e; color: white; box-shadow: 0 0 20px rgba(34,197,94,0.6); transform: scale(1.15); }
+        .el-discarded { background: #1e293b; color: #475569; opacity: 0.5; }
+        .el-checking { background: #a78bfa; color: white; box-shadow: 0 0 12px rgba(167,139,250,0.4); }
+
+        .ptr-left { color: #3b82f6; }
+        .ptr-right { color: #f59e0b; }
+
+        /* SET / MAP CONTAINER */
+        .set-container {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #1e293b;
+        }
+
+        .set-grid {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .set-entry {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-align: center;
+            min-width: 50px;
+            transition: all 0.3s;
+        }
+
+        .set-entry.new {
+            border-color: #22c55e;
+            box-shadow: 0 0 12px rgba(34,197,94,0.3);
+        }
+
+        .set-entry.highlight {
+            border-color: #f59e0b;
+            box-shadow: 0 0 12px rgba(245,158,11,0.3);
+        }
+
+        .set-entry.duplicate {
+            border-color: #ef4444;
+            box-shadow: 0 0 12px rgba(239,68,68,0.3);
+        }
+
+        .set-key { font-size: 0.75rem; color: #94a3b8; }
+        .set-val { font-size: 1.1rem; font-weight: 700; color: #e2e8f0; }
+        .set-arrow { color: #475569; font-size: 0.7rem; }
+
+        /* WINDOW DISPLAY */
+        .window-display {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            text-align: center;
+            font-size: 1.1rem;
+            border: 1px solid #334155;
+        }
+
+        .window-display .label { color: #94a3b8; font-size: 0.85rem; }
+        .window-display .value { font-weight: 700; margin-left: 8px; color: #a78bfa; }
+        .window-display .best { color: #22c55e; }
+
+        /* INFO PANEL */
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .info-box h3 {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .info-box .value { font-size: 1.1rem; font-weight: 700; }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .container { padding: 16px; }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header h1 { font-size: 1.4rem; }
+            .header { margin-bottom: 16px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .container { padding: 14px; }
+            .tab { padding: 8px 14px; font-size: 0.8rem; }
+            .btn { padding: 7px 12px; font-size: 0.8rem; }
+            .input-section { gap: 6px; }
+            #strInput { width: 160px; }
+            .input-section input { padding: 6px 10px; font-size: 0.8rem; }
+            .preset-options { width: 100%; justify-content: center; }
+            .array-element { width: 2.8rem; height: 2.8rem; font-size: 1rem; border-radius: 8px; }
+            .step-description { padding: 10px 12px; font-size: 0.82rem; }
+            .viz-area { padding: 14px; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 6px; }
+            .header h1 { font-size: 1.1rem; }
+            .header p { font-size: 0.8rem; }
+            .header { margin-bottom: 10px; }
+            .tabs { gap: 2px; margin-bottom: 12px; }
+            .tab { padding: 6px 10px; font-size: 0.72rem; }
+            .container { padding: 10px; border-radius: 8px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .info-box { padding: 8px; }
+            .info-box h3 { font-size: 0.6rem; }
+            .info-box .value { font-size: 0.9rem; }
+            .input-section { flex-direction: column; align-items: stretch; }
+            .input-section input { width: 100%; }
+            #strInput { width: 100%; }
+            .preset-options { flex-wrap: wrap; justify-content: center; }
+            .controls { gap: 6px; }
+            .btn { padding: 6px 10px; font-size: 0.75rem; }
+            .speed-control { width: 100%; justify-content: center; }
+            .step-description { padding: 8px 10px; font-size: 0.78rem; min-height: 40px; }
+            .viz-area { padding: 10px; min-height: 150px; }
+            .array-element { width: 2.4rem; height: 2.4rem; font-size: 0.85rem; border-radius: 6px; }
+            .idx-label { font-size: 0.6rem; }
+            .ptr-label { font-size: 0.65rem; }
+            .array-container { gap: 4px; }
+            .set-entry { padding: 6px 8px; min-width: 40px; }
+            .set-grid { gap: 4px; }
+            .set-val { font-size: 0.95rem; }
+            .window-display { padding: 8px 12px; font-size: 0.9rem; }
+            .legend { gap: 8px; margin-top: 10px; }
+            .legend-item { font-size: 0.7rem; gap: 4px; }
+            .legend-color { width: 12px; height: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>0003. Longest Substring Without Repeating Characters</h1>
+        <p>Medium — Hash Table, String, Sliding Window</p>
+    </div>
+
+    <div class="tabs" id="tabs">
+        <div class="tab active" data-tab="brute">Brute Force</div>
+        <div class="tab" data-tab="sliding">Sliding Window (Set)</div>
+        <div class="tab" data-tab="optimized">Sliding Window (Map)</div>
+    </div>
+
+    <div class="container">
+        <div class="input-section">
+            <input type="text" id="strInput" placeholder="abcabcbb" value="abcabcbb">
+            <button class="btn btn-step" onclick="applyInput()">Apply</button>
+            <div class="preset-options">
+                <label>Presets:</label>
+                <select id="presetSelect" onchange="setPreset()">
+                    <option value="abcabcbb">abcabcbb</option>
+                    <option value="bbbbb">bbbbb</option>
+                    <option value="pwwkew">pwwkew</option>
+                    <option value="">(empty)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-play" onclick="play()">&#9654; Play</button>
+            <button class="btn btn-pause" onclick="pause()">&#9646;&#9646; Pause</button>
+            <button class="btn btn-step" onclick="stepForward()">&#9197; Step</button>
+            <button class="btn btn-reset" onclick="reset()">&#8634; Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <select id="speed" onchange="updateSpeed()">
+                    <option value="2000">Slow</option>
+                    <option value="1000" selected>Normal</option>
+                    <option value="500">Fast</option>
+                    <option value="200">Very Fast</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="step-description" id="stepDesc">
+            &#9654; Press "Play" or use "Step" to walk through step by step.
+        </div>
+
+        <div class="viz-area" id="vizArea"></div>
+
+        <div class="info-panel">
+            <div class="info-box">
+                <h3>Step</h3>
+                <div class="value" id="stepCounter">0 / 0</div>
+            </div>
+            <div class="info-box">
+                <h3>Operations</h3>
+                <div class="value" id="opsCounter">0</div>
+            </div>
+            <div class="info-box">
+                <h3>Time</h3>
+                <div class="value" id="timeComp">&mdash;</div>
+            </div>
+            <div class="info-box">
+                <h3>Space</h3>
+                <div class="value" id="spaceComp">&mdash;</div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color" style="background:#334155;"></div><span>Default</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#3b82f6;"></div><span>Left Ptr</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#f59e0b;"></div><span>Right Ptr</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#6366f1;"></div><span>Window</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#ef4444;"></div><span>Duplicate</span></div>
+            <div class="legend-item"><div class="legend-color" style="background:#22c55e;"></div><span>Best</span></div>
+        </div>
+    </div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let currentTab = 'brute';
+let steps = [];
+let currentStep = 0;
+let isPlaying = false;
+let playInterval = null;
+let speed = 1000;
+let str = 'abcabcbb';
+
+// ============================================================
+// TABS
+// ============================================================
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentTab = tab.dataset.tab;
+        reset();
+        generateSteps();
+        renderStep();
+    });
+});
+
+// ============================================================
+// CONTROLS
+// ============================================================
+function play() {
+    if (isPlaying) return;
+    if (steps.length === 0) { generateSteps(); renderStep(); }
+    isPlaying = true;
+    playInterval = setInterval(() => {
+        if (currentStep < steps.length - 1) {
+            currentStep++;
+            renderStep();
+        } else {
+            pause();
+        }
+    }, speed);
+}
+
+function pause() {
+    isPlaying = false;
+    if (playInterval) clearInterval(playInterval);
+}
+
+function stepForward() {
+    pause();
+    if (steps.length === 0) { generateSteps(); }
+    if (currentStep < steps.length - 1) {
+        currentStep++;
+        renderStep();
+    }
+}
+
+function reset() {
+    pause();
+    currentStep = 0;
+    generateSteps();
+    if (steps.length > 0) renderStep();
+}
+
+function applyInput() {
+    str = document.getElementById('strInput').value;
+    reset();
+    generateSteps();
+    renderStep();
+}
+
+function setPreset() {
+    const val = document.getElementById('presetSelect').value;
+    document.getElementById('strInput').value = val;
+    str = val;
+    reset();
+    generateSteps();
+    renderStep();
+}
+
+function updateSpeed() {
+    speed = parseInt(document.getElementById('speed').value);
+    if (isPlaying) { pause(); play(); }
+}
+
+// ============================================================
+// GENERATE STEPS — dispatcher
+// ============================================================
+function generateSteps() {
+    steps = [];
+    if (currentTab === 'brute') generateBrute();
+    else if (currentTab === 'sliding') generateSliding();
+    else if (currentTab === 'optimized') generateOptimized();
+
+    if (steps.length === 0) {
+        steps.push({
+            desc: 'Empty string — result is 0.',
+            chars: [], hl: {}, ptrs: {},
+            setData: null, mapData: null,
+            bestStart: -1, bestLen: 0, curWindow: '',
+            ops: 0, time: 'O(1)', space: 'O(1)'
+        });
+    }
+}
+
+// ============================================================
+// BRUTE FORCE — O(n^3) check all substrings
+// ============================================================
+function generateBrute() {
+    const n = str.length;
+    if (n === 0) return;
+    let ops = 0;
+    let bestStart = 0, bestLen = 0;
+
+    steps.push({
+        desc: `String: "${str}" (length ${n})\nBrute Force: check every substring for uniqueness`,
+        chars: [...str], hl: {}, ptrs: {},
+        setData: null, mapData: null,
+        bestStart: 0, bestLen: 0, curWindow: '',
+        ops: 0, time: 'O(n\u00B3)', space: 'O(min(n,m))'
+    });
+
+    for (let i = 0; i < n; i++) {
+        for (let j = i; j < n; j++) {
+            ops++;
+            // Check if substring s[i..j] has all unique chars
+            const sub = str.substring(i, j + 1);
+            const charSet = new Set(sub);
+            const unique = charSet.size === sub.length;
+            const hl = {};
+
+            for (let k = i; k <= j; k++) {
+                hl[k] = 'checking';
+            }
+
+            if (!unique) {
+                // Find the duplicate char
+                const seen = new Set();
+                for (let k = i; k <= j; k++) {
+                    if (seen.has(str[k])) {
+                        hl[k] = 'duplicate';
+                        // Also highlight the first occurrence
+                        for (let m = i; m < k; m++) {
+                            if (str[m] === str[k]) { hl[m] = 'duplicate'; break; }
+                        }
+                        break;
+                    }
+                    seen.add(str[k]);
+                }
+            }
+
+            if (unique && sub.length > bestLen) {
+                bestLen = sub.length;
+                bestStart = i;
+            }
+
+            // Mark best so far
+            const hlWithBest = { ...hl };
+            if (bestLen > 0 && !(i === bestStart && j === bestStart + bestLen - 1)) {
+                for (let k = bestStart; k < bestStart + bestLen; k++) {
+                    if (!(k in hl)) hlWithBest[k] = 'best';
+                }
+            }
+            if (unique && sub.length === bestLen && i === bestStart) {
+                for (let k = i; k <= j; k++) hlWithBest[k] = 'best';
+            }
+
+            steps.push({
+                desc: unique
+                    ? `Substring s[${i}..${j}] = "${sub}" — all unique (length ${sub.length})${sub.length === bestLen && i === bestStart ? ' — NEW BEST!' : ''}\nBest so far: "${str.substring(bestStart, bestStart + bestLen)}" (length ${bestLen})`
+                    : `Substring s[${i}..${j}] = "${sub}" — has duplicate character`,
+                chars: [...str],
+                hl: hlWithBest,
+                ptrs: { [i]: { label: 'i', cls: 'ptr-left' }, [j]: { label: 'j', cls: 'ptr-right' } },
+                setData: [...charSet],
+                mapData: null,
+                bestStart, bestLen,
+                curWindow: sub,
+                ops, time: 'O(n\u00B3)', space: 'O(min(n,m))'
+            });
+        }
+    }
+
+    steps.push({
+        desc: `Done! Longest substring without repeating characters: "${str.substring(bestStart, bestStart + bestLen)}"\nLength = ${bestLen}`,
+        chars: [...str],
+        hl: (() => { const h = {}; for (let k = bestStart; k < bestStart + bestLen; k++) h[k] = 'best'; return h; })(),
+        ptrs: {},
+        setData: null, mapData: null,
+        bestStart, bestLen,
+        curWindow: str.substring(bestStart, bestStart + bestLen),
+        ops, time: 'O(n\u00B3)', space: 'O(min(n,m))'
+    });
+}
+
+// ============================================================
+// SLIDING WINDOW with Set — O(2n) = O(n)
+// ============================================================
+function generateSliding() {
+    const n = str.length;
+    if (n === 0) return;
+    let ops = 0;
+    let bestStart = 0, bestLen = 0;
+    let left = 0;
+    const charSet = new Set();
+
+    steps.push({
+        desc: `String: "${str}" (length ${n})\nSliding Window with Set: expand right, shrink left on duplicate`,
+        chars: [...str], hl: {}, ptrs: {},
+        setData: [], mapData: null,
+        bestStart: 0, bestLen: 0, curWindow: '',
+        ops: 0, time: 'O(n)', space: 'O(min(n,m))'
+    });
+
+    for (let right = 0; right < n; right++) {
+        ops++;
+        const ch = str[right];
+
+        if (!charSet.has(ch)) {
+            // No duplicate — expand window
+            charSet.add(ch);
+            const windowLen = right - left + 1;
+            if (windowLen > bestLen) {
+                bestLen = windowLen;
+                bestStart = left;
+            }
+
+            const hl = {};
+            for (let k = left; k <= right; k++) hl[k] = 'window';
+            hl[left] = 'left';
+            hl[right] = 'right';
+            if (left === right) hl[right] = 'right';
+            // Show best
+            const hlWithBest = { ...hl };
+            for (let k = bestStart; k < bestStart + bestLen; k++) {
+                if (!(k in hl) || hl[k] === 'window') hlWithBest[k] = (k >= left && k <= right) ? 'window' : 'best';
+            }
+
+            steps.push({
+                desc: `right = ${right}, char '${ch}' not in Set — add it\nWindow: s[${left}..${right}] = "${str.substring(left, right + 1)}" (length ${windowLen})${windowLen === bestLen ? ' — BEST so far!' : ''}\nBest: "${str.substring(bestStart, bestStart + bestLen)}" (length ${bestLen})`,
+                chars: [...str], hl: hlWithBest,
+                ptrs: { [left]: { label: 'L', cls: 'ptr-left' }, [right]: { label: 'R', cls: 'ptr-right' } },
+                setData: [...charSet],
+                setNew: ch,
+                mapData: null,
+                bestStart, bestLen,
+                curWindow: str.substring(left, right + 1),
+                ops, time: 'O(n)', space: 'O(min(n,m))'
+            });
+        } else {
+            // Duplicate found — show it
+            const hl = {};
+            for (let k = left; k <= right; k++) hl[k] = 'window';
+            hl[right] = 'duplicate';
+            // Find the first occurrence of the duplicate in current window
+            for (let k = left; k < right; k++) {
+                if (str[k] === ch) { hl[k] = 'duplicate'; break; }
+            }
+
+            steps.push({
+                desc: `right = ${right}, char '${ch}' already in Set — DUPLICATE!\nNeed to shrink window from left until '${ch}' is removed`,
+                chars: [...str], hl,
+                ptrs: { [left]: { label: 'L', cls: 'ptr-left' }, [right]: { label: 'R', cls: 'ptr-right' } },
+                setData: [...charSet],
+                setDup: ch,
+                mapData: null,
+                bestStart, bestLen,
+                curWindow: str.substring(left, right + 1),
+                ops, time: 'O(n)', space: 'O(min(n,m))'
+            });
+
+            // Shrink from left
+            while (charSet.has(ch)) {
+                ops++;
+                const removed = str[left];
+                charSet.delete(removed);
+
+                const hl2 = {};
+                for (let k = left + 1; k <= right; k++) hl2[k] = 'window';
+                hl2[left] = 'discarded';
+                if (right > left) hl2[right] = 'right';
+
+                steps.push({
+                    desc: `Remove '${removed}' from Set, move left to ${left + 1}\nSet: {${[...charSet].join(', ')}}`,
+                    chars: [...str], hl: hl2,
+                    ptrs: { [left]: { label: 'L', cls: 'ptr-left' }, [right]: { label: 'R', cls: 'ptr-right' } },
+                    setData: [...charSet],
+                    setRemoved: removed,
+                    mapData: null,
+                    bestStart, bestLen,
+                    curWindow: str.substring(left + 1, right + 1),
+                    ops, time: 'O(n)', space: 'O(min(n,m))'
+                });
+
+                left++;
+            }
+
+            // Now add current char
+            charSet.add(ch);
+            const windowLen = right - left + 1;
+            if (windowLen > bestLen) {
+                bestLen = windowLen;
+                bestStart = left;
+            }
+
+            const hl3 = {};
+            for (let k = left; k <= right; k++) hl3[k] = 'window';
+            hl3[left] = 'left';
+            hl3[right] = 'right';
+
+            steps.push({
+                desc: `Add '${ch}' to Set\nWindow: s[${left}..${right}] = "${str.substring(left, right + 1)}" (length ${windowLen})\nBest: "${str.substring(bestStart, bestStart + bestLen)}" (length ${bestLen})`,
+                chars: [...str], hl: hl3,
+                ptrs: { [left]: { label: 'L', cls: 'ptr-left' }, [right]: { label: 'R', cls: 'ptr-right' } },
+                setData: [...charSet],
+                setNew: ch,
+                mapData: null,
+                bestStart, bestLen,
+                curWindow: str.substring(left, right + 1),
+                ops, time: 'O(n)', space: 'O(min(n,m))'
+            });
+        }
+    }
+
+    steps.push({
+        desc: `Done! Longest substring without repeating characters: "${str.substring(bestStart, bestStart + bestLen)}"\nLength = ${bestLen}`,
+        chars: [...str],
+        hl: (() => { const h = {}; for (let k = bestStart; k < bestStart + bestLen; k++) h[k] = 'best'; return h; })(),
+        ptrs: {},
+        setData: null, mapData: null,
+        bestStart, bestLen,
+        curWindow: str.substring(bestStart, bestStart + bestLen),
+        ops, time: 'O(n)', space: 'O(min(n,m))'
+    });
+}
+
+// ============================================================
+// SLIDING WINDOW OPTIMIZED with Map — O(n)
+// ============================================================
+function generateOptimized() {
+    const n = str.length;
+    if (n === 0) return;
+    let ops = 0;
+    let bestStart = 0, bestLen = 0;
+    let left = 0;
+    const charMap = new Map(); // char -> last index
+
+    steps.push({
+        desc: `String: "${str}" (length ${n})\nOptimized Sliding Window with Map: jump left pointer directly`,
+        chars: [...str], hl: {}, ptrs: {},
+        setData: null,
+        mapData: [],
+        bestStart: 0, bestLen: 0, curWindow: '',
+        ops: 0, time: 'O(n)', space: 'O(min(n,m))'
+    });
+
+    for (let right = 0; right < n; right++) {
+        ops++;
+        const ch = str[right];
+
+        if (charMap.has(ch) && charMap.get(ch) >= left) {
+            const oldLeft = left;
+            const dupIdx = charMap.get(ch);
+            left = dupIdx + 1;
+
+            // Show the jump
+            const hl = {};
+            for (let k = oldLeft; k < left; k++) hl[k] = 'discarded';
+            for (let k = left; k <= right; k++) hl[k] = 'window';
+            hl[dupIdx] = 'duplicate';
+            hl[right] = 'duplicate';
+
+            steps.push({
+                desc: `right = ${right}, char '${ch}' found in Map at index ${dupIdx}\nJump left from ${oldLeft} to ${dupIdx + 1} (skip past duplicate)\nMap allows O(1) jump instead of shrinking one by one!`,
+                chars: [...str], hl,
+                ptrs: { [left]: { label: 'L', cls: 'ptr-left' }, [right]: { label: 'R', cls: 'ptr-right' } },
+                setData: null,
+                mapData: [...charMap.entries()].map(([k, v]) => ({ key: k, val: v, dup: k === ch })),
+                bestStart, bestLen,
+                curWindow: str.substring(left, right + 1),
+                ops, time: 'O(n)', space: 'O(min(n,m))'
+            });
+        }
+
+        charMap.set(ch, right);
+        const windowLen = right - left + 1;
+        if (windowLen > bestLen) {
+            bestLen = windowLen;
+            bestStart = left;
+        }
+
+        const hl = {};
+        for (let k = left; k <= right; k++) hl[k] = 'window';
+        hl[left] = 'left';
+        hl[right] = 'right';
+        if (left === right) hl[right] = 'right';
+
+        steps.push({
+            desc: `right = ${right}, Map['${ch}'] = ${right}\nWindow: s[${left}..${right}] = "${str.substring(left, right + 1)}" (length ${windowLen})${windowLen === bestLen && left === bestStart ? ' — BEST so far!' : ''}\nBest: "${str.substring(bestStart, bestStart + bestLen)}" (length ${bestLen})`,
+            chars: [...str], hl,
+            ptrs: { [left]: { label: 'L', cls: 'ptr-left' }, [right]: { label: 'R', cls: 'ptr-right' } },
+            setData: null,
+            mapData: [...charMap.entries()].map(([k, v]) => ({ key: k, val: v, isNew: k === ch })),
+            bestStart, bestLen,
+            curWindow: str.substring(left, right + 1),
+            ops, time: 'O(n)', space: 'O(min(n,m))'
+        });
+    }
+
+    steps.push({
+        desc: `Done! Longest substring without repeating characters: "${str.substring(bestStart, bestStart + bestLen)}"\nLength = ${bestLen}`,
+        chars: [...str],
+        hl: (() => { const h = {}; for (let k = bestStart; k < bestStart + bestLen; k++) h[k] = 'best'; return h; })(),
+        ptrs: {},
+        setData: null, mapData: null,
+        bestStart, bestLen,
+        curWindow: str.substring(bestStart, bestStart + bestLen),
+        ops, time: 'O(n)', space: 'O(min(n,m))'
+    });
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderStep() {
+    if (steps.length === 0) return;
+    const s = steps[currentStep];
+    const viz = document.getElementById('vizArea');
+
+    // Update info panel
+    document.getElementById('stepDesc').innerHTML = s.desc;
+    document.getElementById('stepCounter').textContent = `${currentStep} / ${steps.length - 1}`;
+    document.getElementById('opsCounter').textContent = s.ops;
+    document.getElementById('timeComp').textContent = s.time;
+    document.getElementById('spaceComp').textContent = s.space;
+
+    let html = '';
+
+    // Character array
+    html += '<div class="section-label">String Characters</div>';
+    html += '<div class="array-container">';
+    for (let i = 0; i < s.chars.length; i++) {
+        const cls = getElementClass(s.hl[i]);
+        const ptrInfo = s.ptrs[i];
+        html += '<div class="array-cell">';
+        html += `<div class="ptr-label ${ptrInfo ? ptrInfo.cls : ''}">${ptrInfo ? ptrInfo.label : ''}</div>`;
+        html += `<div class="array-element ${cls}">${escapeHtml(s.chars[i])}</div>`;
+        html += `<div class="idx-label">${i}</div>`;
+        html += '</div>';
+    }
+    html += '</div>';
+
+    // Window display
+    if (s.curWindow !== undefined) {
+        html += '<div class="window-display">';
+        html += `<span class="label">Current Window:</span><span class="value">"${escapeHtml(s.curWindow)}"</span>`;
+        html += `<span style="margin-left:20px;" class="label">Best:</span><span class="value best">"${escapeHtml(s.chars.length > 0 ? str.substring(s.bestStart, s.bestStart + s.bestLen) : '')}" (${s.bestLen})</span>`;
+        html += '</div>';
+    }
+
+    // Set display (for brute force and sliding window)
+    if (s.setData) {
+        html += '<div class="set-container">';
+        html += '<div class="section-label">Set Contents</div>';
+        html += '<div class="set-grid">';
+        for (const ch of s.setData) {
+            let entryCls = '';
+            if (s.setNew && ch === s.setNew) entryCls = 'new';
+            if (s.setDup && ch === s.setDup) entryCls = 'duplicate';
+            html += `<div class="set-entry ${entryCls}">`;
+            html += `<div class="set-val">${escapeHtml(ch)}</div>`;
+            html += '</div>';
+        }
+        if (s.setData.length === 0) {
+            html += '<div style="color:#475569;font-size:0.85rem;">(empty)</div>';
+        }
+        html += '</div></div>';
+    }
+
+    // Map display (for optimized)
+    if (s.mapData) {
+        html += '<div class="set-container">';
+        html += '<div class="section-label">Map: char &rarr; last index</div>';
+        html += '<div class="set-grid">';
+        for (const entry of s.mapData) {
+            let entryCls = '';
+            if (entry.isNew) entryCls = 'new';
+            if (entry.dup) entryCls = 'duplicate';
+            html += `<div class="set-entry ${entryCls}">`;
+            html += `<div class="set-key">'${escapeHtml(entry.key)}'</div>`;
+            html += `<div class="set-arrow">&darr;</div>`;
+            html += `<div class="set-val">${entry.val}</div>`;
+            html += '</div>';
+        }
+        if (s.mapData.length === 0) {
+            html += '<div style="color:#475569;font-size:0.85rem;">(empty)</div>';
+        }
+        html += '</div></div>';
+    }
+
+    viz.innerHTML = html;
+}
+
+function getElementClass(type) {
+    switch (type) {
+        case 'left': return 'el-left';
+        case 'right': return 'el-right';
+        case 'window': return 'el-window';
+        case 'duplicate': return 'el-duplicate';
+        case 'best': return 'el-best';
+        case 'discarded': return 'el-discarded';
+        case 'checking': return 'el-checking';
+        default: return 'el-default';
+    }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+generateSteps();
+renderStep();
+</script>
+</body>
+</html>

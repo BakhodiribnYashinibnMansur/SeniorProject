@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0006. Zigzag Conversion — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        #strInput { width: 220px; }
+        #rowsInput { width: 80px; }
+
+        .btn-generate { background: #8b5cf6; color: white; }
+        .btn-generate:hover { background: #7c3aed; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .controls button {
+            padding: 8px 16px;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .controls button:hover { background: #475569; }
+        .controls button.active { background: #3b82f6; border-color: #3b82f6; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 12px;
+        }
+
+        .speed-control label { font-size: 0.8rem; color: #94a3b8; }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        /* STATUS */
+        .status-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            padding: 10px 16px;
+            background: #0f172a;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .status-item { color: #94a3b8; }
+        .status-item span { color: #60a5fa; font-weight: 600; }
+
+        /* STRING DISPLAY */
+        .string-display {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .char-box {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            background: #334155;
+            color: #94a3b8;
+            position: relative;
+        }
+
+        .char-box.current {
+            background: #3b82f6;
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+        }
+
+        .char-box.placed {
+            background: #1e40af;
+            color: #93c5fd;
+        }
+
+        .char-box.reading {
+            background: #059669;
+            color: white;
+            box-shadow: 0 0 12px rgba(5, 150, 105, 0.5);
+        }
+
+        .char-box .idx {
+            position: absolute;
+            top: -14px;
+            font-size: 0.6rem;
+            color: #64748b;
+        }
+
+        /* ZIGZAG GRID */
+        .grid-wrapper {
+            margin: 20px 0;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .zigzag-grid {
+            display: inline-grid;
+            gap: 4px;
+            margin: 0 auto;
+        }
+
+        .grid-cell {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background: transparent;
+            color: transparent;
+            position: relative;
+        }
+
+        .grid-cell.filled {
+            background: #1e40af;
+            color: #93c5fd;
+        }
+
+        .grid-cell.active {
+            background: #3b82f6;
+            color: white;
+            transform: scale(1.15);
+            box-shadow: 0 0 14px rgba(59, 130, 246, 0.6);
+        }
+
+        .grid-cell.reading {
+            background: #059669;
+            color: white;
+            box-shadow: 0 0 10px rgba(5, 150, 105, 0.5);
+        }
+
+        .grid-cell.empty {
+            background: #1e293b;
+            border: 1px dashed #334155;
+        }
+
+        /* ROW LABELS */
+        .row-label {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #f59e0b;
+            font-size: 0.8rem;
+        }
+
+        /* DIRECTION ARROW */
+        .direction-indicator {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 1.5rem;
+        }
+
+        .direction-indicator .arrow-down { color: #3b82f6; }
+        .direction-indicator .arrow-up { color: #a78bfa; }
+
+        /* ROW STRINGS */
+        .row-strings {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .row-string-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: #0f172a;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .row-string-item.highlight {
+            background: #1e3a5f;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .row-string-item .row-num {
+            font-weight: 700;
+            color: #f59e0b;
+            min-width: 60px;
+        }
+
+        .row-string-item .row-chars {
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            color: #93c5fd;
+        }
+
+        /* RESULT */
+        .result-section {
+            margin-top: 20px;
+            padding: 16px;
+            background: #0f172a;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .result-section .label { color: #94a3b8; font-size: 0.85rem; margin-bottom: 8px; }
+
+        .result-section .value {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: #34d399;
+            font-weight: 700;
+        }
+
+        /* ALGORITHM INFO */
+        .algo-info {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: #0f172a;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .algo-info .step-desc {
+            color: #e2e8f0;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .algo-info code {
+            background: #334155;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #fbbf24;
+            font-size: 0.85rem;
+        }
+
+        /* CYCLE VISUAL (for math approach) */
+        .cycle-visual {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+
+        .cycle-box {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            background: #334155;
+            color: #94a3b8;
+        }
+
+        .cycle-box.main { background: #1e40af; color: #93c5fd; }
+        .cycle-box.diag { background: #7c3aed; color: #c4b5fd; }
+        .cycle-box.highlight { box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); transform: scale(1.1); }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { padding: 16px; }
+            .char-box, .grid-cell { width: 30px; height: 30px; font-size: 0.8rem; }
+            .header h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>0006. Zigzag Conversion</h1>
+    <p>Writing a string in zigzag form and reading it row by row</p>
+</div>
+
+<div class="tabs">
+    <div class="tab active" onclick="switchTab(0)">Brute Force</div>
+    <div class="tab" onclick="switchTab(1)">Row-by-Row</div>
+    <div class="tab" onclick="switchTab(2)">Math-based</div>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <input type="text" id="strInput" value="PAYPALISHIRING" placeholder="String...">
+        <input type="number" id="rowsInput" value="4" min="1" max="10" placeholder="Rows">
+        <button class="controls btn-generate" onclick="generate()">Generate</button>
+    </div>
+
+    <div class="controls">
+        <button id="btnPlay" onclick="play()">&#9654; Play</button>
+        <button onclick="pause()">&#10074;&#10074; Pause</button>
+        <button onclick="stepForward()">Step &#9654;</button>
+        <button onclick="resetAnim()">&#8634; Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <input type="range" id="speedSlider" min="1" max="10" value="5" oninput="updateSpeed()">
+            <span id="speedLabel" style="color:#94a3b8;font-size:0.8rem;">5x</span>
+        </div>
+    </div>
+
+    <div class="status-bar" id="statusBar">
+        <div class="status-item">Step: <span id="stepNum">0</span> / <span id="totalSteps">0</span></div>
+        <div class="status-item">Phase: <span id="phaseText">Ready</span></div>
+        <div class="status-item">Row: <span id="currentRowText">-</span></div>
+        <div class="status-item">Direction: <span id="directionText">-</span></div>
+    </div>
+
+    <div class="string-display" id="stringDisplay"></div>
+
+    <div id="dirIndicator" class="direction-indicator"></div>
+
+    <div class="grid-wrapper" id="gridWrapper">
+        <div class="zigzag-grid" id="zigzagGrid"></div>
+    </div>
+
+    <div class="row-strings" id="rowStrings"></div>
+
+    <div class="result-section" id="resultSection" style="display:none;">
+        <div class="label">Result</div>
+        <div class="value" id="resultValue"></div>
+    </div>
+
+    <div class="algo-info" id="algoInfo">
+        <div class="step-desc">Ready. Press "Play" or "Step".</div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// State
+// ============================================================
+let inputStr = "PAYPALISHIRING";
+let numRows = 4;
+let currentTab = 0; // 0=BruteForce, 1=RowByRow, 2=MathBased
+let steps = [];
+let currentStep = -1;
+let animTimer = null;
+let speed = 5;
+
+// ============================================================
+// Tab switching
+// ============================================================
+function switchTab(idx) {
+    currentTab = idx;
+    document.querySelectorAll('.tab').forEach((t, i) => {
+        t.classList.toggle('active', i === idx);
+    });
+    generate();
+}
+
+// ============================================================
+// Generate steps for current approach
+// ============================================================
+function generate() {
+    pause();
+    inputStr = document.getElementById('strInput').value || "PAYPALISHIRING";
+    numRows = Math.max(1, Math.min(10, parseInt(document.getElementById('rowsInput').value) || 4));
+    document.getElementById('rowsInput').value = numRows;
+
+    steps = [];
+    currentStep = -1;
+
+    if (currentTab === 0) generateBruteForce();
+    else if (currentTab === 1) generateRowByRow();
+    else generateMathBased();
+
+    document.getElementById('totalSteps').textContent = steps.length;
+    resetAnim();
+}
+
+// ============================================================
+// Approach 1: Brute Force (2D Grid)
+// ============================================================
+function generateBruteForce() {
+    const n = inputStr.length;
+    if (numRows === 1 || numRows >= n) {
+        steps.push({
+            type: 'done',
+            desc: 'numRows=1 or numRows >= len(s) — string remains unchanged',
+            result: inputStr,
+            grid: [], rows: buildEmptyRows(), charStates: new Array(n).fill('placed'),
+            currentRow: -1, direction: '-'
+        });
+        return;
+    }
+
+    // Calculate grid dimensions
+    const cycle = 2 * numRows - 2;
+    const numCols = Math.ceil(n / cycle) * (numRows - 1);
+    let grid = Array.from({length: numRows}, () => Array(numCols).fill(''));
+
+    let row = 0, col = 0;
+    let goingDown = true;
+    let rowsData = buildEmptyRows();
+
+    for (let i = 0; i < n; i++) {
+        let prevGrid = grid.map(r => [...r]);
+        grid[row][col] = inputStr[i];
+        rowsData[row] += inputStr[i];
+
+        let charStates = new Array(n).fill('');
+        for (let k = 0; k <= i; k++) charStates[k] = 'placed';
+        charStates[i] = 'current';
+
+        steps.push({
+            type: 'place',
+            desc: `Character '${inputStr[i]}' (index ${i}) → placed at grid[${row}][${col}]`,
+            grid: grid.map(r => [...r]),
+            activeCell: [row, col],
+            rows: rowsData.map(r => r),
+            charStates: [...charStates],
+            currentRow: row,
+            direction: goingDown ? 'Down' : 'Up'
+        });
+
+        if (row === numRows - 1) goingDown = false;
+        if (row === 0) goingDown = true;
+        if (goingDown) row++;
+        else { row--; col++; }
+    }
+
+    // Reading phase
+    let result = '';
+    let charStatesBase = new Array(n).fill('placed');
+    for (let r = 0; r < numRows; r++) {
+        let rowResult = '';
+        for (let c = 0; c < numCols; c++) {
+            if (grid[r][c] !== '') {
+                rowResult += grid[r][c];
+                result += grid[r][c];
+                steps.push({
+                    type: 'read',
+                    desc: `Read '${grid[r][c]}' from Row ${r} → result: "${result}"`,
+                    grid: grid.map(rr => [...rr]),
+                    readCell: [r, c],
+                    readingRow: r,
+                    rows: rowsData.map(rr => rr),
+                    charStates: [...charStatesBase],
+                    currentRow: r,
+                    direction: '-',
+                    result: result
+                });
+            }
+        }
+    }
+
+    steps.push({
+        type: 'done',
+        desc: `Done! Result: "${result}"`,
+        grid: grid.map(r => [...r]),
+        rows: rowsData.map(r => r),
+        charStates: new Array(n).fill('placed'),
+        currentRow: -1, direction: '-',
+        result: result
+    });
+}
+
+// ============================================================
+// Approach 2: Row-by-Row with Direction Flag
+// ============================================================
+function generateRowByRow() {
+    const n = inputStr.length;
+    if (numRows === 1 || numRows >= n) {
+        steps.push({
+            type: 'done', desc: 'numRows=1 or numRows >= len(s) — string remains unchanged',
+            result: inputStr, grid: [], rows: buildEmptyRows(),
+            charStates: new Array(n).fill('placed'), currentRow: -1, direction: '-'
+        });
+        return;
+    }
+
+    let rowsData = buildEmptyRows();
+    let currentRow = 0;
+    let goingDown = false;
+
+    // Build grid for visualization
+    const cycle = 2 * numRows - 2;
+    const numCols = Math.ceil(n / cycle) * (numRows - 1);
+    let grid = Array.from({length: numRows}, () => Array(numCols).fill(''));
+    let gridRow = 0, gridCol = 0;
+    let gd = true;
+
+    // Pre-compute grid positions
+    let positions = [];
+    let tr = 0, tc = 0, tgd = true;
+    for (let i = 0; i < n; i++) {
+        positions.push([tr, tc]);
+        if (tr === numRows - 1) tgd = false;
+        if (tr === 0) tgd = true;
+        if (tgd) tr++;
+        else { tr--; tc++; }
+    }
+
+    for (let i = 0; i < n; i++) {
+        let ch = inputStr[i];
+        rowsData[currentRow] += ch;
+        let [gr, gc] = positions[i];
+        grid[gr][gc] = ch;
+
+        let charStates = new Array(n).fill('');
+        for (let k = 0; k <= i; k++) charStates[k] = 'placed';
+        charStates[i] = 'current';
+
+        let oldDown = goingDown;
+        if (currentRow === 0 || currentRow === numRows - 1) {
+            goingDown = !goingDown;
+        }
+
+        steps.push({
+            type: 'place',
+            desc: `'${ch}' (index ${i}) → Row ${currentRow} added. ` +
+                  (currentRow === 0 ? 'At top — direction changed to down' :
+                   currentRow === numRows - 1 ? 'At bottom — direction changed to up' :
+                   `Direction: ${goingDown ? 'Down' : 'Up'}`),
+            grid: grid.map(r => [...r]),
+            activeCell: [gr, gc],
+            rows: rowsData.map(r => r),
+            charStates: [...charStates],
+            currentRow: currentRow,
+            direction: goingDown ? 'Down' : 'Up'
+        });
+
+        currentRow += goingDown ? 1 : -1;
+    }
+
+    // Concatenation phase
+    let result = '';
+    for (let r = 0; r < numRows; r++) {
+        result += rowsData[r];
+        steps.push({
+            type: 'concat',
+            desc: `Row ${r}: "${rowsData[r]}" → appended to result → "${result}"`,
+            grid: grid.map(rr => [...rr]),
+            readingRow: r,
+            rows: rowsData.map(rr => rr),
+            charStates: new Array(n).fill('placed'),
+            currentRow: r,
+            direction: '-',
+            result: result
+        });
+    }
+
+    steps.push({
+        type: 'done',
+        desc: `Done! Result: "${result}"`,
+        grid: grid.map(r => [...r]),
+        rows: rowsData.map(r => r),
+        charStates: new Array(n).fill('placed'),
+        currentRow: -1, direction: '-',
+        result: result
+    });
+}
+
+// ============================================================
+// Approach 3: Math-based (Cycle Pattern)
+// ============================================================
+function generateMathBased() {
+    const n = inputStr.length;
+    if (numRows === 1 || numRows >= n) {
+        steps.push({
+            type: 'done', desc: 'numRows=1 or numRows >= len(s) — string remains unchanged',
+            result: inputStr, grid: [], rows: buildEmptyRows(),
+            charStates: new Array(n).fill('placed'), currentRow: -1, direction: '-'
+        });
+        return;
+    }
+
+    const cycle = 2 * numRows - 2;
+
+    // Pre-build grid
+    const numCols = Math.ceil(n / cycle) * (numRows - 1);
+    let grid = Array.from({length: numRows}, () => Array(numCols).fill(''));
+    let positions = [];
+    let tr = 0, tc = 0, tgd = true;
+    for (let i = 0; i < n; i++) {
+        grid[tr][tc] = inputStr[i];
+        positions.push([tr, tc]);
+        if (tr === numRows - 1) tgd = false;
+        if (tr === 0) tgd = true;
+        if (tgd) tr++;
+        else { tr--; tc++; }
+    }
+
+    let rowsData = buildEmptyRows();
+    let result = '';
+    let collected = new Set();
+
+    steps.push({
+        type: 'info',
+        desc: `Cycle length = 2 * ${numRows} - 2 = ${cycle}. We process each row separately.`,
+        grid: grid.map(r => [...r]),
+        rows: rowsData.map(r => r),
+        charStates: new Array(n).fill(''),
+        currentRow: -1, direction: '-',
+        cycle: cycle
+    });
+
+    for (let row = 0; row < numRows; row++) {
+        for (let j = row; j < n; j += cycle) {
+            // Main character
+            collected.add(j);
+            rowsData[row] += inputStr[j];
+            result += inputStr[j];
+
+            let charStates = new Array(n).fill('');
+            collected.forEach(idx => charStates[idx] = 'placed');
+            charStates[j] = 'current';
+
+            steps.push({
+                type: 'math-main',
+                desc: `Row ${row}: main index j=${j} → '${inputStr[j]}'. Formula: start=${row}, step=${cycle}`,
+                grid: grid.map(r => [...r]),
+                activeCell: positions[j],
+                rows: rowsData.map(r => r),
+                charStates: [...charStates],
+                currentRow: row,
+                direction: '-',
+                result: result,
+                mathIdx: j,
+                mathType: 'main'
+            });
+
+            // Diagonal character
+            if (row !== 0 && row !== numRows - 1) {
+                let mid = j + cycle - 2 * row;
+                if (mid < n) {
+                    collected.add(mid);
+                    rowsData[row] += inputStr[mid];
+                    result += inputStr[mid];
+
+                    let charStates2 = new Array(n).fill('');
+                    collected.forEach(idx => charStates2[idx] = 'placed');
+                    charStates2[mid] = 'current';
+
+                    steps.push({
+                        type: 'math-diag',
+                        desc: `Row ${row}: diagonal index mid=${j}+${cycle}-${2*row}=${mid} → '${inputStr[mid]}'`,
+                        grid: grid.map(r => [...r]),
+                        activeCell: positions[mid],
+                        rows: rowsData.map(r => r),
+                        charStates: [...charStates2],
+                        currentRow: row,
+                        direction: '-',
+                        result: result,
+                        mathIdx: mid,
+                        mathType: 'diag'
+                    });
+                }
+            }
+        }
+    }
+
+    steps.push({
+        type: 'done',
+        desc: `Done! Result: "${result}"`,
+        grid: grid.map(r => [...r]),
+        rows: rowsData.map(r => r),
+        charStates: new Array(n).fill('placed'),
+        currentRow: -1, direction: '-',
+        result: result
+    });
+}
+
+function buildEmptyRows() {
+    return new Array(numRows).fill('');
+}
+
+// ============================================================
+// Rendering
+// ============================================================
+function render() {
+    if (steps.length === 0) return;
+    const step = currentStep >= 0 && currentStep < steps.length ? steps[currentStep] : null;
+
+    renderStringDisplay(step);
+    renderGrid(step);
+    renderRowStrings(step);
+    renderStatus(step);
+    renderResult(step);
+    renderAlgoInfo(step);
+    renderDirection(step);
+}
+
+function renderStringDisplay(step) {
+    const container = document.getElementById('stringDisplay');
+    let html = '';
+    for (let i = 0; i < inputStr.length; i++) {
+        let cls = 'char-box';
+        if (step) {
+            let state = step.charStates[i];
+            if (state === 'current') cls += ' current';
+            else if (state === 'placed') cls += ' placed';
+            else if (state === 'reading') cls += ' reading';
+        }
+        html += `<div class="${cls}"><span class="idx">${i}</span>${inputStr[i]}</div>`;
+    }
+    container.innerHTML = html;
+}
+
+function renderGrid(step) {
+    const wrapper = document.getElementById('gridWrapper');
+    if (!step || !step.grid || step.grid.length === 0) {
+        wrapper.innerHTML = '';
+        return;
+    }
+
+    const grid = step.grid;
+    const rows = grid.length;
+    const cols = grid[0].length;
+
+    // Find max used column
+    let maxCol = 0;
+    for (let r = 0; r < rows; r++) {
+        for (let c = cols - 1; c >= 0; c--) {
+            if (grid[r][c] !== '') { maxCol = Math.max(maxCol, c); break; }
+        }
+    }
+    maxCol = Math.min(maxCol + 1, cols);
+
+    let html = `<div class="zigzag-grid" style="grid-template-columns: 40px repeat(${maxCol}, 40px); justify-content: center;">`;
+
+    for (let r = 0; r < rows; r++) {
+        html += `<div class="row-label">R${r}</div>`;
+        for (let c = 0; c < maxCol; c++) {
+            let cls = 'grid-cell';
+            let ch = grid[r][c];
+
+            if (ch !== '') {
+                cls += ' filled';
+                if (step.activeCell && step.activeCell[0] === r && step.activeCell[1] === c) {
+                    cls = 'grid-cell active';
+                }
+                if (step.readCell && step.readCell[0] === r && step.readCell[1] === c) {
+                    cls = 'grid-cell reading';
+                }
+                if (step.readingRow !== undefined && step.readingRow === r && step.type === 'read') {
+                    if (!(step.readCell && step.readCell[0] === r && step.readCell[1] === c)) {
+                        // already reading row
+                    }
+                }
+            } else {
+                cls += ' empty';
+            }
+
+            html += `<div class="${cls}">${ch}</div>`;
+        }
+    }
+    html += '</div>';
+    wrapper.innerHTML = html;
+}
+
+function renderRowStrings(step) {
+    const container = document.getElementById('rowStrings');
+    if (!step || !step.rows) { container.innerHTML = ''; return; }
+
+    let html = '';
+    for (let r = 0; r < step.rows.length; r++) {
+        let cls = 'row-string-item';
+        if (step.currentRow === r) cls += ' highlight';
+        if (step.readingRow === r && (step.type === 'concat' || step.type === 'read')) cls += ' highlight';
+        html += `<div class="${cls}">
+            <div class="row-num">Row ${r}:</div>
+            <div class="row-chars">${step.rows[r] || '(empty)'}</div>
+        </div>`;
+    }
+    container.innerHTML = html;
+}
+
+function renderStatus(step) {
+    document.getElementById('stepNum').textContent = Math.max(0, currentStep + 1);
+    if (step) {
+        document.getElementById('phaseText').textContent =
+            step.type === 'place' ? 'Placing' :
+            step.type === 'read' ? 'Reading' :
+            step.type === 'concat' ? 'Concatenating' :
+            step.type === 'math-main' ? 'Main index' :
+            step.type === 'math-diag' ? 'Diagonal index' :
+            step.type === 'info' ? 'Info' :
+            step.type === 'done' ? 'Done' : 'Ready';
+        document.getElementById('currentRowText').textContent = step.currentRow >= 0 ? step.currentRow : '-';
+        document.getElementById('directionText').textContent = step.direction || '-';
+    } else {
+        document.getElementById('phaseText').textContent = 'Ready';
+        document.getElementById('currentRowText').textContent = '-';
+        document.getElementById('directionText').textContent = '-';
+    }
+}
+
+function renderResult(step) {
+    const section = document.getElementById('resultSection');
+    if (step && step.result) {
+        section.style.display = 'block';
+        document.getElementById('resultValue').textContent = step.result;
+    } else {
+        section.style.display = 'none';
+    }
+}
+
+function renderAlgoInfo(step) {
+    const info = document.getElementById('algoInfo');
+    if (step) {
+        let extra = '';
+        if (step.cycle) {
+            extra = `<br><code>cycle = 2 * numRows - 2 = ${step.cycle}</code>`;
+        }
+        if (step.mathType === 'main') {
+            extra = `<br>Formula: <code>j = row + k * cycle = ${step.mathIdx}</code>`;
+        }
+        if (step.mathType === 'diag') {
+            extra = `<br>Formula: <code>mid = j + cycle - 2*row = ${step.mathIdx}</code>`;
+        }
+        info.innerHTML = `<div class="step-desc">${step.desc}</div>${extra}`;
+    } else {
+        info.innerHTML = '<div class="step-desc">Ready. Press "Play" or "Step".</div>';
+    }
+}
+
+function renderDirection(step) {
+    const ind = document.getElementById('dirIndicator');
+    if (step && step.direction === 'Down') {
+        ind.innerHTML = '<span class="arrow-down">&#11015; Down</span>';
+    } else if (step && step.direction === 'Up') {
+        ind.innerHTML = '<span class="arrow-up">&#11014; Up</span>';
+    } else {
+        ind.innerHTML = '';
+    }
+}
+
+// ============================================================
+// Controls
+// ============================================================
+function play() {
+    if (animTimer) return;
+    document.getElementById('btnPlay').classList.add('active');
+    animTimer = setInterval(() => {
+        if (currentStep >= steps.length - 1) {
+            pause();
+            return;
+        }
+        currentStep++;
+        render();
+    }, getInterval());
+}
+
+function pause() {
+    if (animTimer) {
+        clearInterval(animTimer);
+        animTimer = null;
+    }
+    document.getElementById('btnPlay').classList.remove('active');
+}
+
+function stepForward() {
+    pause();
+    if (currentStep < steps.length - 1) {
+        currentStep++;
+        render();
+    }
+}
+
+function resetAnim() {
+    pause();
+    currentStep = -1;
+    document.getElementById('resultSection').style.display = 'none';
+    // Show initial state
+    renderStringDisplay(null);
+    // Build and show empty grid
+    if (steps.length > 0 && steps[0].grid) {
+        let emptyStep = {
+            grid: steps[0].grid.map(r => r.map(() => '')),
+            rows: buildEmptyRows(),
+            charStates: new Array(inputStr.length).fill(''),
+            currentRow: -1, direction: '-'
+        };
+        // Show grid structure
+        let firstWithGrid = steps.find(s => s.grid && s.grid.length > 0);
+        if (firstWithGrid) {
+            let emptyGrid = firstWithGrid.grid.map(r => r.map(() => ''));
+            let maxCol = 0;
+            for (let r = 0; r < firstWithGrid.grid.length; r++) {
+                for (let c = firstWithGrid.grid[r].length - 1; c >= 0; c--) {
+                    if (firstWithGrid.grid[r][c] !== '') { maxCol = Math.max(maxCol, c); break; }
+                }
+            }
+            // Show empty grid
+            const wrapper = document.getElementById('gridWrapper');
+            let html = `<div class="zigzag-grid" style="grid-template-columns: 40px repeat(${maxCol+1}, 40px); justify-content: center;">`;
+            for (let r = 0; r < numRows; r++) {
+                html += `<div class="row-label">R${r}</div>`;
+                for (let c = 0; c <= maxCol; c++) {
+                    html += `<div class="grid-cell empty"></div>`;
+                }
+            }
+            html += '</div>';
+            wrapper.innerHTML = html;
+        }
+    }
+    renderRowStrings({rows: buildEmptyRows(), currentRow: -1});
+    renderStatus(null);
+    renderAlgoInfo(null);
+    renderDirection(null);
+    document.getElementById('stepNum').textContent = '0';
+}
+
+function getInterval() {
+    return Math.max(100, 1200 - speed * 100);
+}
+
+function updateSpeed() {
+    speed = parseInt(document.getElementById('speedSlider').value);
+    document.getElementById('speedLabel').textContent = speed + 'x';
+    if (animTimer) {
+        pause();
+        play();
+    }
+}
+
+// ============================================================
+// Init
+// ============================================================
+generate();
+</script>
+
+</body>
+</html>

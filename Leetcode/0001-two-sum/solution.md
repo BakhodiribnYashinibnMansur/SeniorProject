@@ -24,7 +24,7 @@
 | **Difficulty** | 🟢 Easy |
 | **Tags** | `Array`, `Hash Table` |
 
-### Description (English)
+### Description
 
 > Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`.
 >
@@ -32,21 +32,13 @@
 >
 > You can return the answer in any order.
 
-### Tavsif (O'zbekcha)
-
-> Sizga butun sonlardan iborat `nums` massivi va `target` soni berilgan. Massivdagi qaysi ikkita sonning yig'indisi `target` ga teng bo'lishini toping va ularning **indekslarini** qaytaring.
->
-> Har bir input da **faqat bitta yechim** bor deb hisoblang. Bitta elementni ikki marta ishlata olmaysiz.
->
-> Javobni istalgan tartibda qaytarishingiz mumkin.
-
 ### Examples
 
 ```
 Example 1:
 Input: nums = [2,7,11,15], target = 9
 Output: [0,1]
-Explanation: nums[0] + nums[1] = 2 + 7 = 9, shuning uchun [0,1] qaytaramiz.
+Explanation: nums[0] + nums[1] = 2 + 7 = 9, so we return [0,1].
 
 Example 2:
 Input: nums = [3,2,4], target = 6
@@ -64,118 +56,118 @@ Explanation: nums[0] + nums[1] = 3 + 3 = 6
 - `2 <= nums.length <= 10^4`
 - `-10^9 <= nums[i] <= 10^9`
 - `-10^9 <= target <= 10^9`
-- **Faqat bitta to'g'ri javob mavjud**
+- **Only one valid answer exists**
 
 ---
 
 ## Problem Breakdown
 
-### 1. Nimani so'rayapti?
+### 1. What is being asked?
 
-Massivdan ikkita son topish kerak, ularning yig'indisi target ga teng bo'lsin. Sonlarning o'zini emas, **indekslarini** qaytarish kerak.
+Find two numbers in the array whose sum equals the target. Return their **indices**, not the values themselves.
 
-### 2. Input nima?
+### 2. What is the input?
 
 | Parameter | Type | Description |
 |---|---|---|
-| `nums` | `int[]` | Butun sonlar massivi |
-| `target` | `int` | Maqsadli yig'indi |
+| `nums` | `int[]` | Array of integers |
+| `target` | `int` | Target sum |
 
-Input haqida muhim kuzatuvlar:
-- Massiv **tartiblanmagan** (sorted emas)
-- **Dublikatlar bor** bo'lishi mumkin (Example 3: `[3,3]`)
-- Massiv kamida 2 ta elementdan iborat
-- Salbiy sonlar ham bo'lishi mumkin
+Important observations about the input:
+- The array is **unsorted** (not sorted)
+- **Duplicates may exist** (Example 3: `[3,3]`)
+- The array contains at least 2 elements
+- Negative numbers are possible
 
-### 3. Output nima?
+### 3. What is the output?
 
-- **2 ta indeksdan iborat massiv** `[i, j]`
-- Tartib muhim emas (`[0,1]` yoki `[1,0]` ikkalasi to'g'ri)
-- Har doim **faqat bitta** javob mavjud
-- Bitta elementni ikki marta ishlatib bo'lmaydi (`i != j`)
+- **An array of 2 indices** `[i, j]`
+- Order does not matter (`[0,1]` or `[1,0]` are both correct)
+- There is always **exactly one** answer
+- The same element cannot be used twice (`i != j`)
 
-### 4. Cheklovlar (Constraints) tahlili
+### 4. Constraints analysis
 
-| Constraint | Ahamiyati |
+| Constraint | Significance |
 |---|---|
-| `nums.length <= 10^4` | O(n^2) ishlaydi (~10^8 operatsiya chegarada), lekin O(n) yaxshiroq |
-| `-10^9 <= nums[i] <= 10^9` | int32 yetadi, lekin yig'indi int64 kerak bo'lishi mumkin |
-| Faqat bitta javob | Bir nechta javob topish shart emas — birinchisini qaytarish yetarli |
+| `nums.length <= 10^4` | O(n^2) works (~10^8 operations at the limit), but O(n) is better |
+| `-10^9 <= nums[i] <= 10^9` | int32 is sufficient, but the sum may require int64 |
+| Only one answer | No need to find multiple answers — returning the first one is enough |
 
-### 5. Misollarni qadam-baqadam tahlil qilish
+### 5. Step-by-step example analysis
 
 #### Example 1: `nums = [2,7,11,15], target = 9`
 
 ```text
-Boshlang'ich holat: nums = [2, 7, 11, 15], target = 9
+Initial state: nums = [2, 7, 11, 15], target = 9
 
-Savol: Qaysi ikkita sonning yig'indisi 9 ga teng?
+Question: Which two numbers add up to 9?
 
-Tekshiramiz:
-  2 + 7  = 9  ✅ TOPILDI! → indekslar: [0, 1]
+Checking:
+  2 + 7  = 9  ✅ FOUND! → indices: [0, 1]
 
-Natija: [0, 1]
+Result: [0, 1]
 ```
 
 #### Example 2: `nums = [3,2,4], target = 6`
 
 ```text
-Boshlang'ich holat: nums = [3, 2, 4], target = 6
+Initial state: nums = [3, 2, 4], target = 6
 
-Tekshiramiz:
-  3 + 2 = 5  ❌ (6 emas)
-  3 + 4 = 7  ❌ (6 emas)
-  2 + 4 = 6  ✅ TOPILDI! → indekslar: [1, 2]
+Checking:
+  3 + 2 = 5  ❌ (not 6)
+  3 + 4 = 7  ❌ (not 6)
+  2 + 4 = 6  ✅ FOUND! → indices: [1, 2]
 
-Natija: [1, 2]
+Result: [1, 2]
 ```
 
 #### Example 3: `nums = [3,3], target = 6`
 
 ```text
-Boshlang'ich holat: nums = [3, 3], target = 6
+Initial state: nums = [3, 3], target = 6
 
-Tekshiramiz:
-  3 + 3 = 6  ✅ TOPILDI! → indekslar: [0, 1]
+Checking:
+  3 + 3 = 6  ✅ FOUND! → indices: [0, 1]
 
-Bu yerda ikkala element bir xil qiymatga ega, lekin turli indekslarda.
-Natija: [0, 1]
+Here both elements have the same value but are at different indices.
+Result: [0, 1]
 ```
 
-### 6. Muhim kuzatuvlar (Key Observations)
+### 6. Key Observations
 
-1. **Complement (to'ldiruvchi)** — Agar `a + b = target` bo'lsa, `b = target - a`. Ya'ni har bir element uchun uning "juftini" qidirish kerak.
-2. **Indeks kerak, qiymat emas** — Sort qilsak indekslar yo'qoladi (yoki alohida saqlash kerak).
-3. **Faqat bitta javob** — Birinchi topilgan juftlikni qaytarish yetarli, boshqasini qidirmasa ham bo'ladi.
-4. **Hash Map** — O(1) da complement borligini tekshirish mumkin.
+1. **Complement** — If `a + b = target`, then `b = target - a`. That is, for each element we need to search for its "pair".
+2. **Index needed, not value** — If we sort, the indices are lost (or must be stored separately).
+3. **Only one answer** — Returning the first found pair is sufficient, no need to search for others.
+4. **Hash Map** — We can check if the complement exists in O(1).
 
-### 7. Pattern aniqlash
+### 7. Pattern identification
 
-| Pattern | Nima uchun mos | Misol |
+| Pattern | Why it fits | Example |
 |---|---|---|
-| Hash Map | O(1) lookup, complement qidirish | Two Sum (shu masala) |
-| Two Pointers | Sorted massivda ishlaydi | Two Sum II (sorted) |
-| Brute Force | Har doim ishlaydi, lekin sekin | Barcha masalalar |
+| Hash Map | O(1) lookup, complement search | Two Sum (this problem) |
+| Two Pointers | Works on sorted arrays | Two Sum II (sorted) |
+| Brute Force | Always works, but slow | All problems |
 
-**Tanlangan pattern:** `Hash Map (One-pass)`
-**Sabab:** Massiv sorted emas, indeks kerak, O(n) vaqtda yechish uchun Hash Map eng mos.
+**Chosen pattern:** `Hash Map (One-pass)`
+**Reason:** The array is unsorted, indices are needed, and Hash Map is the best fit for solving in O(n) time.
 
 ---
 
 ## Approach 1: Brute Force
 
-### Fikrlash jarayoni
+### Thought process
 
-> Eng oddiy fikr: har bir elementni boshqa barcha elementlar bilan solishtirish.
-> Ikkita nested loop ishlatib, barcha juftliklarni tekshiramiz.
-> Agar yig'indi target ga teng bo'lsa — indekslarni qaytaramiz.
+> The simplest idea: compare each element with every other element.
+> Using two nested loops, check all pairs.
+> If the sum equals the target — return the indices.
 
-### Algoritm (qadam-baqadam)
+### Algorithm (step-by-step)
 
-1. Tashqi loop: `i = 0` dan `n-1` gacha
-2. Ichki loop: `j = i+1` dan `n-1` gacha
-3. Agar `nums[i] + nums[j] == target` → `[i, j]` qaytarish
-4. (Constraint bo'yicha javob har doim mavjud, shuning uchun bo'sh javob bo'lmaydi)
+1. Outer loop: `i = 0` to `n-1`
+2. Inner loop: `j = i+1` to `n-1`
+3. If `nums[i] + nums[j] == target` → return `[i, j]`
+4. (Per the constraint, an answer always exists, so there will never be an empty result)
 
 ### Pseudocode
 
@@ -185,15 +177,15 @@ function twoSum(nums, target):
         for j = i+1 to n-1:
             if nums[i] + nums[j] == target:
                 return [i, j]
-    return []  // hech qachon bu yerga kelmaydi
+    return []  // will never reach here
 ```
 
 ### Complexity
 
-| | Complexity | Izoh |
+| | Complexity | Explanation |
 |---|---|---|
-| **Time** | O(n^2) | Har bir element uchun qolgan barcha elementlarni tekshiramiz. n*(n-1)/2 juftlik. |
-| **Space** | O(1) | Qo'shimcha xotira ishlatilmaydi (faqat i, j o'zgaruvchilar). |
+| **Time** | O(n^2) | For each element, we check all remaining elements. n*(n-1)/2 pairs. |
+| **Space** | O(1) | No extra memory is used (only i, j variables). |
 
 ### Implementation
 
@@ -204,10 +196,10 @@ function twoSum(nums, target):
 // Time: O(n²), Space: O(1)
 func twoSum(nums []int, target int) []int {
     n := len(nums)
-    // Har bir juftlikni tekshirish
+    // Check every pair
     for i := 0; i < n; i++ {
         for j := i + 1; j < n; j++ {
-            // Yig'indi target ga teng bo'lsa — topildi
+            // If the sum equals the target — found it
             if nums[i]+nums[j] == target {
                 return []int{i, j}
             }
@@ -225,10 +217,10 @@ class Solution {
     // Time: O(n²), Space: O(1)
     public int[] twoSum(int[] nums, int target) {
         int n = nums.length;
-        // Har bir juftlikni tekshirish
+        // Check every pair
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
-                // Yig'indi target ga teng bo'lsa — topildi
+                // If the sum equals the target — found it
                 if (nums[i] + nums[j] == target) {
                     return new int[]{i, j};
                 }
@@ -249,10 +241,10 @@ class Solution:
         Time: O(n²), Space: O(1)
         """
         n = len(nums)
-        # Har bir juftlikni tekshirish
+        # Check every pair
         for i in range(n):
             for j in range(i + 1, n):
-                # Yig'indi target ga teng bo'lsa — topildi
+                # If the sum equals the target — found it
                 if nums[i] + nums[j] == target:
                     return [i, j]
         return []
@@ -264,11 +256,11 @@ class Solution:
 Input: nums = [2, 7, 11, 15], target = 9
 
 i=0 (nums[0]=2):
-  ├── j=1: 2 + 7  = 9  == 9 ✅ TOPILDI!
+  ├── j=1: 2 + 7  = 9  == 9 ✅ FOUND!
   └── return [0, 1]
 
-Jami operatsiyalar: 1 ta solishtirish
-(Eng yaxshi holat — birinchi juftlikda topildi)
+Total operations: 1 comparison
+(Best case — found on the first pair)
 ```
 
 ```text
@@ -279,38 +271,38 @@ i=0 (nums[0]=3):
   └── j=2: 3 + 4 = 7  ❌
 
 i=1 (nums[1]=2):
-  ├── j=2: 2 + 4 = 6  == 6 ✅ TOPILDI!
+  ├── j=2: 2 + 4 = 6  == 6 ✅ FOUND!
   └── return [1, 2]
 
-Jami operatsiyalar: 3 ta solishtirish
+Total operations: 3 comparisons
 ```
 
 ---
 
 ## Approach 2: Time Complexity Optimization
 
-### Brute Force ning muammosi
+### The problem with Brute Force
 
-> Har bir element uchun qolgan **barcha** elementlarni tekshiryapmiz — bu O(n^2).
-> Masalan 10,000 ta element bo'lsa — 50,000,000 ta solishtirish.
-> Savol: "complement (`target - nums[i]`) ni tezroq topa olmaymizmi?"
+> For each element, we are checking **all** remaining elements — this is O(n^2).
+> For example, with 10,000 elements — that's 50,000,000 comparisons.
+> Question: "Can we find the complement (`target - nums[i]`) faster?"
 
-### Optimallashtirish g'oyasi
+### Optimization idea
 
-> **Hash Map** ishlatamiz! Massivni bir marta o'tib, har bir elementning complementini Hash Map dan qidiramiz.
-> Hash Map da qidirish O(1) — shuning uchun jami O(n).
+> **Use a Hash Map!** Traverse the array once, and for each element search for its complement in the Hash Map.
+> Hash Map lookup is O(1) — so the total is O(n).
 >
-> **One-pass:** Massivni o'tayotganda bir vaqtda:
-> 1. Complement Hash Map da bormi? → Ha → TOPILDI!
-> 2. Yo'q → hozirgi elementni Hash Map ga qo'shamiz
+> **One-pass:** While traversing the array, simultaneously:
+> 1. Is the complement in the Hash Map? → Yes → FOUND!
+> 2. No → Add the current element to the Hash Map
 
-### Algoritm (qadam-baqadam)
+### Algorithm (step-by-step)
 
-1. Bo'sh Hash Map yaratish: `seen = {}`
-2. Massivni bitta loop bilan o'tish: `i = 0` dan `n-1` gacha
-3. `complement = target - nums[i]` hisoblash
-4. Agar `complement` Hash Map da bor → `[seen[complement], i]` qaytarish
-5. Aks holda `nums[i] → i` ni Hash Map ga qo'shish
+1. Create an empty Hash Map: `seen = {}`
+2. Traverse the array with a single loop: `i = 0` to `n-1`
+3. Compute `complement = target - nums[i]`
+4. If `complement` exists in the Hash Map → return `[seen[complement], i]`
+5. Otherwise, add `nums[i] → i` to the Hash Map
 
 ### Pseudocode
 
@@ -327,10 +319,10 @@ function twoSum(nums, target):
 
 ### Complexity
 
-| | Complexity | Izoh |
+| | Complexity | Explanation |
 |---|---|---|
-| **Time** | O(n) | Massivni faqat 1 marta o'tamiz. Hash Map da qidirish O(1). |
-| **Space** | O(n) | Hash Map ga eng ko'pi bilan n ta element saqlaymiz. |
+| **Time** | O(n) | We traverse the array only once. Hash Map lookup is O(1). |
+| **Space** | O(n) | We store at most n elements in the Hash Map. |
 
 ### Implementation
 
@@ -340,19 +332,19 @@ function twoSum(nums, target):
 // twoSum — One-pass Hash Map approach
 // Time: O(n), Space: O(n)
 func twoSum(nums []int, target int) []int {
-    // Hash Map: qiymat → indeks
+    // Hash Map: value → index
     seen := make(map[int]int)
 
     for i, num := range nums {
-        // Complement ni hisoblash
+        // Compute the complement
         complement := target - num
 
-        // Complement Hash Map da bormi?
+        // Is the complement in the Hash Map?
         if j, ok := seen[complement]; ok {
-            return []int{j, i} // Topildi!
+            return []int{j, i} // Found!
         }
 
-        // Hozirgi elementni Hash Map ga qo'shish
+        // Add the current element to the Hash Map
         seen[num] = i
     }
 
@@ -369,19 +361,19 @@ class Solution {
     // twoSum — One-pass Hash Map approach
     // Time: O(n), Space: O(n)
     public int[] twoSum(int[] nums, int target) {
-        // Hash Map: qiymat → indeks
+        // Hash Map: value → index
         HashMap<Integer, Integer> seen = new HashMap<>();
 
         for (int i = 0; i < nums.length; i++) {
-            // Complement ni hisoblash
+            // Compute the complement
             int complement = target - nums[i];
 
-            // Complement Hash Map da bormi?
+            // Is the complement in the Hash Map?
             if (seen.containsKey(complement)) {
-                return new int[]{seen.get(complement), i}; // Topildi!
+                return new int[]{seen.get(complement), i}; // Found!
             }
 
-            // Hozirgi elementni Hash Map ga qo'shish
+            // Add the current element to the Hash Map
             seen.put(nums[i], i);
         }
 
@@ -399,18 +391,18 @@ class Solution:
         One-pass Hash Map approach
         Time: O(n), Space: O(n)
         """
-        # Hash Map: qiymat → indeks
+        # Hash Map: value → index
         seen = {}
 
         for i, num in enumerate(nums):
-            # Complement ni hisoblash
+            # Compute the complement
             complement = target - num
 
-            # Complement Hash Map da bormi?
+            # Is the complement in the Hash Map?
             if complement in seen:
-                return [seen[complement], i]  # Topildi!
+                return [seen[complement], i]  # Found!
 
-            # Hozirgi elementni Hash Map ga qo'shish
+            # Add the current element to the Hash Map
             seen[num] = i
 
         return []
@@ -423,15 +415,15 @@ Input: nums = [2, 7, 11, 15], target = 9
 
 seen = {}
 
-Qadam 1: i=0, num=2, complement = 9-2 = 7
-         7 seen da bor mi? ❌ Yo'q
-         seen = {2: 0}
+Step 1: i=0, num=2, complement = 9-2 = 7
+        Is 7 in seen? ❌ No
+        seen = {2: 0}
 
-Qadam 2: i=1, num=7, complement = 9-7 = 2
-         2 seen da bor mi? ✅ Ha! seen[2] = 0
-         return [0, 1]
+Step 2: i=1, num=7, complement = 9-7 = 2
+        Is 2 in seen? ✅ Yes! seen[2] = 0
+        return [0, 1]
 
-Jami operatsiyalar: 2 (Brute Force: 1 → bu holda deyarli teng)
+Total operations: 2 (Brute Force: 1 → in this case nearly equal)
 ```
 
 ```text
@@ -439,50 +431,50 @@ Input: nums = [3, 2, 4], target = 6
 
 seen = {}
 
-Qadam 1: i=0, num=3, complement = 6-3 = 3
-         3 seen da bor mi? ❌ Yo'q
-         seen = {3: 0}
+Step 1: i=0, num=3, complement = 6-3 = 3
+        Is 3 in seen? ❌ No
+        seen = {3: 0}
 
-Qadam 2: i=1, num=2, complement = 6-2 = 4
-         4 seen da bor mi? ❌ Yo'q
-         seen = {3: 0, 2: 1}
+Step 2: i=1, num=2, complement = 6-2 = 4
+        Is 4 in seen? ❌ No
+        seen = {3: 0, 2: 1}
 
-Qadam 3: i=2, num=4, complement = 6-4 = 2
-         2 seen da bor mi? ✅ Ha! seen[2] = 1
-         return [1, 2]
+Step 3: i=2, num=4, complement = 6-4 = 2
+        Is 2 in seen? ✅ Yes! seen[2] = 1
+        return [1, 2]
 
-Jami operatsiyalar: 3 (Brute Force: 3 → bu holda teng, lekin katta inputda farq katta)
+Total operations: 3 (Brute Force: 3 → equal in this case, but the difference is large on bigger inputs)
 ```
 
 ---
 
 ## Approach 3: Space Complexity Optimization
 
-### Oldingi yechimning muammosi
+### The problem with the previous solution
 
-> Hash Map O(n) qo'shimcha xotira oladi.
-> Agar xotirani tejash kerak bo'lsa va vaqtni biroz qurbon qilsak:
-> Massivni **sort** qilib, **Two Pointers** ishlatamiz.
+> The Hash Map uses O(n) extra memory.
+> If we need to save memory and can sacrifice some time:
+> We **sort** the array and use **Two Pointers**.
 >
-> **Lekin muammo:** Sort qilganda original indekslar yo'qoladi!
-> Shuning uchun indekslarni alohida saqlashimiz kerak.
+> **But the problem:** Sorting loses the original indices!
+> Therefore, we need to store the indices separately.
 
-### Optimallashtirish g'oyasi
+### Optimization idea
 
-> 1. Har bir elementni `(qiymat, original_indeks)` juftlik sifatida saqlash
-> 2. Qiymat bo'yicha sort qilish — O(n log n)
+> 1. Store each element as a `(value, original_index)` pair
+> 2. Sort by value — O(n log n)
 > 3. Two Pointers: `left = 0`, `right = n-1`
->    - Yig'indi kichik → left++
->    - Yig'indi katta → right--
->    - Yig'indi teng → original indekslarni qaytarish
+>    - Sum too small → left++
+>    - Sum too large → right--
+>    - Sum equals target → return the original indices
 
-### Algoritm (qadam-baqadam)
+### Algorithm (step-by-step)
 
-1. `(qiymat, indeks)` juftliklar massivi yaratish
-2. Qiymat bo'yicha sort qilish
+1. Create an array of `(value, index)` pairs
+2. Sort by value
 3. `left = 0`, `right = n-1`
 4. `sum = sorted[left].val + sorted[right].val`
-5. `sum == target` → qaytarish | `sum < target` → left++ | `sum > target` → right--
+5. `sum == target` → return | `sum < target` → left++ | `sum > target` → right--
 
 ### Pseudocode
 
@@ -505,14 +497,14 @@ function twoSum(nums, target):
 
 ### Complexity
 
-| | Complexity | Izoh |
+| | Complexity | Explanation |
 |---|---|---|
-| **Time** | O(n log n) | Sort uchun O(n log n) + Two Pointers uchun O(n) = O(n log n) |
-| **Space** | O(n) | Indekslarni saqlash uchun. Aslida bu holda Hash Map bilan bir xil xotira. |
+| **Time** | O(n log n) | O(n log n) for sorting + O(n) for Two Pointers = O(n log n) |
+| **Space** | O(n) | For storing the indices. In practice, the same memory as the Hash Map approach. |
 
-> **Eslatma:** Bu masala uchun Space Optimization kam foyda beradi chunki indekslarni saqlash kerak.
-> Lekin **Two Sum II** (sorted array) da Two Pointers O(1) space beradi.
-> Bu approach ni ko'proq **Two Pointers pattern** ni o'rganish uchun ko'rib chiqamiz.
+> **Note:** Space optimization provides little benefit for this problem because we need to store indices.
+> However, in **Two Sum II** (sorted array), Two Pointers gives O(1) space.
+> We examine this approach primarily to learn the **Two Pointers pattern**.
 
 ### Implementation
 
@@ -524,7 +516,7 @@ import "sort"
 // twoSum — Two Pointers approach (sort + scan)
 // Time: O(n log n), Space: O(n)
 func twoSum(nums []int, target int) []int {
-    // 1. (qiymat, indeks) juftliklar
+    // 1. (value, index) pairs
     type pair struct {
         val, idx int
     }
@@ -533,7 +525,7 @@ func twoSum(nums []int, target int) []int {
         indexed[i] = pair{v, i}
     }
 
-    // 2. Qiymat bo'yicha sort
+    // 2. Sort by value
     sort.Slice(indexed, func(a, b int) bool {
         return indexed[a].val < indexed[b].val
     })
@@ -566,14 +558,14 @@ class Solution {
     public int[] twoSum(int[] nums, int target) {
         int n = nums.length;
 
-        // 1. (qiymat, indeks) juftliklar
+        // 1. (value, index) pairs
         int[][] indexed = new int[n][2];
         for (int i = 0; i < n; i++) {
-            indexed[i][0] = nums[i]; // qiymat
-            indexed[i][1] = i;       // original indeks
+            indexed[i][0] = nums[i]; // value
+            indexed[i][1] = i;       // original index
         }
 
-        // 2. Qiymat bo'yicha sort
+        // 2. Sort by value
         Arrays.sort(indexed, (a, b) -> Integer.compare(a[0], b[0]));
 
         // 3. Two Pointers
@@ -603,10 +595,10 @@ class Solution:
         Two Pointers approach (sort + scan)
         Time: O(n log n), Space: O(n)
         """
-        # 1. (qiymat, indeks) juftliklar
+        # 1. (value, index) pairs
         indexed = [(val, idx) for idx, val in enumerate(nums)]
 
-        # 2. Qiymat bo'yicha sort
+        # 2. Sort by value
         indexed.sort(key=lambda x: x[0])
 
         # 3. Two Pointers
@@ -633,28 +625,28 @@ Input: nums = [3, 2, 4], target = 6
 
 left=0 (val=2), right=2 (val=4)
 
-Qadam 1: sum = 2 + 4 = 6
-         6 == 6 ✅ TOPILDI!
-         return [indexed[0].idx, indexed[2].idx] = [1, 2]
+Step 1: sum = 2 + 4 = 6
+        6 == 6 ✅ FOUND!
+        return [indexed[0].idx, indexed[2].idx] = [1, 2]
 
-Jami operatsiyalar: sort(3 log 3 ≈ 5) + 1 solishtirish = 6
+Total operations: sort(3 log 3 ≈ 5) + 1 comparison = 6
 ```
 
 ---
 
 ## Approach 4: Two-pass Hash Map
 
-### G'oya
+### Idea
 
-> One-pass dan farqi: avval **butun massivni** Hash Map ga qo'shamiz, keyin ikkinchi o'tishda complement ni qidiramiz.
-> Kodi biroz soddaroq — lekin massivni 2 marta o'tadi.
+> The difference from One-pass: first we add the **entire array** to the Hash Map, then in a second pass we search for the complement.
+> The code is slightly simpler — but it traverses the array 2 times.
 
 ### Complexity
 
-| | Complexity | Izoh |
+| | Complexity | Explanation |
 |---|---|---|
-| **Time** | O(n) | 2 ta alohida loop: O(n) + O(n) = O(2n) = O(n) |
-| **Space** | O(n) | Hash Map ga n ta element |
+| **Time** | O(n) | 2 separate loops: O(n) + O(n) = O(2n) = O(n) |
+| **Space** | O(n) | n elements in the Hash Map |
 
 ### Implementation
 
@@ -664,13 +656,13 @@ Jami operatsiyalar: sort(3 log 3 ≈ 5) + 1 solishtirish = 6
 // twoSum — Two-pass Hash Map approach
 // Time: O(n), Space: O(n)
 func twoSum(nums []int, target int) []int {
-    // 1-pass: barcha elementlarni Hash Map ga qo'shish
+    // Pass 1: add all elements to the Hash Map
     seen := make(map[int]int)
     for i, num := range nums {
         seen[num] = i
     }
 
-    // 2-pass: complement ni qidirish
+    // Pass 2: search for the complement
     for i, num := range nums {
         complement := target - num
         if j, ok := seen[complement]; ok && j != i {
@@ -691,13 +683,13 @@ class Solution {
     // twoSum — Two-pass Hash Map approach
     // Time: O(n), Space: O(n)
     public int[] twoSum(int[] nums, int target) {
-        // 1-pass: barcha elementlarni Hash Map ga qo'shish
+        // Pass 1: add all elements to the Hash Map
         HashMap<Integer, Integer> seen = new HashMap<>();
         for (int i = 0; i < nums.length; i++) {
             seen.put(nums[i], i);
         }
 
-        // 2-pass: complement ni qidirish
+        // Pass 2: search for the complement
         for (int i = 0; i < nums.length; i++) {
             int complement = target - nums[i];
             if (seen.containsKey(complement) && seen.get(complement) != i) {
@@ -719,10 +711,10 @@ class Solution:
         Two-pass Hash Map approach
         Time: O(n), Space: O(n)
         """
-        # 1-pass: barcha elementlarni Hash Map ga qo'shish
+        # Pass 1: add all elements to the Hash Map
         seen = {num: i for i, num in enumerate(nums)}
 
-        # 2-pass: complement ni qidirish
+        # Pass 2: search for the complement
         for i, num in enumerate(nums):
             complement = target - num
             if complement in seen and seen[complement] != i:
@@ -737,74 +729,74 @@ class Solution:
 
 | # | Approach | Time | Space | Pros | Cons |
 |---|---|---|---|---|---|
-| 1 | Brute Force | O(n^2) | O(1) | Sodda, xotira ishlatmaydi | Sekin, katta inputda TLE |
-| 2 | One-pass Hash Map | O(n) | O(n) | Eng tez, bitta o'tish | O(n) qo'shimcha xotira |
-| 3 | Sort + Two Pointers | O(n log n) | O(n) | Two Pointers pattern | Indeks saqlash kerak, tezmas |
-| 4 | Two-pass Hash Map | O(n) | O(n) | Sodda, tushunish oson | 2 marta o'tadi |
+| 1 | Brute Force | O(n^2) | O(1) | Simple, uses no extra memory | Slow, TLE on large inputs |
+| 2 | One-pass Hash Map | O(n) | O(n) | Fastest, single pass | O(n) extra memory |
+| 3 | Sort + Two Pointers | O(n log n) | O(n) | Two Pointers pattern | Must store indices, not the fastest |
+| 4 | Two-pass Hash Map | O(n) | O(n) | Simple, easy to understand | Traverses the array twice |
 
-### Qaysi yechimni tanlash kerak?
+### Which solution to choose?
 
-- **Interview da:** Approach 2 (One-pass Hash Map) — tez va elegant, interviewer ta'sirlanadi
-- **Production da:** Approach 2 — eng tez, xotira muammo emas
-- **Leetcode da:** Approach 2 — eng yaxshi Time Complexity
-- **O'rganish uchun:** Barcha 4 ta — har biri turli pattern o'rgatadi
+- **In an interview:** Approach 2 (One-pass Hash Map) — fast and elegant, impresses the interviewer
+- **In production:** Approach 2 — fastest, memory is not an issue
+- **On Leetcode:** Approach 2 — best Time Complexity
+- **For learning:** All 4 — each teaches a different pattern
 
 ---
 
 ## Edge Cases
 
-| # | Case | Input | Expected Output | Sabab |
+| # | Case | Input | Expected Output | Reason |
 |---|---|---|---|---|
-| 1 | Birinchi juftlik | `nums=[2,7], target=9` | `[0,1]` | Minimal input, darhol topiladi |
-| 2 | Oxirgi juftlik | `nums=[1,2,3,4], target=7` | `[2,3]` | Oxirgi elementlar |
-| 3 | Dublikat qiymatlar | `nums=[3,3], target=6` | `[0,1]` | Bir xil qiymat, turli indeks |
-| 4 | Salbiy sonlar | `nums=[-1,-2,-3,-4], target=-6` | `[1,3]` | Manfiy + manfiy |
-| 5 | Aralash sonlar | `nums=[-3,4,3,90], target=0` | `[0,2]` | Manfiy + musbat = 0 |
-| 6 | Nol qiymat | `nums=[0,4,3,0], target=0` | `[0,3]` | 0 + 0 = 0 |
+| 1 | First pair | `nums=[2,7], target=9` | `[0,1]` | Minimal input, found immediately |
+| 2 | Last pair | `nums=[1,2,3,4], target=7` | `[2,3]` | Last elements |
+| 3 | Duplicate values | `nums=[3,3], target=6` | `[0,1]` | Same value, different indices |
+| 4 | Negative numbers | `nums=[-1,-2,-3,-4], target=-6` | `[1,3]` | Negative + negative |
+| 5 | Mixed numbers | `nums=[-3,4,3,90], target=0` | `[0,2]` | Negative + positive = 0 |
+| 6 | Zero value | `nums=[0,4,3,0], target=0` | `[0,3]` | 0 + 0 = 0 |
 
 ---
 
 ## Common Mistakes
 
-### Xato 1: O'zini o'zi bilan juftlash
+### Mistake 1: Pairing an element with itself
 
 ```python
-# ❌ XATO — bitta elementni ikki marta ishlatish
+# ❌ WRONG — using the same element twice
 seen = {num: i for i, num in enumerate(nums)}
 for i, num in enumerate(nums):
     complement = target - num
-    if complement in seen:  # j == i bo'lishi mumkin!
+    if complement in seen:  # j == i is possible!
         return [i, seen[complement]]
 
-# ✅ TO'G'RI — j != i tekshirish
+# ✅ CORRECT — check that j != i
 for i, num in enumerate(nums):
     complement = target - num
     if complement in seen and seen[complement] != i:
         return [i, seen[complement]]
 ```
 
-**Sabab:** `nums=[3,2,4], target=6` da `nums[0]=3`, complement=3 — Hash Map da `3:0` bor, lekin bu o'zi.
+**Reason:** In `nums=[3,2,4], target=6`, `nums[0]=3`, complement=3 — the Hash Map has `3:0`, but that is the element itself.
 
-### Xato 2: Dublikat qiymatlar bilan Hash Map
+### Mistake 2: Duplicate values with Hash Map
 
 ```python
-# ❌ XATO — dublikatda oxirgi indeks yoziladi
+# ❌ WRONG — with duplicates, the last index overwrites
 seen = {num: i for i, num in enumerate(nums)}
-# nums=[3,3], target=6 → seen = {3: 1} (0-indeks yo'qoldi)
+# nums=[3,3], target=6 → seen = {3: 1} (index 0 is lost)
 
-# ✅ TO'G'RI — One-pass yondashuvda bu muammo yo'q
-# Chunki complement ni avval tekshiramiz, keyin qo'shamiz
+# ✅ CORRECT — the One-pass approach avoids this problem
+# Because we check the complement before adding the element
 ```
 
-**Sabab:** One-pass Hash Map bu muammoni tabiiy hal qiladi — element qo'shilgunga qadar complement tekshiriladi.
+**Reason:** The One-pass Hash Map naturally solves this problem — the complement is checked before the element is added.
 
-### Xato 3: Return type xatosi
+### Mistake 3: Return type error
 
 ```go
-// ❌ XATO — Go da nil va []int{} farqli
+// ❌ WRONG — in Go, nil and []int{} are different
 return []int{}
 
-// ✅ TO'G'RI — Leetcode Go da nil qaytarish yetarli
+// ✅ CORRECT — on Leetcode, returning nil in Go is sufficient
 return nil
 ```
 
@@ -812,22 +804,22 @@ return nil
 
 ## Related Problems
 
-| # | Problem | Difficulty | O'xshashligi |
+| # | Problem | Difficulty | Similarity |
 |---|---|---|---|
-| 1 | [167. Two Sum II - Input Array Is Sorted](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) | 🟡 Medium | Sorted massiv → Two Pointers O(1) space |
-| 2 | [15. 3Sum](https://leetcode.com/problems/3sum/) | 🟡 Medium | 3 ta son yig'indisi, sort + Two Pointers |
-| 3 | [18. 4Sum](https://leetcode.com/problems/4sum/) | 🟡 Medium | 4 ta son yig'indisi |
+| 1 | [167. Two Sum II - Input Array Is Sorted](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) | 🟡 Medium | Sorted array → Two Pointers O(1) space |
+| 2 | [15. 3Sum](https://leetcode.com/problems/3sum/) | 🟡 Medium | Sum of 3 numbers, sort + Two Pointers |
+| 3 | [18. 4Sum](https://leetcode.com/problems/4sum/) | 🟡 Medium | Sum of 4 numbers |
 | 4 | [560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/) | 🟡 Medium | Prefix sum + Hash Map |
-| 5 | [653. Two Sum IV - Input is a BST](https://leetcode.com/problems/two-sum-iv-input-is-a-bst/) | 🟢 Easy | BST da Two Sum |
+| 5 | [653. Two Sum IV - Input is a BST](https://leetcode.com/problems/two-sum-iv-input-is-a-bst/) | 🟢 Easy | Two Sum in a BST |
 
 ---
 
 ## Visual Animation
 
-> Interaktiv animatsiya: [animation.html](./animation.html)
+> Interactive animation: [animation.html](./animation.html)
 >
-> Animatsiyada:
-> - **Brute Force** tab — ikki pointer (i, j) barcha juftliklarni tekshiradi
-> - **TC Optimized** tab — Hash Map bilan bitta o'tishda topadi
+> In the animation:
+> - **Brute Force** tab — two pointers (i, j) check all pairs
+> - **TC Optimized** tab — finds the answer in a single pass with Hash Map
 > - **SC Optimized** tab — Sort + Two Pointers
-> - **Compare All** tab — Brute Force vs Hash Map operatsiyalar sonini solishtiradi
+> - **Compare All** tab — compares the number of operations between Brute Force and Hash Map
