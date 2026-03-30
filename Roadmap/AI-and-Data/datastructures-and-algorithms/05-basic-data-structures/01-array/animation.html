@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Array — Interactive Visual Animation</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --red: #f85149;
+    --blue: #58a6ff;
+    --purple: #bc8cff;
+    --orange: #ffa657;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; padding: 24px; }
+
+  h1 { font-size: 1.6rem; font-weight: 700; color: var(--blue); margin-bottom: 4px; }
+  .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 20px; }
+
+  .badges { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .badge { padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+  .badge.green { background: #1e3a22; color: var(--green); }
+  .badge.yellow { background: #3a2e0d; color: var(--yellow); }
+
+  .layout { display: grid; grid-template-columns: 1fr 320px; gap: 16px; }
+  @media(max-width: 800px) { .layout { grid-template-columns: 1fr; } }
+
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+
+  /* Array visual */
+  #array-wrap { display: flex; align-items: flex-end; gap: 0; overflow-x: auto; min-height: 100px; padding: 12px 4px; justify-content: center; flex-wrap: wrap; }
+  .cell-group { display: flex; flex-direction: column; align-items: center; }
+  .cell {
+    width: 56px; height: 56px; border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 700; border-radius: 6px;
+    background: #1e2530; transition: all 0.35s ease;
+    position: relative;
+  }
+  .cell.active   { background: #1e3a22; border-color: var(--green); color: var(--green); transform: translateY(-6px); }
+  .cell.scanning { background: #3a2e0d; border-color: var(--yellow); color: var(--yellow); transform: translateY(-4px); }
+  .cell.found    { background: #1e3a22; border-color: var(--green); color: var(--green); transform: translateY(-8px) scale(1.08); }
+  .cell.deleting { background: #3a0d0d; border-color: var(--red); color: var(--red); transform: translateY(-6px) scale(0.9); opacity: 0.4; }
+  .cell.inserting{ background: #1e2a3a; border-color: var(--blue); color: var(--blue); transform: translateY(-8px) scale(1.08); }
+  .cell.shifting { background: #2a1e3a; border-color: var(--purple); color: var(--purple); transform: translateX(4px); }
+  .cell-index { font-size: 0.65rem; color: var(--muted); margin-top: 4px; font-family: monospace; }
+  .empty-msg { color: var(--muted); font-size: 0.9rem; align-self: center; }
+
+  /* Controls */
+  .controls { display: flex; flex-direction: column; gap: 12px; }
+  .input-row { display: flex; gap: 8px; }
+  input[type=number] {
+    flex: 1; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); padding: 8px 12px; border-radius: 6px; font-size: 0.9rem;
+  }
+  input[type=number]:focus { outline: none; border-color: var(--blue); }
+  .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+  button {
+    padding: 8px 14px; border: none; border-radius: 6px; font-size: 0.8rem;
+    font-weight: 600; cursor: pointer; transition: all 0.2s; letter-spacing: 0.3px;
+  }
+  button:hover { filter: brightness(1.15); transform: translateY(-1px); }
+  button:active { transform: translateY(0); }
+  .btn-green  { background: #1e4d28; color: var(--green); }
+  .btn-red    { background: #4d1e1e; color: var(--red); }
+  .btn-blue   { background: #1e3a4d; color: var(--blue); }
+  .btn-yellow { background: #4d3a1e; color: var(--yellow); }
+  .btn-purple { background: #3a1e4d; color: var(--purple); }
+  .btn-gray   { background: #2a2d35; color: var(--muted); }
+
+  /* Info panel */
+  .info-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; min-height: 80px; }
+  .info-op   { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .info-msg  { font-size: 0.9rem; line-height: 1.5; }
+  .info-complexity { font-size: 0.8rem; margin-top: 8px; }
+  .c-green { color: var(--green); font-weight: 700; }
+  .c-yellow { color: var(--yellow); font-weight: 700; }
+  .c-red { color: var(--red); font-weight: 700; }
+  .c-blue { color: var(--blue); font-weight: 700; }
+
+  /* Big-O table */
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 4px; }
+  th, td { padding: 7px 10px; border: 1px solid var(--border); text-align: left; }
+  th { background: #1e2530; color: var(--muted); font-weight: 600; }
+  td:last-child { text-align: center; font-weight: 700; font-family: monospace; }
+
+  .section-title { font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; margin-top: 4px; }
+
+  .log { max-height: 120px; overflow-y: auto; font-size: 0.75rem; font-family: monospace; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+  .log-entry { padding: 2px 0; border-bottom: 1px solid #1e2530; }
+  .log-entry:last-child { color: var(--text); }
+</style>
+</head>
+<body>
+
+<h1>Array</h1>
+<p class="subtitle">A contiguous block of memory storing elements at indexed positions.</p>
+<div class="badges">
+  <span class="badge green">Access O(1)</span>
+  <span class="badge green">Append O(1)*</span>
+  <span class="badge yellow">Insert O(n)</span>
+  <span class="badge yellow">Delete O(n)</span>
+  <span class="badge yellow">Search O(n)</span>
+</div>
+
+<div class="layout">
+  <!-- Left: visual + controls -->
+  <div>
+    <div class="panel" style="margin-bottom:12px;">
+      <div class="section-title">Array State</div>
+      <div id="array-wrap"><span class="empty-msg">Array is empty. Add elements below.</span></div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Controls</div>
+      <div class="controls">
+
+        <div>
+          <div class="section-title" style="margin-bottom:4px;">Value &amp; Index</div>
+          <div class="input-row">
+            <input type="number" id="val-input" placeholder="Value" min="-99" max="99" value="42">
+            <input type="number" id="idx-input" placeholder="Index" min="0" value="0">
+          </div>
+        </div>
+
+        <div>
+          <div class="section-title" style="margin-bottom:4px;">Insert</div>
+          <div class="btn-group">
+            <button class="btn-green" onclick="insertEnd()">+ Append</button>
+            <button class="btn-blue"  onclick="insertAt()">+ At Index</button>
+            <button class="btn-blue"  onclick="insertHead()">+ Prepend</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-title" style="margin-bottom:4px;">Delete</div>
+          <div class="btn-group">
+            <button class="btn-red" onclick="deleteAt()">Delete at Index</button>
+            <button class="btn-red" onclick="deleteLast()">Delete Last</button>
+            <button class="btn-red" onclick="deleteFirst()">Delete First</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-title" style="margin-bottom:4px;">Read / Search</div>
+          <div class="btn-group">
+            <button class="btn-yellow" onclick="accessAt()">Access at Index</button>
+            <button class="btn-yellow" onclick="searchVal()">Search Value</button>
+            <button class="btn-purple" onclick="updateAt()">Update at Index</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="btn-group">
+            <button class="btn-gray" onclick="autoDemo()">▶ Auto Demo</button>
+            <button class="btn-gray" onclick="resetArr()">↺ Reset</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: info + table + log -->
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <div class="panel">
+      <div class="section-title">Last Operation</div>
+      <div class="info-box">
+        <div class="info-op" id="info-op">—</div>
+        <div class="info-msg" id="info-msg">Perform an operation to see details.</div>
+        <div class="info-complexity" id="info-cplx"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Big-O Complexity</div>
+      <table>
+        <tr><th>Operation</th><th>Time</th></tr>
+        <tr><td>Access by index</td><td class="c-green">O(1)</td></tr>
+        <tr><td>Update by index</td><td class="c-green">O(1)</td></tr>
+        <tr><td>Append (end)</td><td class="c-green">O(1)*</td></tr>
+        <tr><td>Insert at index</td><td class="c-yellow">O(n)</td></tr>
+        <tr><td>Insert at front</td><td class="c-yellow">O(n)</td></tr>
+        <tr><td>Delete at index</td><td class="c-yellow">O(n)</td></tr>
+        <tr><td>Delete last</td><td class="c-green">O(1)</td></tr>
+        <tr><td>Linear search</td><td class="c-yellow">O(n)</td></tr>
+      </table>
+      <p style="font-size:0.7rem;color:var(--muted);margin-top:6px;">* amortized for dynamic arrays</p>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Operation Log</div>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let arr = [];
+let busy = false;
+
+function render(highlights = {}) {
+  const wrap = document.getElementById('array-wrap');
+  if (arr.length === 0) {
+    wrap.innerHTML = '<span class="empty-msg">Array is empty. Add elements below.</span>';
+    return;
+  }
+  wrap.innerHTML = arr.map((v, i) => {
+    const cls = highlights[i] || '';
+    return `<div class="cell-group">
+      <div class="cell ${cls}">${v}</div>
+      <div class="cell-index">[${i}]</div>
+    </div>`;
+  }).join('');
+}
+
+function setInfo(op, msg, cplx, cplxClass = 'c-green') {
+  document.getElementById('info-op').textContent = op;
+  document.getElementById('info-msg').innerHTML = msg;
+  document.getElementById('info-cplx').innerHTML = cplx
+    ? `Time complexity: <span class="${cplxClass}">${cplx}</span>` : '';
+  addLog(`[${op}] ${msg.replace(/<[^>]+>/g, '')}`);
+}
+
+function addLog(msg) {
+  const log = document.getElementById('log');
+  const e = document.createElement('div');
+  e.className = 'log-entry';
+  e.textContent = msg;
+  log.appendChild(e);
+  log.scrollTop = log.scrollHeight;
+}
+
+function getVal() { return parseInt(document.getElementById('val-input').value) || 0; }
+function getIdx() { return parseInt(document.getElementById('idx-input').value) || 0; }
+
+async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── Insert ──
+function insertEnd() {
+  if (busy) return;
+  const v = getVal();
+  arr.push(v);
+  const i = arr.length - 1;
+  const h = {}; h[i] = 'inserting';
+  render(h);
+  setInfo('APPEND', `Appended <b>${v}</b> at index <b>${i}</b>.`, 'O(1)');
+  setTimeout(() => render(), 700);
+}
+
+async function insertAt() {
+  if (busy) return; busy = true;
+  const v = getVal(), idx = Math.max(0, Math.min(getIdx(), arr.length));
+  setInfo('INSERT AT INDEX', `Inserting <b>${v}</b> at index <b>${idx}</b>. Shifting ${arr.length - idx} elements right…`, 'O(n)', 'c-yellow');
+  // animate shifts
+  for (let i = arr.length - 1; i >= idx; i--) {
+    const h = {}; h[i] = 'shifting';
+    render(h); await sleep(180);
+  }
+  arr.splice(idx, 0, v);
+  const h2 = {}; h2[idx] = 'inserting';
+  render(h2);
+  setInfo('INSERT AT INDEX', `Inserted <b>${v}</b> at index <b>${idx}</b>. ${arr.length - idx - 1} elements were shifted.`, 'O(n)', 'c-yellow');
+  setTimeout(() => render(), 700);
+  busy = false;
+}
+
+function insertHead() {
+  document.getElementById('idx-input').value = 0;
+  insertAt();
+}
+
+// ── Delete ──
+async function deleteAt() {
+  if (busy || arr.length === 0) return; busy = true;
+  const idx = Math.max(0, Math.min(getIdx(), arr.length - 1));
+  const removed = arr[idx];
+  const h = {}; h[idx] = 'deleting';
+  render(h);
+  setInfo('DELETE AT INDEX', `Deleting <b>${removed}</b> at index <b>${idx}</b>. Shifting ${arr.length - idx - 1} elements left…`, 'O(n)', 'c-yellow');
+  await sleep(500);
+  arr.splice(idx, 1);
+  render();
+  setInfo('DELETE AT INDEX', `Deleted <b>${removed}</b> from index <b>${idx}</b>. ${arr.length - idx} elements shifted left.`, 'O(n)', 'c-yellow');
+  busy = false;
+}
+
+function deleteLast() {
+  if (busy || arr.length === 0) return;
+  const removed = arr.pop();
+  render();
+  setInfo('DELETE LAST', `Removed last element <b>${removed}</b>.`, 'O(1)');
+}
+
+async function deleteFirst() {
+  if (busy || arr.length === 0) return;
+  document.getElementById('idx-input').value = 0;
+  await deleteAt();
+}
+
+// ── Access / Search ──
+function accessAt() {
+  if (busy || arr.length === 0) return;
+  const idx = Math.max(0, Math.min(getIdx(), arr.length - 1));
+  const v = arr[idx];
+  const h = {}; h[idx] = 'active';
+  render(h);
+  setInfo('ACCESS', `Accessed index <b>${idx}</b> → value is <b>${v}</b>. Direct memory jump.`, 'O(1)');
+  setTimeout(() => render(), 1200);
+}
+
+async function searchVal() {
+  if (busy || arr.length === 0) return; busy = true;
+  const v = getVal();
+  setInfo('SEARCH', `Scanning array for value <b>${v}</b>…`, 'O(n)', 'c-yellow');
+  for (let i = 0; i < arr.length; i++) {
+    const h = {}; h[i] = arr[i] === v ? 'found' : 'scanning';
+    render(h);
+    await sleep(350);
+    if (arr[i] === v) {
+      setInfo('SEARCH', `Found <b>${v}</b> at index <b>${i}</b> after checking ${i + 1} element(s).`, 'O(n)', 'c-yellow');
+      setTimeout(() => render(), 800);
+      busy = false; return;
+    }
+  }
+  render();
+  setInfo('SEARCH', `Value <b>${v}</b> not found after scanning all ${arr.length} elements.`, 'O(n)', 'c-yellow');
+  busy = false;
+}
+
+function updateAt() {
+  if (busy || arr.length === 0) return;
+  const idx = Math.max(0, Math.min(getIdx(), arr.length - 1));
+  const old = arr[idx], v = getVal();
+  arr[idx] = v;
+  const h = {}; h[idx] = 'inserting';
+  render(h);
+  setInfo('UPDATE', `Updated index <b>${idx}</b>: <b>${old}</b> → <b>${v}</b>.`, 'O(1)');
+  setTimeout(() => render(), 800);
+}
+
+// ── Demo & Reset ──
+async function autoDemo() {
+  if (busy) return; busy = true;
+  arr = [];
+  render();
+  await sleep(400);
+
+  const steps = [8, 15, 3, 42, 7];
+  for (const v of steps) {
+    arr.push(v);
+    const h = {}; h[arr.length - 1] = 'inserting';
+    render(h);
+    setInfo('DEMO: APPEND', `Appending <b>${v}</b>…`, 'O(1)');
+    await sleep(600);
+    render();
+    await sleep(200);
+  }
+
+  // access
+  const h1 = {}; h1[2] = 'active';
+  render(h1);
+  setInfo('DEMO: ACCESS', `Accessing index <b>2</b> → <b>${arr[2]}</b>. Direct memory jump!`, 'O(1)');
+  await sleep(900);
+  render();
+  await sleep(300);
+
+  // insert at index 1
+  const v2 = 99;
+  for (let i = arr.length - 1; i >= 1; i--) {
+    const h = {}; h[i] = 'shifting'; render(h); await sleep(200);
+  }
+  arr.splice(1, 0, v2);
+  const h2 = {}; h2[1] = 'inserting'; render(h2);
+  setInfo('DEMO: INSERT', `Inserted <b>${v2}</b> at index <b>1</b>. Elements shifted right.`, 'O(n)', 'c-yellow');
+  await sleep(900); render(); await sleep(300);
+
+  // search
+  for (let i = 0; i < arr.length; i++) {
+    const h = {}; h[i] = arr[i] === 42 ? 'found' : 'scanning'; render(h); await sleep(350);
+    if (arr[i] === 42) {
+      setInfo('DEMO: SEARCH', `Found <b>42</b> at index <b>${i}</b>!`, 'O(n)', 'c-yellow');
+      await sleep(900); render(); break;
+    }
+  }
+  await sleep(300);
+
+  // delete last
+  const removed = arr.pop();
+  render();
+  setInfo('DEMO: DELETE LAST', `Removed last element <b>${removed}</b>.`, 'O(1)');
+  await sleep(600);
+
+  setInfo('DEMO COMPLETE', 'All operations demonstrated. Try the controls yourself!', '');
+  busy = false;
+}
+
+function resetArr() {
+  busy = false; arr = [];
+  render();
+  setInfo('RESET', 'Array cleared.', '');
+}
+
+// init
+arr = [10, 25, 7, 43];
+render();
+setInfo('READY', 'Array initialized with [10, 25, 7, 43]. Use the controls to interact.', '');
+</script>
+</body>
+</html>

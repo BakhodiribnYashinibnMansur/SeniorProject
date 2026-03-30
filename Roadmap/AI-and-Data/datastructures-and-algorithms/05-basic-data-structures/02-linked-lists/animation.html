@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linked List — Interactive Visual Animation</title>
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --border: #30363d;
+    --text: #e6edf3; --muted: #8b949e;
+    --green: #3fb950; --yellow: #d29922; --red: #f85149;
+    --blue: #58a6ff; --purple: #bc8cff; --orange: #ffa657;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; padding: 24px; }
+
+  h1 { font-size: 1.6rem; font-weight: 700; color: var(--blue); margin-bottom: 4px; }
+  .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 20px; }
+  .badges { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .badge { padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+  .badge.green { background: #1e3a22; color: var(--green); }
+  .badge.yellow { background: #3a2e0d; color: var(--yellow); }
+
+  .layout { display: grid; grid-template-columns: 1fr 300px; gap: 16px; }
+  @media(max-width:800px){ .layout{grid-template-columns:1fr;} }
+
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+
+  /* LL visual */
+  #ll-wrap {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 0;
+    min-height: 90px; padding: 12px 4px; overflow-x: auto;
+  }
+  .ll-item { display: flex; align-items: center; }
+  .node {
+    display: flex; align-items: stretch; border: 2px solid var(--border);
+    border-radius: 8px; overflow: hidden; transition: all 0.35s ease;
+    min-width: 80px;
+  }
+  .node-val {
+    padding: 10px 14px; font-size: 1rem; font-weight: 700;
+    border-right: 2px solid var(--border); background: #1e2530;
+    transition: all 0.3s;
+  }
+  .node-ptr {
+    padding: 10px 8px; font-size: 0.7rem; color: var(--muted);
+    background: #181e28; display: flex; align-items: center;
+    font-family: monospace;
+  }
+  .arrow {
+    font-size: 1.3rem; color: var(--border); margin: 0 4px;
+    transition: color 0.3s;
+  }
+  .null-node { color: var(--muted); font-size: 0.8rem; font-family: monospace; padding: 10px 6px; }
+
+  .node.head-node  { border-color: var(--blue); }
+  .node.head-node .node-val { background: #1e2a3a; color: var(--blue); }
+  .node.tail-node  { border-color: var(--orange); }
+  .node.tail-node .node-val { background: #2a1e0d; color: var(--orange); }
+  .node.active     { border-color: var(--green); transform: translateY(-6px); }
+  .node.active .node-val { background: #1e3a22; color: var(--green); }
+  .node.scanning   { border-color: var(--yellow); transform: translateY(-4px); }
+  .node.scanning .node-val { background: #3a2e0d; color: var(--yellow); }
+  .node.found      { border-color: var(--green); transform: translateY(-8px) scale(1.06); }
+  .node.found .node-val { background: #1e3a22; color: var(--green); }
+  .node.deleting   { border-color: var(--red); transform: scale(0.85); opacity: 0.3; }
+  .node.deleting .node-val { background: #3a0d0d; color: var(--red); }
+  .node.new-node   { border-color: var(--purple); transform: translateY(-8px) scale(1.06); }
+  .node.new-node .node-val { background: #2a1e3a; color: var(--purple); }
+  .arrow.active    { color: var(--green); }
+  .arrow.new-arrow { color: var(--purple); }
+
+  .pointer-label { font-size: 0.65rem; text-align: center; margin-top: 3px; font-weight: 600; }
+  .ptr-head { color: var(--blue); }
+  .ptr-tail { color: var(--orange); }
+  .ptr-cur  { color: var(--yellow); }
+
+  .node-wrap { display: flex; flex-direction: column; align-items: center; }
+
+  .empty-msg { color: var(--muted); font-size: 0.9rem; }
+
+  /* Controls */
+  .controls { display: flex; flex-direction: column; gap: 12px; }
+  .input-row { display: flex; gap: 8px; }
+  input[type=number] {
+    flex:1; background:var(--bg); border:1px solid var(--border);
+    color:var(--text); padding:8px 12px; border-radius:6px; font-size:0.9rem;
+  }
+  input[type=number]:focus { outline:none; border-color:var(--blue); }
+  .btn-group { display:flex; gap:6px; flex-wrap:wrap; }
+  button {
+    padding:8px 14px; border:none; border-radius:6px; font-size:0.8rem;
+    font-weight:600; cursor:pointer; transition:all 0.2s;
+  }
+  button:hover { filter:brightness(1.15); transform:translateY(-1px); }
+  button:active { transform:translateY(0); }
+  .btn-green  { background:#1e4d28; color:var(--green); }
+  .btn-red    { background:#4d1e1e; color:var(--red); }
+  .btn-blue   { background:#1e3a4d; color:var(--blue); }
+  .btn-yellow { background:#4d3a1e; color:var(--yellow); }
+  .btn-purple { background:#3a1e4d; color:var(--purple); }
+  .btn-gray   { background:#2a2d35; color:var(--muted); }
+
+  .info-box { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px; min-height:80px; }
+  .info-op  { font-size:0.75rem; color:var(--muted); margin-bottom:4px; text-transform:uppercase; letter-spacing:1px; }
+  .info-msg { font-size:0.9rem; line-height:1.5; }
+  .info-cplx{ font-size:0.8rem; margin-top:8px; }
+  .c-green{color:var(--green);font-weight:700;} .c-yellow{color:var(--yellow);font-weight:700;}
+  .c-red{color:var(--red);font-weight:700;} .c-blue{color:var(--blue);font-weight:700;}
+
+  table { width:100%; border-collapse:collapse; font-size:0.8rem; }
+  th,td { padding:7px 10px; border:1px solid var(--border); text-align:left; }
+  th { background:#1e2530; color:var(--muted); font-weight:600; }
+  td:last-child { text-align:center; font-weight:700; font-family:monospace; }
+
+  .section-title { font-size:0.75rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+  .log { max-height:110px; overflow-y:auto; font-size:0.75rem; font-family:monospace; color:var(--muted); display:flex; flex-direction:column; gap:2px; }
+  .log-entry { padding:2px 0; border-bottom:1px solid #1e2530; }
+  .log-entry:last-child { color:var(--text); }
+</style>
+</head>
+<body>
+
+<h1>Linked List</h1>
+<p class="subtitle">A linear data structure where each node points to the next. No random access — follow the chain.</p>
+<div class="badges">
+  <span class="badge green">Insert Head O(1)</span>
+  <span class="badge green">Insert Tail O(1)*</span>
+  <span class="badge yellow">Insert at Index O(n)</span>
+  <span class="badge yellow">Delete by Value O(n)</span>
+  <span class="badge yellow">Search O(n)</span>
+</div>
+
+<div class="layout">
+  <div>
+    <div class="panel" style="margin-bottom:12px;">
+      <div class="section-title">Linked List State</div>
+      <div id="ll-wrap"><span class="empty-msg">List is empty. Add nodes below.</span></div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Controls</div>
+      <div class="controls">
+
+        <div>
+          <div class="section-title" style="margin-bottom:4px;">Value &amp; Index</div>
+          <div class="input-row">
+            <input type="number" id="val-input" placeholder="Value" value="42">
+            <input type="number" id="idx-input" placeholder="Index" value="0" min="0">
+          </div>
+        </div>
+
+        <div>
+          <div class="section-title" style="margin-bottom:4px;">Insert</div>
+          <div class="btn-group">
+            <button class="btn-blue"  onclick="insertHead()">+ Head</button>
+            <button class="btn-green" onclick="insertTail()">+ Tail</button>
+            <button class="btn-blue"  onclick="insertAt()">+ At Index</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-title" style="margin-bottom:4px;">Delete</div>
+          <div class="btn-group">
+            <button class="btn-red" onclick="deleteHead()">Delete Head</button>
+            <button class="btn-red" onclick="deleteTail()">Delete Tail</button>
+            <button class="btn-red" onclick="deleteVal()">Delete by Value</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-title" style="margin-bottom:4px;">Traverse / Search</div>
+          <div class="btn-group">
+            <button class="btn-yellow" onclick="traverse()">Traverse</button>
+            <button class="btn-yellow" onclick="searchVal()">Search Value</button>
+            <button class="btn-purple" onclick="reverseList()">Reverse</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="btn-group">
+            <button class="btn-gray" onclick="autoDemo()">▶ Auto Demo</button>
+            <button class="btn-gray" onclick="resetList()">↺ Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <div class="panel">
+      <div class="section-title">Last Operation</div>
+      <div class="info-box">
+        <div class="info-op" id="info-op">—</div>
+        <div class="info-msg" id="info-msg">Perform an operation to see details.</div>
+        <div class="info-cplx" id="info-cplx"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Big-O Complexity</div>
+      <table>
+        <tr><th>Operation</th><th>Time</th></tr>
+        <tr><td>Insert at head</td><td class="c-green">O(1)</td></tr>
+        <tr><td>Insert at tail*</td><td class="c-green">O(1)</td></tr>
+        <tr><td>Insert at index</td><td class="c-yellow">O(n)</td></tr>
+        <tr><td>Delete head</td><td class="c-green">O(1)</td></tr>
+        <tr><td>Delete tail</td><td class="c-yellow">O(n)</td></tr>
+        <tr><td>Delete by value</td><td class="c-yellow">O(n)</td></tr>
+        <tr><td>Search</td><td class="c-yellow">O(n)</td></tr>
+        <tr><td>Access by index</td><td class="c-yellow">O(n)</td></tr>
+      </table>
+      <p style="font-size:0.7rem;color:var(--muted);margin-top:6px;">* with tail pointer maintained</p>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Operation Log</div>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Node class
+class LLNode { constructor(v){ this.val=v; this.next=null; } }
+
+let head = null, tail = null, size = 0;
+let busy = false;
+
+// ── Render ──
+function render(highlights = {}) {
+  const wrap = document.getElementById('ll-wrap');
+  if (!head) { wrap.innerHTML='<span class="empty-msg">List is empty. Add nodes below.</span>'; return; }
+  let html = '';
+  let cur = head, i = 0;
+  while (cur) {
+    const hl = highlights[i] || '';
+    const isHead = i === 0;
+    const isTail = cur.next === null;
+    let cls = hl;
+    if (!hl && isHead) cls = 'head-node';
+    if (!hl && isTail && !isHead) cls = 'tail-node';
+    const ptrLabel = isHead && isTail ? 'head/tail' : isHead ? 'head' : isTail ? 'tail' : '';
+    const ptrClass = isHead ? 'ptr-head' : 'ptr-tail';
+    const arrowCls = hl === 'new-node' ? 'active' : hl === 'scanning' ? 'active' : '';
+
+    html += `<div class="ll-item">
+      <div class="node-wrap">
+        <div class="node ${cls}">
+          <div class="node-val">${cur.val}</div>
+          <div class="node-ptr">next→</div>
+        </div>
+        ${ptrLabel ? `<div class="pointer-label ${ptrClass}">${ptrLabel}</div>` : '<div style="margin-top:3px;height:14px;"></div>'}
+      </div>
+      ${cur.next ? `<div class="arrow ${arrowCls}">→</div>` : `<div class="null-node">null</div>`}
+    </div>`;
+    cur = cur.next; i++;
+  }
+  wrap.innerHTML = html;
+}
+
+function setInfo(op, msg, cplx, cplxClass='c-green') {
+  document.getElementById('info-op').textContent = op;
+  document.getElementById('info-msg').innerHTML = msg;
+  document.getElementById('info-cplx').innerHTML = cplx ? `Time complexity: <span class="${cplxClass}">${cplx}</span>` : '';
+  addLog(`[${op}] ${msg.replace(/<[^>]+>/g,'')}`);
+}
+function addLog(msg) {
+  const log = document.getElementById('log');
+  const e = document.createElement('div'); e.className='log-entry'; e.textContent=msg;
+  log.appendChild(e); log.scrollTop=log.scrollHeight;
+}
+function getVal(){ return parseInt(document.getElementById('val-input').value)||0; }
+function getIdx(){ return parseInt(document.getElementById('idx-input').value)||0; }
+async function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+function nodeAtIndex(k) {
+  let cur=head,i=0; while(cur&&i<k){cur=cur.next;i++;} return cur;
+}
+
+// ── Insert ──
+function insertHead() {
+  if (busy) return;
+  const v = getVal();
+  const n = new LLNode(v);
+  n.next = head; head = n;
+  if (!tail) tail = n;
+  size++;
+  const h={}; h[0]='new-node'; render(h);
+  setInfo('INSERT HEAD', `Inserted <b>${v}</b> at head. No traversal needed — O(1).`, 'O(1)');
+  setTimeout(()=>render(), 800);
+}
+
+function insertTail() {
+  if (busy) return;
+  const v = getVal();
+  const n = new LLNode(v);
+  if (!head){ head=n; tail=n; }
+  else { tail.next=n; tail=n; }
+  size++;
+  const h={}; h[size-1]='new-node'; render(h);
+  setInfo('INSERT TAIL', `Inserted <b>${v}</b> at tail using tail pointer — O(1).`, 'O(1)');
+  setTimeout(()=>render(), 800);
+}
+
+async function insertAt() {
+  if (busy) return; busy=true;
+  const v=getVal(), idx=Math.max(0,Math.min(getIdx(),size));
+  if (idx===0){ busy=false; insertHead(); return; }
+  if (idx===size){ busy=false; insertTail(); return; }
+
+  setInfo('INSERT AT INDEX', `Traversing to index <b>${idx-1}</b> to insert <b>${v}</b>…`, 'O(n)', 'c-yellow');
+  let cur=head, i=0;
+  while(i<idx-1){
+    const h={}; h[i]='scanning'; render(h); await sleep(350); i++; cur=cur.next;
+  }
+  const n=new LLNode(v); n.next=cur.next; cur.next=n; size++;
+  const h2={}; h2[idx]='new-node'; render(h2);
+  setInfo('INSERT AT INDEX', `Inserted <b>${v}</b> at index <b>${idx}</b> after traversing ${idx} nodes.`, 'O(n)', 'c-yellow');
+  setTimeout(()=>render(), 800); busy=false;
+}
+
+// ── Delete ──
+function deleteHead() {
+  if (busy||!head) return;
+  const removed=head.val;
+  head=head.next;
+  if(!head) tail=null;
+  size--;
+  render();
+  setInfo('DELETE HEAD', `Removed head node <b>${removed}</b>. New head set — O(1).`, 'O(1)');
+}
+
+async function deleteTail() {
+  if (busy||!head) return; busy=true;
+  if (!head.next){
+    const v=head.val; head=null; tail=null; size=0;
+    render(); setInfo('DELETE TAIL', `Removed only node <b>${v}</b>.`, 'O(1)'); busy=false; return;
+  }
+  setInfo('DELETE TAIL', `Traversing to find node before tail…`, 'O(n)', 'c-yellow');
+  let cur=head,i=0;
+  while(cur.next && cur.next.next){
+    const h={}; h[i]='scanning'; render(h); await sleep(350); cur=cur.next; i++;
+  }
+  const removed=cur.next.val; cur.next=null; tail=cur; size--;
+  render(); setInfo('DELETE TAIL', `Removed tail node <b>${removed}</b> after traversing ${i+1} nodes.`, 'O(n)', 'c-yellow'); busy=false;
+}
+
+async function deleteVal() {
+  if (busy||!head) return; busy=true;
+  const v=getVal();
+  setInfo('DELETE BY VALUE', `Searching for <b>${v}</b> to delete…`, 'O(n)', 'c-yellow');
+  let cur=head,i=0;
+  if(cur.val===v){
+    const h={}; h[0]='deleting'; render(h); await sleep(500);
+    head=head.next; if(!head)tail=null; size--;
+    render(); setInfo('DELETE BY VALUE', `Deleted head node with value <b>${v}</b>.`, 'O(n)', 'c-yellow');
+    busy=false; return;
+  }
+  while(cur.next){
+    const h={}; h[i]='scanning'; render(h); await sleep(300);
+    if(cur.next.val===v){
+      const h2={}; h2[i+1]='deleting'; render(h2); await sleep(500);
+      if(cur.next===tail) tail=cur;
+      cur.next=cur.next.next; size--;
+      render(); setInfo('DELETE BY VALUE', `Found and deleted node <b>${v}</b> at index <b>${i+1}</b>.`, 'O(n)', 'c-yellow');
+      busy=false; return;
+    }
+    cur=cur.next; i++;
+  }
+  render(); setInfo('DELETE BY VALUE', `Value <b>${v}</b> not found in list.`, 'O(n)', 'c-yellow'); busy=false;
+}
+
+// ── Traverse / Search ──
+async function traverse() {
+  if (busy||!head) return; busy=true;
+  setInfo('TRAVERSE', `Visiting each node from head to tail…`, 'O(n)', 'c-yellow');
+  let cur=head,i=0,steps=[];
+  while(cur){ steps.push(cur.val); cur=cur.next; i++; }
+  cur=head; i=0;
+  while(cur){
+    const h={}; h[i]='scanning'; render(h);
+    setInfo('TRAVERSE', `Visiting node <b>${cur.val}</b> (index ${i}) → ${cur.next?'next: '+cur.next.val:'null (end)'}`, 'O(n)', 'c-yellow');
+    await sleep(500); cur=cur.next; i++;
+  }
+  render(); setInfo('TRAVERSE', `Traversed ${size} nodes: [${steps.join(' → ')}]`, 'O(n)', 'c-yellow'); busy=false;
+}
+
+async function searchVal() {
+  if (busy||!head) return; busy=true;
+  const v=getVal();
+  setInfo('SEARCH', `Scanning list for value <b>${v}</b>…`, 'O(n)', 'c-yellow');
+  let cur=head,i=0;
+  while(cur){
+    const found=cur.val===v;
+    const h={}; h[i]=found?'found':'scanning'; render(h); await sleep(400);
+    if(found){
+      setInfo('SEARCH', `Found <b>${v}</b> at index <b>${i}</b> after ${i+1} step(s).`, 'O(n)', 'c-yellow');
+      setTimeout(()=>render(),800); busy=false; return;
+    }
+    cur=cur.next; i++;
+  }
+  render(); setInfo('SEARCH', `Value <b>${v}</b> not found after scanning all ${size} nodes.`, 'O(n)', 'c-yellow'); busy=false;
+}
+
+async function reverseList() {
+  if (busy||!head) return; busy=true;
+  setInfo('REVERSE', `Reversing the linked list…`, 'O(n)', 'c-yellow');
+  await sleep(400);
+  let prev=null,cur=head,i=0;
+  tail=head;
+  while(cur){
+    const h={}; h[i]='scanning'; render(h); await sleep(300);
+    const next=cur.next; cur.next=prev; prev=cur; cur=next; i++;
+  }
+  head=prev; size=i;
+  render(); setInfo('REVERSE', `List reversed! ${i} nodes processed. New head → ${head.val}.`, 'O(n)', 'c-yellow'); busy=false;
+}
+
+// ── Demo ──
+async function autoDemo() {
+  if (busy) return; busy=true;
+  head=null; tail=null; size=0; render(); await sleep(400);
+
+  for(const v of [10,20,30,40]){
+    const n=new LLNode(v); if(!head){head=n;tail=n;}else{tail.next=n;tail=n;} size++;
+    const h={}; h[size-1]='new-node'; render(h);
+    setInfo('DEMO: INSERT TAIL',`Appended <b>${v}</b> at tail.`,'O(1)'); await sleep(600); render(); await sleep(200);
+  }
+
+  // insert head
+  const nh=new LLNode(5); nh.next=head; head=nh; size++;
+  const h1={}; h1[0]='new-node'; render(h1);
+  setInfo('DEMO: INSERT HEAD',`Inserted <b>5</b> at head — O(1).`,'O(1)'); await sleep(800); render(); await sleep(300);
+
+  // traverse
+  let cur2=head,i2=0;
+  while(cur2){ const h={}; h[i2]='scanning'; render(h); await sleep(350); cur2=cur2.next; i2++; }
+  setInfo('DEMO: TRAVERSE',`Visited all ${size} nodes.`,'O(n)','c-yellow'); render(); await sleep(300);
+
+  // search
+  let cur3=head,i3=0;
+  while(cur3){
+    const found=cur3.val===30; const h={}; h[i3]=found?'found':'scanning'; render(h); await sleep(350);
+    if(found){ setInfo('DEMO: SEARCH',`Found <b>30</b> at index <b>${i3}</b>!`,'O(n)','c-yellow'); await sleep(800); render(); break; }
+    cur3=cur3.next; i3++;
+  }
+  await sleep(300);
+
+  // delete tail
+  let c=head; while(c.next&&c.next.next)c=c.next;
+  const removed=c.next.val; c.next=null; tail=c; size--;
+  render(); setInfo('DEMO: DELETE TAIL',`Removed tail <b>${removed}</b>.`,'O(n)','c-yellow'); await sleep(600);
+
+  // reverse
+  let prev=null,cur4=head;
+  while(cur4){const next=cur4.next;cur4.next=prev;prev=cur4;cur4=next;}
+  head=prev;
+  render(); setInfo('DEMO: REVERSE',`List reversed!`,'O(n)','c-yellow'); await sleep(600);
+
+  setInfo('DEMO COMPLETE','All operations demonstrated. Try the controls yourself!','');
+  busy=false;
+}
+
+function resetList() {
+  busy=false; head=null; tail=null; size=0;
+  render(); setInfo('RESET','List cleared.','');
+}
+
+// init
+[10,25,7,43].forEach(v=>{const n=new LLNode(v);if(!head){head=n;tail=n;}else{tail.next=n;tail=n;}size++;});
+render();
+setInfo('READY','Initialized with [10 → 25 → 7 → 43]. Use controls to interact.','');
+</script>
+</body>
+</html>

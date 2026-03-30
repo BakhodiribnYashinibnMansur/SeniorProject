@@ -12,7 +12,7 @@
 | **Purpose** | Universal template for all Data Structures & Algorithms roadmap topics |
 | **Files per topic** | 9 files: `junior.md`, `middle.md`, `senior.md`, `professional.md`, `interview.md`, `tasks.md`, `find-bug.md`, `optimize.md`, `specification.md` |
 | **Languages** | All code must be in **Go**, **Java**, **Python** (in that order) |
-| **Visualization** | `animation.html` — **Optional**. Recommended for algorithm/DS topics (sorting, searching, trees, graphs). Can be skipped for theory topics (syntax, pseudo code, OOP) |
+| **Visualization** | `animation.html` — **Required** for DS/algorithm topics (arrays, linked lists, stacks, queues, hash tables, sorting, searching, trees, graphs, Big-O, asymptotic notation). **Skip** for pure theory topics (syntax, pseudo code, OOP, control structures) |
 | **Code Fences** | `go`, `java`, `python` for implementations, `text` for pseudocode |
 | **Table of Contents** | Optional — omit for `tasks.md`, `find-bug.md`, `optimize.md` |
 
@@ -29,8 +29,197 @@ XX-topic-name/
 ├── find-bug.md        ← find and fix bugs (10+ exercises, 3 languages)
 ├── optimize.md        ← optimize slow/inefficient code (10+ exercises, 3 languages)
 ├── specification.md   ← Official spec / documentation deep-dive
-└── animation.html     ← Optional: visual animation (recommended for algorithms/DS)
+└── animation.html     ← REQUIRED for DS/algorithm topics — interactive visual animation
+                          (arrays, linked lists, stacks, queues, hash tables, sorting,
+                           searching, trees, graphs, Big-O, asymptotic notation)
+                          SKIP for theory topics (syntax, pseudo code, OOP, control flow)
 ```
+
+### Animation Rules
+
+| Topic Type | animation.html |
+|-----------|---------------|
+| Data Structures (Array, Linked List, Stack, Queue, Hash Table) | **Required** |
+| Algorithmic Complexity (Big-O, Big-θ, Big-Ω, Common Runtimes) | **Required** |
+| Sorting & Searching Algorithms | **Required** |
+| Trees & Graphs | **Required** |
+| Programming Fundamentals (syntax, pseudo code, OOP, control flow) | Skip |
+| Theory-only topics | Skip |
+
+### Animation HTML Template
+
+Each `animation.html` is **fully self-contained** (no CDN, no external dependencies), dark-themed, and responsive.
+
+#### Standard Layout Sections
+
+| Section | Description |
+|---------|-------------|
+| **Header** | Topic name (`<h1>`), short subtitle, colored complexity badges |
+| **Visual Area** | DS-specific visual — rendered via CSS/JS DOM, not canvas |
+| **Stats Bar** | Live stats (size, top/front/rear, isEmpty) |
+| **Controls** | Value/index inputs + operation buttons (grouped by Insert / Delete / Inspect) |
+| **Info Panel** | Last operation name + explanation + time complexity |
+| **Big-O Table** | All operations with color-coded complexity |
+| **Operation Log** | Scrollable log of all operations performed |
+
+#### CSS Design Tokens (use these variables in every animation.html)
+
+```css
+:root {
+  --bg:      #0d1117;  /* page background */
+  --surface: #161b22;  /* card/panel background */
+  --border:  #30363d;  /* borders */
+  --text:    #e6edf3;  /* primary text */
+  --muted:   #8b949e;  /* secondary text */
+  --green:   #3fb950;  /* O(1) / success / insert */
+  --yellow:  #d29922;  /* O(n) / warning / scan */
+  --red:     #f85149;  /* delete / error */
+  --blue:    #58a6ff;  /* accent / head pointer */
+  --purple:  #bc8cff;  /* secondary accent / new node */
+  --orange:  #ffa657;  /* tail / rear pointer */
+}
+```
+
+#### Cell/Node State Classes
+
+| Class | Color | Meaning |
+|-------|-------|---------|
+| `active` / `top-cell` / `front-cell` | Blue | Current pointer (head, top, front) |
+| `rear-cell` / `tail-node` | Orange | Rear/tail pointer |
+| `inserting` / `pushing` / `enqueueing` / `new-node` | Green | Newly inserted element |
+| `deleting` / `popping` / `dequeueing` | Red | Being removed (fades out) |
+| `scanning` | Yellow | Currently being visited/traversed |
+| `found` | Green (bright) | Search result found |
+| `peeking` | Yellow | Read-only inspection |
+
+#### Per-DS Visual Convention
+
+| Data Structure | Visual Orientation | Key Pointers |
+|----------------|-------------------|--------------|
+| **Array** | Horizontal cells with index labels below | No special pointer |
+| **Linked List** | Horizontal nodes with `next→` arrow segments | `head` (blue), `tail` (orange) |
+| **Queue** | Horizontal cells, left=front, right=rear | `← front` (blue), `rear →` (orange) |
+| **Stack** | Vertical cells (top at top), index labels on left | `TOP` arrow (blue) |
+| **Hash Table** | Bucket rows with chain visualization | Bucket index labels |
+| **Tree** | SVG-based node tree layout | Root, leaf indicators |
+| **Graph** | SVG canvas with draggable nodes | Weighted edge labels |
+
+#### JavaScript Conventions
+
+```js
+let busy = false;       // prevents concurrent animations
+async function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+// Always: render(highlights) → setInfo(op, msg, cplx, cls) → addLog(msg)
+// Guard every handler: if (busy) return;
+// After animated state: setTimeout(()=>render(), 700)
+```
+
+## Roadmap Sections 3–6
+
+### Section 3 — What are Data Structures?
+```
+03-what-are-data-structures/
+├── junior.md
+├── middle.md
+├── senior.md
+├── professional.md
+├── interview.md
+├── tasks.md
+├── find-bug.md
+├── optimize.md
+└── specification.md
+```
+> Theory topic — animation.html not required.
+
+---
+
+### Section 4 — Why are Data Structures Important?
+```
+04-why-are-data-structures-important/
+├── junior.md
+├── middle.md
+├── senior.md
+├── professional.md
+├── interview.md
+├── tasks.md
+├── find-bug.md
+├── optimize.md
+└── specification.md
+```
+> Theory topic — animation.html not required.
+
+---
+
+### Section 5 — Basic Data Structures
+```
+05-basic-data-structures/
+├── 01-array/
+│   ├── junior.md
+│   ├── middle.md
+│   ├── senior.md
+│   ├── professional.md
+│   ├── interview.md
+│   ├── tasks.md
+│   ├── find-bug.md
+│   ├── optimize.md
+│   ├── specification.md
+│   └── animation.html       ← REQUIRED
+├── 02-linked-lists/
+│   ├── ... (same 9 files)
+│   └── animation.html       ← REQUIRED
+├── 03-queues/
+│   ├── ... (same 9 files)
+│   └── animation.html       ← REQUIRED
+├── 04-stacks/
+│   ├── ... (same 9 files)
+│   └── animation.html       ← REQUIRED
+└── 05-hash-tables/
+    ├── ... (same 9 files)
+    └── animation.html       ← REQUIRED
+```
+
+---
+
+### Section 6 — Algorithmic Complexity
+```
+06-algorithmic-complexity/
+├── 01-time-vs-space-complexity/
+│   ├── junior.md
+│   ├── middle.md
+│   ├── senior.md
+│   ├── professional.md
+│   ├── interview.md
+│   ├── tasks.md
+│   ├── find-bug.md
+│   ├── optimize.md
+│   └── specification.md
+├── 02-how-to-calculate-complexity/
+│   └── ... (same 9 files)
+├── 03-common-runtimes/
+│   ├── 01-constant/
+│   │   ├── ... (9 files)
+│   │   └── animation.html   ← REQUIRED
+│   ├── 02-logarithmic/
+│   │   └── animation.html   ← REQUIRED
+│   ├── 03-linear/
+│   │   └── animation.html   ← REQUIRED
+│   ├── 04-polynomial/
+│   │   └── animation.html   ← REQUIRED
+│   ├── 05-exponential/
+│   │   └── animation.html   ← REQUIRED
+│   └── 06-factorial/
+│       └── animation.html   ← REQUIRED
+└── 04-asymptotic-notation/
+    ├── 01-big-o-notation/
+    │   ├── ... (9 files)
+    │   └── animation.html   ← REQUIRED
+    ├── 02-big-theta-notation/
+    │   └── animation.html   ← REQUIRED
+    └── 03-big-omega-notation/
+        └── animation.html   ← REQUIRED
+```
+
+---
 
 ## Level Comparison Matrix
 
@@ -2057,7 +2246,7 @@ def fast_solution(arr):
 ---
 ---
 
-# TEMPLATE 9 — `specification.md`
+# TEMPLATE 10 — `specification.md`
 
 > **Focus:** Official documentation deep-dive — API reference, configuration schema, behavioral guarantees, and version compatibility.
 >

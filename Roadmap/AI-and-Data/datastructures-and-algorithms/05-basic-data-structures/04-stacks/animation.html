@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stack — Interactive Visual Animation</title>
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --border: #30363d;
+    --text: #e6edf3; --muted: #8b949e;
+    --green: #3fb950; --yellow: #d29922; --red: #f85149;
+    --blue: #58a6ff; --purple: #bc8cff; --orange: #ffa657;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; padding: 24px; }
+
+  h1 { font-size: 1.6rem; font-weight: 700; color: var(--blue); margin-bottom: 4px; }
+  .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; }
+  .badges { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .badge { padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+  .badge.green { background: #1e3a22; color: var(--green); }
+
+  .layout { display: grid; grid-template-columns: 1fr 300px; gap: 16px; }
+  @media(max-width:800px){ .layout{grid-template-columns:1fr;} }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+
+  /* Stack visual */
+  .stack-arena {
+    display: flex; align-items: center; gap: 20px;
+    min-height: 320px; padding: 12px;
+    justify-content: center;
+  }
+  .stack-column {
+    display: flex; flex-direction: column-reverse;
+    align-items: center; gap: 2px;
+    min-height: 280px; justify-content: flex-start;
+  }
+  .stack-base {
+    width: 140px; height: 8px; background: var(--border);
+    border-radius: 4px; margin-top: 4px;
+  }
+  .s-cell {
+    width: 120px; height: 52px;
+    border: 2px solid var(--border); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: 700; background: #1e2530;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+  }
+  .s-cell.top-cell  { border-color: var(--blue);   background: #1e2a3a; color: var(--blue); }
+  .s-cell.pushing   { border-color: var(--green);  background: #1e3a22; color: var(--green); transform: translateX(-12px) scale(1.06); }
+  .s-cell.popping   { border-color: var(--red);    background: #3a0d0d; color: var(--red);   transform: translateX(12px) scale(0.88); opacity: 0.3; }
+  .s-cell.peeking   { border-color: var(--yellow); background: #3a2e0d; color: var(--yellow); transform: translateX(-8px); }
+
+  .top-arrow {
+    position: absolute; right: -56px; top: 50%; transform: translateY(-50%);
+    display: flex; align-items: center; gap: 4px; white-space: nowrap;
+    font-size: 0.7rem; color: var(--blue); font-weight: 700;
+  }
+  .top-arrow::before { content: '←'; font-size: 1rem; }
+
+  .index-col {
+    display: flex; flex-direction: column-reverse; gap: 2px;
+    align-items: flex-end; min-height: 280px; justify-content: flex-start;
+    padding-top: 12px;
+  }
+  .idx-label {
+    height: 52px; display: flex; align-items: center;
+    font-size: 0.7rem; color: var(--muted); font-family: monospace;
+    width: 32px; justify-content: flex-end; margin-bottom: 2px;
+  }
+  .empty-msg { color: var(--muted); font-size: 0.9rem; }
+
+  /* Controls */
+  .controls { display: flex; flex-direction: column; gap: 12px; }
+  .input-row { display: flex; gap: 8px; }
+  input[type=number] { flex:1; background:var(--bg); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:6px; font-size:0.9rem; }
+  input:focus { outline:none; border-color:var(--blue); }
+  .btn-group { display:flex; gap:6px; flex-wrap:wrap; }
+  button { padding:8px 14px; border:none; border-radius:6px; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
+  button:hover { filter:brightness(1.15); transform:translateY(-1px); }
+  button:active { transform:translateY(0); }
+  .btn-green  { background:#1e4d28; color:var(--green); }
+  .btn-red    { background:#4d1e1e; color:var(--red); }
+  .btn-yellow { background:#4d3a1e; color:var(--yellow); }
+  .btn-purple { background:#3a1e4d; color:var(--purple); }
+  .btn-gray   { background:#2a2d35; color:var(--muted); }
+
+  .info-box { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px; min-height:80px; }
+  .info-op  { font-size:0.75rem; color:var(--muted); margin-bottom:4px; text-transform:uppercase; letter-spacing:1px; }
+  .info-msg { font-size:0.9rem; line-height:1.5; }
+  .info-cplx{ font-size:0.8rem; margin-top:8px; }
+  .c-green{color:var(--green);font-weight:700;} .c-yellow{color:var(--yellow);font-weight:700;}
+
+  table { width:100%; border-collapse:collapse; font-size:0.8rem; }
+  th,td { padding:7px 10px; border:1px solid var(--border); text-align:left; }
+  th { background:#1e2530; color:var(--muted); font-weight:600; }
+  td:last-child { text-align:center; font-weight:700; font-family:monospace; }
+
+  .section-title { font-size:0.75rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+  .log { max-height:110px; overflow-y:auto; font-size:0.75rem; font-family:monospace; color:var(--muted); display:flex; flex-direction:column; gap:2px; }
+  .log-entry { padding:2px 0; border-bottom:1px solid #1e2530; }
+  .log-entry:last-child { color:var(--text); }
+
+  .stat-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+  .stat { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:6px 12px; }
+  .stat-label { color:var(--muted); font-size:0.7rem; }
+  .stat-val { font-weight:700; color:var(--blue); font-size:0.95rem; }
+</style>
+</head>
+<body>
+
+<h1>Stack</h1>
+<p class="subtitle">LIFO — Last In, First Out. All operations happen at the <span style="color:var(--blue)">top</span>. Think of a stack of plates.</p>
+<div class="badges">
+  <span class="badge green">Push O(1)</span>
+  <span class="badge green">Pop O(1)</span>
+  <span class="badge green">Peek O(1)</span>
+  <span class="badge green">Size O(1)</span>
+</div>
+
+<div class="layout">
+  <div>
+    <div class="panel" style="margin-bottom:12px;">
+      <div class="section-title">Stack State</div>
+      <div class="stack-arena" id="s-arena">
+        <span class="empty-msg">Stack is empty. Push elements below.</span>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><div class="stat-label">Size</div><div class="stat-val" id="stat-size">0</div></div>
+        <div class="stat"><div class="stat-label">Top</div><div class="stat-val" id="stat-top">—</div></div>
+        <div class="stat"><div class="stat-label">Empty?</div><div class="stat-val" id="stat-empty">Yes</div></div>
+        <div class="stat"><div class="stat-label">Bottom</div><div class="stat-val" id="stat-bottom">—</div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Controls</div>
+      <div class="controls">
+        <div>
+          <div class="section-title" style="margin-bottom:4px;">Value</div>
+          <div class="input-row">
+            <input type="number" id="val-input" placeholder="Value" value="42">
+          </div>
+        </div>
+        <div>
+          <div class="section-title" style="margin-bottom:4px;">Core Operations</div>
+          <div class="btn-group">
+            <button class="btn-green"  onclick="push()">↑ Push</button>
+            <button class="btn-red"    onclick="pop()">↓ Pop</button>
+            <button class="btn-yellow" onclick="peek()">Peek Top</button>
+          </div>
+        </div>
+        <div>
+          <div class="section-title" style="margin-bottom:4px;">Inspect</div>
+          <div class="btn-group">
+            <button class="btn-yellow" onclick="peekBottom()">Peek Bottom</button>
+            <button class="btn-purple" onclick="checkEmpty()">isEmpty?</button>
+            <button class="btn-purple" onclick="checkSize()">Size</button>
+          </div>
+        </div>
+        <div>
+          <div class="section-title" style="margin-bottom:4px;">Utility</div>
+          <div class="btn-group">
+            <button class="btn-purple" onclick="popAll()">Pop All</button>
+            <button class="btn-gray"   onclick="autoDemo()">▶ Auto Demo</button>
+            <button class="btn-gray"   onclick="resetStack()">↺ Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <div class="panel">
+      <div class="section-title">Last Operation</div>
+      <div class="info-box">
+        <div class="info-op" id="info-op">—</div>
+        <div class="info-msg" id="info-msg">Perform an operation to see details.</div>
+        <div class="info-cplx" id="info-cplx"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Big-O Complexity</div>
+      <table>
+        <tr><th>Operation</th><th>Time</th></tr>
+        <tr><td>Push</td><td class="c-green">O(1)</td></tr>
+        <tr><td>Pop</td><td class="c-green">O(1)</td></tr>
+        <tr><td>Peek (top)</td><td class="c-green">O(1)</td></tr>
+        <tr><td>isEmpty</td><td class="c-green">O(1)</td></tr>
+        <tr><td>Size</td><td class="c-green">O(1)</td></tr>
+        <tr><td>Peek (bottom)</td><td class="c-yellow">O(n)*</td></tr>
+        <tr><td>Space</td><td class="c-green">O(n)</td></tr>
+      </table>
+      <p style="font-size:0.7rem;color:var(--muted);margin-top:6px;">* requires traversal without bottom pointer</p>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Operation Log</div>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let stack = [];   // stack[stack.length-1] = top
+let busy = false;
+
+function render(highlights = {}) {
+  const arena = document.getElementById('s-arena');
+  if (stack.length === 0) {
+    arena.innerHTML = '<span class="empty-msg">Stack is empty. Push elements below.</span>';
+  } else {
+    let idxHtml = '<div class="index-col">';
+    let stackHtml = '<div class="stack-column">';
+    for (let i = 0; i < stack.length; i++) {
+      const isTop = i === stack.length - 1;
+      const hl = highlights[i];
+      let cls = hl || (isTop ? 'top-cell' : '');
+      const topArrow = isTop && !hl ? `<div class="top-arrow">TOP</div>` : '';
+      stackHtml += `<div class="s-cell ${cls}">${stack[i]}${topArrow}</div>`;
+      idxHtml += `<div class="idx-label">[${i}]</div>`;
+    }
+    stackHtml += '<div class="stack-base"></div></div>';
+    idxHtml += '</div>';
+    arena.innerHTML = idxHtml + stackHtml;
+  }
+  document.getElementById('stat-size').textContent = stack.length;
+  document.getElementById('stat-top').textContent = stack.length ? stack[stack.length-1] : '—';
+  document.getElementById('stat-empty').textContent = stack.length === 0 ? 'Yes' : 'No';
+  document.getElementById('stat-bottom').textContent = stack.length ? stack[0] : '—';
+}
+
+function setInfo(op, msg, cplx, cls='c-green') {
+  document.getElementById('info-op').textContent = op;
+  document.getElementById('info-msg').innerHTML = msg;
+  document.getElementById('info-cplx').innerHTML = cplx ? `Time complexity: <span class="${cls}">${cplx}</span>` : '';
+  const log = document.getElementById('log');
+  const e = document.createElement('div'); e.className='log-entry';
+  e.textContent = `[${op}] ${msg.replace(/<[^>]+>/g,'')}`;
+  log.appendChild(e); log.scrollTop=log.scrollHeight;
+}
+function getVal(){ return parseInt(document.getElementById('val-input').value)||0; }
+async function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+function push() {
+  if (busy) return;
+  const v = getVal(); stack.push(v);
+  const h = {}; h[stack.length-1] = 'pushing'; render(h);
+  setInfo('PUSH', `Pushed <b>${v}</b> onto top. Stack size: <b>${stack.length}</b>.`, 'O(1)');
+  setTimeout(()=>render(), 700);
+}
+
+async function pop() {
+  if (busy || stack.length===0) return; busy=true;
+  const h = {}; h[stack.length-1] = 'popping'; render(h);
+  setInfo('POP', `Removing top element <b>${stack[stack.length-1]}</b>…`, 'O(1)');
+  await sleep(500); const removed = stack.pop(); render();
+  setInfo('POP', `Popped <b>${removed}</b> from top. Stack size: <b>${stack.length}</b>.`, 'O(1)');
+  busy=false;
+}
+
+function peek() {
+  if (!stack.length){ setInfo('PEEK TOP','Stack is empty!','O(1)'); return; }
+  const h = {}; h[stack.length-1] = 'peeking'; render(h);
+  setInfo('PEEK TOP', `Top element is <b>${stack[stack.length-1]}</b>. Not removed — just inspected.`, 'O(1)');
+  setTimeout(()=>render(), 900);
+}
+
+function peekBottom() {
+  if (!stack.length){ setInfo('PEEK BOTTOM','Stack is empty!','O(1)'); return; }
+  const h = {}; h[0] = 'peeking'; render(h);
+  setInfo('PEEK BOTTOM', `Bottom element is <b>${stack[0]}</b>. It was the first element pushed.`, 'O(n)', 'c-yellow');
+  setTimeout(()=>render(), 900);
+}
+
+function checkEmpty() {
+  const empty = stack.length===0;
+  setInfo('IS EMPTY', empty ? 'Stack <b>is empty</b>.' : `Stack is <b>not empty</b> — contains ${stack.length} element(s).`, 'O(1)');
+}
+
+function checkSize() {
+  setInfo('SIZE', `Stack contains <b>${stack.length}</b> element(s). Top index: ${stack.length-1}.`, 'O(1)');
+}
+
+async function popAll() {
+  if (busy || stack.length===0) return; busy=true;
+  const popped = [];
+  while (stack.length > 0) {
+    const h = {}; h[stack.length-1]='popping'; render(h);
+    setInfo('POP ALL', `Popping <b>${stack[stack.length-1]}</b>…`, 'O(1)');
+    await sleep(400); popped.push(stack.pop()); render(); await sleep(150);
+  }
+  setInfo('POP ALL', `Popped all: [${popped.join(', ')}]. Stack is now empty.`, 'O(n)', 'c-yellow');
+  busy=false;
+}
+
+async function autoDemo() {
+  if (busy) return; busy=true;
+  stack=[]; render(); await sleep(400);
+
+  for (const v of [10,20,30,40,50]) {
+    stack.push(v); const h={}; h[stack.length-1]='pushing'; render(h);
+    setInfo('DEMO: PUSH',`Pushed <b>${v}</b> onto top.`,'O(1)');
+    await sleep(600); render(); await sleep(200);
+  }
+
+  let h1={}; h1[stack.length-1]='peeking'; render(h1);
+  setInfo('DEMO: PEEK TOP',`Top is <b>${stack[stack.length-1]}</b>. LIFO — last in, first out!`,'O(1)');
+  await sleep(900); render(); await sleep(300);
+
+  let h2={}; h2[0]='peeking'; render(h2);
+  setInfo('DEMO: PEEK BOTTOM',`Bottom is <b>${stack[0]}</b>. It was pushed first.`,'O(n)','c-yellow');
+  await sleep(900); render(); await sleep(300);
+
+  for(let d=0;d<3;d++){
+    const h={}; h[stack.length-1]='popping'; render(h);
+    setInfo('DEMO: POP',`Popping <b>${stack[stack.length-1]}</b>…`,'O(1)');
+    await sleep(500); const removed=stack.pop(); render();
+    setInfo('DEMO: POP',`Popped <b>${removed}</b>. ${stack.length} element(s) remain.`,'O(1)');
+    await sleep(500);
+  }
+
+  setInfo('DEMO: IS EMPTY',`isEmpty → <b>${stack.length===0}</b>. ${stack.length} element(s) left.`,'O(1)');
+  await sleep(600);
+  setInfo('DEMO COMPLETE','All Stack operations demonstrated! Try the controls yourself.','');
+  busy=false;
+}
+
+function resetStack() {
+  busy=false; stack=[];
+  render(); setInfo('RESET','Stack cleared.','');
+}
+
+stack = [5, 17, 33];
+render();
+setInfo('READY','Stack initialized with [5 (bottom), 17, 33 (top)]. Use controls to interact.','');
+</script>
+</body>
+</html>
