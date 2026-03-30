@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0018. 4Sum — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        #arrInput { width: 260px; }
+        #targetInput { width: 80px; }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-apply { background: #8b5cf6; color: white; }
+        .btn-apply:hover { background: #7c3aed; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-pause:hover { background: #dc2626; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #64748b; color: white; }
+        .btn-reset:hover { background: #475569; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 80px;
+            accent-color: #3b82f6;
+        }
+
+        /* ARRAY DISPLAY */
+        .array-section {
+            margin-bottom: 20px;
+        }
+
+        .section-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .array-row {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+            min-height: 70px;
+            align-items: flex-end;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #334155;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .cell.pointer-i {
+            background: #7c3aed;
+            box-shadow: 0 0 12px rgba(124, 58, 237, 0.5);
+        }
+
+        .cell.pointer-j {
+            background: #0891b2;
+            box-shadow: 0 0 12px rgba(8, 145, 178, 0.5);
+        }
+
+        .cell.pointer-left {
+            background: #2563eb;
+            box-shadow: 0 0 12px rgba(37, 99, 235, 0.5);
+        }
+
+        .cell.pointer-right {
+            background: #dc2626;
+            box-shadow: 0 0 12px rgba(220, 38, 38, 0.5);
+        }
+
+        .cell.found {
+            background: #16a34a;
+            box-shadow: 0 0 12px rgba(22, 163, 74, 0.5);
+        }
+
+        .cell.skipped {
+            background: #475569;
+            opacity: 0.5;
+        }
+
+        .cell .label {
+            position: absolute;
+            top: -20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .cell .label.label-i { color: #a78bfa; }
+        .cell .label.label-j { color: #22d3ee; }
+        .cell .label.label-left { color: #60a5fa; }
+        .cell .label.label-right { color: #f87171; }
+        .cell .label.label-k { color: #60a5fa; }
+        .cell .label.label-l { color: #f87171; }
+
+        .cell .index-label {
+            position: absolute;
+            bottom: -18px;
+            font-size: 0.65rem;
+            color: #64748b;
+        }
+
+        /* SORT VISUALIZATION */
+        .sort-section {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .sort-arrow {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin: 8px 0;
+        }
+
+        /* INFO PANEL */
+        .info-panel {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #334155;
+        }
+
+        .info-panel .step-info {
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .info-panel .step-info .highlight {
+            color: #fbbf24;
+            font-weight: 700;
+        }
+
+        .info-panel .step-info .val-i { color: #a78bfa; font-weight: 700; }
+        .info-panel .step-info .val-j { color: #22d3ee; font-weight: 700; }
+        .info-panel .step-info .val-left { color: #60a5fa; font-weight: 700; }
+        .info-panel .step-info .val-right { color: #f87171; font-weight: 700; }
+        .info-panel .step-info .val-sum { color: #fbbf24; font-weight: 700; }
+
+        /* QUADRUPLET COLLECTION */
+        .triplets-section {
+            margin-top: 16px;
+        }
+
+        .triplet-list {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            min-height: 40px;
+        }
+
+        .triplet-badge {
+            background: #16a34a;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .triplet-badge.new {
+            box-shadow: 0 0 15px rgba(22, 163, 74, 0.6);
+        }
+
+        /* SKIP INDICATOR */
+        .skip-indicator {
+            text-align: center;
+            color: #f59e0b;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 8px 0;
+            min-height: 20px;
+        }
+
+        /* COMPLEXITY BADGE */
+        .complexity-badge {
+            display: inline-block;
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-left: 8px;
+        }
+
+        /* STEP COUNTER */
+        .step-counter {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+
+        .step-counter span {
+            color: #fbbf24;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0018. 4Sum</h1>
+        <p>Find all unique quadruplets that sum to target</p>
+    </div>
+
+    <!-- INPUT -->
+    <div class="input-section">
+        <label style="color: #94a3b8; font-size: 0.85rem;">Array:</label>
+        <input type="text" id="arrInput" value="1, 0, -1, 0, -2, 2" placeholder="e.g. 1, 0, -1, 0, -2, 2">
+        <label style="color: #94a3b8; font-size: 0.85rem;">Target:</label>
+        <input type="text" id="targetInput" value="0" placeholder="0">
+        <button class="btn-apply" onclick="applyInput()">Apply</button>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <div class="tab active" data-tab="twopointers" onclick="switchTab('twopointers')">
+            Sort + Two Pointers <span class="complexity-badge">O(n^3)</span>
+        </div>
+        <div class="tab" data-tab="bruteforce" onclick="switchTab('bruteforce')">
+            Brute Force <span class="complexity-badge">O(n^4)</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- TWO POINTERS TAB -->
+        <div class="tab-content active" id="tab-twopointers">
+            <div class="controls">
+                <button class="btn-play" onclick="tp_play()">&#9654; Play</button>
+                <button class="btn-pause" onclick="tp_pause()">&#9646;&#9646; Pause</button>
+                <button class="btn-step" onclick="tp_step()">&#9654;| Step</button>
+                <button class="btn-reset" onclick="tp_reset()">&#8634; Reset</button>
+                <div class="speed-control">
+                    <label>Speed:</label>
+                    <input type="range" id="tp-speed" min="1" max="10" value="5">
+                </div>
+            </div>
+
+            <div class="step-counter" id="tp-step-counter">Step: <span>0</span></div>
+
+            <!-- Original array -->
+            <div class="array-section">
+                <div class="section-label">Original Array</div>
+                <div class="array-row" id="tp-original-array"></div>
+            </div>
+
+            <!-- Sort visualization -->
+            <div class="sort-section" id="tp-sort-section" style="display:none;">
+                <div class="sort-arrow">&#8595; sort()</div>
+            </div>
+
+            <!-- Sorted array with pointers -->
+            <div class="array-section">
+                <div class="section-label">Sorted Array (with pointers)</div>
+                <div class="array-row" id="tp-sorted-array"></div>
+            </div>
+
+            <!-- Skip indicator -->
+            <div class="skip-indicator" id="tp-skip-indicator"></div>
+
+            <!-- Info panel -->
+            <div class="info-panel">
+                <div class="step-info" id="tp-info">Click <strong>Play</strong> or <strong>Step</strong> to begin the animation.</div>
+            </div>
+
+            <!-- Found quadruplets -->
+            <div class="triplets-section">
+                <div class="section-label">Found Quadruplets</div>
+                <div class="triplet-list" id="tp-triplets"></div>
+            </div>
+        </div>
+
+        <!-- BRUTE FORCE TAB -->
+        <div class="tab-content" id="tab-bruteforce">
+            <div class="controls">
+                <button class="btn-play" onclick="bf_play()">&#9654; Play</button>
+                <button class="btn-pause" onclick="bf_pause()">&#9646;&#9646; Pause</button>
+                <button class="btn-step" onclick="bf_step()">&#9654;| Step</button>
+                <button class="btn-reset" onclick="bf_reset()">&#8634; Reset</button>
+                <div class="speed-control">
+                    <label>Speed:</label>
+                    <input type="range" id="bf-speed" min="1" max="10" value="5">
+                </div>
+            </div>
+
+            <div class="step-counter" id="bf-step-counter">Step: <span>0</span></div>
+
+            <!-- Sorted array -->
+            <div class="array-section">
+                <div class="section-label">Sorted Array (i, j, k, l pointers)</div>
+                <div class="array-row" id="bf-array"></div>
+            </div>
+
+            <!-- Skip indicator -->
+            <div class="skip-indicator" id="bf-skip-indicator"></div>
+
+            <!-- Info panel -->
+            <div class="info-panel">
+                <div class="step-info" id="bf-info">Click <strong>Play</strong> or <strong>Step</strong> to begin the animation.</div>
+            </div>
+
+            <!-- Found quadruplets -->
+            <div class="triplets-section">
+                <div class="section-label">Found Quadruplets</div>
+                <div class="triplet-list" id="bf-triplets"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ============================================================
+    // SHARED STATE
+    // ============================================================
+    let originalNums = [];
+    let sortedNums = [];
+    let targetVal = 0;
+
+    function parseInput() {
+        const val = document.getElementById('arrInput').value;
+        originalNums = val.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+        sortedNums = [...originalNums].sort((a, b) => a - b);
+        targetVal = parseInt(document.getElementById('targetInput').value) || 0;
+    }
+
+    function applyInput() {
+        parseInput();
+        tp_reset();
+        bf_reset();
+    }
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+    }
+
+    function getSpeed(sliderId) {
+        const val = document.getElementById(sliderId).value;
+        return 1200 - val * 100;
+    }
+
+    function renderArray(containerId, nums, highlights, labels) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        nums.forEach((num, idx) => {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.textContent = num;
+
+            // Apply highlights
+            if (highlights) {
+                for (const [cls, indices] of Object.entries(highlights)) {
+                    if (indices.includes(idx)) {
+                        cell.classList.add(cls);
+                    }
+                }
+            }
+
+            // Add labels
+            if (labels) {
+                for (const [labelText, info] of Object.entries(labels)) {
+                    if (info.index === idx) {
+                        const lbl = document.createElement('div');
+                        lbl.className = `label ${info.className || ''}`;
+                        lbl.textContent = labelText;
+                        cell.appendChild(lbl);
+                    }
+                }
+            }
+
+            // Index label
+            const idxLabel = document.createElement('div');
+            idxLabel.className = 'index-label';
+            idxLabel.textContent = idx;
+            cell.appendChild(idxLabel);
+
+            container.appendChild(cell);
+        });
+    }
+
+    // ============================================================
+    // TWO POINTERS ANIMATION
+    // ============================================================
+    let tpSteps = [];
+    let tpCurrent = 0;
+    let tpTimer = null;
+
+    function tp_generateSteps() {
+        tpSteps = [];
+        const nums = [...sortedNums];
+        const n = nums.length;
+        const target = targetVal;
+
+        // Step 0: show sorting
+        tpSteps.push({
+            type: 'sort',
+            info: `Sorting array: [${originalNums.join(', ')}] → [${nums.join(', ')}], target = <span class="val-sum">${target}</span>`,
+            highlights: {},
+            labels: {},
+            triplets: []
+        });
+
+        const foundQuads = [];
+
+        for (let i = 0; i < n - 3; i++) {
+            // Duplicate skip for i
+            if (i > 0 && nums[i] === nums[i - 1]) {
+                tpSteps.push({
+                    type: 'skip-i',
+                    info: `<span class="val-i">i=${i}</span>, nums[${i}]=${nums[i]} — <span class="highlight">SKIP duplicate</span> (same as nums[${i-1}])`,
+                    highlights: { 'skipped': [i] },
+                    labels: { 'i (skip)': { index: i, className: 'label-i' } },
+                    skipText: `Skipping duplicate: nums[${i}] = ${nums[i]}`,
+                    triplets: [...foundQuads]
+                });
+                continue;
+            }
+
+            // Early termination for i
+            if (nums[i] + nums[i+1] + nums[i+2] + nums[i+3] > target) {
+                tpSteps.push({
+                    type: 'early-break-i',
+                    info: `<span class="val-i">i=${i}</span>: min sum = ${nums[i]}+${nums[i+1]}+${nums[i+2]}+${nums[i+3]} = ${nums[i]+nums[i+1]+nums[i+2]+nums[i+3]} > ${target} — <span class="highlight">BREAK</span>`,
+                    highlights: { 'pointer-i': [i] },
+                    labels: { 'i': { index: i, className: 'label-i' } },
+                    triplets: [...foundQuads]
+                });
+                break;
+            }
+
+            // Skip for i (max sum too small)
+            if (nums[i] + nums[n-3] + nums[n-2] + nums[n-1] < target) {
+                tpSteps.push({
+                    type: 'skip-i-max',
+                    info: `<span class="val-i">i=${i}</span>: max sum = ${nums[i]}+${nums[n-3]}+${nums[n-2]}+${nums[n-1]} = ${nums[i]+nums[n-3]+nums[n-2]+nums[n-1]} < ${target} — <span class="highlight">SKIP</span> (too small)`,
+                    highlights: { 'pointer-i': [i] },
+                    labels: { 'i': { index: i, className: 'label-i' } },
+                    triplets: [...foundQuads]
+                });
+                continue;
+            }
+
+            // Fix i step
+            tpSteps.push({
+                type: 'fix-i',
+                info: `Fix <span class="val-i">i=${i}</span> (nums[${i}]=${nums[i]})`,
+                highlights: { 'pointer-i': [i] },
+                labels: { 'i': { index: i, className: 'label-i' } },
+                triplets: [...foundQuads]
+            });
+
+            for (let j = i + 1; j < n - 2; j++) {
+                // Duplicate skip for j
+                if (j > i + 1 && nums[j] === nums[j - 1]) {
+                    tpSteps.push({
+                        type: 'skip-j',
+                        info: `<span class="val-j">j=${j}</span>, nums[${j}]=${nums[j]} — <span class="highlight">SKIP duplicate</span>`,
+                        highlights: { 'pointer-i': [i], 'skipped': [j] },
+                        labels: {
+                            'i': { index: i, className: 'label-i' },
+                            'j (skip)': { index: j, className: 'label-j' }
+                        },
+                        skipText: `Skipping duplicate j: nums[${j}] = ${nums[j]}`,
+                        triplets: [...foundQuads]
+                    });
+                    continue;
+                }
+
+                // Early termination for j
+                if (nums[i] + nums[j] + nums[j+1] + nums[j+2] > target) {
+                    tpSteps.push({
+                        type: 'early-break-j',
+                        info: `<span class="val-j">j=${j}</span>: min sum = ${nums[i]}+${nums[j]}+${nums[j+1]}+${nums[j+2]} = ${nums[i]+nums[j]+nums[j+1]+nums[j+2]} > ${target} — <span class="highlight">BREAK j</span>`,
+                        highlights: { 'pointer-i': [i], 'pointer-j': [j] },
+                        labels: {
+                            'i': { index: i, className: 'label-i' },
+                            'j': { index: j, className: 'label-j' }
+                        },
+                        triplets: [...foundQuads]
+                    });
+                    break;
+                }
+
+                // Skip for j (max sum too small)
+                if (nums[i] + nums[j] + nums[n-2] + nums[n-1] < target) {
+                    tpSteps.push({
+                        type: 'skip-j-max',
+                        info: `<span class="val-j">j=${j}</span>: max sum = ${nums[i]}+${nums[j]}+${nums[n-2]}+${nums[n-1]} = ${nums[i]+nums[j]+nums[n-2]+nums[n-1]} < ${target} — <span class="highlight">SKIP</span>`,
+                        highlights: { 'pointer-i': [i], 'pointer-j': [j] },
+                        labels: {
+                            'i': { index: i, className: 'label-i' },
+                            'j': { index: j, className: 'label-j' }
+                        },
+                        triplets: [...foundQuads]
+                    });
+                    continue;
+                }
+
+                let left = j + 1, right = n - 1;
+                const remain = target - nums[i] - nums[j];
+
+                // Fix j step
+                tpSteps.push({
+                    type: 'fix-j',
+                    info: `Fix <span class="val-i">i=${i}</span> (${nums[i]}), <span class="val-j">j=${j}</span> (${nums[j]}), remain = <span class="val-sum">${remain}</span>, left=${left}, right=${right}`,
+                    highlights: { 'pointer-i': [i], 'pointer-j': [j], 'pointer-left': [left], 'pointer-right': [right] },
+                    labels: {
+                        'i': { index: i, className: 'label-i' },
+                        'j': { index: j, className: 'label-j' },
+                        'L': { index: left, className: 'label-left' },
+                        'R': { index: right, className: 'label-right' }
+                    },
+                    triplets: [...foundQuads]
+                });
+
+                while (left < right) {
+                    const sum = nums[left] + nums[right];
+
+                    if (sum === remain) {
+                        foundQuads.push([nums[i], nums[j], nums[left], nums[right]]);
+
+                        tpSteps.push({
+                            type: 'found',
+                            info: `<span class="val-i">${nums[i]}</span> + <span class="val-j">${nums[j]}</span> + <span class="val-left">${nums[left]}</span> + <span class="val-right">${nums[right]}</span> = <span class="val-sum">${target}</span> — <span class="highlight">FOUND!</span>`,
+                            highlights: { 'pointer-i': [i], 'pointer-j': [j], 'found': [left, right] },
+                            labels: {
+                                'i': { index: i, className: 'label-i' },
+                                'j': { index: j, className: 'label-j' },
+                                'L': { index: left, className: 'label-left' },
+                                'R': { index: right, className: 'label-right' }
+                            },
+                            triplets: [...foundQuads],
+                            newTriplet: true
+                        });
+
+                        // Skip duplicates left
+                        while (left < right && nums[left] === nums[left + 1]) {
+                            left++;
+                            tpSteps.push({
+                                type: 'skip-left',
+                                info: `Skip duplicate left: nums[${left}]=${nums[left]}`,
+                                highlights: { 'pointer-i': [i], 'pointer-j': [j], 'skipped': [left], 'pointer-right': [right] },
+                                labels: {
+                                    'i': { index: i, className: 'label-i' },
+                                    'j': { index: j, className: 'label-j' },
+                                    'L (skip)': { index: left, className: 'label-left' },
+                                    'R': { index: right, className: 'label-right' }
+                                },
+                                skipText: `Skipping duplicate left: nums[${left}] = ${nums[left]}`,
+                                triplets: [...foundQuads]
+                            });
+                        }
+
+                        // Skip duplicates right
+                        while (left < right && nums[right] === nums[right - 1]) {
+                            right--;
+                            tpSteps.push({
+                                type: 'skip-right',
+                                info: `Skip duplicate right: nums[${right}]=${nums[right]}`,
+                                highlights: { 'pointer-i': [i], 'pointer-j': [j], 'pointer-left': [left], 'skipped': [right] },
+                                labels: {
+                                    'i': { index: i, className: 'label-i' },
+                                    'j': { index: j, className: 'label-j' },
+                                    'L': { index: left, className: 'label-left' },
+                                    'R (skip)': { index: right, className: 'label-right' }
+                                },
+                                skipText: `Skipping duplicate right: nums[${right}] = ${nums[right]}`,
+                                triplets: [...foundQuads]
+                            });
+                        }
+
+                        left++;
+                        right--;
+                    } else if (sum < remain) {
+                        tpSteps.push({
+                            type: 'move-left',
+                            info: `<span class="val-left">${nums[left]}</span> + <span class="val-right">${nums[right]}</span> = <span class="val-sum">${sum}</span> < <span class="val-sum">${remain}</span> — move left++`,
+                            highlights: { 'pointer-i': [i], 'pointer-j': [j], 'pointer-left': [left], 'pointer-right': [right] },
+                            labels: {
+                                'i': { index: i, className: 'label-i' },
+                                'j': { index: j, className: 'label-j' },
+                                'L': { index: left, className: 'label-left' },
+                                'R': { index: right, className: 'label-right' }
+                            },
+                            triplets: [...foundQuads]
+                        });
+                        left++;
+                    } else {
+                        tpSteps.push({
+                            type: 'move-right',
+                            info: `<span class="val-left">${nums[left]}</span> + <span class="val-right">${nums[right]}</span> = <span class="val-sum">${sum}</span> > <span class="val-sum">${remain}</span> — move right--`,
+                            highlights: { 'pointer-i': [i], 'pointer-j': [j], 'pointer-left': [left], 'pointer-right': [right] },
+                            labels: {
+                                'i': { index: i, className: 'label-i' },
+                                'j': { index: j, className: 'label-j' },
+                                'L': { index: left, className: 'label-left' },
+                                'R': { index: right, className: 'label-right' }
+                            },
+                            triplets: [...foundQuads]
+                        });
+                        right--;
+                    }
+                }
+
+                // End of inner loop for this j
+                tpSteps.push({
+                    type: 'end-inner',
+                    info: `left >= right — done with <span class="val-i">i=${i}</span>, <span class="val-j">j=${j}</span>`,
+                    highlights: { 'pointer-i': [i], 'pointer-j': [j] },
+                    labels: {
+                        'i': { index: i, className: 'label-i' },
+                        'j': { index: j, className: 'label-j' }
+                    },
+                    triplets: [...foundQuads]
+                });
+            }
+        }
+
+        // Final step
+        tpSteps.push({
+            type: 'done',
+            info: `<span class="highlight">DONE!</span> Found ${foundQuads.length} quadruplet(s): ${foundQuads.map(q => `[${q.join(',')}]`).join(', ') || 'none'}`,
+            highlights: {},
+            labels: {},
+            triplets: [...foundQuads]
+        });
+    }
+
+    function tp_renderStep(stepIdx) {
+        if (stepIdx < 0 || stepIdx >= tpSteps.length) return;
+        const step = tpSteps[stepIdx];
+
+        renderArray('tp-original-array', originalNums, {}, {});
+
+        if (step.type === 'sort' || stepIdx > 0) {
+            document.getElementById('tp-sort-section').style.display = 'block';
+        }
+
+        renderArray('tp-sorted-array', sortedNums, step.highlights, step.labels);
+
+        document.getElementById('tp-info').innerHTML = step.info;
+        document.getElementById('tp-skip-indicator').textContent = step.skipText || '';
+        document.getElementById('tp-step-counter').innerHTML = `Step: <span>${stepIdx}</span> / ${tpSteps.length - 1}`;
+
+        const tripletContainer = document.getElementById('tp-triplets');
+        tripletContainer.innerHTML = '';
+        if (step.triplets) {
+            step.triplets.forEach((q, idx) => {
+                const badge = document.createElement('div');
+                badge.className = 'triplet-badge';
+                if (step.newTriplet && idx === step.triplets.length - 1) {
+                    badge.classList.add('new');
+                }
+                badge.textContent = `[${q.join(', ')}]`;
+                tripletContainer.appendChild(badge);
+            });
+        }
+    }
+
+    function tp_step() {
+        if (tpCurrent < tpSteps.length - 1) {
+            tpCurrent++;
+            tp_renderStep(tpCurrent);
+        } else {
+            tp_pause();
+        }
+    }
+
+    function tp_play() {
+        tp_pause();
+        if (tpSteps.length === 0) {
+            tp_generateSteps();
+        }
+        tpTimer = setInterval(() => {
+            if (tpCurrent < tpSteps.length - 1) {
+                tpCurrent++;
+                tp_renderStep(tpCurrent);
+            } else {
+                tp_pause();
+            }
+        }, getSpeed('tp-speed'));
+    }
+
+    function tp_pause() {
+        if (tpTimer) { clearInterval(tpTimer); tpTimer = null; }
+    }
+
+    function tp_reset() {
+        tp_pause();
+        tpCurrent = 0;
+        tp_generateSteps();
+        if (tpSteps.length > 0) {
+            tp_renderStep(0);
+        }
+        document.getElementById('tp-sort-section').style.display = 'none';
+        document.getElementById('tp-info').innerHTML = 'Click <strong>Play</strong> or <strong>Step</strong> to begin the animation.';
+        document.getElementById('tp-triplets').innerHTML = '';
+        document.getElementById('tp-skip-indicator').textContent = '';
+        document.getElementById('tp-step-counter').innerHTML = 'Step: <span>0</span>';
+        renderArray('tp-original-array', originalNums, {}, {});
+        renderArray('tp-sorted-array', sortedNums, {}, {});
+    }
+
+    // ============================================================
+    // BRUTE FORCE ANIMATION
+    // ============================================================
+    let bfSteps = [];
+    let bfCurrent = 0;
+    let bfTimer = null;
+
+    function bf_generateSteps() {
+        bfSteps = [];
+        const nums = [...sortedNums];
+        const n = nums.length;
+        const target = targetVal;
+        const foundQuads = [];
+        const seen = new Set();
+
+        bfSteps.push({
+            type: 'start',
+            info: `Sorted array: [${nums.join(', ')}], target = <span class="val-sum">${target}</span>. Checking all quadruplets (i, j, k, l)...`,
+            highlights: {},
+            labels: {},
+            triplets: []
+        });
+
+        for (let i = 0; i < n - 3; i++) {
+            for (let j = i + 1; j < n - 2; j++) {
+                for (let k = j + 1; k < n - 1; k++) {
+                    for (let l = k + 1; l < n; l++) {
+                        const sum = nums[i] + nums[j] + nums[k] + nums[l];
+                        const key = `${nums[i]},${nums[j]},${nums[k]},${nums[l]}`;
+
+                        if (sum === target && !seen.has(key)) {
+                            seen.add(key);
+                            foundQuads.push([nums[i], nums[j], nums[k], nums[l]]);
+
+                            bfSteps.push({
+                                type: 'found',
+                                info: `<span class="val-i">${nums[i]}</span> + <span class="val-j">${nums[j]}</span> + <span class="val-left">${nums[k]}</span> + <span class="val-right">${nums[l]}</span> = <span class="val-sum">${target}</span> — <span class="highlight">FOUND!</span>`,
+                                highlights: { 'found': [i, j, k, l] },
+                                labels: {
+                                    'i': { index: i, className: 'label-i' },
+                                    'j': { index: j, className: 'label-j' },
+                                    'k': { index: k, className: 'label-k' },
+                                    'l': { index: l, className: 'label-l' }
+                                },
+                                triplets: [...foundQuads],
+                                newTriplet: true
+                            });
+                        } else if (sum === target && seen.has(key)) {
+                            bfSteps.push({
+                                type: 'duplicate',
+                                info: `<span class="val-i">${nums[i]}</span> + <span class="val-j">${nums[j]}</span> + <span class="val-left">${nums[k]}</span> + <span class="val-right">${nums[l]}</span> = ${target} — <span class="highlight">DUPLICATE, skip</span>`,
+                                highlights: { 'pointer-i': [i], 'pointer-j': [j], 'pointer-left': [k], 'skipped': [l] },
+                                labels: {
+                                    'i': { index: i, className: 'label-i' },
+                                    'j': { index: j, className: 'label-j' },
+                                    'k': { index: k, className: 'label-k' },
+                                    'l': { index: l, className: 'label-l' }
+                                },
+                                skipText: `Duplicate quadruplet: [${nums[i]}, ${nums[j]}, ${nums[k]}, ${nums[l]}]`,
+                                triplets: [...foundQuads]
+                            });
+                        } else {
+                            bfSteps.push({
+                                type: 'check',
+                                info: `<span class="val-i">${nums[i]}</span> + <span class="val-j">${nums[j]}</span> + <span class="val-left">${nums[k]}</span> + <span class="val-right">${nums[l]}</span> = <span class="val-sum">${sum}</span> ≠ ${target}`,
+                                highlights: { 'pointer-i': [i], 'pointer-j': [j], 'pointer-left': [k], 'pointer-right': [l] },
+                                labels: {
+                                    'i': { index: i, className: 'label-i' },
+                                    'j': { index: j, className: 'label-j' },
+                                    'k': { index: k, className: 'label-k' },
+                                    'l': { index: l, className: 'label-l' }
+                                },
+                                triplets: [...foundQuads]
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        bfSteps.push({
+            type: 'done',
+            info: `<span class="highlight">DONE!</span> Checked all quadruplets. Found ${foundQuads.length} quadruplet(s). Total steps: ${bfSteps.length}`,
+            highlights: {},
+            labels: {},
+            triplets: [...foundQuads]
+        });
+    }
+
+    function bf_renderStep(stepIdx) {
+        if (stepIdx < 0 || stepIdx >= bfSteps.length) return;
+        const step = bfSteps[stepIdx];
+
+        renderArray('bf-array', sortedNums, step.highlights, step.labels);
+        document.getElementById('bf-info').innerHTML = step.info;
+        document.getElementById('bf-skip-indicator').textContent = step.skipText || '';
+        document.getElementById('bf-step-counter').innerHTML = `Step: <span>${stepIdx}</span> / ${bfSteps.length - 1}`;
+
+        const tripletContainer = document.getElementById('bf-triplets');
+        tripletContainer.innerHTML = '';
+        if (step.triplets) {
+            step.triplets.forEach((q, idx) => {
+                const badge = document.createElement('div');
+                badge.className = 'triplet-badge';
+                if (step.newTriplet && idx === step.triplets.length - 1) {
+                    badge.classList.add('new');
+                }
+                badge.textContent = `[${q.join(', ')}]`;
+                tripletContainer.appendChild(badge);
+            });
+        }
+    }
+
+    function bf_step() {
+        if (bfCurrent < bfSteps.length - 1) {
+            bfCurrent++;
+            bf_renderStep(bfCurrent);
+        } else {
+            bf_pause();
+        }
+    }
+
+    function bf_play() {
+        bf_pause();
+        if (bfSteps.length === 0) {
+            bf_generateSteps();
+        }
+        bfTimer = setInterval(() => {
+            if (bfCurrent < bfSteps.length - 1) {
+                bfCurrent++;
+                bf_renderStep(bfCurrent);
+            } else {
+                bf_pause();
+            }
+        }, getSpeed('bf-speed'));
+    }
+
+    function bf_pause() {
+        if (bfTimer) { clearInterval(bfTimer); bfTimer = null; }
+    }
+
+    function bf_reset() {
+        bf_pause();
+        bfCurrent = 0;
+        bf_generateSteps();
+        if (bfSteps.length > 0) {
+            bf_renderStep(0);
+        }
+        document.getElementById('bf-info').innerHTML = 'Click <strong>Play</strong> or <strong>Step</strong> to begin the animation.';
+        document.getElementById('bf-triplets').innerHTML = '';
+        document.getElementById('bf-skip-indicator').textContent = '';
+        document.getElementById('bf-step-counter').innerHTML = 'Step: <span>0</span>';
+        renderArray('bf-array', sortedNums, {}, {});
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    parseInput();
+    tp_generateSteps();
+    bf_generateSteps();
+    renderArray('tp-original-array', originalNums, {}, {});
+    renderArray('tp-sorted-array', sortedNums, {}, {});
+    renderArray('bf-array', sortedNums, {}, {});
+    </script>
+</body>
+</html>

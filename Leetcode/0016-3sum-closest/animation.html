@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0016. 3Sum Closest — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        #arrInput { width: 280px; }
+        #targetInput { width: 80px; }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-apply { background: #3b82f6; color: white; }
+        .btn-apply:hover { background: #2563eb; }
+        .btn-generate { background: #8b5cf6; color: white; }
+        .btn-generate:hover { background: #7c3aed; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-prev { background: #64748b; color: white; }
+        .btn-prev:hover { background: #475569; }
+        .btn-next { background: #10b981; color: white; }
+        .btn-next:hover { background: #059669; }
+        .btn-play { background: #f59e0b; color: #0f172a; }
+        .btn-play:hover { background: #d97706; }
+        .btn-reset { background: #ef4444; color: white; }
+        .btn-reset:hover { background: #dc2626; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 80px;
+            accent-color: #3b82f6;
+        }
+
+        /* STATUS */
+        .status-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .status-item {
+            background: #0f172a;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .status-item .label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-item .value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .value-target { color: #f59e0b; }
+        .value-sum { color: #60a5fa; }
+        .value-best { color: #10b981; }
+        .value-distance { color: #f472b6; }
+        .value-step { color: #a78bfa; }
+
+        /* VISUALIZATION */
+        .viz-area {
+            position: relative;
+            margin: 20px auto;
+            min-height: 300px;
+        }
+
+        .array-display {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            align-items: flex-end;
+            min-height: 220px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .arr-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s;
+        }
+
+        .arr-bar {
+            width: 40px;
+            min-height: 4px;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .arr-val {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            padding: 2px 6px;
+            background: #334155;
+            border-radius: 4px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .arr-idx {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        .arr-pointer {
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-height: 20px;
+            text-align: center;
+        }
+
+        .pointer-i { color: #f59e0b; }
+        .pointer-l { color: #10b981; }
+        .pointer-r { color: #ef4444; }
+        .pointer-j { color: #60a5fa; }
+        .pointer-k { color: #a78bfa; }
+
+        /* BAR COLORS */
+        .bar-default { background: #475569; }
+        .bar-i { background: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+        .bar-left { background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+        .bar-right { background: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+        .bar-j { background: #60a5fa; box-shadow: 0 0 10px rgba(96, 165, 250, 0.4); }
+        .bar-k { background: #a78bfa; box-shadow: 0 0 10px rgba(167, 139, 250, 0.4); }
+        .bar-sorted { background: #334155; }
+        .bar-sorting { background: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+
+        /* DISTANCE BAR */
+        .distance-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 16px 0;
+            padding: 12px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+
+        .dist-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .dist-bar-bg {
+            flex: 1;
+            max-width: 400px;
+            height: 20px;
+            background: #334155;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .dist-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s, background 0.3s;
+        }
+
+        .dist-bar-best { background: linear-gradient(90deg, #10b981, #34d399); }
+        .dist-bar-current { background: linear-gradient(90deg, #f472b6, #f9a8d4); }
+
+        .dist-value {
+            font-size: 0.85rem;
+            font-weight: 700;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* LOG */
+        .log-section {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #334155;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .log-section::-webkit-scrollbar { width: 6px; }
+        .log-section::-webkit-scrollbar-track { background: #1e293b; }
+        .log-section::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+        .log-entry { padding: 2px 0; }
+        .log-highlight { color: #10b981; font-weight: 600; }
+        .log-sum { color: #60a5fa; }
+        .log-update { color: #f59e0b; font-weight: 600; }
+        .log-exact { color: #10b981; font-weight: 700; }
+
+        /* SORTING PHASE */
+        .sorting-info {
+            text-align: center;
+            padding: 12px;
+            margin-bottom: 16px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+            color: #a78bfa;
+            font-size: 0.9rem;
+        }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #334155;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>0016. 3Sum Closest</h1>
+    <p>Find three integers in the array whose sum is closest to the target</p>
+</div>
+
+<div class="tabs">
+    <div class="tab active" onclick="switchTab('twoPointers')">Sort + Two Pointers (Optimal)</div>
+    <div class="tab" onclick="switchTab('bruteForce')">Brute Force</div>
+</div>
+
+<div class="container">
+    <!-- Input Section -->
+    <div class="input-section">
+        <label style="color: #94a3b8; font-size: 0.85rem;">Array:</label>
+        <input type="text" id="arrInput" placeholder="e.g. -1, 2, 1, -4" value="-1, 2, 1, -4">
+        <label style="color: #94a3b8; font-size: 0.85rem;">Target:</label>
+        <input type="text" id="targetInput" placeholder="e.g. 1" value="1">
+        <button class="btn btn-apply" onclick="applyInput()">Apply</button>
+        <button class="btn btn-generate" onclick="generateRandom()">Random</button>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="btn btn-prev" onclick="prevStep()">&#9664; Prev</button>
+        <button class="btn btn-play" id="playBtn" onclick="togglePlay()">&#9654; Play</button>
+        <button class="btn btn-next" onclick="nextStep()">Next &#9654;</button>
+        <button class="btn btn-reset" onclick="resetAnimation()">Reset</button>
+        <div class="speed-control">
+            <span>Speed:</span>
+            <input type="range" id="speedRange" min="1" max="10" value="5">
+            <span id="speedLabel">5x</span>
+        </div>
+    </div>
+
+    <!-- Status -->
+    <div class="status-bar">
+        <div class="status-item">
+            <div class="label">Target</div>
+            <div class="value value-target" id="statusTarget">1</div>
+        </div>
+        <div class="status-item">
+            <div class="label">Current Sum</div>
+            <div class="value value-sum" id="statusSum">—</div>
+        </div>
+        <div class="status-item">
+            <div class="label">Best Sum</div>
+            <div class="value value-best" id="statusBest">—</div>
+        </div>
+        <div class="status-item">
+            <div class="label">Distance</div>
+            <div class="value value-distance" id="statusDist">—</div>
+        </div>
+        <div class="status-item">
+            <div class="label">Step</div>
+            <div class="value value-step" id="statusStep">0 / 0</div>
+        </div>
+    </div>
+
+    <!-- Sorting Info -->
+    <div class="sorting-info hidden" id="sortingInfo">
+        Sorting phase: original array is being sorted for two-pointer approach
+    </div>
+
+    <!-- Distance Visualization -->
+    <div class="distance-display">
+        <span class="dist-label">Best dist:</span>
+        <div class="dist-bar-bg">
+            <div class="dist-bar-fill dist-bar-best" id="bestDistBar" style="width: 0%"></div>
+        </div>
+        <span class="dist-value value-best" id="bestDistVal">0</span>
+    </div>
+    <div class="distance-display">
+        <span class="dist-label">Curr dist:</span>
+        <div class="dist-bar-bg">
+            <div class="dist-bar-fill dist-bar-current" id="currDistBar" style="width: 0%"></div>
+        </div>
+        <span class="dist-value value-distance" id="currDistVal">0</span>
+    </div>
+
+    <!-- Array Visualization -->
+    <div class="viz-area">
+        <div class="array-display" id="arrayDisplay"></div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend" id="legendTP">
+        <div class="legend-item"><div class="legend-color" style="background:#f59e0b"></div> i (fixed)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#10b981"></div> left</div>
+        <div class="legend-item"><div class="legend-color" style="background:#ef4444"></div> right</div>
+        <div class="legend-item"><div class="legend-color" style="background:#475569"></div> default</div>
+    </div>
+    <div class="legend hidden" id="legendBF">
+        <div class="legend-item"><div class="legend-color" style="background:#f59e0b"></div> i</div>
+        <div class="legend-item"><div class="legend-color" style="background:#60a5fa"></div> j</div>
+        <div class="legend-item"><div class="legend-color" style="background:#a78bfa"></div> k</div>
+        <div class="legend-item"><div class="legend-color" style="background:#475569"></div> default</div>
+    </div>
+
+    <!-- Log -->
+    <div class="log-section" id="logSection"></div>
+</div>
+
+<script>
+    let originalArray = [-1, 2, 1, -4];
+    let target = 1;
+    let currentTab = 'twoPointers';
+    let steps = [];
+    let currentStep = -1;
+    let isPlaying = false;
+    let playInterval = null;
+
+    // ========== Tab switching ==========
+    function switchTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tab').forEach((t, i) => {
+            t.classList.toggle('active', (i === 0 && tab === 'twoPointers') || (i === 1 && tab === 'bruteForce'));
+        });
+        document.getElementById('legendTP').classList.toggle('hidden', tab !== 'twoPointers');
+        document.getElementById('legendBF').classList.toggle('hidden', tab !== 'bruteForce');
+        resetAnimation();
+    }
+
+    // ========== Input ==========
+    function applyInput() {
+        const arrStr = document.getElementById('arrInput').value;
+        const tStr = document.getElementById('targetInput').value;
+        const parsed = arrStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+        const parsedTarget = parseInt(tStr.trim());
+        if (parsed.length < 3) { alert('Need at least 3 numbers'); return; }
+        if (isNaN(parsedTarget)) { alert('Invalid target'); return; }
+        originalArray = parsed;
+        target = parsedTarget;
+        resetAnimation();
+    }
+
+    function generateRandom() {
+        const n = 5 + Math.floor(Math.random() * 5);
+        originalArray = [];
+        for (let i = 0; i < n; i++) {
+            originalArray.push(Math.floor(Math.random() * 21) - 10);
+        }
+        target = Math.floor(Math.random() * 21) - 10;
+        document.getElementById('arrInput').value = originalArray.join(', ');
+        document.getElementById('targetInput').value = target;
+        resetAnimation();
+    }
+
+    // ========== Step generation: Two Pointers ==========
+    function generateTwoPointerSteps() {
+        const nums = [...originalArray];
+        const stepsArr = [];
+
+        // Step: show original
+        stepsArr.push({
+            array: [...nums],
+            sorted: false,
+            pointers: {},
+            currentSum: null,
+            bestSum: null,
+            bestDist: Infinity,
+            currentDist: null,
+            log: `Original array: [${nums.join(', ')}], target = ${target}`
+        });
+
+        // Step: show sorted
+        nums.sort((a, b) => a - b);
+        stepsArr.push({
+            array: [...nums],
+            sorted: true,
+            sorting: true,
+            pointers: {},
+            currentSum: null,
+            bestSum: null,
+            bestDist: Infinity,
+            currentDist: null,
+            log: `Sorted array: [${nums.join(', ')}]`
+        });
+
+        const n = nums.length;
+        let closest = nums[0] + nums[1] + nums[2];
+        let bestDist = Math.abs(closest - target);
+
+        // Initial closest
+        stepsArr.push({
+            array: [...nums],
+            sorted: true,
+            pointers: { i: 0, left: 1, right: 2 },
+            currentSum: closest,
+            bestSum: closest,
+            bestDist: bestDist,
+            currentDist: bestDist,
+            log: `Initialize: closest = ${nums[0]} + ${nums[1]} + ${nums[2]} = ${closest}, distance = ${bestDist}`
+        });
+
+        for (let i = 0; i < n - 2; i++) {
+            if (i > 0 && nums[i] === nums[i - 1]) {
+                stepsArr.push({
+                    array: [...nums],
+                    sorted: true,
+                    pointers: { i },
+                    currentSum: null,
+                    bestSum: closest,
+                    bestDist: bestDist,
+                    currentDist: null,
+                    log: `Skip i=${i} (duplicate value ${nums[i]})`
+                });
+                continue;
+            }
+
+            let left = i + 1, right = n - 1;
+
+            stepsArr.push({
+                array: [...nums],
+                sorted: true,
+                pointers: { i, left, right },
+                currentSum: null,
+                bestSum: closest,
+                bestDist: bestDist,
+                currentDist: null,
+                log: `Fix i=${i} (${nums[i]}), left=${left}, right=${right}`
+            });
+
+            while (left < right) {
+                const sum = nums[i] + nums[left] + nums[right];
+                const dist = Math.abs(sum - target);
+
+                let logMsg = `sum = ${nums[i]} + ${nums[left]} + ${nums[right]} = ${sum}, distance = ${dist}`;
+                let updated = false;
+
+                if (dist < bestDist) {
+                    closest = sum;
+                    bestDist = dist;
+                    updated = true;
+                    logMsg += ` → NEW BEST! closest = ${closest}`;
+                }
+
+                if (sum === target) {
+                    stepsArr.push({
+                        array: [...nums],
+                        sorted: true,
+                        pointers: { i, left, right },
+                        currentSum: sum,
+                        bestSum: closest,
+                        bestDist: 0,
+                        currentDist: 0,
+                        log: logMsg + ' → EXACT MATCH! Return ' + target,
+                        done: true
+                    });
+                    return stepsArr;
+                }
+
+                const moveMsg = sum < target ? `sum < target → left++` : `sum > target → right--`;
+
+                stepsArr.push({
+                    array: [...nums],
+                    sorted: true,
+                    pointers: { i, left, right },
+                    currentSum: sum,
+                    bestSum: closest,
+                    bestDist: bestDist,
+                    currentDist: dist,
+                    log: logMsg,
+                    updated
+                });
+
+                if (sum < target) {
+                    left++;
+                } else {
+                    right--;
+                }
+
+                stepsArr.push({
+                    array: [...nums],
+                    sorted: true,
+                    pointers: { i, left, right },
+                    currentSum: sum,
+                    bestSum: closest,
+                    bestDist: bestDist,
+                    currentDist: dist,
+                    log: moveMsg
+                });
+            }
+        }
+
+        stepsArr.push({
+            array: [...nums],
+            sorted: true,
+            pointers: {},
+            currentSum: null,
+            bestSum: closest,
+            bestDist: bestDist,
+            currentDist: null,
+            log: `Done! Closest sum = ${closest}, distance = ${bestDist}`,
+            done: true
+        });
+
+        return stepsArr;
+    }
+
+    // ========== Step generation: Brute Force ==========
+    function generateBruteForceSteps() {
+        const nums = [...originalArray];
+        const stepsArr = [];
+        const n = nums.length;
+
+        let closest = nums[0] + nums[1] + nums[2];
+        let bestDist = Math.abs(closest - target);
+
+        stepsArr.push({
+            array: [...nums],
+            sorted: false,
+            pointers: {},
+            currentSum: null,
+            bestSum: null,
+            bestDist: Infinity,
+            currentDist: null,
+            log: `Array: [${nums.join(', ')}], target = ${target}`
+        });
+
+        stepsArr.push({
+            array: [...nums],
+            sorted: false,
+            pointers: { i: 0, j: 1, k: 2 },
+            currentSum: closest,
+            bestSum: closest,
+            bestDist: bestDist,
+            currentDist: bestDist,
+            log: `Initialize: closest = ${nums[0]} + ${nums[1]} + ${nums[2]} = ${closest}, distance = ${bestDist}`
+        });
+
+        for (let i = 0; i < n - 2; i++) {
+            for (let j = i + 1; j < n - 1; j++) {
+                for (let k = j + 1; k < n; k++) {
+                    if (i === 0 && j === 1 && k === 2) continue; // skip initial
+
+                    const sum = nums[i] + nums[j] + nums[k];
+                    const dist = Math.abs(sum - target);
+                    let logMsg = `(${i},${j},${k}): ${nums[i]} + ${nums[j]} + ${nums[k]} = ${sum}, dist = ${dist}`;
+                    let updated = false;
+
+                    if (dist < bestDist) {
+                        closest = sum;
+                        bestDist = dist;
+                        updated = true;
+                        logMsg += ` → NEW BEST!`;
+                    }
+
+                    stepsArr.push({
+                        array: [...nums],
+                        sorted: false,
+                        pointers: { i, j, k },
+                        currentSum: sum,
+                        bestSum: closest,
+                        bestDist: bestDist,
+                        currentDist: dist,
+                        log: logMsg,
+                        updated
+                    });
+                }
+            }
+        }
+
+        stepsArr.push({
+            array: [...nums],
+            sorted: false,
+            pointers: {},
+            currentSum: null,
+            bestSum: closest,
+            bestDist: bestDist,
+            currentDist: null,
+            log: `Done! Closest sum = ${closest}, distance = ${bestDist}`,
+            done: true
+        });
+
+        return stepsArr;
+    }
+
+    // ========== Rendering ==========
+    function render(step) {
+        if (!step) return;
+
+        const display = document.getElementById('arrayDisplay');
+        const arr = step.array;
+        const maxAbs = Math.max(...arr.map(Math.abs), 1);
+        const maxBarH = 160;
+
+        // Update status
+        document.getElementById('statusTarget').textContent = target;
+        document.getElementById('statusSum').textContent = step.currentSum !== null ? step.currentSum : '—';
+        document.getElementById('statusBest').textContent = step.bestSum !== null ? step.bestSum : '—';
+        document.getElementById('statusDist').textContent = step.currentDist !== null ? step.currentDist : '—';
+        document.getElementById('statusStep').textContent = `${currentStep + 1} / ${steps.length}`;
+
+        // Sorting info
+        const sortInfo = document.getElementById('sortingInfo');
+        sortInfo.classList.toggle('hidden', !step.sorting);
+
+        // Distance bars
+        const maxDist = Math.max(
+            ...steps.filter(s => s.bestDist !== Infinity && s.bestDist !== null).map(s => Math.max(s.bestDist || 0, s.currentDist || 0)),
+            1
+        );
+
+        const bestPct = step.bestDist !== Infinity && step.bestDist !== null
+            ? Math.min((step.bestDist / maxDist) * 100, 100) : 0;
+        const currPct = step.currentDist !== null
+            ? Math.min((step.currentDist / maxDist) * 100, 100) : 0;
+
+        document.getElementById('bestDistBar').style.width = bestPct + '%';
+        document.getElementById('bestDistVal').textContent = step.bestDist !== Infinity ? step.bestDist : '—';
+        document.getElementById('currDistBar').style.width = currPct + '%';
+        document.getElementById('currDistVal').textContent = step.currentDist !== null ? step.currentDist : '—';
+
+        // Build array display
+        let html = '';
+        for (let idx = 0; idx < arr.length; idx++) {
+            const val = arr[idx];
+            const h = Math.max((Math.abs(val) / maxAbs) * maxBarH, 8);
+            let barClass = 'bar-default';
+            let pointerHtml = '';
+
+            if (currentTab === 'twoPointers') {
+                if (step.pointers.i === idx) { barClass = 'bar-i'; pointerHtml = '<span class="pointer-i">i</span>'; }
+                if (step.pointers.left === idx) { barClass = 'bar-left'; pointerHtml += '<span class="pointer-l">L</span>'; }
+                if (step.pointers.right === idx) { barClass = 'bar-right'; pointerHtml += '<span class="pointer-r">R</span>'; }
+                if (step.sorting) barClass = 'bar-sorted';
+            } else {
+                if (step.pointers.i === idx) { barClass = 'bar-i'; pointerHtml = '<span class="pointer-i">i</span>'; }
+                if (step.pointers.j === idx) { barClass = 'bar-j'; pointerHtml += '<span class="pointer-j">j</span>'; }
+                if (step.pointers.k === idx) { barClass = 'bar-k'; pointerHtml += '<span class="pointer-k">k</span>'; }
+            }
+
+            const isNeg = val < 0;
+            html += `
+                <div class="arr-item">
+                    <div class="arr-pointer">${pointerHtml || '&nbsp;'}</div>
+                    <div class="arr-bar ${barClass}" style="height:${h}px; ${isNeg ? 'opacity:0.7; border: 1px dashed #94a3b8;' : ''}"></div>
+                    <div class="arr-val" style="${step.updated && pointerHtml ? 'background:#10b981; color:#0f172a;' : ''}">${val}</div>
+                    <div class="arr-idx">${idx}</div>
+                </div>
+            `;
+        }
+        display.innerHTML = html;
+
+        // Log
+        const logSection = document.getElementById('logSection');
+        const logClass = step.done ? 'log-exact' : step.updated ? 'log-update' : 'log-sum';
+        logSection.innerHTML += `<div class="log-entry"><span class="${logClass}">[${currentStep + 1}]</span> ${step.log}</div>`;
+        logSection.scrollTop = logSection.scrollHeight;
+    }
+
+    // ========== Controls ==========
+    function nextStep() {
+        if (currentStep < steps.length - 1) {
+            currentStep++;
+            render(steps[currentStep]);
+        } else {
+            stopPlay();
+        }
+    }
+
+    function prevStep() {
+        if (currentStep > 0) {
+            currentStep--;
+            // Re-render from start to current step
+            document.getElementById('logSection').innerHTML = '';
+            const saved = currentStep;
+            currentStep = -1;
+            for (let i = 0; i <= saved; i++) {
+                currentStep = i;
+                render(steps[i]);
+            }
+        }
+    }
+
+    function togglePlay() {
+        if (isPlaying) {
+            stopPlay();
+        } else {
+            isPlaying = true;
+            document.getElementById('playBtn').innerHTML = '&#9646;&#9646; Pause';
+            const speed = document.getElementById('speedRange').value;
+            const delay = 1200 - (speed * 100);
+            playInterval = setInterval(() => {
+                if (currentStep >= steps.length - 1) {
+                    stopPlay();
+                } else {
+                    nextStep();
+                }
+            }, delay);
+        }
+    }
+
+    function stopPlay() {
+        isPlaying = false;
+        document.getElementById('playBtn').innerHTML = '&#9654; Play';
+        if (playInterval) {
+            clearInterval(playInterval);
+            playInterval = null;
+        }
+    }
+
+    function resetAnimation() {
+        stopPlay();
+        currentStep = -1;
+        document.getElementById('logSection').innerHTML = '';
+        document.getElementById('arrayDisplay').innerHTML = '';
+        document.getElementById('statusSum').textContent = '—';
+        document.getElementById('statusBest').textContent = '—';
+        document.getElementById('statusDist').textContent = '—';
+        document.getElementById('statusTarget').textContent = target;
+        document.getElementById('bestDistBar').style.width = '0%';
+        document.getElementById('bestDistVal').textContent = '—';
+        document.getElementById('currDistBar').style.width = '0%';
+        document.getElementById('currDistVal').textContent = '—';
+        document.getElementById('sortingInfo').classList.add('hidden');
+
+        if (currentTab === 'twoPointers') {
+            steps = generateTwoPointerSteps();
+        } else {
+            steps = generateBruteForceSteps();
+        }
+
+        document.getElementById('statusStep').textContent = `0 / ${steps.length}`;
+    }
+
+    // Speed label update
+    document.getElementById('speedRange').addEventListener('input', function () {
+        document.getElementById('speedLabel').textContent = this.value + 'x';
+        if (isPlaying) {
+            stopPlay();
+            togglePlay();
+        }
+    });
+
+    // Initialize
+    resetAnimation();
+</script>
+
+</body>
+</html>

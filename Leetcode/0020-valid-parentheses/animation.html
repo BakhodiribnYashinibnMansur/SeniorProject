@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0020. Valid Parentheses — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            width: 250px;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        /* PRESET BUTTONS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            padding: 6px 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            border-color: #60a5fa;
+            color: #60a5fa;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .btn-step { background: #3b82f6; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-play { background: #10b981; }
+        .btn-play:hover { background: #059669; }
+        .btn-reset { background: #ef4444; }
+        .btn-reset:hover { background: #dc2626; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 80px;
+            accent-color: #8b5cf6;
+        }
+
+        /* STRING DISPLAY */
+        .string-display {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            min-height: 50px;
+            align-items: center;
+        }
+
+        .char-box {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            border-radius: 8px;
+            background: #0f172a;
+            border: 2px solid #334155;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .char-box.current {
+            border-color: #fbbf24;
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
+            transform: scale(1.1);
+        }
+
+        .char-box.processed {
+            opacity: 0.4;
+        }
+
+        .char-box.matched {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .char-box.error {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        /* Bracket colors */
+        .bracket-paren { color: #60a5fa; }
+        .bracket-square { color: #a78bfa; }
+        .bracket-curly { color: #f472b6; }
+
+        /* STACK VISUALIZATION */
+        .stack-area {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: flex-end;
+            margin-bottom: 20px;
+            min-height: 220px;
+        }
+
+        .stack-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stack-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .stack-visual {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            min-width: 60px;
+            min-height: 180px;
+            border-left: 3px solid #475569;
+            border-right: 3px solid #475569;
+            border-bottom: 3px solid #475569;
+            border-radius: 0 0 8px 8px;
+            padding: 4px;
+            position: relative;
+            justify-content: flex-start;
+        }
+
+        .stack-item {
+            width: 52px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            border-radius: 6px;
+            margin: 2px 0;
+            animation: stackPush 0.3s ease-out;
+        }
+
+        @keyframes stackPush {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes stackPop {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(-30px); opacity: 0; }
+        }
+
+        .stack-item.paren { background: rgba(96, 165, 250, 0.25); color: #60a5fa; border: 1px solid #60a5fa; }
+        .stack-item.square { background: rgba(167, 139, 250, 0.25); color: #a78bfa; border: 1px solid #a78bfa; }
+        .stack-item.curly { background: rgba(244, 114, 182, 0.25); color: #f472b6; border: 1px solid #f472b6; }
+
+        .stack-empty-label {
+            color: #475569;
+            font-size: 0.8rem;
+            font-style: italic;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* LOG */
+        .log-area {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border: 1px solid #334155;
+        }
+
+        .log-entry { margin-bottom: 2px; }
+        .log-push { color: #60a5fa; }
+        .log-pop { color: #10b981; }
+        .log-error { color: #ef4444; }
+        .log-info { color: #94a3b8; }
+        .log-result { color: #fbbf24; font-weight: 600; }
+
+        /* RESULT */
+        .result-display {
+            text-align: center;
+            padding: 16px;
+            margin-top: 16px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .result-valid {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+
+        .result-invalid {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        .result-pending {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid #334155;
+            color: #94a3b8;
+        }
+
+        /* REPLACE TAB */
+        .replace-passes {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+            min-height: 150px;
+        }
+
+        .replace-pass {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px 16px;
+            border: 1px solid #334155;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .replace-pass-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .replace-string {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+        }
+
+        .replace-highlight {
+            background: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            text-decoration: line-through;
+            border-radius: 3px;
+            padding: 0 2px;
+        }
+
+        /* TAB CONTENT */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* INFO BOX */
+        .info-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .info-box code {
+            background: #334155;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0020. Valid Parentheses</h1>
+        <p>Interactive visualization of bracket validation algorithms</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="stack">Stack Approach</div>
+        <div class="tab" data-tab="replace">Replace Pairs Approach</div>
+    </div>
+
+    <div class="container">
+        <!-- Input Section -->
+        <div class="input-section">
+            <label for="strInput">String:</label>
+            <input type="text" id="strInput" value="{[()]}" placeholder="Enter brackets...">
+        </div>
+
+        <div class="presets">
+            <button class="preset-btn" data-val="()">()</button>
+            <button class="preset-btn" data-val="()[]{}">()[]{}</button>
+            <button class="preset-btn" data-val="(]">(]</button>
+            <button class="preset-btn" data-val="{[()]}">{[()]}</button>
+            <button class="preset-btn" data-val="([)]">([)]</button>
+            <button class="preset-btn" data-val="(({{[[]]}}))">(({{[[]]}}))</button>
+            <button class="preset-btn" data-val="">empty</button>
+            <button class="preset-btn" data-val="(">(</button>
+            <button class="preset-btn" data-val="]{{}">]{{}&#x200B;</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-step" id="btnStep">Step</button>
+            <button class="btn btn-play" id="btnPlay">Play</button>
+            <button class="btn btn-reset" id="btnReset">Reset</button>
+            <div class="speed-control">
+                <span>Speed:</span>
+                <input type="range" id="speedRange" min="1" max="10" value="5">
+                <span id="speedLabel">5</span>
+            </div>
+        </div>
+
+        <!-- Stack Tab -->
+        <div class="tab-content active" id="tab-stack">
+            <div class="info-box">
+                <strong>Stack Approach:</strong> Push opening brackets onto the stack. For each closing bracket, check if it matches the top of the stack. Time: <code>O(n)</code>, Space: <code>O(n)</code>
+            </div>
+
+            <div class="string-display" id="stackStringDisplay"></div>
+
+            <div class="stack-area">
+                <div class="stack-container">
+                    <div class="stack-label">Stack</div>
+                    <div class="stack-visual" id="stackVisual">
+                        <span class="stack-empty-label">empty</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="log-area" id="stackLog">
+                <div class="log-entry log-info">Click "Step" or "Play" to begin...</div>
+            </div>
+
+            <div class="result-display result-pending" id="stackResult">
+                Waiting to start...
+            </div>
+        </div>
+
+        <!-- Replace Tab -->
+        <div class="tab-content" id="tab-replace">
+            <div class="info-box">
+                <strong>Replace Pairs Approach:</strong> Repeatedly remove <code>()</code>, <code>[]</code>, <code>{}</code> pairs until no more can be removed. If the string is empty, it's valid. Time: <code>O(n&sup2;)</code>, Space: <code>O(n)</code>
+            </div>
+
+            <div class="string-display" id="replaceStringDisplay"></div>
+
+            <div class="replace-passes" id="replacePasses"></div>
+
+            <div class="log-area" id="replaceLog">
+                <div class="log-entry log-info">Click "Step" or "Play" to begin...</div>
+            </div>
+
+            <div class="result-display result-pending" id="replaceResult">
+                Waiting to start...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // STATE
+        // ============================================================
+        let currentTab = 'stack';
+        let isPlaying = false;
+        let playTimer = null;
+
+        // Stack approach state
+        let stackState = {
+            input: '',
+            index: 0,
+            stack: [],
+            done: false,
+            result: null,
+            charStates: [] // 'pending', 'current', 'processed', 'matched', 'error'
+        };
+
+        // Replace approach state
+        let replaceState = {
+            input: '',
+            current: '',
+            passes: [],
+            done: false,
+            result: null,
+            passIndex: 0
+        };
+
+        // ============================================================
+        // TABS
+        // ============================================================
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = tab.dataset.tab;
+                document.getElementById('tab-' + currentTab).classList.add('active');
+                resetAll();
+            });
+        });
+
+        // ============================================================
+        // PRESETS
+        // ============================================================
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById('strInput').value = btn.dataset.val;
+                resetAll();
+            });
+        });
+
+        // ============================================================
+        // CONTROLS
+        // ============================================================
+        document.getElementById('btnStep').addEventListener('click', step);
+        document.getElementById('btnPlay').addEventListener('click', togglePlay);
+        document.getElementById('btnReset').addEventListener('click', resetAll);
+
+        document.getElementById('speedRange').addEventListener('input', (e) => {
+            document.getElementById('speedLabel').textContent = e.target.value;
+        });
+
+        document.getElementById('strInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') resetAll();
+        });
+
+        function getSpeed() {
+            return 1100 - document.getElementById('speedRange').value * 100;
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                stopPlay();
+            } else {
+                isPlaying = true;
+                document.getElementById('btnPlay').textContent = 'Pause';
+                document.getElementById('btnPlay').style.background = '#f59e0b';
+                playLoop();
+            }
+        }
+
+        function stopPlay() {
+            isPlaying = false;
+            clearTimeout(playTimer);
+            document.getElementById('btnPlay').textContent = 'Play';
+            document.getElementById('btnPlay').style.background = '#10b981';
+        }
+
+        function playLoop() {
+            if (!isPlaying) return;
+            const done = step();
+            if (done) {
+                stopPlay();
+                return;
+            }
+            playTimer = setTimeout(playLoop, getSpeed());
+        }
+
+        // ============================================================
+        // STEP (dispatches to correct tab)
+        // ============================================================
+        function step() {
+            if (currentTab === 'stack') return stepStack();
+            else return stepReplace();
+        }
+
+        // ============================================================
+        // BRACKET HELPERS
+        // ============================================================
+        function getBracketClass(ch) {
+            if (ch === '(' || ch === ')') return 'bracket-paren';
+            if (ch === '[' || ch === ']') return 'bracket-square';
+            if (ch === '{' || ch === '}') return 'bracket-curly';
+            return '';
+        }
+
+        function getStackItemClass(ch) {
+            if (ch === '(' || ch === ')') return 'paren';
+            if (ch === '[' || ch === ']') return 'square';
+            if (ch === '{' || ch === '}') return 'curly';
+            return '';
+        }
+
+        const MATCHING = { ')': '(', ']': '[', '}': '{' };
+        const OPENERS = new Set(['(', '[', '{']);
+
+        // ============================================================
+        // STACK APPROACH
+        // ============================================================
+        function initStack() {
+            const input = document.getElementById('strInput').value;
+            stackState = {
+                input: input,
+                index: 0,
+                stack: [],
+                done: false,
+                result: null,
+                charStates: Array(input.length).fill('pending')
+            };
+            renderStackString();
+            renderStack();
+            document.getElementById('stackLog').innerHTML = '<div class="log-entry log-info">Click "Step" or "Play" to begin...</div>';
+            document.getElementById('stackResult').className = 'result-display result-pending';
+            document.getElementById('stackResult').textContent = 'Waiting to start...';
+        }
+
+        function stepStack() {
+            if (stackState.done) return true;
+
+            const s = stackState.input;
+            const logArea = document.getElementById('stackLog');
+
+            // First step: clear initial message
+            if (stackState.index === 0 && stackState.result === null) {
+                logArea.innerHTML = '';
+            }
+
+            // If we've processed all characters
+            if (stackState.index >= s.length) {
+                stackState.done = true;
+                if (stackState.stack.length === 0) {
+                    stackState.result = true;
+                    addLog('stackLog', `Result: VALID -- stack is empty`, 'log-result');
+                    document.getElementById('stackResult').className = 'result-display result-valid';
+                    document.getElementById('stackResult').textContent = 'VALID -- all brackets matched!';
+                } else {
+                    stackState.result = false;
+                    addLog('stackLog', `Result: INVALID -- stack has ${stackState.stack.length} unmatched bracket(s)`, 'log-result');
+                    document.getElementById('stackResult').className = 'result-display result-invalid';
+                    document.getElementById('stackResult').textContent = 'INVALID -- unmatched opening bracket(s) remain';
+                }
+                renderStackString();
+                return true;
+            }
+
+            const ch = s[stackState.index];
+            stackState.charStates[stackState.index] = 'current';
+
+            if (OPENERS.has(ch)) {
+                // Push opening bracket
+                stackState.stack.push(ch);
+                addLog('stackLog', `Step ${stackState.index + 1}: '${ch}' is opening -- push onto stack`, 'log-push');
+                stackState.charStates[stackState.index] = 'matched';
+            } else {
+                // Closing bracket
+                if (stackState.stack.length === 0) {
+                    // Stack empty - no matching opener
+                    stackState.charStates[stackState.index] = 'error';
+                    addLog('stackLog', `Step ${stackState.index + 1}: '${ch}' is closing -- stack is EMPTY! No match.`, 'log-error');
+                    stackState.done = true;
+                    stackState.result = false;
+                    document.getElementById('stackResult').className = 'result-display result-invalid';
+                    document.getElementById('stackResult').textContent = `INVALID -- closing '${ch}' has no matching opener`;
+                    renderStackString();
+                    renderStack();
+                    return true;
+                }
+
+                const top = stackState.stack[stackState.stack.length - 1];
+                if (top === MATCHING[ch]) {
+                    // Match!
+                    stackState.stack.pop();
+                    stackState.charStates[stackState.index] = 'matched';
+                    addLog('stackLog', `Step ${stackState.index + 1}: '${ch}' matches top '${top}' -- pop stack`, 'log-pop');
+                } else {
+                    // Mismatch
+                    stackState.charStates[stackState.index] = 'error';
+                    addLog('stackLog', `Step ${stackState.index + 1}: '${ch}' does NOT match top '${top}' -- MISMATCH!`, 'log-error');
+                    stackState.done = true;
+                    stackState.result = false;
+                    document.getElementById('stackResult').className = 'result-display result-invalid';
+                    document.getElementById('stackResult').textContent = `INVALID -- '${ch}' does not match '${top}'`;
+                    renderStackString();
+                    renderStack();
+                    return true;
+                }
+            }
+
+            // Mark previous chars as processed
+            for (let i = 0; i < stackState.index; i++) {
+                if (stackState.charStates[i] !== 'error') {
+                    stackState.charStates[i] = 'processed';
+                }
+            }
+
+            stackState.index++;
+            renderStackString();
+            renderStack();
+            return false;
+        }
+
+        function renderStackString() {
+            const container = document.getElementById('stackStringDisplay');
+            container.innerHTML = '';
+            const s = stackState.input;
+
+            if (s.length === 0) {
+                container.innerHTML = '<span style="color: #475569; font-style: italic;">empty string</span>';
+                return;
+            }
+
+            for (let i = 0; i < s.length; i++) {
+                const box = document.createElement('div');
+                box.className = 'char-box ' + getBracketClass(s[i]);
+                if (stackState.charStates[i]) {
+                    box.classList.add(stackState.charStates[i]);
+                }
+                box.textContent = s[i];
+                container.appendChild(box);
+            }
+        }
+
+        function renderStack() {
+            const container = document.getElementById('stackVisual');
+            container.innerHTML = '';
+
+            if (stackState.stack.length === 0) {
+                container.innerHTML = '<span class="stack-empty-label">empty</span>';
+                return;
+            }
+
+            for (let i = 0; i < stackState.stack.length; i++) {
+                const item = document.createElement('div');
+                item.className = 'stack-item ' + getStackItemClass(stackState.stack[i]);
+                item.textContent = stackState.stack[i];
+                container.appendChild(item);
+            }
+        }
+
+        // ============================================================
+        // REPLACE APPROACH
+        // ============================================================
+        function initReplace() {
+            const input = document.getElementById('strInput').value;
+            replaceState = {
+                input: input,
+                current: input,
+                passes: [],
+                done: false,
+                result: null,
+                passIndex: 0
+            };
+            renderReplaceString(input);
+            document.getElementById('replacePasses').innerHTML = '';
+            document.getElementById('replaceLog').innerHTML = '<div class="log-entry log-info">Click "Step" or "Play" to begin...</div>';
+            document.getElementById('replaceResult').className = 'result-display result-pending';
+            document.getElementById('replaceResult').textContent = 'Waiting to start...';
+        }
+
+        function stepReplace() {
+            if (replaceState.done) return true;
+
+            const logArea = document.getElementById('replaceLog');
+            const passesArea = document.getElementById('replacePasses');
+
+            // First step: clear initial message
+            if (replaceState.passIndex === 0) {
+                logArea.innerHTML = '';
+            }
+
+            const before = replaceState.current;
+
+            // Perform replacements
+            let after = before.replace('()', '').replace('[]', '').replace('{}', '');
+
+            replaceState.passIndex++;
+
+            // Show the pass
+            const passDiv = document.createElement('div');
+            passDiv.className = 'replace-pass';
+
+            if (after === before) {
+                // No changes made
+                replaceState.done = true;
+                if (after.length === 0) {
+                    replaceState.result = true;
+                    passDiv.innerHTML = `<div class="replace-pass-label">Pass ${replaceState.passIndex}</div><div class="replace-string" style="color: #10b981;">String is empty!</div>`;
+                    addLog('replaceLog', `Pass ${replaceState.passIndex}: No changes possible. String is empty.`, 'log-result');
+                    document.getElementById('replaceResult').className = 'result-display result-valid';
+                    document.getElementById('replaceResult').textContent = 'VALID -- string reduced to empty!';
+                } else {
+                    replaceState.result = false;
+                    passDiv.innerHTML = `<div class="replace-pass-label">Pass ${replaceState.passIndex}</div><div class="replace-string" style="color: #ef4444;">"${highlightReplaceString(before)}" -- no pairs to remove</div>`;
+                    addLog('replaceLog', `Pass ${replaceState.passIndex}: No pairs found. Remaining: "${before}"`, 'log-error');
+                    document.getElementById('replaceResult').className = 'result-display result-invalid';
+                    document.getElementById('replaceResult').textContent = `INVALID -- cannot reduce "${before}" further`;
+                }
+            } else {
+                // Show what was removed
+                const removed = [];
+                if (before.includes('()') && !before.replace('()', '').includes('()') || before.includes('()')) removed.push('()');
+                if (before.includes('[]')) removed.push('[]');
+                if (before.includes('{}')) removed.push('{}');
+
+                passDiv.innerHTML = `<div class="replace-pass-label">Pass ${replaceState.passIndex}: Remove ${removed.map(r => '"' + r + '"').join(', ')}</div><div class="replace-string">"${highlightReplaceString(before)}" &rarr; "${after || '<em style=color:#10b981>empty</em>'}"</div>`;
+
+                addLog('replaceLog', `Pass ${replaceState.passIndex}: "${before}" -> "${after}" (removed ${removed.join(', ')})`, 'log-pop');
+
+                replaceState.current = after;
+
+                // Check if empty after this pass
+                if (after.length === 0) {
+                    replaceState.done = true;
+                    replaceState.result = true;
+                    document.getElementById('replaceResult').className = 'result-display result-valid';
+                    document.getElementById('replaceResult').textContent = 'VALID -- string reduced to empty!';
+                    addLog('replaceLog', 'Result: VALID -- string is empty!', 'log-result');
+                }
+            }
+
+            passesArea.appendChild(passDiv);
+            renderReplaceString(replaceState.current);
+
+            return replaceState.done;
+        }
+
+        function highlightReplaceString(s) {
+            let result = '';
+            for (let i = 0; i < s.length; i++) {
+                const pair = s.substring(i, i + 2);
+                if (pair === '()' || pair === '[]' || pair === '{}') {
+                    result += `<span class="replace-highlight">${pair}</span>`;
+                    i++; // skip next char
+                } else {
+                    result += `<span class="${getBracketClass(s[i])}">${s[i]}</span>`;
+                }
+            }
+            return result;
+        }
+
+        function renderReplaceString(s) {
+            const container = document.getElementById('replaceStringDisplay');
+            container.innerHTML = '';
+
+            if (s.length === 0) {
+                container.innerHTML = '<span style="color: #10b981; font-style: italic;">empty string</span>';
+                return;
+            }
+
+            for (let i = 0; i < s.length; i++) {
+                const box = document.createElement('div');
+                box.className = 'char-box ' + getBracketClass(s[i]);
+                box.textContent = s[i];
+                container.appendChild(box);
+            }
+        }
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+        function addLog(logId, message, cls) {
+            const logArea = document.getElementById(logId);
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + (cls || 'log-info');
+            entry.textContent = message;
+            logArea.appendChild(entry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        function resetAll() {
+            stopPlay();
+            if (currentTab === 'stack') {
+                initStack();
+            } else {
+                initReplace();
+            }
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        initStack();
+        initReplace();
+    </script>
+</body>
+</html>

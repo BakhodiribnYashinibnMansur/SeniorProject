@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0019. Remove Nth Node From End of List — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        .input-list { width: 200px; }
+        .input-n { width: 80px; }
+
+        .input-section label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: #22c55e; color: white; }
+        .btn-success:hover { background: #16a34a; }
+        .btn-warning { background: #f59e0b; color: #1e293b; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-generate { background: #8b5cf6; color: white; }
+        .btn-generate:hover { background: #7c3aed; }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+
+        /* PRESET OPTIONS */
+        .preset-options {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .preset-options span { color: #94a3b8; font-size: 0.85rem; }
+
+        .preset-btn {
+            padding: 4px 10px;
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 4px;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover { background: #475569; border-color: #64748b; }
+
+        /* VISUALIZATION AREA */
+        .viz-area {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .list-row {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            position: relative;
+        }
+
+        .node-wrapper {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .node {
+            width: 56px;
+            height: 56px;
+            border: 2px solid #475569;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: #1e293b;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .node.dummy {
+            background: #334155;
+            border-color: #64748b;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            width: 48px;
+            height: 48px;
+        }
+
+        .node.highlight-fast {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.15);
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .node.highlight-slow {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.15);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .node.highlight-both {
+            border-color: #a78bfa;
+            background: rgba(167, 139, 250, 0.15);
+            box-shadow: 0 0 12px rgba(167, 139, 250, 0.3);
+        }
+
+        .node.highlight-target {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
+        }
+
+        .node.highlight-removed {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.3);
+            opacity: 0.4;
+            transform: scale(0.85) translateY(10px);
+        }
+
+        .node.highlight-curr {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.15);
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.3);
+        }
+
+        .node.highlight-count {
+            border-color: #06b6d4;
+            background: rgba(6, 182, 212, 0.15);
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+        }
+
+        .arrow {
+            width: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .arrow.removed {
+            color: #ef4444;
+            text-decoration: line-through;
+            opacity: 0.3;
+        }
+
+        .null-marker {
+            color: #64748b;
+            font-size: 0.85rem;
+            font-style: italic;
+            padding: 0 8px;
+        }
+
+        .pointer-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            position: absolute;
+            white-space: nowrap;
+        }
+
+        .pointer-label.fast {
+            background: rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+            top: -22px;
+        }
+
+        .pointer-label.slow {
+            background: rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            bottom: -22px;
+        }
+
+        .pointer-label.curr {
+            background: rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+            top: -22px;
+        }
+
+        .pointer-label.count-label {
+            background: rgba(6, 182, 212, 0.3);
+            color: #22d3ee;
+            bottom: -22px;
+        }
+
+        /* INFO BOX */
+        .info-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .info-box .step-title {
+            color: #60a5fa;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .info-box .step-detail {
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .info-box .step-detail code {
+            background: #334155;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            color: #fbbf24;
+            font-size: 0.8rem;
+        }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #334155;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            border: 2px solid;
+        }
+
+        .legend-color.fast-color { border-color: #f59e0b; background: rgba(245, 158, 11, 0.15); }
+        .legend-color.slow-color { border-color: #3b82f6; background: rgba(59, 130, 246, 0.15); }
+        .legend-color.target-color { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
+        .legend-color.curr-color { border-color: #22c55e; background: rgba(34, 197, 94, 0.15); }
+        .legend-color.count-color { border-color: #06b6d4; background: rgba(6, 182, 212, 0.15); }
+
+        /* STEP COUNTER */
+        .step-counter {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin: 8px 0;
+        }
+
+        .step-counter span {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        /* SPEED CONTROL */
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            margin: 8px 0;
+        }
+
+        .speed-control label { color: #94a3b8; font-size: 0.8rem; }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        /* RESULT DISPLAY */
+        .result-display {
+            text-align: center;
+            padding: 12px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 8px;
+            margin-top: 12px;
+            font-weight: 600;
+            color: #4ade80;
+        }
+
+        .result-display.hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0019. Remove Nth Node From End of List</h1>
+        <p>Interactive visualization of Two-Pass and One-Pass Two-Pointer approaches</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('twopass')">Two-Pass</div>
+        <div class="tab" onclick="switchTab('onepass')">One-Pass Two Pointers</div>
+    </div>
+
+    <div class="container">
+        <!-- Shared Input Section -->
+        <div class="input-section">
+            <label>List:</label>
+            <input type="text" id="inputList" class="input-list" placeholder="1,2,3,4,5" value="1,2,3,4,5">
+            <label>n:</label>
+            <input type="number" id="inputN" class="input-n" placeholder="2" value="2" min="1">
+            <button class="btn btn-generate" onclick="applyInput()">Apply</button>
+        </div>
+
+        <div class="preset-options">
+            <span>Presets:</span>
+            <button class="preset-btn" onclick="setPreset([1,2,3,4,5], 2)">[1,2,3,4,5] n=2</button>
+            <button class="preset-btn" onclick="setPreset([1], 1)">[1] n=1</button>
+            <button class="preset-btn" onclick="setPreset([1,2], 1)">[1,2] n=1</button>
+            <button class="preset-btn" onclick="setPreset([1,2], 2)">[1,2] n=2</button>
+            <button class="preset-btn" onclick="setPreset([1,2,3,4,5], 5)">[1,2,3,4,5] n=5</button>
+            <button class="preset-btn" onclick="setPreset([1,2,3,4,5,6,7], 4)">[1..7] n=4</button>
+        </div>
+
+        <!-- Two-Pass Tab -->
+        <div id="tab-twopass" class="tab-content active">
+            <div class="controls">
+                <button class="btn btn-success" onclick="twoPassPlay()">&#9654; Play</button>
+                <button class="btn btn-primary" onclick="twoPassStep()">Step &rarr;</button>
+                <button class="btn btn-danger" onclick="twoPassReset()">Reset</button>
+            </div>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedTwoPass" min="200" max="2000" value="800" step="100">
+                <label id="speedLabelTwoPass">800ms</label>
+            </div>
+            <div class="step-counter" id="twoPassStepCounter">Step <span>0</span> / <span>0</span></div>
+            <div class="viz-area" id="twoPassViz"></div>
+            <div class="info-box" id="twoPassInfo">
+                <div class="step-title">Ready</div>
+                <div class="step-detail">Click <strong>Play</strong> or <strong>Step</strong> to begin. First pass counts the list length, second pass finds and removes the target node.</div>
+            </div>
+            <div class="result-display hidden" id="twoPassResult"></div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color count-color"></div> Counting (Pass 1)</div>
+                <div class="legend-item"><div class="legend-color curr-color"></div> Current (Pass 2)</div>
+                <div class="legend-item"><div class="legend-color target-color"></div> Target to Remove</div>
+            </div>
+        </div>
+
+        <!-- One-Pass Tab -->
+        <div id="tab-onepass" class="tab-content">
+            <div class="controls">
+                <button class="btn btn-success" onclick="onePassPlay()">&#9654; Play</button>
+                <button class="btn btn-primary" onclick="onePassStep()">Step &rarr;</button>
+                <button class="btn btn-danger" onclick="onePassReset()">Reset</button>
+            </div>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedOnePass" min="200" max="2000" value="800" step="100">
+                <label id="speedLabelOnePass">800ms</label>
+            </div>
+            <div class="step-counter" id="onePassStepCounter">Step <span>0</span> / <span>0</span></div>
+            <div class="viz-area" id="onePassViz"></div>
+            <div class="info-box" id="onePassInfo">
+                <div class="step-title">Ready</div>
+                <div class="step-detail">Click <strong>Play</strong> or <strong>Step</strong> to begin. Fast pointer advances n+1 steps, then both move together until fast reaches null.</div>
+            </div>
+            <div class="result-display hidden" id="onePassResult"></div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color fast-color"></div> Fast Pointer</div>
+                <div class="legend-item"><div class="legend-color slow-color"></div> Slow Pointer</div>
+                <div class="legend-item"><div class="legend-color target-color"></div> Target to Remove</div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // ============================================================
+    // Shared State
+    // ============================================================
+    let listValues = [1, 2, 3, 4, 5];
+    let nValue = 2;
+    let currentTab = 'twopass';
+
+    // Speed controls
+    document.getElementById('speedTwoPass').addEventListener('input', function() {
+        document.getElementById('speedLabelTwoPass').textContent = this.value + 'ms';
+    });
+    document.getElementById('speedOnePass').addEventListener('input', function() {
+        document.getElementById('speedLabelOnePass').textContent = this.value + 'ms';
+    });
+
+    function switchTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        if (tab === 'twopass') {
+            document.querySelectorAll('.tab')[0].classList.add('active');
+            document.getElementById('tab-twopass').classList.add('active');
+        } else {
+            document.querySelectorAll('.tab')[1].classList.add('active');
+            document.getElementById('tab-onepass').classList.add('active');
+        }
+    }
+
+    function setPreset(vals, n) {
+        listValues = [...vals];
+        nValue = n;
+        document.getElementById('inputList').value = vals.join(',');
+        document.getElementById('inputN').value = n;
+        twoPassReset();
+        onePassReset();
+    }
+
+    function applyInput() {
+        const raw = document.getElementById('inputList').value.trim();
+        const n = parseInt(document.getElementById('inputN').value);
+        const vals = raw.split(',').map(s => parseInt(s.trim())).filter(v => !isNaN(v));
+        if (vals.length === 0) { alert('Please enter valid list values.'); return; }
+        if (isNaN(n) || n < 1 || n > vals.length) { alert('n must be between 1 and list length.'); return; }
+        listValues = vals;
+        nValue = n;
+        twoPassReset();
+        onePassReset();
+    }
+
+    // ============================================================
+    // Render Linked List
+    // ============================================================
+    function renderList(container, vals, options = {}) {
+        /*
+         * options:
+         *   showDummy: bool — show dummy node at start
+         *   highlights: { index: className } — highlight specific nodes (index -1 = dummy)
+         *   pointers: { index: [{ label, className }] } — pointer labels
+         *   removedIndex: number — node to show as removed
+         *   removedArrowIndex: number — arrow to show as removed
+         *   nullAtEnd: bool — show null marker at end
+         *   fastAtNull: bool — show fast pointer at null marker
+         */
+        const { showDummy = true, highlights = {}, pointers = {}, removedIndex = -2, removedArrowIndex = -2, nullAtEnd = true, fastAtNull = false } = options;
+
+        let html = '<div class="list-row">';
+
+        // Dummy node
+        if (showDummy) {
+            const dummyCls = highlights[-1] || '';
+            html += `<div class="node-wrapper">`;
+            if (pointers[-1]) {
+                pointers[-1].forEach(p => {
+                    html += `<div class="pointer-label ${p.className}">${p.label}</div>`;
+                });
+            }
+            html += `<div class="node dummy ${dummyCls}">D</div>`;
+            html += `</div>`;
+            html += `<div class="arrow">&rarr;</div>`;
+        }
+
+        // List nodes
+        for (let i = 0; i < vals.length; i++) {
+            const cls = highlights[i] || '';
+            const isRemoved = i === removedIndex;
+            html += `<div class="node-wrapper">`;
+            if (pointers[i]) {
+                pointers[i].forEach(p => {
+                    html += `<div class="pointer-label ${p.className}">${p.label}</div>`;
+                });
+            }
+            html += `<div class="node ${cls} ${isRemoved ? 'highlight-removed' : ''}">${vals[i]}</div>`;
+            html += `</div>`;
+            if (i < vals.length - 1) {
+                const arrowRemoved = (i === removedArrowIndex);
+                html += `<div class="arrow ${arrowRemoved ? 'removed' : ''}">&rarr;</div>`;
+            }
+        }
+
+        // Null marker
+        if (nullAtEnd) {
+            html += `<div class="arrow">&rarr;</div>`;
+            html += `<div class="node-wrapper">`;
+            if (fastAtNull) {
+                html += `<div class="pointer-label fast">fast</div>`;
+            }
+            html += `<span class="null-marker">null</span>`;
+            html += `</div>`;
+        }
+
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    // ============================================================
+    // TWO-PASS Animation
+    // ============================================================
+    let tpSteps = [];
+    let tpCurrent = 0;
+    let tpPlaying = false;
+    let tpTimer = null;
+
+    function buildTwoPassSteps() {
+        const steps = [];
+        const L = listValues.length;
+        const targetIndex = L - nValue; // 0-based index of node to remove
+
+        // Step 0: Initial state
+        steps.push({
+            title: 'Initial State',
+            detail: `List: [${listValues.join(', ')}], n = ${nValue}<br>Create a dummy node before head. We need to find and remove the <code>${nValue}th</code> node from the end.`,
+            highlights: {},
+            pointers: {},
+            removedIndex: -2,
+            removedArrowIndex: -2,
+            fastAtNull: false,
+            phase: 'init'
+        });
+
+        // Phase 1: Counting length
+        for (let i = 0; i < L; i++) {
+            steps.push({
+                title: `Pass 1: Counting — Visit node ${i + 1}`,
+                detail: `Traversing node with value <code>${listValues[i]}</code>. Current count: <code>${i + 1}</code>`,
+                highlights: Object.fromEntries(Array.from({length: i + 1}, (_, j) => [j, j === i ? 'highlight-count' : ''])),
+                pointers: { [i]: [{ label: `count=${i+1}`, className: 'count-label' }] },
+                removedIndex: -2,
+                removedArrowIndex: -2,
+                fastAtNull: false,
+                phase: 'count'
+            });
+        }
+
+        // After counting
+        steps.push({
+            title: `Pass 1 Complete: Length = ${L}`,
+            detail: `Total length is <code>${L}</code>. The target is the <code>${nValue}th</code> from end = <code>${L} - ${nValue} + 1 = ${targetIndex + 1}th</code> from start (1-indexed).<br>We need to advance <code>${L} - ${nValue} = ${targetIndex}</code> steps from dummy to reach the predecessor.`,
+            highlights: {},
+            pointers: {},
+            removedIndex: -2,
+            removedArrowIndex: -2,
+            fastAtNull: false,
+            phase: 'count-done'
+        });
+
+        // Phase 2: Finding predecessor
+        // Start at dummy (position = -1 conceptually, 0 steps from dummy)
+        steps.push({
+            title: 'Pass 2: Start at dummy node',
+            detail: `Set <code>curr = dummy</code>. Will advance <code>${targetIndex}</code> steps to reach the node just before the target.`,
+            highlights: { [-1]: 'highlight-curr' },
+            pointers: { [-1]: [{ label: 'curr', className: 'curr' }] },
+            removedIndex: -2,
+            removedArrowIndex: -2,
+            fastAtNull: false,
+            phase: 'find'
+        });
+
+        for (let i = 0; i < targetIndex; i++) {
+            steps.push({
+                title: `Pass 2: Advance curr (step ${i + 1}/${targetIndex})`,
+                detail: `Move curr to node with value <code>${listValues[i]}</code>. ${i + 1 < targetIndex ? `${targetIndex - i - 1} more step(s) to go.` : 'Curr is now at the predecessor of the target!'}`,
+                highlights: { [i]: 'highlight-curr', [targetIndex]: i + 1 === targetIndex ? 'highlight-target' : '' },
+                pointers: { [i]: [{ label: 'curr', className: 'curr' }] },
+                removedIndex: -2,
+                removedArrowIndex: -2,
+                fastAtNull: false,
+                phase: 'find'
+            });
+        }
+
+        // Identify target
+        steps.push({
+            title: `Target Found: Node with value ${listValues[targetIndex]}`,
+            detail: `<code>curr</code> is at ${targetIndex === 0 ? 'dummy' : `node ${listValues[targetIndex - 1]}`}. The next node (value <code>${listValues[targetIndex]}</code>) is the ${nValue}th from end — this is the node to remove.`,
+            highlights: {
+                [targetIndex - 1 >= 0 ? targetIndex - 1 : -1]: 'highlight-curr',
+                [targetIndex]: 'highlight-target'
+            },
+            pointers: {
+                [targetIndex - 1 >= 0 ? targetIndex - 1 : -1]: [{ label: 'curr', className: 'curr' }]
+            },
+            removedIndex: -2,
+            removedArrowIndex: -2,
+            fastAtNull: false,
+            phase: 'target'
+        });
+
+        // Remove
+        steps.push({
+            title: `Remove: curr.next = curr.next.next`,
+            detail: `Skip over node <code>${listValues[targetIndex]}</code> by setting <code>curr.next = curr.next.next</code>.<br>Result: [${listValues.filter((_, i) => i !== targetIndex).join(', ')}]`,
+            highlights: {
+                [targetIndex - 1 >= 0 ? targetIndex - 1 : -1]: 'highlight-curr'
+            },
+            pointers: {
+                [targetIndex - 1 >= 0 ? targetIndex - 1 : -1]: [{ label: 'curr', className: 'curr' }]
+            },
+            removedIndex: targetIndex,
+            removedArrowIndex: targetIndex > 0 ? targetIndex - 1 : -2,
+            fastAtNull: false,
+            phase: 'remove'
+        });
+
+        return steps;
+    }
+
+    function twoPassReset() {
+        tpPlaying = false;
+        if (tpTimer) clearTimeout(tpTimer);
+        tpSteps = buildTwoPassSteps();
+        tpCurrent = 0;
+        renderTwoPassStep();
+        document.getElementById('twoPassResult').classList.add('hidden');
+    }
+
+    function renderTwoPassStep() {
+        const step = tpSteps[tpCurrent];
+        const viz = document.getElementById('twoPassViz');
+        renderList(viz, listValues, {
+            showDummy: true,
+            highlights: step.highlights,
+            pointers: step.pointers,
+            removedIndex: step.removedIndex,
+            removedArrowIndex: step.removedArrowIndex,
+            fastAtNull: step.fastAtNull
+        });
+
+        document.getElementById('twoPassInfo').innerHTML =
+            `<div class="step-title">${step.title}</div><div class="step-detail">${step.detail}</div>`;
+
+        const counter = document.getElementById('twoPassStepCounter');
+        counter.innerHTML = `Step <span>${tpCurrent}</span> / <span>${tpSteps.length - 1}</span>`;
+
+        if (tpCurrent === tpSteps.length - 1) {
+            const targetIndex = listValues.length - nValue;
+            const result = listValues.filter((_, i) => i !== targetIndex);
+            const rd = document.getElementById('twoPassResult');
+            rd.textContent = `Result: [${result.join(', ')}]`;
+            rd.classList.remove('hidden');
+        }
+    }
+
+    function twoPassStep() {
+        if (tpCurrent < tpSteps.length - 1) {
+            tpCurrent++;
+            renderTwoPassStep();
+        }
+    }
+
+    function twoPassPlay() {
+        if (tpPlaying) { tpPlaying = false; return; }
+        if (tpCurrent >= tpSteps.length - 1) twoPassReset();
+        tpPlaying = true;
+        const advance = () => {
+            if (!tpPlaying || tpCurrent >= tpSteps.length - 1) { tpPlaying = false; return; }
+            twoPassStep();
+            const speed = parseInt(document.getElementById('speedTwoPass').value);
+            tpTimer = setTimeout(advance, speed);
+        };
+        advance();
+    }
+
+    // ============================================================
+    // ONE-PASS Animation
+    // ============================================================
+    let opSteps = [];
+    let opCurrent = 0;
+    let opPlaying = false;
+    let opTimer = null;
+
+    function buildOnePassSteps() {
+        const steps = [];
+        const L = listValues.length;
+        const targetIndex = L - nValue;
+
+        // Step 0: Initial state
+        steps.push({
+            title: 'Initial State',
+            detail: `List: [${listValues.join(', ')}], n = ${nValue}<br>Create dummy node. Both <code>fast</code> and <code>slow</code> start at dummy.`,
+            highlights: { [-1]: 'highlight-both' },
+            pointers: { [-1]: [{ label: 'fast', className: 'fast' }, { label: 'slow', className: 'slow' }] },
+            removedIndex: -2,
+            removedArrowIndex: -2,
+            fastAtNull: false,
+            phase: 'init'
+        });
+
+        // Phase 1: Advance fast n+1 steps
+        // fast starts at dummy (index -1), moves to index n-1 after n+1 steps
+        let fastPos = -1; // -1 = dummy
+        for (let i = 0; i <= nValue; i++) {
+            fastPos++;
+            const fastActual = fastPos - 1; // -1=dummy, 0=first node, etc.
+            const isAtNull = fastActual >= L;
+
+            const hls = {};
+            const pts = {};
+
+            if (!isAtNull) {
+                if (fastActual === -1) {
+                    hls[-1] = 'highlight-both';
+                    pts[-1] = [{ label: 'fast', className: 'fast' }, { label: 'slow', className: 'slow' }];
+                } else {
+                    hls[-1] = 'highlight-slow';
+                    hls[fastActual] = 'highlight-fast';
+                    pts[-1] = [{ label: 'slow', className: 'slow' }];
+                    pts[fastActual] = [{ label: 'fast', className: 'fast' }];
+                }
+            } else {
+                hls[-1] = 'highlight-slow';
+                pts[-1] = [{ label: 'slow', className: 'slow' }];
+            }
+
+            steps.push({
+                title: `Advance fast: step ${i + 1} of ${nValue + 1}`,
+                detail: `Move <code>fast</code> one step forward. ${isAtNull ? '<code>fast</code> is now at <code>null</code>.' : `<code>fast</code> is at ${fastActual === -1 ? 'dummy' : 'node ' + listValues[fastActual]}.`} Gap between fast and slow: <code>${i + 1}</code> steps.`,
+                highlights: hls,
+                pointers: pts,
+                removedIndex: -2,
+                removedArrowIndex: -2,
+                fastAtNull: isAtNull,
+                phase: 'advance'
+            });
+        }
+
+        // Phase 2: Move both until fast is null
+        let slowPos = -1; // -1 = dummy
+        let fastIdx = nValue; // fast is now at index nValue-1 (0-based node) or nValue steps from dummy
+        // Actually: after n+1 steps from dummy, fast is at node index n (0-based)
+        // Slow is still at dummy (-1)
+        // We need to move both until fast reaches null (past the last node)
+
+        let currentFastNodeIdx = nValue - 1; // 0-based node index (fast is at listValues[nValue-1] if nValue <= L, else at null)
+        let currentSlowNodeIdx = -1; // -1 = dummy
+
+        // How many more moves until fast reaches null?
+        // fast is at node index (nValue-1), needs to go to L (null). That's L - nValue moves.
+        if (currentFastNodeIdx < L) {
+            for (let i = 0; i < L - nValue; i++) {
+                currentFastNodeIdx++;
+                currentSlowNodeIdx++;
+
+                const hls = {};
+                const pts = {};
+                const isAtNull = currentFastNodeIdx >= L;
+
+                if (currentSlowNodeIdx === -1) {
+                    hls[-1] = 'highlight-slow';
+                    pts[-1] = [{ label: 'slow', className: 'slow' }];
+                } else {
+                    hls[currentSlowNodeIdx] = 'highlight-slow';
+                    pts[currentSlowNodeIdx] = [{ label: 'slow', className: 'slow' }];
+                }
+
+                if (!isAtNull) {
+                    if (currentFastNodeIdx === currentSlowNodeIdx) {
+                        hls[currentFastNodeIdx] = 'highlight-both';
+                        pts[currentFastNodeIdx] = [{ label: 'fast', className: 'fast' }, { label: 'slow', className: 'slow' }];
+                    } else {
+                        hls[currentFastNodeIdx] = 'highlight-fast';
+                        pts[currentFastNodeIdx] = [{ label: 'fast', className: 'fast' }];
+                    }
+                }
+
+                steps.push({
+                    title: `Move both: ${isAtNull ? 'fast reached null' : `fast at ${listValues[currentFastNodeIdx]}, slow at ${currentSlowNodeIdx === -1 ? 'dummy' : listValues[currentSlowNodeIdx]}`}`,
+                    detail: `Move both pointers one step. ${isAtNull ? '<code>fast</code> reached <code>null</code> — stop!' : `<code>fast</code> = node ${listValues[currentFastNodeIdx]}, <code>slow</code> = ${currentSlowNodeIdx === -1 ? 'dummy' : 'node ' + listValues[currentSlowNodeIdx]}.`} Gap is maintained at <code>${nValue + 1}</code>.`,
+                    highlights: hls,
+                    pointers: pts,
+                    removedIndex: -2,
+                    removedArrowIndex: -2,
+                    fastAtNull: isAtNull,
+                    phase: 'move'
+                });
+            }
+        }
+
+        // Identify target — slow is now at the predecessor
+        const slowFinal = currentSlowNodeIdx;
+        steps.push({
+            title: `Slow is at predecessor: ${slowFinal === -1 ? 'dummy' : 'node ' + listValues[slowFinal]}`,
+            detail: `<code>fast</code> is at null. <code>slow</code> is at ${slowFinal === -1 ? 'dummy' : 'node ' + listValues[slowFinal]}. The next node (value <code>${listValues[targetIndex]}</code>) is the ${nValue}th from end.`,
+            highlights: {
+                [slowFinal]: 'highlight-slow',
+                [targetIndex]: 'highlight-target'
+            },
+            pointers: {
+                [slowFinal]: [{ label: 'slow', className: 'slow' }]
+            },
+            removedIndex: -2,
+            removedArrowIndex: -2,
+            fastAtNull: true,
+            phase: 'target'
+        });
+
+        // Remove
+        steps.push({
+            title: `Remove: slow.next = slow.next.next`,
+            detail: `Skip over node <code>${listValues[targetIndex]}</code>.<br>Result: [${listValues.filter((_, i) => i !== targetIndex).join(', ')}]`,
+            highlights: {
+                [slowFinal]: 'highlight-slow'
+            },
+            pointers: {
+                [slowFinal]: [{ label: 'slow', className: 'slow' }]
+            },
+            removedIndex: targetIndex,
+            removedArrowIndex: targetIndex > 0 ? targetIndex - 1 : -2,
+            fastAtNull: false,
+            phase: 'remove'
+        });
+
+        return steps;
+    }
+
+    function onePassReset() {
+        opPlaying = false;
+        if (opTimer) clearTimeout(opTimer);
+        opSteps = buildOnePassSteps();
+        opCurrent = 0;
+        renderOnePassStep();
+        document.getElementById('onePassResult').classList.add('hidden');
+    }
+
+    function renderOnePassStep() {
+        const step = opSteps[opCurrent];
+        const viz = document.getElementById('onePassViz');
+        renderList(viz, listValues, {
+            showDummy: true,
+            highlights: step.highlights,
+            pointers: step.pointers,
+            removedIndex: step.removedIndex,
+            removedArrowIndex: step.removedArrowIndex,
+            fastAtNull: step.fastAtNull
+        });
+
+        document.getElementById('onePassInfo').innerHTML =
+            `<div class="step-title">${step.title}</div><div class="step-detail">${step.detail}</div>`;
+
+        const counter = document.getElementById('onePassStepCounter');
+        counter.innerHTML = `Step <span>${opCurrent}</span> / <span>${opSteps.length - 1}</span>`;
+
+        if (opCurrent === opSteps.length - 1) {
+            const targetIndex = listValues.length - nValue;
+            const result = listValues.filter((_, i) => i !== targetIndex);
+            const rd = document.getElementById('onePassResult');
+            rd.textContent = `Result: [${result.join(', ')}]`;
+            rd.classList.remove('hidden');
+        }
+    }
+
+    function onePassStep() {
+        if (opCurrent < opSteps.length - 1) {
+            opCurrent++;
+            renderOnePassStep();
+        }
+    }
+
+    function onePassPlay() {
+        if (opPlaying) { opPlaying = false; return; }
+        if (opCurrent >= opSteps.length - 1) onePassReset();
+        opPlaying = true;
+        const advance = () => {
+            if (!opPlaying || opCurrent >= opSteps.length - 1) { opPlaying = false; return; }
+            onePassStep();
+            const speed = parseInt(document.getElementById('speedOnePass').value);
+            opTimer = setTimeout(advance, speed);
+        };
+        advance();
+    }
+
+    // ============================================================
+    // Initialize
+    // ============================================================
+    twoPassReset();
+    onePassReset();
+</script>
+</body>
+</html>

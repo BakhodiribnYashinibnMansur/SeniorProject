@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0017. Letter Combinations of a Phone Number — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 120px;
+            text-align: center;
+            letter-spacing: 4px;
+            font-weight: 600;
+        }
+
+        .input-section input::placeholder { color: #64748b; letter-spacing: 1px; }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-warning { background: #f59e0b; color: #1e293b; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 12px;
+        }
+
+        .speed-control label { font-size: 0.8rem; color: #94a3b8; }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        /* PHONE KEYPAD */
+        .keypad-section {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 72px);
+            gap: 6px;
+        }
+
+        .key {
+            background: #334155;
+            border: 2px solid #475569;
+            border-radius: 10px;
+            padding: 8px 4px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .key.active {
+            background: #3b82f6;
+            border-color: #60a5fa;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .key.highlight {
+            background: #7c3aed;
+            border-color: #a78bfa;
+            box-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
+        }
+
+        .key .digit {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+
+        .key .letters {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-top: 2px;
+            letter-spacing: 2px;
+        }
+
+        .key.active .letters,
+        .key.highlight .letters {
+            color: #e2e8f0;
+        }
+
+        .key .letters .active-letter {
+            color: #fbbf24;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        /* COMBINATION DISPLAY */
+        .combo-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .combo-display h3 {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .current-combo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fbbf24;
+            letter-spacing: 6px;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .current-combo .char {
+            display: inline-block;
+            background: #334155;
+            border-radius: 6px;
+            padding: 4px 10px;
+            min-width: 36px;
+        }
+
+        .current-combo .char.filled {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .current-combo .char.current {
+            background: #7c3aed;
+            color: white;
+            animation: pulse 0.6s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { box-shadow: 0 0 4px rgba(124, 58, 237, 0.4); }
+            to { box-shadow: 0 0 16px rgba(124, 58, 237, 0.8); }
+        }
+
+        /* RESULT LIST */
+        .result-section {
+            margin-top: 20px;
+        }
+
+        .result-section h3 {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .result-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            min-height: 36px;
+        }
+
+        .result-item {
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .result-item.new {
+            background: #10b981;
+            border-color: #34d399;
+            color: white;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* TREE VISUALIZATION */
+        .tree-section {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .tree-section h3 {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .tree-canvas {
+            width: 100%;
+            min-height: 300px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+
+        /* ITERATIVE LEVELS */
+        .iter-levels {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .iter-level {
+            text-align: center;
+        }
+
+        .iter-level .level-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .iter-level .level-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .iter-level .level-item {
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .iter-level .level-item.expanding {
+            background: #3b82f6;
+            border-color: #60a5fa;
+            color: white;
+        }
+
+        .iter-level .level-item.new-item {
+            background: #7c3aed;
+            border-color: #a78bfa;
+            color: white;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .iter-level .level-item.done {
+            background: #10b981;
+            border-color: #34d399;
+            color: white;
+        }
+
+        /* INFO BOX */
+        .info-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+
+        .info-box .step-info {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        /* STATUS BAR */
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .status-bar span { color: #60a5fa; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0017. Letter Combinations of a Phone Number</h1>
+        <p>Backtracking / Iterative — Interactive Visualization</p>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <div class="tab active" data-tab="backtrack">Backtracking (DFS)</div>
+        <div class="tab" data-tab="iterative">Iterative (BFS)</div>
+    </div>
+
+    <div class="container">
+        <!-- INPUT -->
+        <div class="input-section">
+            <label>Digits (2-9):</label>
+            <input type="text" id="digitInput" value="23" placeholder="e.g. 23" maxlength="4">
+            <button class="btn-primary" id="btnSet">Set</button>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="controls">
+            <button class="btn-primary" id="btnStep">Step</button>
+            <button class="btn-success" id="btnPlay">Play</button>
+            <button class="btn-danger" id="btnReset">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <label id="speedLabel">5x</label>
+            </div>
+        </div>
+
+        <!-- KEYPAD -->
+        <div class="keypad-section">
+            <div class="keypad" id="keypad">
+                <div class="key" data-digit="2"><div class="digit">2</div><div class="letters">abc</div></div>
+                <div class="key" data-digit="3"><div class="digit">3</div><div class="letters">def</div></div>
+                <div class="key" data-digit="4"><div class="digit">4</div><div class="letters">ghi</div></div>
+                <div class="key" data-digit="5"><div class="digit">5</div><div class="letters">jkl</div></div>
+                <div class="key" data-digit="6"><div class="digit">6</div><div class="letters">mno</div></div>
+                <div class="key" data-digit="7"><div class="digit">7</div><div class="letters">pqrs</div></div>
+                <div class="key" data-digit="8"><div class="digit">8</div><div class="letters">tuv</div></div>
+                <div class="key" data-digit="9"><div class="digit">9</div><div class="letters">wxyz</div></div>
+            </div>
+
+            <!-- Current combination being built -->
+            <div class="combo-display">
+                <h3>Current Combination</h3>
+                <div class="current-combo" id="currentCombo"></div>
+            </div>
+        </div>
+
+        <!-- BACKTRACKING TAB -->
+        <div class="tab-content active" id="tab-backtrack">
+            <div class="tree-section">
+                <h3>Backtracking Tree (DFS)</h3>
+                <canvas class="tree-canvas" id="treeCanvas"></canvas>
+            </div>
+
+            <div class="result-section">
+                <h3>Found Combinations (<span id="btResultCount">0</span>)</h3>
+                <div class="result-list" id="btResultList"></div>
+            </div>
+
+            <div class="info-box" id="btInfo">
+                Click <strong>Set</strong> to initialize, then <strong>Step</strong> or <strong>Play</strong> to animate.
+            </div>
+
+            <div class="status-bar">
+                Step: <span id="btStepNum">0</span> / <span id="btTotalSteps">0</span>
+                &nbsp;|&nbsp; Combinations: <span id="btComboCount">0</span>
+            </div>
+        </div>
+
+        <!-- ITERATIVE TAB -->
+        <div class="tab-content" id="tab-iterative">
+            <div class="iter-levels" id="iterLevels"></div>
+
+            <div class="result-section">
+                <h3>Final Combinations (<span id="iterResultCount">0</span>)</h3>
+                <div class="result-list" id="iterResultList"></div>
+            </div>
+
+            <div class="info-box" id="iterInfo">
+                Click <strong>Set</strong> to initialize, then <strong>Step</strong> or <strong>Play</strong> to animate.
+            </div>
+
+            <div class="status-bar">
+                Step: <span id="iterStepNum">0</span> / <span id="iterTotalSteps">0</span>
+                &nbsp;|&nbsp; Level: <span id="iterLevelNum">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // Phone mapping
+        // ============================================================
+        const PHONE = {
+            '2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl',
+            '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'
+        };
+
+        // ============================================================
+        // State
+        // ============================================================
+        let digits = '23';
+        let activeTab = 'backtrack';
+        let playing = false;
+        let playTimer = null;
+
+        // Backtracking state
+        let btSteps = [];
+        let btStepIndex = 0;
+        let btResults = [];
+
+        // Iterative state
+        let iterSteps = [];
+        let iterStepIndex = 0;
+        let iterResults = [];
+
+        // ============================================================
+        // Tab switching
+        // ============================================================
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                activeTab = tab.dataset.tab;
+                document.getElementById('tab-' + activeTab).classList.add('active');
+                stopPlaying();
+            });
+        });
+
+        // ============================================================
+        // Controls
+        // ============================================================
+        document.getElementById('btnSet').addEventListener('click', () => {
+            const input = document.getElementById('digitInput').value.replace(/[^2-9]/g, '').slice(0, 4);
+            document.getElementById('digitInput').value = input;
+            digits = input;
+            stopPlaying();
+            generateSteps();
+            resetAnimation();
+        });
+
+        document.getElementById('btnStep').addEventListener('click', () => {
+            stopPlaying();
+            step();
+        });
+
+        document.getElementById('btnPlay').addEventListener('click', () => {
+            if (playing) {
+                stopPlaying();
+            } else {
+                startPlaying();
+            }
+        });
+
+        document.getElementById('btnReset').addEventListener('click', () => {
+            stopPlaying();
+            resetAnimation();
+        });
+
+        document.getElementById('speedSlider').addEventListener('input', (e) => {
+            document.getElementById('speedLabel').textContent = e.target.value + 'x';
+        });
+
+        function getDelay() {
+            const speed = parseInt(document.getElementById('speedSlider').value);
+            return 1200 - (speed - 1) * 110; // 1200ms at speed 1, 210ms at speed 10
+        }
+
+        function startPlaying() {
+            playing = true;
+            document.getElementById('btnPlay').textContent = 'Pause';
+            document.getElementById('btnPlay').classList.remove('btn-success');
+            document.getElementById('btnPlay').classList.add('btn-warning');
+            playNext();
+        }
+
+        function stopPlaying() {
+            playing = false;
+            clearTimeout(playTimer);
+            document.getElementById('btnPlay').textContent = 'Play';
+            document.getElementById('btnPlay').classList.remove('btn-warning');
+            document.getElementById('btnPlay').classList.add('btn-success');
+        }
+
+        function playNext() {
+            if (!playing) return;
+            const stepped = step();
+            if (stepped) {
+                playTimer = setTimeout(playNext, getDelay());
+            } else {
+                stopPlaying();
+            }
+        }
+
+        function step() {
+            if (activeTab === 'backtrack') {
+                return stepBacktrack();
+            } else {
+                return stepIterative();
+            }
+        }
+
+        // ============================================================
+        // Generate all animation steps
+        // ============================================================
+        function generateSteps() {
+            generateBacktrackSteps();
+            generateIterativeSteps();
+        }
+
+        // --- Backtracking Steps ---
+        function generateBacktrackSteps() {
+            btSteps = [];
+            if (!digits) return;
+
+            const treeNodes = []; // {id, parentId, label, depth, letterIndex}
+            let nodeId = 0;
+            const rootId = nodeId++;
+            treeNodes.push({ id: rootId, parentId: -1, label: '', depth: 0, letterIndex: -1 });
+
+            function backtrack(index, current, parentId) {
+                if (index === digits.length) {
+                    const combo = current.join('');
+                    btSteps.push({
+                        type: 'complete',
+                        combo: combo,
+                        current: [...current],
+                        digitIndex: index - 1,
+                        nodeId: parentId,
+                        treeSnapshot: JSON.parse(JSON.stringify(treeNodes)),
+                        info: `Combination complete: "${combo}" - add to results`
+                    });
+                    return;
+                }
+
+                const digit = digits[index];
+                const letters = PHONE[digit];
+
+                for (let i = 0; i < letters.length; i++) {
+                    const ch = letters[i];
+                    const nid = nodeId++;
+                    treeNodes.push({ id: nid, parentId: parentId, label: ch, depth: index + 1, letterIndex: i });
+
+                    current.push(ch);
+                    btSteps.push({
+                        type: 'choose',
+                        letter: ch,
+                        digitIndex: index,
+                        digit: digit,
+                        current: [...current],
+                        nodeId: nid,
+                        treeSnapshot: JSON.parse(JSON.stringify(treeNodes)),
+                        info: `Digit '${digit}': choose '${ch}' -> current = "${current.join('')}"`
+                    });
+
+                    backtrack(index + 1, current, nid);
+
+                    current.pop();
+                    btSteps.push({
+                        type: 'backtrack',
+                        letter: ch,
+                        digitIndex: index,
+                        current: [...current],
+                        nodeId: parentId,
+                        treeSnapshot: JSON.parse(JSON.stringify(treeNodes)),
+                        info: `Backtrack: remove '${ch}' -> current = "${current.join('')}"`
+                    });
+                }
+            }
+
+            backtrack(0, [], rootId);
+        }
+
+        // --- Iterative Steps ---
+        function generateIterativeSteps() {
+            iterSteps = [];
+            if (!digits) return;
+
+            let result = [''];
+            iterSteps.push({
+                type: 'init',
+                levels: [{ label: 'Start', items: [''], highlightIndex: -1 }],
+                info: 'Initialize with empty string [""]'
+            });
+
+            for (let d = 0; d < digits.length; d++) {
+                const digit = digits[d];
+                const letters = PHONE[digit];
+                const newResult = [];
+
+                // Show which level we're expanding
+                iterSteps.push({
+                    type: 'expand-start',
+                    digitIndex: d,
+                    digit: digit,
+                    letters: letters,
+                    levels: buildLevels(result, d, -1, []),
+                    info: `Processing digit '${digit}' (letters: "${letters}") - expand ${result.length} combinations`
+                });
+
+                for (let c = 0; c < result.length; c++) {
+                    const combo = result[c];
+                    for (let l = 0; l < letters.length; l++) {
+                        const newCombo = combo + letters[l];
+                        newResult.push(newCombo);
+
+                        iterSteps.push({
+                            type: 'expand',
+                            digitIndex: d,
+                            digit: digit,
+                            letter: letters[l],
+                            combo: combo,
+                            newCombo: newCombo,
+                            levels: buildLevels(result, d, c, newResult),
+                            info: `"${combo}" + '${letters[l]}' = "${newCombo}"`
+                        });
+                    }
+                }
+
+                result = newResult;
+
+                iterSteps.push({
+                    type: 'level-done',
+                    digitIndex: d,
+                    levels: buildLevels(result, d + 1, -1, []),
+                    info: `Level ${d + 1} complete: ${result.length} combinations`
+                });
+            }
+
+            iterSteps.push({
+                type: 'done',
+                result: [...result],
+                levels: buildLevels(result, digits.length, -1, []),
+                info: `All done! ${result.length} total combinations found.`
+            });
+        }
+
+        function buildLevels(currentResult, currentLevel, expandingIndex, newItems) {
+            const levels = [];
+            levels.push({
+                label: `Level ${currentLevel} (${currentResult.length} items)`,
+                items: [...currentResult],
+                expandingIndex: expandingIndex,
+                isNew: false
+            });
+            if (newItems.length > 0) {
+                levels.push({
+                    label: `Building next level (${newItems.length} items)`,
+                    items: [...newItems],
+                    expandingIndex: -1,
+                    isNew: true
+                });
+            }
+            return levels;
+        }
+
+        // ============================================================
+        // Reset
+        // ============================================================
+        function resetAnimation() {
+            btStepIndex = 0;
+            btResults = [];
+            iterStepIndex = 0;
+            iterResults = [];
+
+            // Reset keypad
+            document.querySelectorAll('.key').forEach(k => {
+                k.classList.remove('active', 'highlight');
+                k.querySelector('.letters').innerHTML = k.querySelector('.letters').textContent;
+            });
+
+            // Reset backtracking display
+            document.getElementById('currentCombo').innerHTML = digits.split('').map(() =>
+                '<span class="char">_</span>').join('');
+            document.getElementById('btResultList').innerHTML = '';
+            document.getElementById('btResultCount').textContent = '0';
+            document.getElementById('btStepNum').textContent = '0';
+            document.getElementById('btTotalSteps').textContent = btSteps.length;
+            document.getElementById('btComboCount').textContent = '0';
+            document.getElementById('btInfo').innerHTML = digits ?
+                `Ready to animate backtracking for digits "<strong>${digits}</strong>". Press Step or Play.` :
+                'Enter digits (2-9) and click Set.';
+
+            // Reset iterative display
+            document.getElementById('iterLevels').innerHTML = '';
+            document.getElementById('iterResultList').innerHTML = '';
+            document.getElementById('iterResultCount').textContent = '0';
+            document.getElementById('iterStepNum').textContent = '0';
+            document.getElementById('iterTotalSteps').textContent = iterSteps.length;
+            document.getElementById('iterLevelNum').textContent = '0';
+            document.getElementById('iterInfo').innerHTML = digits ?
+                `Ready to animate iterative approach for digits "<strong>${digits}</strong>". Press Step or Play.` :
+                'Enter digits (2-9) and click Set.';
+
+            // Clear tree canvas
+            clearTreeCanvas();
+        }
+
+        // ============================================================
+        // Backtracking Animation
+        // ============================================================
+        function stepBacktrack() {
+            if (btStepIndex >= btSteps.length) return false;
+
+            const s = btSteps[btStepIndex];
+            btStepIndex++;
+
+            // Update info
+            document.getElementById('btInfo').innerHTML = `<span class="step-info">Step ${btStepIndex}:</span> ${s.info}`;
+            document.getElementById('btStepNum').textContent = btStepIndex;
+
+            // Update current combination display
+            updateCurrentCombo(s.current || [], s.type === 'choose' ? s.digitIndex : -1);
+
+            // Update keypad highlighting
+            updateKeypad(s);
+
+            // If complete, add to results
+            if (s.type === 'complete') {
+                btResults.push(s.combo);
+                const list = document.getElementById('btResultList');
+                const item = document.createElement('div');
+                item.className = 'result-item new';
+                item.textContent = s.combo;
+                list.appendChild(item);
+                setTimeout(() => item.classList.remove('new'), 500);
+                document.getElementById('btResultCount').textContent = btResults.length;
+                document.getElementById('btComboCount').textContent = btResults.length;
+            }
+
+            // Draw tree
+            drawTree(s.treeSnapshot, s.nodeId, s.type);
+
+            return true;
+        }
+
+        function updateCurrentCombo(current, activeIndex) {
+            const container = document.getElementById('currentCombo');
+            let html = '';
+            for (let i = 0; i < digits.length; i++) {
+                if (i < current.length) {
+                    const cls = (i === activeIndex) ? 'char current' : 'char filled';
+                    html += `<span class="${cls}">${current[i]}</span>`;
+                } else {
+                    html += '<span class="char">_</span>';
+                }
+            }
+            container.innerHTML = html;
+        }
+
+        function updateKeypad(s) {
+            document.querySelectorAll('.key').forEach(k => {
+                k.classList.remove('active', 'highlight');
+                const d = k.dataset.digit;
+                const lettersEl = k.querySelector('.letters');
+                lettersEl.innerHTML = PHONE[d].split('').join(' ');
+            });
+
+            if (s.type === 'choose' || s.type === 'complete') {
+                // Highlight the digit being used
+                const current = s.current || [];
+                for (let i = 0; i < Math.min(current.length, digits.length); i++) {
+                    const d = digits[i];
+                    const key = document.querySelector(`.key[data-digit="${d}"]`);
+                    if (key) {
+                        if (i === (s.digitIndex !== undefined ? s.digitIndex : -1)) {
+                            key.classList.add('highlight');
+                        } else {
+                            key.classList.add('active');
+                        }
+                        // Highlight active letter
+                        const letters = PHONE[d];
+                        const activeLetter = current[i];
+                        const lettersEl = key.querySelector('.letters');
+                        lettersEl.innerHTML = letters.split('').map(l =>
+                            l === activeLetter ? `<span class="active-letter">${l}</span>` : l
+                        ).join(' ');
+                    }
+                }
+            }
+        }
+
+        // ============================================================
+        // Tree Drawing
+        // ============================================================
+        function clearTreeCanvas() {
+            const canvas = document.getElementById('treeCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 300;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function drawTree(nodes, activeNodeId, stepType) {
+            const canvas = document.getElementById('treeCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Set canvas size
+            const maxDepth = Math.max(...nodes.map(n => n.depth), 0);
+            const leafCount = nodes.filter(n => n.depth === maxDepth).length || 1;
+            const minWidth = Math.max(canvas.offsetWidth, leafCount * 40 + 40);
+            canvas.width = minWidth;
+            canvas.height = Math.max(300, (maxDepth + 1) * 70 + 40);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (nodes.length === 0) return;
+
+            // Compute positions using layout algorithm
+            const positions = computeTreeLayout(nodes, canvas.width, canvas.height);
+
+            // Draw edges
+            ctx.lineWidth = 1.5;
+            for (const node of nodes) {
+                if (node.parentId >= 0) {
+                    const parent = positions[node.parentId];
+                    const child = positions[node.id];
+                    if (parent && child) {
+                        ctx.strokeStyle = (node.id === activeNodeId || node.parentId === activeNodeId)
+                            ? '#60a5fa' : '#475569';
+                        ctx.beginPath();
+                        ctx.moveTo(parent.x, parent.y + 14);
+                        ctx.lineTo(child.x, child.y - 14);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Draw nodes
+            for (const node of nodes) {
+                const pos = positions[node.id];
+                if (!pos) continue;
+
+                let bgColor = '#334155';
+                let borderColor = '#475569';
+                let textColor = '#e2e8f0';
+
+                if (node.id === activeNodeId) {
+                    if (stepType === 'complete') {
+                        bgColor = '#10b981'; borderColor = '#34d399';
+                    } else if (stepType === 'backtrack') {
+                        bgColor = '#ef4444'; borderColor = '#f87171';
+                    } else {
+                        bgColor = '#7c3aed'; borderColor = '#a78bfa';
+                    }
+                    textColor = '#ffffff';
+                }
+
+                // Circle
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, 14, 0, Math.PI * 2);
+                ctx.fillStyle = bgColor;
+                ctx.fill();
+                ctx.strokeStyle = borderColor;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Label
+                ctx.fillStyle = textColor;
+                ctx.font = node.depth === 0 ? 'bold 10px Segoe UI' : 'bold 13px Courier New';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(node.depth === 0 ? 'root' : node.label, pos.x, pos.y);
+            }
+        }
+
+        function computeTreeLayout(nodes, canvasWidth, canvasHeight) {
+            const positions = {};
+            const maxDepth = Math.max(...nodes.map(n => n.depth), 0);
+            const levelHeight = maxDepth > 0 ? (canvasHeight - 60) / maxDepth : 0;
+
+            // Group nodes by depth
+            const byDepth = {};
+            for (const n of nodes) {
+                if (!byDepth[n.depth]) byDepth[n.depth] = [];
+                byDepth[n.depth].push(n);
+            }
+
+            // Position bottom-up: place leaves evenly, then center parents
+            // First, place all leaf nodes (nodes with no children) at the deepest level they appear
+            const childrenOf = {};
+            for (const n of nodes) {
+                if (n.parentId >= 0) {
+                    if (!childrenOf[n.parentId]) childrenOf[n.parentId] = [];
+                    childrenOf[n.parentId].push(n.id);
+                }
+            }
+
+            // Layout leaves first at the bottom
+            const leaves = nodes.filter(n => !childrenOf[n.id] || childrenOf[n.id].length === 0);
+
+            // Sort leaves by their order (based on DFS order = id)
+            leaves.sort((a, b) => a.id - b.id);
+
+            const spacing = Math.max(36, canvasWidth / (leaves.length + 1));
+            let x = spacing / 2;
+            for (const leaf of leaves) {
+                positions[leaf.id] = {
+                    x: x,
+                    y: 30 + leaf.depth * levelHeight
+                };
+                x += spacing;
+            }
+
+            // Now position internal nodes as center of their children (bottom up)
+            for (let depth = maxDepth - 1; depth >= 0; depth--) {
+                if (!byDepth[depth]) continue;
+                for (const node of byDepth[depth]) {
+                    if (positions[node.id]) continue; // already placed (leaf at non-max depth)
+                    const children = (childrenOf[node.id] || []).filter(cid => positions[cid]);
+                    if (children.length > 0) {
+                        const avgX = children.reduce((sum, cid) => sum + positions[cid].x, 0) / children.length;
+                        positions[node.id] = {
+                            x: avgX,
+                            y: 30 + depth * levelHeight
+                        };
+                    } else {
+                        positions[node.id] = { x: canvasWidth / 2, y: 30 + depth * levelHeight };
+                    }
+                }
+            }
+
+            return positions;
+        }
+
+        // ============================================================
+        // Iterative Animation
+        // ============================================================
+        function stepIterative() {
+            if (iterStepIndex >= iterSteps.length) return false;
+
+            const s = iterSteps[iterStepIndex];
+            iterStepIndex++;
+
+            document.getElementById('iterInfo').innerHTML = `<span class="step-info">Step ${iterStepIndex}:</span> ${s.info}`;
+            document.getElementById('iterStepNum').textContent = iterStepIndex;
+
+            if (s.digitIndex !== undefined) {
+                document.getElementById('iterLevelNum').textContent = s.digitIndex + 1;
+            }
+
+            // Update keypad for iterative
+            document.querySelectorAll('.key').forEach(k => {
+                k.classList.remove('active', 'highlight');
+                const d = k.dataset.digit;
+                k.querySelector('.letters').innerHTML = PHONE[d].split('').join(' ');
+            });
+
+            if (s.digit) {
+                const key = document.querySelector(`.key[data-digit="${s.digit}"]`);
+                if (key) {
+                    key.classList.add('highlight');
+                    if (s.letter) {
+                        const letters = PHONE[s.digit];
+                        key.querySelector('.letters').innerHTML = letters.split('').map(l =>
+                            l === s.letter ? `<span class="active-letter">${l}</span>` : l
+                        ).join(' ');
+                    }
+                }
+            }
+
+            // Update current combo display for iterative
+            if (s.newCombo) {
+                updateCurrentCombo(s.newCombo.split(''), -1);
+            } else if (s.type === 'init') {
+                document.getElementById('currentCombo').innerHTML = digits.split('').map(() =>
+                    '<span class="char">_</span>').join('');
+            }
+
+            // Render levels
+            renderIterLevels(s);
+
+            // Final result
+            if (s.type === 'done') {
+                iterResults = s.result;
+                const list = document.getElementById('iterResultList');
+                list.innerHTML = '';
+                for (const combo of iterResults) {
+                    const item = document.createElement('div');
+                    item.className = 'result-item new';
+                    item.textContent = combo;
+                    list.appendChild(item);
+                    setTimeout(() => item.classList.remove('new'), 500);
+                }
+                document.getElementById('iterResultCount').textContent = iterResults.length;
+            }
+
+            return true;
+        }
+
+        function renderIterLevels(s) {
+            const container = document.getElementById('iterLevels');
+            container.innerHTML = '';
+
+            if (!s.levels) return;
+
+            for (const level of s.levels) {
+                const levelDiv = document.createElement('div');
+                levelDiv.className = 'iter-level';
+
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'level-label';
+                labelDiv.textContent = level.label;
+                levelDiv.appendChild(labelDiv);
+
+                const itemsDiv = document.createElement('div');
+                itemsDiv.className = 'level-items';
+
+                level.items.forEach((item, idx) => {
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'level-item';
+                    itemEl.textContent = item || '""';
+
+                    if (level.isNew) {
+                        if (idx === level.items.length - 1 && s.type === 'expand') {
+                            itemEl.classList.add('new-item');
+                        } else {
+                            itemEl.classList.add('done');
+                        }
+                    } else if (idx === level.expandingIndex) {
+                        itemEl.classList.add('expanding');
+                    }
+
+                    itemsDiv.appendChild(itemEl);
+                });
+
+                levelDiv.appendChild(itemsDiv);
+                container.appendChild(levelDiv);
+            }
+        }
+
+        // ============================================================
+        // Initialize
+        // ============================================================
+        generateSteps();
+        resetAnimation();
+    </script>
+</body>
+</html>

@@ -28,3 +28,13 @@ Each problem includes:
 | 8 | [String to Integer (atoi)](0008-string-to-integer-atoi/solution) | Medium |
 | 9 | [Palindrome Number](0009-palindrome-number/solution) | Easy |
 | 10 | [Regular Expression Matching](0010-regular-expression-matching/solution) | Hard |
+| 11 | [Container With Most Water](0011-container-with-most-water/solution) | Medium |
+| 12 | [Integer to Roman](0012-integer-to-roman/solution) | Medium |
+| 13 | [Roman to Integer](0013-roman-to-integer/solution) | Easy |
+| 14 | [Longest Common Prefix](0014-longest-common-prefix/solution) | Easy |
+| 15 | [3Sum](0015-3sum/solution) | Medium |
+| 16 | [3Sum Closest](0016-3sum-closest/solution) | Medium |
+| 17 | [Letter Combinations of a Phone Number](0017-letter-combinations-of-a-phone-number/solution) | Medium |
+| 18 | [4Sum](0018-4sum/solution) | Medium |
+| 19 | [Remove Nth Node From End of List](0019-remove-nth-node-from-end-of-list/solution) | Medium |
+| 20 | [Valid Parentheses](0020-valid-parentheses/solution) | Easy |

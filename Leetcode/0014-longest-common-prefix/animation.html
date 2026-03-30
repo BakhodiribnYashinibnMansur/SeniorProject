@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0014. Longest Common Prefix — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 1rem;
+            width: 350px;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .input-section input::placeholder { color: #64748b; letter-spacing: normal; }
+
+        .input-section input:focus { outline: none; border-color: #3b82f6; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .btn:hover { background: #334155; }
+
+        .btn.primary {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .btn.primary:hover { background: #2563eb; }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .speed-control input[type="range"] {
+            width: 80px;
+            accent-color: #3b82f6;
+        }
+
+        /* VISUALIZATION AREA */
+        .viz-area {
+            margin-bottom: 20px;
+            min-height: 200px;
+        }
+
+        /* STRING GRID */
+        .string-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .string-row {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+        }
+
+        .string-label {
+            width: 70px;
+            text-align: right;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            padding-right: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .char-cell {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .char-cell.match {
+            background: #065f46;
+            border-color: #10b981;
+            color: #6ee7b7;
+        }
+
+        .char-cell.mismatch {
+            background: #7f1d1d;
+            border-color: #ef4444;
+            color: #fca5a5;
+        }
+
+        .char-cell.current {
+            border-color: #f59e0b;
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+        }
+
+        .char-cell.prefix {
+            background: #1e3a5f;
+            border-color: #3b82f6;
+            color: #93c5fd;
+        }
+
+        .char-cell.dimmed {
+            opacity: 0.3;
+        }
+
+        /* COLUMN INDICATOR */
+        .column-indicator {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 8px;
+            padding-left: 78px;
+        }
+
+        .col-marker {
+            width: 36px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #64748b;
+            font-family: 'Courier New', monospace;
+        }
+
+        .col-marker.active {
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        /* INFO PANEL */
+        .info-panel {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #334155;
+        }
+
+        .info-panel h3 {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 0.9rem;
+        }
+
+        .info-label { color: #94a3b8; }
+        .info-value { color: #e2e8f0; font-weight: 600; font-family: 'Courier New', monospace; }
+        .info-value.match-val { color: #10b981; }
+        .info-value.mismatch-val { color: #ef4444; }
+
+        /* LOG */
+        .log {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #334155;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .log-entry { padding: 2px 0; }
+        .log-match { color: #10b981; }
+        .log-mismatch { color: #ef4444; }
+        .log-info { color: #60a5fa; }
+        .log-result { color: #f59e0b; font-weight: 700; }
+
+        /* RESULT */
+        .result-box {
+            text-align: center;
+            padding: 16px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            margin-top: 16px;
+        }
+
+        .result-box .label { color: #94a3b8; font-size: 0.85rem; }
+
+        .result-box .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            color: #10b981;
+            margin-top: 4px;
+        }
+
+        .result-box .value.empty { color: #ef4444; }
+
+        /* HORIZONTAL SCANNING SPECIFIC */
+        .prefix-display {
+            text-align: center;
+            margin: 16px 0;
+            font-size: 1.1rem;
+        }
+
+        .prefix-display .prefix-label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .prefix-display .prefix-val {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #3b82f6;
+            font-size: 1.3rem;
+        }
+
+        .compare-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 12px 0;
+        }
+
+        .compare-label {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            width: 60px;
+            text-align: right;
+        }
+
+        /* SORTING SPECIFIC */
+        .sort-arrow {
+            text-align: center;
+            color: #f59e0b;
+            font-size: 1.2rem;
+            margin: 12px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0014. Longest Common Prefix</h1>
+        <p>Interactive visualization of prefix-finding algorithms</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab(0)">Vertical Scanning</div>
+        <div class="tab" onclick="switchTab(1)">Horizontal Scanning</div>
+        <div class="tab" onclick="switchTab(2)">Sorting</div>
+    </div>
+
+    <div class="container">
+        <div class="input-section">
+            <label>Strings:</label>
+            <input type="text" id="inputStr" value="flower, flow, flight" placeholder="e.g. flower, flow, flight">
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="stepBack()" id="btnBack">&#9664; Back</button>
+            <button class="btn primary" onclick="step()" id="btnStep">Step &#9654;</button>
+            <button class="btn primary" onclick="play()" id="btnPlay">Play &#9654;&#9654;</button>
+            <button class="btn" onclick="resetViz()">Reset</button>
+            <div class="speed-control">
+                <span>Speed:</span>
+                <input type="range" id="speed" min="1" max="10" value="5">
+                <span id="speedLabel">5</span>
+            </div>
+        </div>
+
+        <div class="viz-area" id="vizArea"></div>
+
+        <div class="log" id="log"></div>
+    </div>
+
+    <script>
+        let currentTab = 0;
+        let strs = [];
+        let steps = [];
+        let currentStep = -1;
+        let playing = false;
+        let playTimer = null;
+
+        const speedSlider = document.getElementById('speed');
+        const speedLabel = document.getElementById('speedLabel');
+        speedSlider.addEventListener('input', () => {
+            speedLabel.textContent = speedSlider.value;
+        });
+
+        function getSpeed() {
+            return 1100 - (speedSlider.value * 100);
+        }
+
+        function parseInput() {
+            const raw = document.getElementById('inputStr').value;
+            strs = raw.split(',').map(s => s.trim());
+            if (strs.length === 1 && strs[0] === '') strs = [];
+        }
+
+        function switchTab(idx) {
+            currentTab = idx;
+            document.querySelectorAll('.tab').forEach((t, i) => {
+                t.classList.toggle('active', i === idx);
+            });
+            resetViz();
+        }
+
+        function resetViz() {
+            stopPlay();
+            parseInput();
+            currentStep = -1;
+            steps = [];
+            generateSteps();
+            renderInitial();
+            document.getElementById('log').innerHTML = '';
+        }
+
+        function generateSteps() {
+            if (currentTab === 0) generateVerticalSteps();
+            else if (currentTab === 1) generateHorizontalSteps();
+            else generateSortingSteps();
+        }
+
+        // ===================== VERTICAL SCANNING =====================
+        function generateVerticalSteps() {
+            steps = [];
+            if (strs.length === 0) {
+                steps.push({ type: 'result', prefix: '' });
+                return;
+            }
+
+            const ref = strs[0];
+            for (let i = 0; i < ref.length; i++) {
+                const ch = ref[i];
+                for (let j = 1; j < strs.length; j++) {
+                    if (i >= strs[j].length) {
+                        steps.push({ type: 'check', col: i, row: j, ch: ch, targetCh: null, match: false, reason: 'end' });
+                        steps.push({ type: 'result', prefix: ref.substring(0, i) });
+                        return;
+                    }
+                    const isMatch = strs[j][i] === ch;
+                    steps.push({ type: 'check', col: i, row: j, ch: ch, targetCh: strs[j][i], match: isMatch });
+                    if (!isMatch) {
+                        steps.push({ type: 'result', prefix: ref.substring(0, i) });
+                        return;
+                    }
+                }
+                steps.push({ type: 'col-done', col: i, ch: ch });
+            }
+            steps.push({ type: 'result', prefix: ref });
+        }
+
+        // ===================== HORIZONTAL SCANNING =====================
+        function generateHorizontalSteps() {
+            steps = [];
+            if (strs.length === 0) {
+                steps.push({ type: 'result', prefix: '' });
+                return;
+            }
+
+            let prefix = strs[0];
+            steps.push({ type: 'h-init', prefix: prefix });
+
+            for (let i = 1; i < strs.length; i++) {
+                steps.push({ type: 'h-compare-start', strIdx: i, prefix: prefix, str: strs[i] });
+
+                while (prefix.length > 0 && !strs[i].startsWith(prefix)) {
+                    steps.push({ type: 'h-shrink', strIdx: i, prefix: prefix, str: strs[i], match: false });
+                    prefix = prefix.substring(0, prefix.length - 1);
+                }
+
+                if (prefix.length === 0) {
+                    steps.push({ type: 'h-empty', strIdx: i });
+                    steps.push({ type: 'result', prefix: '' });
+                    return;
+                }
+
+                steps.push({ type: 'h-match', strIdx: i, prefix: prefix, str: strs[i] });
+            }
+
+            steps.push({ type: 'result', prefix: prefix });
+        }
+
+        // ===================== SORTING =====================
+        function generateSortingSteps() {
+            steps = [];
+            if (strs.length === 0) {
+                steps.push({ type: 'result', prefix: '' });
+                return;
+            }
+
+            const original = [...strs];
+            steps.push({ type: 's-original', strs: [...original] });
+
+            const sorted = [...strs].sort();
+            steps.push({ type: 's-sorted', strs: [...sorted], original: [...original] });
+
+            const first = sorted[0];
+            const last = sorted[sorted.length - 1];
+            steps.push({ type: 's-pick', first: first, last: last, sorted: [...sorted] });
+
+            let i = 0;
+            while (i < first.length && i < last.length && first[i] === last[i]) {
+                steps.push({ type: 's-check', col: i, firstCh: first[i], lastCh: last[i], match: true, first: first, last: last });
+                i++;
+            }
+
+            if (i < first.length && i < last.length) {
+                steps.push({ type: 's-check', col: i, firstCh: first[i], lastCh: last[i], match: false, first: first, last: last });
+            }
+
+            steps.push({ type: 'result', prefix: first.substring(0, i) });
+        }
+
+        // ===================== RENDER =====================
+        function renderInitial() {
+            const viz = document.getElementById('vizArea');
+
+            if (currentTab === 0) {
+                renderVerticalState(-1);
+            } else if (currentTab === 1) {
+                renderHorizontalState(-1);
+            } else {
+                renderSortingState(-1);
+            }
+        }
+
+        function renderVerticalState(upToStep) {
+            const viz = document.getElementById('vizArea');
+            let html = '';
+
+            if (strs.length === 0) {
+                html = '<div class="result-box"><div class="label">No strings provided</div></div>';
+                viz.innerHTML = html;
+                return;
+            }
+
+            // Find max length for column indicators
+            const maxLen = Math.max(...strs.map(s => s.length));
+
+            // Column indicators
+            html += '<div class="column-indicator">';
+            for (let i = 0; i < maxLen; i++) {
+                let cls = 'col-marker';
+                // Determine if this column is active
+                const lastStep = upToStep >= 0 ? steps[upToStep] : null;
+                if (lastStep && (lastStep.type === 'check' || lastStep.type === 'col-done') && lastStep.col === i) {
+                    cls += ' active';
+                }
+                html += `<div class="${cls}">${i}</div>`;
+            }
+            html += '</div>';
+
+            // Collect state from steps
+            const cellStates = {}; // "row,col" -> "match" | "mismatch" | "current" | "prefix"
+            let prefixLen = 0;
+            let finished = false;
+
+            for (let s = 0; s <= upToStep && s < steps.length; s++) {
+                const st = steps[s];
+                if (st.type === 'check') {
+                    if (st.match) {
+                        cellStates[`${st.row},${st.col}`] = 'match';
+                        cellStates[`0,${st.col}`] = 'match';
+                    } else {
+                        cellStates[`${st.row},${st.col}`] = 'mismatch';
+                        cellStates[`0,${st.col}`] = 'mismatch';
+                        finished = true;
+                    }
+                } else if (st.type === 'col-done') {
+                    prefixLen = st.col + 1;
+                    // Mark column as prefix
+                    for (let r = 0; r < strs.length; r++) {
+                        if (st.col < strs[r].length) {
+                            cellStates[`${r},${st.col}`] = 'prefix';
+                        }
+                    }
+                } else if (st.type === 'result') {
+                    finished = true;
+                    prefixLen = st.prefix.length;
+                    // Mark all prefix columns
+                    for (let c = 0; c < prefixLen; c++) {
+                        for (let r = 0; r < strs.length; r++) {
+                            if (c < strs[r].length) {
+                                cellStates[`${r},${c}`] = 'prefix';
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Highlight current step
+            const lastStep = upToStep >= 0 && upToStep < steps.length ? steps[upToStep] : null;
+            if (lastStep && lastStep.type === 'check') {
+                cellStates[`${lastStep.row},${lastStep.col}`] = lastStep.match ? 'match' : 'mismatch';
+                // Also mark reference cell
+                if (!finished || lastStep.match) {
+                    cellStates[`0,${lastStep.col}`] = lastStep.match ? 'match' : 'mismatch';
+                }
+            }
+
+            // String grid
+            html += '<div class="string-grid">';
+            for (let r = 0; r < strs.length; r++) {
+                html += '<div class="string-row">';
+                html += `<div class="string-label">strs[${r}]:</div>`;
+                for (let c = 0; c < maxLen; c++) {
+                    let cls = 'char-cell';
+                    const key = `${r},${c}`;
+                    if (cellStates[key]) {
+                        cls += ` ${cellStates[key]}`;
+                    }
+                    if (lastStep && lastStep.type === 'check' && lastStep.col === c &&
+                        (r === lastStep.row || r === 0)) {
+                        cls += ' current';
+                    }
+                    const ch = c < strs[r].length ? strs[r][c] : '';
+                    html += `<div class="${cls}">${ch}</div>`;
+                }
+                html += '</div>';
+            }
+            html += '</div>';
+
+            // Result
+            if (lastStep && lastStep.type === 'result') {
+                const val = lastStep.prefix || '""';
+                const cls = lastStep.prefix ? '' : ' empty';
+                html += `<div class="result-box">
+                    <div class="label">Longest Common Prefix</div>
+                    <div class="value${cls}">"${lastStep.prefix}"</div>
+                </div>`;
+            }
+
+            viz.innerHTML = html;
+        }
+
+        function renderHorizontalState(upToStep) {
+            const viz = document.getElementById('vizArea');
+            let html = '';
+
+            if (strs.length === 0) {
+                html = '<div class="result-box"><div class="label">No strings provided</div></div>';
+                viz.innerHTML = html;
+                return;
+            }
+
+            let currentPrefix = strs[0];
+            let currentStrIdx = -1;
+            let isResult = false;
+            let resultPrefix = '';
+
+            // Replay steps to get current state
+            for (let s = 0; s <= upToStep && s < steps.length; s++) {
+                const st = steps[s];
+                if (st.type === 'h-init') currentPrefix = st.prefix;
+                else if (st.type === 'h-compare-start') currentStrIdx = st.strIdx;
+                else if (st.type === 'h-shrink') currentPrefix = st.prefix.substring(0, st.prefix.length - 1);
+                else if (st.type === 'h-match') currentPrefix = st.prefix;
+                else if (st.type === 'h-empty') currentPrefix = '';
+                else if (st.type === 'result') { isResult = true; resultPrefix = st.prefix; }
+            }
+
+            // Prefix display
+            html += `<div class="prefix-display">
+                <div class="prefix-label">Current Prefix</div>
+                <div class="prefix-val">"${currentPrefix}"</div>
+            </div>`;
+
+            // String grid showing all strings with prefix highlighting
+            const maxLen = Math.max(...strs.map(s => s.length));
+            html += '<div class="string-grid">';
+            for (let r = 0; r < strs.length; r++) {
+                html += '<div class="string-row">';
+                html += `<div class="string-label">strs[${r}]:</div>`;
+                for (let c = 0; c < maxLen; c++) {
+                    let cls = 'char-cell';
+                    if (c < strs[r].length) {
+                        if (c < currentPrefix.length && strs[r][c] === currentPrefix[c]) {
+                            cls += ' prefix';
+                        } else if (currentStrIdx >= 0 && r === currentStrIdx && c === currentPrefix.length) {
+                            // Character that caused mismatch or next to check
+                            const lastStep = upToStep >= 0 ? steps[upToStep] : null;
+                            if (lastStep && lastStep.type === 'h-shrink') {
+                                cls += ' mismatch';
+                            }
+                        }
+                        if (r === currentStrIdx) {
+                            cls += ' current';
+                        }
+                    } else {
+                        cls += ' dimmed';
+                    }
+                    const ch = c < strs[r].length ? strs[r][c] : '';
+                    html += `<div class="${cls}">${ch}</div>`;
+                }
+                html += '</div>';
+            }
+            html += '</div>';
+
+            // Info panel
+            const lastStep = upToStep >= 0 && upToStep < steps.length ? steps[upToStep] : null;
+            if (lastStep) {
+                html += '<div class="info-panel">';
+                if (lastStep.type === 'h-init') {
+                    html += `<div class="info-row"><span class="info-label">Initialized prefix:</span><span class="info-value">"${lastStep.prefix}"</span></div>`;
+                } else if (lastStep.type === 'h-compare-start') {
+                    html += `<div class="info-row"><span class="info-label">Comparing with:</span><span class="info-value">strs[${lastStep.strIdx}] = "${lastStep.str}"</span></div>`;
+                } else if (lastStep.type === 'h-shrink') {
+                    html += `<div class="info-row"><span class="info-label">Action:</span><span class="info-value mismatch-val">"${lastStep.str}" does not start with "${lastStep.prefix}" — shrink prefix</span></div>`;
+                } else if (lastStep.type === 'h-match') {
+                    html += `<div class="info-row"><span class="info-label">Action:</span><span class="info-value match-val">"${lastStep.str}" starts with "${lastStep.prefix}" — match!</span></div>`;
+                } else if (lastStep.type === 'h-empty') {
+                    html += `<div class="info-row"><span class="info-label">Action:</span><span class="info-value mismatch-val">Prefix is empty — no common prefix</span></div>`;
+                }
+                html += '</div>';
+            }
+
+            // Result
+            if (isResult) {
+                const val = resultPrefix || '""';
+                const cls = resultPrefix ? '' : ' empty';
+                html += `<div class="result-box">
+                    <div class="label">Longest Common Prefix</div>
+                    <div class="value${cls}">"${resultPrefix}"</div>
+                </div>`;
+            }
+
+            viz.innerHTML = html;
+        }
+
+        function renderSortingState(upToStep) {
+            const viz = document.getElementById('vizArea');
+            let html = '';
+
+            if (strs.length === 0) {
+                html = '<div class="result-box"><div class="label">No strings provided</div></div>';
+                viz.innerHTML = html;
+                return;
+            }
+
+            let phase = 'init'; // init, sorted, pick, check, result
+            let sortedStrs = [];
+            let first = '', last = '';
+            let checkCol = -1;
+            let checkMatch = true;
+            let resultPrefix = '';
+            let isResult = false;
+
+            for (let s = 0; s <= upToStep && s < steps.length; s++) {
+                const st = steps[s];
+                if (st.type === 's-original') phase = 'original';
+                else if (st.type === 's-sorted') { phase = 'sorted'; sortedStrs = st.strs; }
+                else if (st.type === 's-pick') { phase = 'pick'; first = st.first; last = st.last; sortedStrs = st.sorted; }
+                else if (st.type === 's-check') { phase = 'check'; checkCol = st.col; checkMatch = st.match; first = st.first; last = st.last; }
+                else if (st.type === 'result') { isResult = true; resultPrefix = st.prefix; }
+            }
+
+            // Original strings
+            if (phase === 'original' || phase === 'init') {
+                html += '<div class="info-panel"><h3>Original Array</h3>';
+                html += '<div class="string-grid">';
+                for (let i = 0; i < strs.length; i++) {
+                    html += `<div class="string-row"><div class="string-label">strs[${i}]:</div>`;
+                    for (let c = 0; c < strs[i].length; c++) {
+                        html += `<div class="char-cell">${strs[i][c]}</div>`;
+                    }
+                    html += '</div>';
+                }
+                html += '</div></div>';
+            }
+
+            // Sorted strings
+            if (phase === 'sorted' || phase === 'pick' || phase === 'check' || isResult) {
+                if (phase !== 'original' && phase !== 'init') {
+                    html += '<div class="sort-arrow">&#x2193; Sort lexicographically &#x2193;</div>';
+                    html += '<div class="info-panel"><h3>Sorted Array</h3>';
+                    html += '<div class="string-grid">';
+                    const displayStrs = sortedStrs.length > 0 ? sortedStrs : [...strs].sort();
+                    for (let i = 0; i < displayStrs.length; i++) {
+                        const isFirst = (i === 0 && (phase === 'pick' || phase === 'check' || isResult));
+                        const isLast = (i === displayStrs.length - 1 && (phase === 'pick' || phase === 'check' || isResult));
+                        html += `<div class="string-row"><div class="string-label">${isFirst ? 'first:' : isLast ? 'last:' : `[${i}]:`}</div>`;
+                        for (let c = 0; c < displayStrs[i].length; c++) {
+                            let cls = 'char-cell';
+                            if ((isFirst || isLast) && phase === 'check') {
+                                if (c < checkCol) cls += ' prefix';
+                                else if (c === checkCol) cls += checkMatch ? ' match current' : ' mismatch current';
+                            } else if ((isFirst || isLast) && isResult) {
+                                if (c < resultPrefix.length) cls += ' prefix';
+                            }
+                            if (!isFirst && !isLast && (phase === 'pick' || phase === 'check' || isResult)) {
+                                cls += ' dimmed';
+                            }
+                            html += `<div class="${cls}">${displayStrs[i][c]}</div>`;
+                        }
+                        html += '</div>';
+                    }
+                    html += '</div></div>';
+                }
+            }
+
+            // Check info
+            const lastStep = upToStep >= 0 && upToStep < steps.length ? steps[upToStep] : null;
+            if (lastStep && lastStep.type === 's-check') {
+                html += '<div class="info-panel">';
+                if (lastStep.match) {
+                    html += `<div class="info-row"><span class="info-label">Column ${lastStep.col}:</span><span class="info-value match-val">'${lastStep.firstCh}' == '${lastStep.lastCh}' — match!</span></div>`;
+                } else {
+                    html += `<div class="info-row"><span class="info-label">Column ${lastStep.col}:</span><span class="info-value mismatch-val">'${lastStep.firstCh}' != '${lastStep.lastCh}' — mismatch!</span></div>`;
+                }
+                html += '</div>';
+            }
+
+            // Result
+            if (isResult) {
+                const cls = resultPrefix ? '' : ' empty';
+                html += `<div class="result-box">
+                    <div class="label">Longest Common Prefix</div>
+                    <div class="value${cls}">"${resultPrefix}"</div>
+                </div>`;
+            }
+
+            viz.innerHTML = html;
+        }
+
+        function render() {
+            if (currentTab === 0) renderVerticalState(currentStep);
+            else if (currentTab === 1) renderHorizontalState(currentStep);
+            else renderSortingState(currentStep);
+        }
+
+        function addLogEntry(text, cls) {
+            const log = document.getElementById('log');
+            log.innerHTML += `<div class="log-entry ${cls || ''}">${text}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function getStepLog(stepIdx) {
+            if (stepIdx < 0 || stepIdx >= steps.length) return null;
+            const st = steps[stepIdx];
+
+            if (currentTab === 0) {
+                if (st.type === 'check') {
+                    if (st.reason === 'end') {
+                        return { text: `Column ${st.col}: strs[${st.row}] has ended (length ${strs[st.row].length}) — stop`, cls: 'log-mismatch' };
+                    }
+                    if (st.match) {
+                        return { text: `Column ${st.col}: strs[${st.row}][${st.col}] = '${st.targetCh}' == '${st.ch}' ✓`, cls: 'log-match' };
+                    } else {
+                        return { text: `Column ${st.col}: strs[${st.row}][${st.col}] = '${st.targetCh}' != '${st.ch}' ✗ — mismatch!`, cls: 'log-mismatch' };
+                    }
+                } else if (st.type === 'col-done') {
+                    return { text: `Column ${st.col}: all strings have '${st.ch}' — prefix extended to "${strs[0].substring(0, st.col + 1)}"`, cls: 'log-info' };
+                } else if (st.type === 'result') {
+                    return { text: `Result: "${st.prefix}"`, cls: 'log-result' };
+                }
+            } else if (currentTab === 1) {
+                if (st.type === 'h-init') return { text: `Initialize prefix = "${st.prefix}" (from strs[0])`, cls: 'log-info' };
+                if (st.type === 'h-compare-start') return { text: `Comparing prefix with strs[${st.strIdx}] = "${st.str}"`, cls: 'log-info' };
+                if (st.type === 'h-shrink') return { text: `"${st.str}" doesn't start with "${st.prefix}" — shrink to "${st.prefix.substring(0, st.prefix.length - 1)}"`, cls: 'log-mismatch' };
+                if (st.type === 'h-match') return { text: `"${st.str}" starts with "${st.prefix}" — match!`, cls: 'log-match' };
+                if (st.type === 'h-empty') return { text: `Prefix is empty — no common prefix`, cls: 'log-mismatch' };
+                if (st.type === 'result') return { text: `Result: "${st.prefix}"`, cls: 'log-result' };
+            } else {
+                if (st.type === 's-original') return { text: `Original: [${strs.map(s => `"${s}"`).join(', ')}]`, cls: 'log-info' };
+                if (st.type === 's-sorted') return { text: `Sorted:   [${st.strs.map(s => `"${s}"`).join(', ')}]`, cls: 'log-info' };
+                if (st.type === 's-pick') return { text: `Compare first="${st.first}" with last="${st.last}"`, cls: 'log-info' };
+                if (st.type === 's-check') {
+                    if (st.match) return { text: `Column ${st.col}: '${st.firstCh}' == '${st.lastCh}' ✓`, cls: 'log-match' };
+                    else return { text: `Column ${st.col}: '${st.firstCh}' != '${st.lastCh}' ✗ — mismatch!`, cls: 'log-mismatch' };
+                }
+                if (st.type === 'result') return { text: `Result: "${st.prefix}"`, cls: 'log-result' };
+            }
+
+            return null;
+        }
+
+        function step() {
+            if (currentStep >= steps.length - 1) return;
+            currentStep++;
+            render();
+            const logEntry = getStepLog(currentStep);
+            if (logEntry) addLogEntry(logEntry.text, logEntry.cls);
+        }
+
+        function stepBack() {
+            if (currentStep < 0) return;
+            currentStep--;
+            render();
+            // Rebuild log
+            const log = document.getElementById('log');
+            log.innerHTML = '';
+            for (let i = 0; i <= currentStep; i++) {
+                const entry = getStepLog(i);
+                if (entry) addLogEntry(entry.text, entry.cls);
+            }
+        }
+
+        function play() {
+            if (playing) { stopPlay(); return; }
+            if (currentStep >= steps.length - 1) {
+                resetViz();
+            }
+            playing = true;
+            document.getElementById('btnPlay').textContent = 'Pause ⏸';
+            playTick();
+        }
+
+        function playTick() {
+            if (!playing || currentStep >= steps.length - 1) {
+                stopPlay();
+                return;
+            }
+            step();
+            playTimer = setTimeout(playTick, getSpeed());
+        }
+
+        function stopPlay() {
+            playing = false;
+            if (playTimer) { clearTimeout(playTimer); playTimer = null; }
+            document.getElementById('btnPlay').textContent = 'Play ▶▶';
+        }
+
+        // Handle input change
+        document.getElementById('inputStr').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') resetViz();
+        });
+
+        // Initial render
+        resetViz();
+    </script>
+</body>
+</html>

@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0011. Container With Most Water — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        #arrInput { width: 280px; }
+
+        .btn-generate { background: #8b5cf6; color: white; }
+        .btn-generate:hover { background: #7c3aed; }
+
+        .gen-options {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .gen-options label { color: #94a3b8; font-size: 0.8rem; }
+
+        .gen-options select {
+            padding: 5px 8px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-pause:hover { background: #dc2626; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-reset:hover { background: #4b5563; }
+
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select {
+            padding: 6px 10px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 4px;
+        }
+
+        /* STEP DESCRIPTION */
+        .step-description {
+            background: #0f172a;
+            border-left: 3px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 50px;
+            white-space: pre-line;
+        }
+
+        /* VIZ AREA */
+        .viz-area {
+            min-height: 300px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        /* BARS VISUALIZATION */
+        .bars-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            justify-content: center;
+            height: 250px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            max-width: 60px;
+            min-width: 20px;
+            height: 100%;
+            justify-content: flex-end;
+        }
+
+        .bar {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.35s ease;
+            position: relative;
+            min-height: 2px;
+        }
+
+        .bar-height-label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-bottom: 2px;
+            font-weight: 600;
+        }
+
+        .bar-idx-label {
+            font-size: 0.65rem;
+            color: #475569;
+            margin-top: 4px;
+        }
+
+        .bar-ptr-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-height: 18px;
+            margin-top: 2px;
+        }
+
+        /* Bar colors */
+        .bar-default { background: #334155; }
+        .bar-left { background: #22c55e; box-shadow: 0 0 12px rgba(34,197,94,0.4); }
+        .bar-right { background: #ef4444; box-shadow: 0 0 12px rgba(239,68,68,0.4); }
+        .bar-checking-i { background: #3b82f6; box-shadow: 0 0 12px rgba(59,130,246,0.4); }
+        .bar-checking-j { background: #a78bfa; box-shadow: 0 0 12px rgba(167,139,250,0.4); }
+        .bar-best { background: #f59e0b; box-shadow: 0 0 12px rgba(245,158,11,0.4); }
+        .bar-found { background: #22c55e; box-shadow: 0 0 20px rgba(34,197,94,0.6); }
+
+        .ptr-left { color: #22c55e; }
+        .ptr-right { color: #ef4444; }
+        .ptr-i { color: #3b82f6; }
+        .ptr-j { color: #a78bfa; }
+
+        /* Water overlay */
+        .water-overlay {
+            position: absolute;
+            bottom: 0;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px dashed rgba(59, 130, 246, 0.4);
+            border-bottom: none;
+            transition: all 0.35s ease;
+            pointer-events: none;
+        }
+
+        .water-overlay.best {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        /* CALC BOX */
+        .calc-box {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            text-align: center;
+            font-size: 1.1rem;
+            border: 1px solid #334155;
+        }
+
+        .calc-box .formula { color: #94a3b8; }
+        .calc-box .result { font-weight: 700; margin-left: 8px; }
+        .result-match { color: #22c55e; }
+        .result-no { color: #ef4444; }
+
+        /* INFO PANEL */
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .info-box h3 {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .info-box .value { font-size: 1.1rem; font-weight: 700; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .bars-container { height: 180px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0011. Container With Most Water</h1>
+        <p>Find two lines that together with the x-axis forms a container with the most water</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('bruteforce')">Brute Force</div>
+        <div class="tab" onclick="switchTab('twopointers')">Two Pointers</div>
+    </div>
+
+    <div class="container">
+        <!-- Input Section -->
+        <div class="input-section">
+            <input type="text" id="arrInput" placeholder="e.g. 1,8,6,2,5,4,8,3,7" value="1,8,6,2,5,4,8,3,7">
+            <button class="btn btn-generate" onclick="applyInput()">Apply</button>
+            <div class="gen-options">
+                <label>Size:</label>
+                <select id="genSize">
+                    <option value="5">5</option>
+                    <option value="7">7</option>
+                    <option value="9" selected>9</option>
+                    <option value="12">12</option>
+                    <option value="15">15</option>
+                </select>
+                <button class="btn btn-generate" onclick="generateRandom()">Random</button>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-play" id="btnPlay" onclick="play()">Play</button>
+            <button class="btn btn-pause" id="btnPause" onclick="pause()" style="display:none;">Pause</button>
+            <button class="btn btn-step" onclick="step()">Step</button>
+            <button class="btn btn-reset" onclick="reset()">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <select id="speedSelect" onchange="updateSpeed()">
+                    <option value="1500">0.5x</option>
+                    <option value="800" selected>1x</option>
+                    <option value="400">2x</option>
+                    <option value="200">4x</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Info Panel -->
+        <div class="info-panel">
+            <div class="info-box">
+                <h3>Step</h3>
+                <div class="value" id="infoStep">0</div>
+            </div>
+            <div class="info-box">
+                <h3>Current Area</h3>
+                <div class="value" id="infoArea">-</div>
+            </div>
+            <div class="info-box">
+                <h3>Max Area</h3>
+                <div class="value" id="infoMax" style="color: #f59e0b;">0</div>
+            </div>
+            <div class="info-box">
+                <h3>Comparisons</h3>
+                <div class="value" id="infoComparisons">0</div>
+            </div>
+        </div>
+
+        <!-- Step Description -->
+        <div class="step-description" id="stepDesc">
+            Press "Step" or "Play" to start the animation.
+        </div>
+
+        <!-- Visualization -->
+        <div class="viz-area">
+            <div class="section-label">Height Array</div>
+            <div class="bars-container" id="barsContainer"></div>
+            <div class="calc-box" id="calcBox">
+                <span class="formula">area = min(height[left], height[right]) * (right - left)</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // State
+        // ============================================================
+        let height = [1, 8, 6, 2, 5, 4, 8, 3, 7];
+        let currentTab = 'bruteforce';
+        let steps = [];
+        let currentStepIdx = -1;
+        let playing = false;
+        let playTimer = null;
+        let speed = 800;
+
+        // ============================================================
+        // Tab switching
+        // ============================================================
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach((t, i) => {
+                t.classList.toggle('active', (i === 0 && tab === 'bruteforce') || (i === 1 && tab === 'twopointers'));
+            });
+            reset();
+        }
+
+        // ============================================================
+        // Input handling
+        // ============================================================
+        function applyInput() {
+            const val = document.getElementById('arrInput').value.trim();
+            const arr = val.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 0);
+            if (arr.length < 2) { alert('Need at least 2 elements'); return; }
+            height = arr;
+            reset();
+        }
+
+        function generateRandom() {
+            const size = parseInt(document.getElementById('genSize').value);
+            height = [];
+            for (let i = 0; i < size; i++) {
+                height.push(Math.floor(Math.random() * 9) + 1);
+            }
+            document.getElementById('arrInput').value = height.join(',');
+            reset();
+        }
+
+        // ============================================================
+        // Speed
+        // ============================================================
+        function updateSpeed() {
+            speed = parseInt(document.getElementById('speedSelect').value);
+        }
+
+        // ============================================================
+        // Generate steps
+        // ============================================================
+        function generateSteps() {
+            steps = [];
+            if (currentTab === 'bruteforce') {
+                generateBruteForceSteps();
+            } else {
+                generateTwoPointersSteps();
+            }
+        }
+
+        function generateBruteForceSteps() {
+            const n = height.length;
+            let maxArea = 0;
+            let bestI = -1, bestJ = -1;
+            let comparisons = 0;
+
+            steps.push({
+                type: 'init',
+                desc: `Brute Force: Check all pairs of lines.\nn = ${n}, total pairs = ${n*(n-1)/2}`,
+                highlights: {},
+                maxArea: 0,
+                area: '-',
+                comparisons: 0
+            });
+
+            for (let i = 0; i < n; i++) {
+                for (let j = i + 1; j < n; j++) {
+                    comparisons++;
+                    const w = j - i;
+                    const h = Math.min(height[i], height[j]);
+                    const area = w * h;
+                    const isNew = area > maxArea;
+
+                    if (isNew) {
+                        maxArea = area;
+                        bestI = i;
+                        bestJ = j;
+                    }
+
+                    steps.push({
+                        type: 'check',
+                        i, j,
+                        width: w,
+                        h,
+                        area,
+                        maxArea,
+                        bestI, bestJ,
+                        isNewMax: isNew,
+                        comparisons,
+                        desc: `Checking pair (i=${i}, j=${j}): min(${height[i]}, ${height[j]}) * ${w} = ${h} * ${w} = ${area}` +
+                              (isNew ? `\nNew max area! ${maxArea}` : `\nMax area remains ${maxArea}`)
+                    });
+                }
+            }
+
+            steps.push({
+                type: 'done',
+                bestI, bestJ,
+                maxArea,
+                comparisons,
+                desc: `Done! Maximum area = ${maxArea}\nBest container: lines at index ${bestI} (h=${height[bestI]}) and index ${bestJ} (h=${height[bestJ]})\nTotal comparisons: ${comparisons}`
+            });
+        }
+
+        function generateTwoPointersSteps() {
+            const n = height.length;
+            let left = 0, right = n - 1;
+            let maxArea = 0;
+            let bestL = -1, bestR = -1;
+            let comparisons = 0;
+
+            steps.push({
+                type: 'init',
+                desc: `Two Pointers: Start from widest container.\nleft = 0, right = ${n - 1}`,
+                left, right,
+                maxArea: 0,
+                area: '-',
+                comparisons: 0
+            });
+
+            while (left < right) {
+                comparisons++;
+                const w = right - left;
+                const h = Math.min(height[left], height[right]);
+                const area = w * h;
+                const isNew = area > maxArea;
+
+                if (isNew) {
+                    maxArea = area;
+                    bestL = left;
+                    bestR = right;
+                }
+
+                const moveLeft = height[left] < height[right];
+                const moveDesc = moveLeft
+                    ? `height[${left}]=${height[left]} < height[${right}]=${height[right]} → move left++`
+                    : `height[${left}]=${height[left]} >= height[${right}]=${height[right]} → move right--`;
+
+                steps.push({
+                    type: 'check',
+                    left, right,
+                    width: w,
+                    h,
+                    area,
+                    maxArea,
+                    bestL, bestR,
+                    isNewMax: isNew,
+                    comparisons,
+                    moveLeft,
+                    desc: `left=${left}, right=${right}: min(${height[left]}, ${height[right]}) * ${w} = ${h} * ${w} = ${area}` +
+                          (isNew ? `\nNew max area! ${maxArea}` : `\nMax area remains ${maxArea}`) +
+                          `\n${moveDesc}`
+                });
+
+                if (moveLeft) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+
+            steps.push({
+                type: 'done',
+                bestL, bestR,
+                maxArea,
+                comparisons,
+                desc: `Done! Maximum area = ${maxArea}\nBest container: lines at index ${bestL} (h=${height[bestL]}) and index ${bestR} (h=${height[bestR]})\nTotal comparisons: ${comparisons}`
+            });
+        }
+
+        // ============================================================
+        // Rendering
+        // ============================================================
+        function renderBars() {
+            const container = document.getElementById('barsContainer');
+            container.innerHTML = '';
+
+            const maxH = Math.max(...height);
+
+            height.forEach((h, idx) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'bar-wrapper';
+                wrapper.id = `barWrapper${idx}`;
+
+                const label = document.createElement('div');
+                label.className = 'bar-height-label';
+                label.textContent = h;
+
+                const bar = document.createElement('div');
+                bar.className = 'bar bar-default';
+                bar.id = `bar${idx}`;
+                bar.style.height = maxH > 0 ? `${(h / maxH) * 85}%` : '2px';
+
+                const idxLabel = document.createElement('div');
+                idxLabel.className = 'bar-idx-label';
+                idxLabel.textContent = idx;
+
+                const ptrLabel = document.createElement('div');
+                ptrLabel.className = 'bar-ptr-label';
+                ptrLabel.id = `ptr${idx}`;
+                ptrLabel.innerHTML = '&nbsp;';
+
+                wrapper.appendChild(label);
+                wrapper.appendChild(bar);
+                wrapper.appendChild(idxLabel);
+                wrapper.appendChild(ptrLabel);
+                container.appendChild(wrapper);
+            });
+        }
+
+        function renderStep() {
+            if (currentStepIdx < 0 || currentStepIdx >= steps.length) return;
+            const s = steps[currentStepIdx];
+
+            // Reset bar colors
+            height.forEach((_, idx) => {
+                const bar = document.getElementById(`bar${idx}`);
+                bar.className = 'bar bar-default';
+                document.getElementById(`ptr${idx}`).innerHTML = '&nbsp;';
+            });
+
+            // Remove water overlays
+            document.querySelectorAll('.water-overlay').forEach(el => el.remove());
+
+            const desc = document.getElementById('stepDesc');
+            desc.textContent = s.desc;
+
+            document.getElementById('infoStep').textContent = currentStepIdx;
+            document.getElementById('infoMax').textContent = s.maxArea;
+            document.getElementById('infoComparisons').textContent = s.comparisons;
+
+            if (s.type === 'init') {
+                document.getElementById('infoArea').textContent = '-';
+                if (currentTab === 'twopointers') {
+                    colorBar(s.left, 'bar-left');
+                    colorBar(s.right, 'bar-right');
+                    setPtr(s.left, 'L', 'ptr-left');
+                    setPtr(s.right, 'R', 'ptr-right');
+                }
+                updateCalc('-', '-', '-', '-');
+                return;
+            }
+
+            if (currentTab === 'bruteforce') {
+                renderBruteForceStep(s);
+            } else {
+                renderTwoPointersStep(s);
+            }
+        }
+
+        function renderBruteForceStep(s) {
+            if (s.type === 'check') {
+                document.getElementById('infoArea').textContent = s.area;
+
+                colorBar(s.i, 'bar-checking-i');
+                colorBar(s.j, 'bar-checking-j');
+                setPtr(s.i, 'i', 'ptr-i');
+                setPtr(s.j, 'j', 'ptr-j');
+
+                // Show best pair
+                if (s.bestI >= 0 && (s.bestI !== s.i || s.bestJ !== s.j)) {
+                    colorBar(s.bestI, 'bar-best');
+                    colorBar(s.bestJ, 'bar-best');
+                }
+
+                // Draw water for current pair
+                drawWater(s.i, s.j, s.h, false);
+
+                // Draw best water
+                if (s.bestI >= 0 && s.bestI !== s.i && s.bestJ !== s.j) {
+                    drawWater(s.bestI, s.bestJ, Math.min(height[s.bestI], height[s.bestJ]), true);
+                }
+
+                updateCalc(height[s.i], height[s.j], s.width, s.area);
+
+            } else if (s.type === 'done') {
+                document.getElementById('infoArea').textContent = s.maxArea;
+                colorBar(s.bestI, 'bar-found');
+                colorBar(s.bestJ, 'bar-found');
+                drawWater(s.bestI, s.bestJ, Math.min(height[s.bestI], height[s.bestJ]), true);
+                updateCalc(height[s.bestI], height[s.bestJ], s.bestJ - s.bestI, s.maxArea);
+            }
+        }
+
+        function renderTwoPointersStep(s) {
+            if (s.type === 'check') {
+                document.getElementById('infoArea').textContent = s.area;
+
+                colorBar(s.left, 'bar-left');
+                colorBar(s.right, 'bar-right');
+                setPtr(s.left, 'L', 'ptr-left');
+                setPtr(s.right, 'R', 'ptr-right');
+
+                // Show best pair
+                if (s.bestL >= 0 && (s.bestL !== s.left || s.bestR !== s.right)) {
+                    colorBar(s.bestL, 'bar-best');
+                    colorBar(s.bestR, 'bar-best');
+                }
+
+                // Draw water for current pair
+                drawWater(s.left, s.right, s.h, false);
+
+                // Draw best water
+                if (s.bestL >= 0 && s.bestL !== s.left && s.bestR !== s.right) {
+                    drawWater(s.bestL, s.bestR, Math.min(height[s.bestL], height[s.bestR]), true);
+                }
+
+                updateCalc(height[s.left], height[s.right], s.width, s.area);
+
+            } else if (s.type === 'done') {
+                document.getElementById('infoArea').textContent = s.maxArea;
+                colorBar(s.bestL, 'bar-found');
+                colorBar(s.bestR, 'bar-found');
+                drawWater(s.bestL, s.bestR, Math.min(height[s.bestL], height[s.bestR]), true);
+                updateCalc(height[s.bestL], height[s.bestR], s.bestR - s.bestL, s.maxArea);
+            }
+        }
+
+        function colorBar(idx, cls) {
+            const bar = document.getElementById(`bar${idx}`);
+            if (bar) bar.className = `bar ${cls}`;
+        }
+
+        function setPtr(idx, text, cls) {
+            const ptr = document.getElementById(`ptr${idx}`);
+            if (ptr) {
+                ptr.textContent = text;
+                ptr.className = `bar-ptr-label ${cls}`;
+            }
+        }
+
+        function drawWater(i, j, waterH, isBest) {
+            if (i < 0 || j < 0 || i >= height.length || j >= height.length) return;
+
+            const container = document.getElementById('barsContainer');
+            const maxH = Math.max(...height);
+            if (maxH === 0) return;
+
+            const barWrapperI = document.getElementById(`barWrapper${i}`);
+            const barWrapperJ = document.getElementById(`barWrapper${j}`);
+            if (!barWrapperI || !barWrapperJ) return;
+
+            const containerRect = container.getBoundingClientRect();
+            const rectI = barWrapperI.getBoundingClientRect();
+            const rectJ = barWrapperJ.getBoundingClientRect();
+
+            const overlay = document.createElement('div');
+            overlay.className = isBest ? 'water-overlay best' : 'water-overlay';
+
+            const leftPos = rectI.left - containerRect.left + rectI.width / 2;
+            const rightPos = rectJ.left - containerRect.left + rectJ.width / 2;
+            const heightPct = (waterH / maxH) * 85;
+
+            overlay.style.left = `${leftPos}px`;
+            overlay.style.width = `${rightPos - leftPos}px`;
+            overlay.style.height = `${heightPct}%`;
+
+            container.appendChild(overlay);
+        }
+
+        function updateCalc(hLeft, hRight, width, area) {
+            const calcBox = document.getElementById('calcBox');
+            if (hLeft === '-') {
+                calcBox.innerHTML = '<span class="formula">area = min(height[left], height[right]) * (right - left)</span>';
+            } else {
+                const isMax = area === steps[currentStepIdx]?.maxArea;
+                calcBox.innerHTML = `<span class="formula">area = min(${hLeft}, ${hRight}) * ${width} = </span>` +
+                    `<span class="result ${isMax ? 'result-match' : 'result-no'}">${area}</span>`;
+            }
+        }
+
+        // ============================================================
+        // Playback controls
+        // ============================================================
+        function step() {
+            if (steps.length === 0) generateSteps();
+            if (currentStepIdx < steps.length - 1) {
+                currentStepIdx++;
+                renderStep();
+            } else {
+                pause();
+            }
+        }
+
+        function play() {
+            if (steps.length === 0) generateSteps();
+            if (currentStepIdx >= steps.length - 1) reset();
+            playing = true;
+            document.getElementById('btnPlay').style.display = 'none';
+            document.getElementById('btnPause').style.display = 'inline-block';
+            runPlay();
+        }
+
+        function runPlay() {
+            if (!playing) return;
+            if (currentStepIdx >= steps.length - 1) {
+                pause();
+                return;
+            }
+            step();
+            playTimer = setTimeout(runPlay, speed);
+        }
+
+        function pause() {
+            playing = false;
+            clearTimeout(playTimer);
+            document.getElementById('btnPlay').style.display = 'inline-block';
+            document.getElementById('btnPause').style.display = 'none';
+        }
+
+        function reset() {
+            pause();
+            steps = [];
+            currentStepIdx = -1;
+            renderBars();
+            document.getElementById('stepDesc').textContent = 'Press "Step" or "Play" to start the animation.';
+            document.getElementById('infoStep').textContent = '0';
+            document.getElementById('infoArea').textContent = '-';
+            document.getElementById('infoMax').textContent = '0';
+            document.getElementById('infoComparisons').textContent = '0';
+            document.getElementById('calcBox').innerHTML = '<span class="formula">area = min(height[left], height[right]) * (right - left)</span>';
+        }
+
+        // ============================================================
+        // Init
+        // ============================================================
+        renderBars();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0013. Roman to Integer — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 1rem;
+            width: 200px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .input-section input::placeholder { color: #64748b; text-transform: none; letter-spacing: normal; }
+
+        /* BUTTONS */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: #22c55e; color: white; }
+        .btn-success:hover { background: #16a34a; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-secondary { background: #475569; color: white; }
+        .btn-secondary:hover { background: #64748b; }
+
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* SPEED */
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+
+        .speed-control input[type="range"] {
+            width: 120px;
+            accent-color: #3b82f6;
+        }
+
+        /* ROMAN VALUE MAP */
+        .roman-map {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .roman-map-item {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 6px 12px;
+            text-align: center;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .roman-map-item .symbol {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+
+        .roman-map-item .value {
+            color: #94a3b8;
+            font-size: 0.75rem;
+        }
+
+        .roman-map-item.active {
+            border-color: #60a5fa;
+            background: #1e3a5f;
+        }
+
+        /* CHARACTER DISPLAY */
+        .char-display {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            min-height: 80px;
+            align-items: center;
+        }
+
+        .char-box {
+            width: 56px;
+            height: 72px;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            transition: all 0.4s;
+            position: relative;
+        }
+
+        .char-box .char-letter {
+            font-size: 1.4rem;
+            line-height: 1;
+        }
+
+        .char-box .char-value {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        .char-box.current {
+            border-color: #3b82f6;
+            background: #1e3a5f;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+            transform: scale(1.1);
+        }
+
+        .char-box.next-char {
+            border-color: #a78bfa;
+            background: #2d1f5e;
+        }
+
+        .char-box.processed-add {
+            border-color: #22c55e;
+            background: #0f2a1a;
+        }
+
+        .char-box.processed-sub {
+            border-color: #ef4444;
+            background: #2a0f0f;
+        }
+
+        .char-box .operation {
+            position: absolute;
+            top: -10px;
+            right: -6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .char-box .operation.add {
+            background: #22c55e;
+            color: white;
+        }
+
+        .char-box .operation.sub {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* DIRECTION ARROW */
+        .direction-indicator {
+            text-align: center;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .direction-indicator .arrow {
+            font-size: 1.2rem;
+            color: #3b82f6;
+        }
+
+        /* RUNNING TOTAL */
+        .total-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .total-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+
+        .total-value {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #60a5fa;
+            transition: all 0.3s;
+        }
+
+        .total-value.adding { color: #22c55e; }
+        .total-value.subtracting { color: #ef4444; }
+
+        /* STEP LOG */
+        .step-log {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            max-height: 250px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .step-log .step-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid #1e293b;
+            transition: all 0.3s;
+        }
+
+        .step-log .step-entry:last-child { border-bottom: none; }
+
+        .step-log .step-entry.current {
+            background: #1e293b;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .step-add { color: #22c55e; }
+        .step-sub { color: #ef4444; }
+        .step-info { color: #94a3b8; }
+        .step-result { color: #60a5fa; font-weight: 700; }
+
+        /* COMPARISON TABLE */
+        .comparison {
+            margin-top: 20px;
+        }
+
+        .comparison h3 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            color: #94a3b8;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .comparison-panel {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .comparison-panel h4 {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            color: #a78bfa;
+        }
+
+        .comparison-panel .comp-chars {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            min-height: 48px;
+            align-items: center;
+        }
+
+        .comp-char {
+            width: 40px;
+            height: 44px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .comp-char .comp-val { font-size: 0.55rem; color: #94a3b8; }
+        .comp-char.comp-current { border-color: #3b82f6; background: #1e3a5f; }
+        .comp-char.comp-add { border-color: #22c55e; background: #0f2a1a; }
+        .comp-char.comp-sub { border-color: #ef4444; background: #2a0f0f; }
+
+        .comp-total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #60a5fa;
+            text-align: center;
+        }
+
+        /* FORMULA */
+        .formula {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            text-align: center;
+            line-height: 1.8;
+            word-wrap: break-word;
+        }
+
+        .formula .f-add { color: #22c55e; }
+        .formula .f-sub { color: #ef4444; }
+        .formula .f-eq { color: #60a5fa; font-weight: 700; }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+        /* TAB CONTENT */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        @media (max-width: 600px) {
+            .comparison-grid { grid-template-columns: 1fr; }
+            .char-box { width: 44px; height: 60px; }
+            .char-box .char-letter { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0013. Roman to Integer</h1>
+        <p>Character-by-character conversion with subtraction rule detection</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="left-to-right">Left-to-Right</div>
+        <div class="tab" data-tab="right-to-left">Right-to-Left</div>
+        <div class="tab" data-tab="compare">Compare Both</div>
+    </div>
+
+    <div class="container">
+        <!-- Roman Value Map -->
+        <div class="roman-map">
+            <div class="roman-map-item" data-symbol="I"><div class="symbol">I</div><div class="value">1</div></div>
+            <div class="roman-map-item" data-symbol="V"><div class="symbol">V</div><div class="value">5</div></div>
+            <div class="roman-map-item" data-symbol="X"><div class="symbol">X</div><div class="value">10</div></div>
+            <div class="roman-map-item" data-symbol="L"><div class="symbol">L</div><div class="value">50</div></div>
+            <div class="roman-map-item" data-symbol="C"><div class="symbol">C</div><div class="value">100</div></div>
+            <div class="roman-map-item" data-symbol="D"><div class="symbol">D</div><div class="value">500</div></div>
+            <div class="roman-map-item" data-symbol="M"><div class="symbol">M</div><div class="value">1000</div></div>
+        </div>
+
+        <!-- Input -->
+        <div class="input-section">
+            <label for="romanInput">Roman Numeral:</label>
+            <input type="text" id="romanInput" placeholder="e.g. MCMXCIV" value="MCMXCIV" maxlength="15">
+            <button class="btn btn-primary" id="btnStart">Start</button>
+        </div>
+
+        <!-- Preset examples -->
+        <div class="input-section" style="margin-bottom:12px;">
+            <button class="btn btn-secondary preset-btn" data-value="III">III (3)</button>
+            <button class="btn btn-secondary preset-btn" data-value="IV">IV (4)</button>
+            <button class="btn btn-secondary preset-btn" data-value="IX">IX (9)</button>
+            <button class="btn btn-secondary preset-btn" data-value="LVIII">LVIII (58)</button>
+            <button class="btn btn-secondary preset-btn" data-value="MCMXCIV">MCMXCIV (1994)</button>
+            <button class="btn btn-secondary preset-btn" data-value="MMMCMXCIX">MMMCMXCIX (3999)</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-success" id="btnPlay" disabled>Play</button>
+            <button class="btn btn-secondary" id="btnStep" disabled>Step</button>
+            <button class="btn btn-danger" id="btnReset" disabled>Reset</button>
+        </div>
+
+        <!-- Speed -->
+        <div class="speed-control">
+            <label>Speed:</label>
+            <input type="range" id="speedSlider" min="1" max="10" value="5">
+            <span id="speedLabel">5</span>
+        </div>
+
+        <!-- LEFT-TO-RIGHT TAB -->
+        <div class="tab-content active" id="tab-left-to-right">
+            <div class="direction-indicator">
+                Processing direction: <span class="arrow">--></span> Left to Right
+            </div>
+
+            <div class="char-display" id="ltr-chars"></div>
+
+            <div class="total-section">
+                <div class="total-label">Running Total</div>
+                <div class="total-value" id="ltr-total">0</div>
+            </div>
+
+            <div class="formula" id="ltr-formula"></div>
+
+            <div class="step-log" id="ltr-log">
+                <div class="step-entry step-info">Press Start to begin...</div>
+            </div>
+        </div>
+
+        <!-- RIGHT-TO-LEFT TAB -->
+        <div class="tab-content" id="tab-right-to-left">
+            <div class="direction-indicator">
+                Processing direction: <span class="arrow"><--</span> Right to Left
+            </div>
+
+            <div class="char-display" id="rtl-chars"></div>
+
+            <div class="total-section">
+                <div class="total-label">Running Total</div>
+                <div class="total-value" id="rtl-total">0</div>
+            </div>
+
+            <div class="formula" id="rtl-formula"></div>
+
+            <div class="step-log" id="rtl-log">
+                <div class="step-entry step-info">Press Start to begin...</div>
+            </div>
+        </div>
+
+        <!-- COMPARE TAB -->
+        <div class="tab-content" id="tab-compare">
+            <div class="comparison">
+                <h3 style="text-align:center;">Side-by-side comparison of both approaches</h3>
+                <div class="comparison-grid">
+                    <div class="comparison-panel">
+                        <h4>Left-to-Right</h4>
+                        <div class="comp-chars" id="comp-ltr-chars"></div>
+                        <div class="comp-total" id="comp-ltr-total">Total: 0</div>
+                    </div>
+                    <div class="comparison-panel">
+                        <h4>Right-to-Left</h4>
+                        <div class="comp-chars" id="comp-rtl-chars"></div>
+                        <div class="comp-total" id="comp-rtl-total">Total: 0</div>
+                    </div>
+                </div>
+
+                <div class="formula" id="comp-formula" style="margin-top:16px;">
+                    Both approaches produce the same result.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ROMAN_MAP = { 'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000 };
+        const VALID_CHARS = new Set(Object.keys(ROMAN_MAP));
+
+        let currentTab = 'left-to-right';
+        let animationState = null;
+        let animTimer = null;
+        let speed = 5;
+
+        // DOM Elements
+        const romanInput = document.getElementById('romanInput');
+        const btnStart = document.getElementById('btnStart');
+        const btnPlay = document.getElementById('btnPlay');
+        const btnStep = document.getElementById('btnStep');
+        const btnReset = document.getElementById('btnReset');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedLabel = document.getElementById('speedLabel');
+
+        // ===== TABS =====
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = tab.dataset.tab;
+                document.getElementById('tab-' + currentTab).classList.add('active');
+                resetAnimation();
+            });
+        });
+
+        // ===== PRESETS =====
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                romanInput.value = btn.dataset.value;
+                resetAnimation();
+            });
+        });
+
+        // ===== SPEED =====
+        speedSlider.addEventListener('input', () => {
+            speed = parseInt(speedSlider.value);
+            speedLabel.textContent = speed;
+        });
+
+        // ===== BUTTONS =====
+        btnStart.addEventListener('click', () => startAnimation());
+        btnPlay.addEventListener('click', () => togglePlay());
+        btnStep.addEventListener('click', () => stepAnimation());
+        btnReset.addEventListener('click', () => resetAnimation());
+
+        romanInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') startAnimation();
+        });
+
+        // Filter input to valid Roman characters
+        romanInput.addEventListener('input', () => {
+            romanInput.value = romanInput.value.toUpperCase().split('').filter(c => VALID_CHARS.has(c)).join('');
+        });
+
+        // ===== ANIMATION STATE =====
+        function createState(s, direction) {
+            const chars = s.split('');
+            return {
+                chars,
+                direction,
+                stepIndex: 0,
+                total: 0,
+                prev: 0,
+                operations: [],  // {char, value, op: 'add'|'sub'}
+                done: false,
+                playing: false
+            };
+        }
+
+        function startAnimation() {
+            const s = romanInput.value.toUpperCase().trim();
+            if (!s || s.length === 0) return;
+
+            for (const c of s) {
+                if (!VALID_CHARS.has(c)) return;
+            }
+
+            stopTimer();
+
+            if (currentTab === 'compare') {
+                animationState = {
+                    ltr: createState(s, 'ltr'),
+                    rtl: createState(s, 'rtl'),
+                    isCompare: true
+                };
+            } else if (currentTab === 'left-to-right') {
+                animationState = createState(s, 'ltr');
+            } else {
+                animationState = createState(s, 'rtl');
+            }
+
+            btnPlay.disabled = false;
+            btnStep.disabled = false;
+            btnReset.disabled = false;
+
+            renderInitial();
+        }
+
+        function resetAnimation() {
+            stopTimer();
+            animationState = null;
+            btnPlay.disabled = true;
+            btnStep.disabled = true;
+            btnReset.disabled = true;
+            renderClear();
+        }
+
+        function togglePlay() {
+            if (!animationState) return;
+
+            const state = animationState.isCompare ? animationState.ltr : animationState;
+            if (state.done) return;
+
+            if (state.playing || (animationState.isCompare && animationState.rtl.playing)) {
+                stopTimer();
+                if (animationState.isCompare) {
+                    animationState.ltr.playing = false;
+                    animationState.rtl.playing = false;
+                } else {
+                    state.playing = false;
+                }
+                btnPlay.textContent = 'Play';
+            } else {
+                if (animationState.isCompare) {
+                    animationState.ltr.playing = true;
+                    animationState.rtl.playing = true;
+                } else {
+                    state.playing = true;
+                }
+                btnPlay.textContent = 'Pause';
+                runTimer();
+            }
+        }
+
+        function runTimer() {
+            const delay = Math.max(200, 1200 - speed * 100);
+            animTimer = setInterval(() => {
+                stepAnimation();
+                const state = animationState.isCompare ? animationState.ltr : animationState;
+                if (state.done) {
+                    stopTimer();
+                    if (animationState.isCompare) {
+                        animationState.ltr.playing = false;
+                        animationState.rtl.playing = false;
+                    } else {
+                        state.playing = false;
+                    }
+                    btnPlay.textContent = 'Play';
+                }
+            }, delay);
+        }
+
+        function stopTimer() {
+            if (animTimer) { clearInterval(animTimer); animTimer = null; }
+        }
+
+        function stepAnimation() {
+            if (!animationState) return;
+
+            if (animationState.isCompare) {
+                stepSingle(animationState.ltr);
+                stepSingle(animationState.rtl);
+                renderCompare();
+            } else {
+                stepSingle(animationState);
+                renderSingle(animationState);
+            }
+        }
+
+        function stepSingle(state) {
+            if (state.done) return;
+
+            const n = state.chars.length;
+            const i = state.stepIndex;
+
+            if (state.direction === 'ltr') {
+                // Left-to-Right
+                const curr = ROMAN_MAP[state.chars[i]];
+                const next = (i + 1 < n) ? ROMAN_MAP[state.chars[i + 1]] : 0;
+
+                if (i + 1 < n && curr < next) {
+                    state.total -= curr;
+                    state.operations.push({ char: state.chars[i], value: curr, op: 'sub' });
+                } else {
+                    state.total += curr;
+                    state.operations.push({ char: state.chars[i], value: curr, op: 'add' });
+                }
+            } else {
+                // Right-to-Left
+                const idx = n - 1 - i;
+                const curr = ROMAN_MAP[state.chars[idx]];
+
+                if (curr < state.prev) {
+                    state.total -= curr;
+                    state.operations.unshift({ char: state.chars[idx], value: curr, op: 'sub' });
+                } else {
+                    state.total += curr;
+                    state.operations.unshift({ char: state.chars[idx], value: curr, op: 'add' });
+                }
+                state.prev = curr;
+            }
+
+            state.stepIndex++;
+            if (state.stepIndex >= n) {
+                state.done = true;
+            }
+        }
+
+        // ===== RENDERING =====
+        function renderClear() {
+            ['ltr', 'rtl'].forEach(prefix => {
+                const charsEl = document.getElementById(prefix + '-chars');
+                const totalEl = document.getElementById(prefix + '-total');
+                const logEl = document.getElementById(prefix + '-log');
+                const formulaEl = document.getElementById(prefix + '-formula');
+                if (charsEl) charsEl.innerHTML = '';
+                if (totalEl) { totalEl.textContent = '0'; totalEl.className = 'total-value'; }
+                if (logEl) logEl.innerHTML = '<div class="step-entry step-info">Press Start to begin...</div>';
+                if (formulaEl) formulaEl.innerHTML = '';
+            });
+            ['comp-ltr-chars', 'comp-rtl-chars'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = '';
+            });
+            document.getElementById('comp-ltr-total').textContent = 'Total: 0';
+            document.getElementById('comp-rtl-total').textContent = 'Total: 0';
+            document.getElementById('comp-formula').innerHTML = 'Both approaches produce the same result.';
+
+            // Clear active map items
+            document.querySelectorAll('.roman-map-item').forEach(el => el.classList.remove('active'));
+        }
+
+        function renderInitial() {
+            if (animationState.isCompare) {
+                renderCompareInit();
+            } else {
+                renderSingleInit(animationState);
+            }
+        }
+
+        function renderSingleInit(state) {
+            const prefix = state.direction;
+            const charsEl = document.getElementById(prefix + '-chars');
+            const totalEl = document.getElementById(prefix + '-total');
+            const logEl = document.getElementById(prefix + '-log');
+            const formulaEl = document.getElementById(prefix + '-formula');
+
+            charsEl.innerHTML = state.chars.map((c, i) => `
+                <div class="char-box" id="${prefix}-box-${i}">
+                    <div class="char-letter">${c}</div>
+                    <div class="char-value">${ROMAN_MAP[c]}</div>
+                </div>
+            `).join('');
+
+            totalEl.textContent = '0';
+            totalEl.className = 'total-value';
+            logEl.innerHTML = '<div class="step-entry step-info">Ready. Press Step or Play.</div>';
+            formulaEl.innerHTML = '';
+        }
+
+        function renderSingle(state) {
+            const prefix = state.direction;
+            const charsEl = document.getElementById(prefix + '-chars');
+            const totalEl = document.getElementById(prefix + '-total');
+            const logEl = document.getElementById(prefix + '-log');
+            const formulaEl = document.getElementById(prefix + '-formula');
+            const n = state.chars.length;
+
+            // Clear previous highlights
+            document.querySelectorAll('.roman-map-item').forEach(el => el.classList.remove('active'));
+
+            // Update character boxes
+            for (let i = 0; i < n; i++) {
+                const box = document.getElementById(prefix + '-box-' + i);
+                box.className = 'char-box';
+
+                // Remove old operation badges
+                const oldOp = box.querySelector('.operation');
+                if (oldOp) oldOp.remove();
+            }
+
+            // Mark processed characters
+            if (state.direction === 'ltr') {
+                for (let i = 0; i < state.operations.length; i++) {
+                    const box = document.getElementById(prefix + '-box-' + i);
+                    const op = state.operations[i];
+                    box.classList.add(op.op === 'add' ? 'processed-add' : 'processed-sub');
+
+                    const badge = document.createElement('div');
+                    badge.className = 'operation ' + (op.op === 'add' ? 'add' : 'sub');
+                    badge.textContent = op.op === 'add' ? '+' : '-';
+                    box.appendChild(badge);
+                }
+
+                // Highlight current position
+                if (!state.done && state.stepIndex < n) {
+                    const currBox = document.getElementById(prefix + '-box-' + state.stepIndex);
+                    currBox.classList.add('current');
+
+                    // Highlight next if exists
+                    if (state.stepIndex + 1 < n) {
+                        const nextBox = document.getElementById(prefix + '-box-' + (state.stepIndex + 1));
+                        nextBox.classList.add('next-char');
+                    }
+                }
+
+                // Highlight current symbol in map
+                if (state.operations.length > 0) {
+                    const lastOp = state.operations[state.operations.length - 1];
+                    document.querySelectorAll('.roman-map-item').forEach(el => {
+                        if (el.dataset.symbol === lastOp.char) el.classList.add('active');
+                    });
+                }
+            } else {
+                // Right-to-left: operations are stored in order (unshifted), so index 0 = leftmost processed
+                const processedCount = state.operations.length;
+                const startIdx = n - processedCount;
+
+                for (let i = 0; i < processedCount; i++) {
+                    const boxIdx = startIdx + i;
+                    const box = document.getElementById(prefix + '-box-' + boxIdx);
+                    const op = state.operations[i];
+                    box.classList.add(op.op === 'add' ? 'processed-add' : 'processed-sub');
+
+                    const badge = document.createElement('div');
+                    badge.className = 'operation ' + (op.op === 'add' ? 'add' : 'sub');
+                    badge.textContent = op.op === 'add' ? '+' : '-';
+                    box.appendChild(badge);
+                }
+
+                // Highlight current position
+                if (!state.done && startIdx - 1 >= 0) {
+                    const currBox = document.getElementById(prefix + '-box-' + (startIdx - 1));
+                    currBox.classList.add('current');
+                }
+
+                // Highlight current symbol in map
+                if (state.operations.length > 0) {
+                    const firstOp = state.operations[0];
+                    document.querySelectorAll('.roman-map-item').forEach(el => {
+                        if (el.dataset.symbol === firstOp.char) el.classList.add('active');
+                    });
+                }
+            }
+
+            // Update total with animation class
+            totalEl.textContent = state.total;
+            totalEl.className = 'total-value';
+            if (state.operations.length > 0) {
+                const lastProcessed = state.direction === 'ltr'
+                    ? state.operations[state.operations.length - 1]
+                    : state.operations[0];
+                totalEl.classList.add(lastProcessed.op === 'add' ? 'adding' : 'subtracting');
+                setTimeout(() => { totalEl.className = 'total-value'; }, 400);
+            }
+
+            // Build formula
+            renderFormula(state, formulaEl);
+
+            // Build log
+            renderLog(state, logEl);
+        }
+
+        function renderFormula(state, el) {
+            if (state.operations.length === 0) {
+                el.innerHTML = '';
+                return;
+            }
+
+            const ops = state.direction === 'ltr' ? state.operations : [...state.operations];
+            let html = '';
+            ops.forEach((op, i) => {
+                if (i > 0) html += ' ';
+                const cls = op.op === 'add' ? 'f-add' : 'f-sub';
+                const sign = (i === 0 && op.op === 'add') ? '' : (op.op === 'add' ? '+ ' : '- ');
+                html += `<span class="${cls}">${sign}${op.value}</span>`;
+            });
+
+            if (state.done) {
+                html += ` <span class="f-eq">= ${state.total}</span>`;
+            }
+
+            el.innerHTML = html;
+        }
+
+        function renderLog(state, el) {
+            let html = '';
+            const ops = state.direction === 'ltr' ? state.operations : [...state.operations];
+            const n = state.chars.length;
+
+            ops.forEach((op, i) => {
+                const stepNum = i + 1;
+                const cls = op.op === 'add' ? 'step-add' : 'step-sub';
+                const sign = op.op === 'add' ? '+' : '-';
+                const isCurrent = (i === ops.length - 1 && !state.done);
+
+                let reason = '';
+                if (state.direction === 'ltr') {
+                    if (op.op === 'sub') {
+                        const nextChar = state.chars[i + 1];
+                        reason = ` (${op.char}=${op.value} < ${nextChar}=${ROMAN_MAP[nextChar]} => subtract)`;
+                    } else {
+                        reason = ` (add)`;
+                    }
+                } else {
+                    if (op.op === 'sub') {
+                        reason = ` (less than right neighbor => subtract)`;
+                    } else {
+                        reason = ` (add)`;
+                    }
+                }
+
+                const runTotal = computeRunningTotal(ops, i);
+                html += `<div class="step-entry ${isCurrent ? 'current' : ''}">
+                    <span class="${cls}">Step ${stepNum}: ${sign}${op.value} (${op.char})</span>
+                    <span class="step-info">${reason}</span>
+                    <span class="step-result"> = ${runTotal}</span>
+                </div>`;
+            });
+
+            if (state.done) {
+                html += `<div class="step-entry"><span class="step-result">Final Result: ${state.total}</span></div>`;
+            }
+
+            el.innerHTML = html || '<div class="step-entry step-info">Ready. Press Step or Play.</div>';
+            el.scrollTop = el.scrollHeight;
+        }
+
+        function computeRunningTotal(ops, upTo) {
+            let total = 0;
+            for (let i = 0; i <= upTo; i++) {
+                if (ops[i].op === 'add') total += ops[i].value;
+                else total -= ops[i].value;
+            }
+            return total;
+        }
+
+        // ===== COMPARE RENDERING =====
+        function renderCompareInit() {
+            const s = animationState.ltr.chars;
+            ['comp-ltr', 'comp-rtl'].forEach(prefix => {
+                const charsEl = document.getElementById(prefix + '-chars');
+                charsEl.innerHTML = s.map((c, i) => `
+                    <div class="comp-char" id="${prefix}-box-${i}">
+                        <div>${c}</div>
+                        <div class="comp-val">${ROMAN_MAP[c]}</div>
+                    </div>
+                `).join('');
+            });
+            document.getElementById('comp-ltr-total').textContent = 'Total: 0';
+            document.getElementById('comp-rtl-total').textContent = 'Total: 0';
+            document.getElementById('comp-formula').innerHTML = 'Ready. Press Step or Play.';
+        }
+
+        function renderCompare() {
+            const ltr = animationState.ltr;
+            const rtl = animationState.rtl;
+            const n = ltr.chars.length;
+
+            // LTR panel
+            for (let i = 0; i < n; i++) {
+                const box = document.getElementById('comp-ltr-box-' + i);
+                box.className = 'comp-char';
+            }
+            for (let i = 0; i < ltr.operations.length; i++) {
+                const box = document.getElementById('comp-ltr-box-' + i);
+                box.classList.add(ltr.operations[i].op === 'add' ? 'comp-add' : 'comp-sub');
+            }
+            if (!ltr.done && ltr.stepIndex < n) {
+                document.getElementById('comp-ltr-box-' + ltr.stepIndex).classList.add('comp-current');
+            }
+            document.getElementById('comp-ltr-total').textContent = 'Total: ' + ltr.total;
+
+            // RTL panel
+            for (let i = 0; i < n; i++) {
+                const box = document.getElementById('comp-rtl-box-' + i);
+                box.className = 'comp-char';
+            }
+            const rtlProcessed = rtl.operations.length;
+            const rtlStart = n - rtlProcessed;
+            for (let i = 0; i < rtlProcessed; i++) {
+                const box = document.getElementById('comp-rtl-box-' + (rtlStart + i));
+                box.classList.add(rtl.operations[i].op === 'add' ? 'comp-add' : 'comp-sub');
+            }
+            if (!rtl.done && rtlStart - 1 >= 0) {
+                document.getElementById('comp-rtl-box-' + (rtlStart - 1)).classList.add('comp-current');
+            }
+            document.getElementById('comp-rtl-total').textContent = 'Total: ' + rtl.total;
+
+            // Formula
+            const formulaEl = document.getElementById('comp-formula');
+            if (ltr.done && rtl.done) {
+                formulaEl.innerHTML = `Both approaches give: <span class="f-eq">${ltr.total}</span>. Same result, different traversal order.`;
+            } else {
+                formulaEl.innerHTML = `LTR: ${ltr.total} | RTL: ${rtl.total} (step ${ltr.stepIndex}/${n})`;
+            }
+        }
+    </script>
+</body>
+</html>

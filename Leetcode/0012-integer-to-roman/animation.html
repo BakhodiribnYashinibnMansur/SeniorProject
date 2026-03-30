@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0012. Integer to Roman — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 1rem;
+            width: 120px;
+            text-align: center;
+        }
+
+        .input-section input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-warning { background: #f59e0b; color: #1e293b; }
+        .btn-warning:hover { background: #d97706; }
+
+        /* RESULT DISPLAY */
+        .result-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .result-box .label {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .result-box .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #60a5fa;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 3px;
+        }
+
+        /* STEPS */
+        .steps-container {
+            margin-top: 16px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            margin-bottom: 6px;
+            background: #0f172a;
+            border-radius: 8px;
+            border-left: 3px solid #334155;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.4s ease;
+        }
+
+        .step.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .step.active-step {
+            border-left-color: #3b82f6;
+            background: #1a2744;
+        }
+
+        .step.done {
+            border-left-color: #10b981;
+        }
+
+        .step-number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .step.active-step .step-number { background: #3b82f6; }
+        .step.done .step-number { background: #10b981; }
+
+        .step-info { flex: 1; }
+
+        .step-desc {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .step-values {
+            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+            margin-top: 2px;
+        }
+
+        .step-remaining {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .step-symbol {
+            color: #10b981;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .step-result {
+            color: #60a5fa;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            min-width: 120px;
+            text-align: right;
+        }
+
+        /* VALUE TABLE */
+        .value-table {
+            margin-top: 20px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #334155;
+        }
+
+        .value-table h3 {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+
+        .table-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 6px;
+        }
+
+        .table-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            background: #1e293b;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            transition: all 0.3s;
+        }
+
+        .table-cell.highlight {
+            border-color: #3b82f6;
+            background: #1a2744;
+            transform: scale(1.05);
+        }
+
+        .table-cell .sym {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #a78bfa;
+        }
+
+        .table-cell .val {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* DIGIT MAP TAB */
+        .digit-decomposition {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .digit-group {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 14px 20px;
+            text-align: center;
+            min-width: 120px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .digit-group.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .digit-group.active-group {
+            border-color: #3b82f6;
+            background: #1a2744;
+        }
+
+        .digit-place {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .digit-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #f59e0b;
+            font-family: 'Courier New', monospace;
+        }
+
+        .digit-arrow {
+            font-size: 1.2rem;
+            color: #64748b;
+            margin: 6px 0;
+        }
+
+        .digit-roman {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #10b981;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* SPEED SLIDER */
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .speed-control label {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        /* BUILDING ANIMATION */
+        .building-display {
+            display: flex;
+            gap: 2px;
+            justify-content: center;
+            margin: 16px 0;
+            min-height: 48px;
+            align-items: center;
+        }
+
+        .roman-char {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 44px;
+            background: #334155;
+            border-radius: 6px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            font-family: 'Courier New', monospace;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.3s ease;
+        }
+
+        .roman-char.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .roman-char.just-added {
+            background: #3b82f6;
+            color: white;
+            transform: scale(1.15);
+        }
+
+        .roman-char.settled {
+            background: #1e4a3a;
+            color: #10b981;
+        }
+
+        /* INFO PANEL */
+        .info-panel {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .info-panel code {
+            background: #334155;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #a78bfa;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0012. Integer to Roman</h1>
+        <p>Convert an integer (1-3999) to its Roman numeral representation</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="greedy">Greedy (Value Table)</div>
+        <div class="tab" data-tab="digitmap">Digit Mapping</div>
+    </div>
+
+    <div class="container">
+        <!-- Greedy Tab -->
+        <div class="tab-content active" id="tab-greedy">
+            <div class="input-section">
+                <label>Number:</label>
+                <input type="number" id="greedyInput" value="1994" min="1" max="3999" placeholder="1-3999">
+                <button class="btn btn-primary" onclick="runGreedy()">Convert</button>
+                <button class="btn btn-success" onclick="stepGreedy()">Step</button>
+                <button class="btn btn-warning" onclick="resetGreedy()">Reset</button>
+            </div>
+
+            <div class="result-box">
+                <div class="label">ROMAN NUMERAL</div>
+                <div class="value" id="greedyResult">—</div>
+            </div>
+
+            <div class="building-display" id="greedyBuilding"></div>
+
+            <div class="steps-container" id="greedySteps"></div>
+
+            <div class="controls">
+                <div class="speed-control">
+                    <label>Speed:</label>
+                    <input type="range" id="greedySpeed" min="100" max="1500" value="600" step="100">
+                    <label id="greedySpeedLabel">600ms</label>
+                </div>
+            </div>
+
+            <div class="value-table">
+                <h3>Value-Symbol Reference Table</h3>
+                <div class="table-grid" id="greedyTable"></div>
+            </div>
+        </div>
+
+        <!-- Digit Map Tab -->
+        <div class="tab-content" id="tab-digitmap">
+            <div class="input-section">
+                <label>Number:</label>
+                <input type="number" id="digitmapInput" value="1994" min="1" max="3999" placeholder="1-3999">
+                <button class="btn btn-primary" onclick="runDigitMap()">Convert</button>
+                <button class="btn btn-success" onclick="stepDigitMap()">Step</button>
+                <button class="btn btn-warning" onclick="resetDigitMap()">Reset</button>
+            </div>
+
+            <div class="result-box">
+                <div class="label">ROMAN NUMERAL</div>
+                <div class="value" id="digitmapResult">—</div>
+            </div>
+
+            <div class="building-display" id="digitmapBuilding"></div>
+
+            <div class="digit-decomposition" id="digitGroups"></div>
+
+            <div class="steps-container" id="digitmapSteps"></div>
+
+            <div class="controls">
+                <div class="speed-control">
+                    <label>Speed:</label>
+                    <input type="range" id="digitmapSpeed" min="200" max="2000" value="800" step="100">
+                    <label id="digitmapSpeedLabel">800ms</label>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <strong>Digit Mapping Approach:</strong>
+                Predefine Roman representations for each digit (0-9) at each place value (thousands, hundreds, tens, ones).
+                Decompose the number into its digits and look up each one.
+                Example: <code>1994</code> = <code>thousands[1]</code> + <code>hundreds[9]</code> + <code>tens[9]</code> + <code>ones[4]</code>
+                = <code>M</code> + <code>CM</code> + <code>XC</code> + <code>IV</code> = <code>MCMXCIV</code>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // Value-Symbol Table
+        // ============================================================
+        const VALUE_SYMBOLS = [
+            [1000, "M"],  [900, "CM"], [500, "D"],  [400, "CD"],
+            [100, "C"],   [90, "XC"],  [50, "L"],   [40, "XL"],
+            [10, "X"],    [9, "IX"],   [5, "V"],    [4, "IV"],
+            [1, "I"]
+        ];
+
+        const THOUSANDS = ["", "M", "MM", "MMM"];
+        const HUNDREDS  = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"];
+        const TENS      = ["", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"];
+        const ONES      = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"];
+
+        // ============================================================
+        // Tabs
+        // ============================================================
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // ============================================================
+        // Speed sliders
+        // ============================================================
+        document.getElementById('greedySpeed').addEventListener('input', e => {
+            document.getElementById('greedySpeedLabel').textContent = e.target.value + 'ms';
+        });
+        document.getElementById('digitmapSpeed').addEventListener('input', e => {
+            document.getElementById('digitmapSpeedLabel').textContent = e.target.value + 'ms';
+        });
+
+        // ============================================================
+        // Build value table
+        // ============================================================
+        function buildValueTable() {
+            const grid = document.getElementById('greedyTable');
+            grid.innerHTML = '';
+            VALUE_SYMBOLS.forEach(([val, sym]) => {
+                const cell = document.createElement('div');
+                cell.className = 'table-cell';
+                cell.id = 'vtcell-' + val;
+                cell.innerHTML = `<span class="sym">${sym}</span><span class="val">${val}</span>`;
+                grid.appendChild(cell);
+            });
+        }
+        buildValueTable();
+
+        // ============================================================
+        // Helper: render building display
+        // ============================================================
+        function renderBuilding(containerId, chars, justAddedStart) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            chars.forEach((ch, i) => {
+                const el = document.createElement('span');
+                el.className = 'roman-char visible';
+                if (justAddedStart !== undefined && i >= justAddedStart) {
+                    el.classList.add('just-added');
+                } else {
+                    el.classList.add('settled');
+                }
+                el.textContent = ch;
+                container.appendChild(el);
+            });
+        }
+
+        // ============================================================
+        // Greedy Approach
+        // ============================================================
+        let greedyState = null;
+        let greedyAnimTimer = null;
+
+        function getGreedySteps(num) {
+            const steps = [];
+            let remaining = num;
+            let result = "";
+            for (let i = 0; i < VALUE_SYMBOLS.length; i++) {
+                const [val, sym] = VALUE_SYMBOLS[i];
+                while (remaining >= val) {
+                    result += sym;
+                    remaining -= val;
+                    steps.push({
+                        valueIndex: i,
+                        value: val,
+                        symbol: sym,
+                        remaining: remaining,
+                        result: result
+                    });
+                }
+            }
+            return steps;
+        }
+
+        function resetGreedy() {
+            if (greedyAnimTimer) clearTimeout(greedyAnimTimer);
+            greedyAnimTimer = null;
+            greedyState = null;
+            document.getElementById('greedyResult').textContent = '—';
+            document.getElementById('greedySteps').innerHTML = '';
+            document.getElementById('greedyBuilding').innerHTML = '';
+            document.querySelectorAll('#greedyTable .table-cell').forEach(c => c.classList.remove('highlight'));
+        }
+
+        function initGreedyState() {
+            const num = parseInt(document.getElementById('greedyInput').value) || 1;
+            const clamped = Math.max(1, Math.min(3999, num));
+            document.getElementById('greedyInput').value = clamped;
+            resetGreedy();
+            const steps = getGreedySteps(clamped);
+            greedyState = { steps, currentStep: 0, num: clamped };
+            return greedyState;
+        }
+
+        function showGreedyStep(state) {
+            if (state.currentStep >= state.steps.length) return false;
+
+            const step = state.steps[state.currentStep];
+            const stepsDiv = document.getElementById('greedySteps');
+
+            // Settle previous steps
+            stepsDiv.querySelectorAll('.step.active-step').forEach(s => {
+                s.classList.remove('active-step');
+                s.classList.add('done');
+            });
+
+            // Remove previous table highlight
+            document.querySelectorAll('#greedyTable .table-cell').forEach(c => c.classList.remove('highlight'));
+
+            // Highlight current value in table
+            const cell = document.getElementById('vtcell-' + step.value);
+            if (cell) cell.classList.add('highlight');
+
+            // Create step element
+            const stepEl = document.createElement('div');
+            stepEl.className = 'step active-step';
+            stepEl.innerHTML = `
+                <div class="step-number">${state.currentStep + 1}</div>
+                <div class="step-info">
+                    <div class="step-desc">Subtract <strong>${step.value}</strong> (${step.symbol})</div>
+                    <div class="step-values">
+                        remaining: <span class="step-remaining">${step.remaining}</span>
+                    </div>
+                </div>
+                <div class="step-symbol">${step.symbol}</div>
+                <div class="step-result">"${step.result}"</div>
+            `;
+            stepsDiv.appendChild(stepEl);
+            requestAnimationFrame(() => stepEl.classList.add('visible'));
+
+            // Building display
+            const chars = step.result.split('');
+            const prevLen = state.currentStep > 0 ? state.steps[state.currentStep - 1].result.length : 0;
+            renderBuilding('greedyBuilding', chars, prevLen);
+
+            // Update result
+            document.getElementById('greedyResult').textContent = step.result;
+
+            state.currentStep++;
+            return state.currentStep < state.steps.length;
+        }
+
+        function stepGreedy() {
+            if (!greedyState) initGreedyState();
+            showGreedyStep(greedyState);
+        }
+
+        function runGreedy() {
+            const state = initGreedyState();
+            const speed = parseInt(document.getElementById('greedySpeed').value);
+
+            function animate() {
+                const hasMore = showGreedyStep(state);
+                if (hasMore) {
+                    greedyAnimTimer = setTimeout(animate, speed);
+                } else {
+                    // Settle all
+                    document.querySelectorAll('#greedySteps .step.active-step').forEach(s => {
+                        s.classList.remove('active-step');
+                        s.classList.add('done');
+                    });
+                    document.querySelectorAll('#greedyTable .table-cell').forEach(c => c.classList.remove('highlight'));
+                    // Settle building chars
+                    document.querySelectorAll('#greedyBuilding .roman-char').forEach(c => {
+                        c.classList.remove('just-added');
+                        c.classList.add('settled');
+                    });
+                }
+            }
+            animate();
+        }
+
+        // ============================================================
+        // Digit Map Approach
+        // ============================================================
+        let digitmapState = null;
+        let digitmapAnimTimer = null;
+
+        function getDigitMapSteps(num) {
+            const places = [
+                { name: "Thousands", divisor: 1000, mod: 10, table: THOUSANDS },
+                { name: "Hundreds",  divisor: 100,  mod: 10, table: HUNDREDS },
+                { name: "Tens",      divisor: 10,   mod: 10, table: TENS },
+                { name: "Ones",      divisor: 1,    mod: 10, table: ONES },
+            ];
+
+            const steps = [];
+            let result = "";
+            for (const place of places) {
+                const digit = Math.floor(num / place.divisor) % place.mod;
+                const roman = place.table[digit];
+                result += roman;
+                steps.push({
+                    place: place.name,
+                    digit: digit,
+                    digitValue: digit * place.divisor,
+                    roman: roman,
+                    result: result
+                });
+            }
+            return steps;
+        }
+
+        function resetDigitMap() {
+            if (digitmapAnimTimer) clearTimeout(digitmapAnimTimer);
+            digitmapAnimTimer = null;
+            digitmapState = null;
+            document.getElementById('digitmapResult').textContent = '—';
+            document.getElementById('digitmapSteps').innerHTML = '';
+            document.getElementById('digitmapBuilding').innerHTML = '';
+            document.getElementById('digitGroups').innerHTML = '';
+        }
+
+        function initDigitMapState() {
+            const num = parseInt(document.getElementById('digitmapInput').value) || 1;
+            const clamped = Math.max(1, Math.min(3999, num));
+            document.getElementById('digitmapInput').value = clamped;
+            resetDigitMap();
+            const steps = getDigitMapSteps(clamped);
+            digitmapState = { steps, currentStep: 0, num: clamped };
+
+            // Create digit group placeholders
+            const groupsDiv = document.getElementById('digitGroups');
+            steps.forEach((step, i) => {
+                const group = document.createElement('div');
+                group.className = 'digit-group';
+                group.id = 'dgroup-' + i;
+                group.innerHTML = `
+                    <div class="digit-place">${step.place}</div>
+                    <div class="digit-value">${step.digitValue}</div>
+                    <div class="digit-arrow">&#8595;</div>
+                    <div class="digit-roman">${step.roman || '—'}</div>
+                `;
+                groupsDiv.appendChild(group);
+            });
+
+            return digitmapState;
+        }
+
+        function showDigitMapStep(state) {
+            if (state.currentStep >= state.steps.length) return false;
+
+            const step = state.steps[state.currentStep];
+            const stepsDiv = document.getElementById('digitmapSteps');
+
+            // Settle previous
+            stepsDiv.querySelectorAll('.step.active-step').forEach(s => {
+                s.classList.remove('active-step');
+                s.classList.add('done');
+            });
+            document.querySelectorAll('.digit-group.active-group').forEach(g => g.classList.remove('active-group'));
+
+            // Show digit group
+            const group = document.getElementById('dgroup-' + state.currentStep);
+            if (group) {
+                group.classList.add('visible', 'active-group');
+            }
+
+            // Create step element
+            const stepEl = document.createElement('div');
+            stepEl.className = 'step active-step';
+            stepEl.innerHTML = `
+                <div class="step-number">${state.currentStep + 1}</div>
+                <div class="step-info">
+                    <div class="step-desc"><strong>${step.place}</strong>: digit = ${step.digit} (value = ${step.digitValue})</div>
+                    <div class="step-values">
+                        lookup: <code>${step.place.toLowerCase()}[${step.digit}]</code> = <span class="step-symbol">"${step.roman}"</span>
+                    </div>
+                </div>
+                <div class="step-result">"${step.result}"</div>
+            `;
+            stepsDiv.appendChild(stepEl);
+            requestAnimationFrame(() => stepEl.classList.add('visible'));
+
+            // Building display
+            const chars = step.result.split('');
+            const prevLen = state.currentStep > 0 ? state.steps[state.currentStep - 1].result.length : 0;
+            renderBuilding('digitmapBuilding', chars, prevLen);
+
+            // Update result
+            document.getElementById('digitmapResult').textContent = step.result;
+
+            state.currentStep++;
+            return state.currentStep < state.steps.length;
+        }
+
+        function stepDigitMap() {
+            if (!digitmapState) initDigitMapState();
+            showDigitMapStep(digitmapState);
+        }
+
+        function runDigitMap() {
+            const state = initDigitMapState();
+            const speed = parseInt(document.getElementById('digitmapSpeed').value);
+
+            function animate() {
+                const hasMore = showDigitMapStep(state);
+                if (hasMore) {
+                    digitmapAnimTimer = setTimeout(animate, speed);
+                } else {
+                    stepsDiv = document.getElementById('digitmapSteps');
+                    stepsDiv.querySelectorAll('.step.active-step').forEach(s => {
+                        s.classList.remove('active-step');
+                        s.classList.add('done');
+                    });
+                    document.querySelectorAll('.digit-group.active-group').forEach(g => g.classList.remove('active-group'));
+                    document.querySelectorAll('.digit-group').forEach(g => g.classList.add('visible'));
+                    document.querySelectorAll('#digitmapBuilding .roman-char').forEach(c => {
+                        c.classList.remove('just-added');
+                        c.classList.add('settled');
+                    });
+                }
+            }
+            animate();
+        }
+
+        // ============================================================
+        // Enter key support
+        // ============================================================
+        document.getElementById('greedyInput').addEventListener('keydown', e => {
+            if (e.key === 'Enter') runGreedy();
+        });
+        document.getElementById('digitmapInput').addEventListener('keydown', e => {
+            if (e.key === 'Enter') runDigitMap();
+        });
+    </script>
+</body>
+</html>
