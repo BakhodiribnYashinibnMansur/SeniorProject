@@ -2,8 +2,8 @@
 
 > Guides content generation for **Data Structures & Algorithms** topics.
 > All algorithm implementations must be provided in **3 languages: Go, Java, Python**.
-> Algorithm/DS mavzulari uchun **HTML/CSS/JS visual animation** qo'shiladi.
-> Nazariy mavzular (Programming Fundamentals, etc.) uchun animation **kerak emas**.
+> **HTML/CSS/JS visual animations** are included for Algorithm/DS topics.
+> Animation is **not required** for theoretical topics (Programming Fundamentals, etc.).
 
 ## Overview
 
