@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0028. Find the Index of the First Occurrence in a String — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .input-group label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"] {
+            padding: 10px 14px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            outline: none;
+            transition: border-color 0.3s;
+            width: 220px;
+        }
+
+        input[type="text"]:focus { border-color: #3b82f6; }
+
+        /* PRESETS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset {
+            padding: 6px 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            color: #94a3b8;
+        }
+
+        .preset:hover {
+            border-color: #3b82f6;
+            color: #e2e8f0;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 8px 18px;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        button:hover { border-color: #3b82f6; background: #1a2540; }
+
+        button.primary {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        button.primary:hover { background: #2563eb; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        /* VISUALIZATION */
+        .viz-area {
+            margin-bottom: 20px;
+            min-height: 200px;
+        }
+
+        .string-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px;
+        }
+
+        .string-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            width: 80px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .char-cells {
+            display: flex;
+            gap: 3px;
+            flex-wrap: wrap;
+        }
+
+        .char-cell {
+            width: 38px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+            background: #0f172a;
+            border: 2px solid #334155;
+        }
+
+        .char-cell .index-label {
+            position: absolute;
+            top: -16px;
+            font-size: 0.65rem;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        .char-cell.match {
+            background: #065f46;
+            border-color: #10b981;
+            color: #6ee7b7;
+        }
+
+        .char-cell.mismatch {
+            background: #7f1d1d;
+            border-color: #ef4444;
+            color: #fca5a5;
+        }
+
+        .char-cell.current {
+            border-color: #f59e0b;
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+        }
+
+        .char-cell.window {
+            border-color: #3b82f6;
+            background: #1e3a5f;
+        }
+
+        .char-cell.found {
+            background: #065f46;
+            border-color: #10b981;
+            color: #6ee7b7;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+        }
+
+        .char-cell.lps-highlight {
+            border-color: #a78bfa;
+            background: #2e1065;
+        }
+
+        /* LPS Table */
+        .lps-section {
+            margin: 16px 0;
+            padding: 12px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+
+        .lps-section h3 {
+            font-size: 0.9rem;
+            color: #a78bfa;
+            margin-bottom: 8px;
+        }
+
+        .lps-row {
+            display: flex;
+            gap: 3px;
+        }
+
+        .lps-cell {
+            width: 38px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #a78bfa;
+        }
+
+        .lps-cell.active {
+            border-color: #a78bfa;
+            background: #2e1065;
+        }
+
+        /* Info line */
+        .info-line {
+            text-align: center;
+            font-size: 1rem;
+            margin: 16px 0;
+            padding: 10px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .info-line.success { border-color: #10b981; color: #6ee7b7; }
+        .info-line.failure { border-color: #ef4444; color: #fca5a5; }
+
+        /* RESULT */
+        .result {
+            text-align: center;
+            font-size: 1.2rem;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .result.show { display: block; }
+
+        .result.found {
+            background: #065f46;
+            border: 1px solid #10b981;
+            color: #6ee7b7;
+        }
+
+        .result.not-found {
+            background: #7f1d1d;
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+        }
+
+        /* LOG */
+        .log-area {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .log-area .log-entry { color: #94a3b8; }
+        .log-area .log-match { color: #6ee7b7; }
+        .log-area .log-mismatch { color: #fca5a5; }
+        .log-area .log-info { color: #93c5fd; }
+        .log-area .log-result { color: #fbbf24; font-weight: 600; }
+
+        .log-area::-webkit-scrollbar { width: 6px; }
+        .log-area::-webkit-scrollbar-track { background: #0f172a; }
+        .log-area::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+        /* Pointer arrows */
+        .pointer-row {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 4px;
+            margin-left: 88px;
+        }
+
+        .pointer-cell {
+            width: 38px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        .pointer-cell.j-pointer { color: #a78bfa; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>0028. Find the Index of the First Occurrence in a String</h1>
+    <p>Interactive visualization of string matching algorithms</p>
+</div>
+
+<div class="tabs">
+    <div class="tab active" onclick="switchTab('brute')">Brute Force</div>
+    <div class="tab" onclick="switchTab('kmp')">KMP Algorithm</div>
+</div>
+
+<div class="container">
+    <!-- Input -->
+    <div class="input-section">
+        <div class="input-group">
+            <label>Haystack</label>
+            <input type="text" id="haystackInput" value="sadbutsad" />
+        </div>
+        <div class="input-group">
+            <label>Needle</label>
+            <input type="text" id="needleInput" value="sad" />
+        </div>
+    </div>
+
+    <!-- Presets -->
+    <div class="presets">
+        <div class="preset" onclick="loadPreset('sadbutsad','sad')">sadbutsad / sad</div>
+        <div class="preset" onclick="loadPreset('leetcode','leeto')">leetcode / leeto</div>
+        <div class="preset" onclick="loadPreset('hello','llo')">hello / llo</div>
+        <div class="preset" onclick="loadPreset('mississippi','issip')">mississippi / issip</div>
+        <div class="preset" onclick="loadPreset('aaabaaab','aaab')">aaabaaab / aaab</div>
+        <div class="preset" onclick="loadPreset('abcabcabd','abcabd')">abcabcabd / abcabd</div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="primary" id="stepBtn" onclick="step()">Step</button>
+        <button id="playBtn" onclick="togglePlay()">Play</button>
+        <button onclick="resetAnimation()">Reset</button>
+        <div class="speed-control">
+            <span>Speed:</span>
+            <input type="range" id="speedSlider" min="1" max="10" value="5" />
+            <span id="speedLabel">5x</span>
+        </div>
+    </div>
+
+    <!-- Visualization -->
+    <div class="viz-area" id="vizArea"></div>
+
+    <!-- Info line -->
+    <div class="info-line" id="infoLine">Press Step or Play to begin</div>
+
+    <!-- Result -->
+    <div class="result" id="resultBox"></div>
+
+    <!-- Log -->
+    <div class="log-area" id="logArea"></div>
+</div>
+
+<script>
+    // ============================================================
+    // State
+    // ============================================================
+    let currentTab = 'brute';
+    let haystack = '';
+    let needle = '';
+    let steps = [];
+    let stepIndex = 0;
+    let playing = false;
+    let playTimer = null;
+
+    // ============================================================
+    // Tab switching
+    // ============================================================
+    function switchTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tab').forEach((t, i) => {
+            t.classList.toggle('active', (i === 0 && tab === 'brute') || (i === 1 && tab === 'kmp'));
+        });
+        resetAnimation();
+    }
+
+    // ============================================================
+    // Presets
+    // ============================================================
+    function loadPreset(h, n) {
+        document.getElementById('haystackInput').value = h;
+        document.getElementById('needleInput').value = n;
+        resetAnimation();
+    }
+
+    // ============================================================
+    // Speed
+    // ============================================================
+    document.getElementById('speedSlider').addEventListener('input', function() {
+        document.getElementById('speedLabel').textContent = this.value + 'x';
+    });
+
+    function getDelay() {
+        const speed = parseInt(document.getElementById('speedSlider').value);
+        return 1100 - speed * 100;
+    }
+
+    // ============================================================
+    // Generate steps — Brute Force
+    // ============================================================
+    function generateBruteForceSteps() {
+        const steps = [];
+        const n = haystack.length, m = needle.length;
+
+        steps.push({
+            type: 'init',
+            msg: `Starting Brute Force: haystack="${haystack}" (n=${n}), needle="${needle}" (m=${m})`,
+            haystackHL: [], needleHL: [], needleOffset: 0
+        });
+
+        if (m > n) {
+            steps.push({
+                type: 'result',
+                found: false,
+                index: -1,
+                msg: `Needle (${m}) is longer than haystack (${n}). Return -1.`,
+                haystackHL: [], needleHL: [], needleOffset: 0
+            });
+            return steps;
+        }
+
+        for (let i = 0; i <= n - m; i++) {
+            // Show window position
+            const windowHL = [];
+            for (let k = 0; k < m; k++) windowHL.push({ idx: i + k, cls: 'window' });
+
+            steps.push({
+                type: 'window',
+                msg: `Position i=${i}: comparing haystack[${i}..${i + m - 1}] with needle`,
+                haystackHL: windowHL,
+                needleHL: [],
+                needleOffset: i
+            });
+
+            let matched = true;
+            for (let j = 0; j < m; j++) {
+                const isMatch = haystack[i + j] === needle[j];
+                const hHL = [];
+                const nHL = [];
+
+                // All previous matches
+                for (let k = 0; k < j; k++) {
+                    hHL.push({ idx: i + k, cls: 'match' });
+                    nHL.push({ idx: k, cls: 'match' });
+                }
+
+                // Current comparison
+                hHL.push({ idx: i + j, cls: isMatch ? 'match' : 'mismatch' });
+                nHL.push({ idx: j, cls: isMatch ? 'match' : 'mismatch' });
+
+                // Remaining in window
+                for (let k = j + 1; k < m; k++) {
+                    hHL.push({ idx: i + k, cls: 'window' });
+                }
+
+                steps.push({
+                    type: 'compare',
+                    msg: `i=${i}, j=${j}: haystack[${i + j}]='${haystack[i + j]}' ${isMatch ? '==' : '!='} needle[${j}]='${needle[j]}' ${isMatch ? '--- Match!' : '--- Mismatch!'}`,
+                    haystackHL: hHL,
+                    needleHL: nHL,
+                    needleOffset: i,
+                    isMatch: isMatch,
+                    hIdx: i + j,
+                    nIdx: j
+                });
+
+                if (!isMatch) {
+                    matched = false;
+                    break;
+                }
+            }
+
+            if (matched) {
+                const foundHL = [];
+                const nFoundHL = [];
+                for (let k = 0; k < m; k++) {
+                    foundHL.push({ idx: i + k, cls: 'found' });
+                    nFoundHL.push({ idx: k, cls: 'found' });
+                }
+                steps.push({
+                    type: 'result',
+                    found: true,
+                    index: i,
+                    msg: `Found needle at index ${i}!`,
+                    haystackHL: foundHL,
+                    needleHL: nFoundHL,
+                    needleOffset: i
+                });
+                return steps;
+            }
+        }
+
+        steps.push({
+            type: 'result',
+            found: false,
+            index: -1,
+            msg: `Needle not found in haystack. Return -1.`,
+            haystackHL: [],
+            needleHL: [],
+            needleOffset: 0
+        });
+
+        return steps;
+    }
+
+    // ============================================================
+    // Generate steps — KMP
+    // ============================================================
+    function generateKMPSteps() {
+        const steps = [];
+        const n = haystack.length, m = needle.length;
+
+        steps.push({
+            type: 'init',
+            msg: `Starting KMP: haystack="${haystack}" (n=${n}), needle="${needle}" (m=${m})`,
+            haystackHL: [], needleHL: [], needleOffset: 0,
+            lps: null, lpsHL: [], phase: 'init'
+        });
+
+        if (m > n) {
+            steps.push({
+                type: 'result',
+                found: false,
+                index: -1,
+                msg: `Needle (${m}) is longer than haystack (${n}). Return -1.`,
+                haystackHL: [], needleHL: [], needleOffset: 0,
+                lps: null, lpsHL: [], phase: 'done'
+            });
+            return steps;
+        }
+
+        // Phase 1: Build LPS
+        const lps = new Array(m).fill(0);
+        const lpsSnapshots = [];
+
+        steps.push({
+            type: 'lps-start',
+            msg: `Phase 1: Building LPS (Longest Proper Prefix Suffix) array for "${needle}"`,
+            haystackHL: [], needleHL: [], needleOffset: 0,
+            lps: [...lps], lpsHL: [], phase: 'lps'
+        });
+
+        let len = 0;
+        let ii = 1;
+
+        while (ii < m) {
+            if (needle[ii] === needle[len]) {
+                len++;
+                lps[ii] = len;
+
+                const nHL = [
+                    { idx: ii, cls: 'match' },
+                    { idx: len - 1, cls: 'lps-highlight' }
+                ];
+
+                steps.push({
+                    type: 'lps-match',
+                    msg: `LPS: needle[${ii}]='${needle[ii]}' == needle[${len - 1}]='${needle[len - 1]}' -> lps[${ii}] = ${len}`,
+                    haystackHL: [], needleHL: nHL, needleOffset: 0,
+                    lps: [...lps], lpsHL: [{ idx: ii, cls: 'active' }], phase: 'lps',
+                    lpsI: ii, lpsLen: len
+                });
+
+                ii++;
+            } else if (len > 0) {
+                const oldLen = len;
+                len = lps[len - 1];
+
+                steps.push({
+                    type: 'lps-fallback',
+                    msg: `LPS: needle[${ii}]='${needle[ii]}' != needle[${oldLen}]='${needle[oldLen]}' -> fallback: length = lps[${oldLen - 1}] = ${len}`,
+                    haystackHL: [], needleHL: [{ idx: ii, cls: 'mismatch' }], needleOffset: 0,
+                    lps: [...lps], lpsHL: [{ idx: oldLen - 1, cls: 'active' }], phase: 'lps',
+                    lpsI: ii, lpsLen: len
+                });
+            } else {
+                lps[ii] = 0;
+
+                steps.push({
+                    type: 'lps-zero',
+                    msg: `LPS: needle[${ii}]='${needle[ii]}' != needle[0]='${needle[0]}' -> lps[${ii}] = 0`,
+                    haystackHL: [], needleHL: [{ idx: ii, cls: 'mismatch' }], needleOffset: 0,
+                    lps: [...lps], lpsHL: [{ idx: ii, cls: 'active' }], phase: 'lps',
+                    lpsI: ii, lpsLen: 0
+                });
+
+                ii++;
+            }
+        }
+
+        steps.push({
+            type: 'lps-done',
+            msg: `LPS array complete: [${lps.join(', ')}]`,
+            haystackHL: [], needleHL: [], needleOffset: 0,
+            lps: [...lps], lpsHL: [], phase: 'search'
+        });
+
+        // Phase 2: Search
+        steps.push({
+            type: 'search-start',
+            msg: `Phase 2: Searching haystack using LPS array`,
+            haystackHL: [], needleHL: [], needleOffset: 0,
+            lps: [...lps], lpsHL: [], phase: 'search'
+        });
+
+        let i = 0, j = 0;
+
+        while (i < n) {
+            if (haystack[i] === needle[j]) {
+                const hHL = [];
+                const nHL = [];
+
+                // Show all matched so far
+                for (let k = 0; k < j; k++) {
+                    hHL.push({ idx: i - j + k, cls: 'match' });
+                    nHL.push({ idx: k, cls: 'match' });
+                }
+                hHL.push({ idx: i, cls: 'match' });
+                nHL.push({ idx: j, cls: 'match' });
+
+                steps.push({
+                    type: 'search-match',
+                    msg: `Search: haystack[${i}]='${haystack[i]}' == needle[${j}]='${needle[j]}' -> i=${i + 1}, j=${j + 1}`,
+                    haystackHL: hHL, needleHL: nHL, needleOffset: i - j,
+                    lps: [...lps], lpsHL: [], phase: 'search',
+                    sI: i, sJ: j
+                });
+
+                i++;
+                j++;
+            }
+
+            if (j === m) {
+                const foundHL = [];
+                const nFoundHL = [];
+                for (let k = 0; k < m; k++) {
+                    foundHL.push({ idx: i - j + k, cls: 'found' });
+                    nFoundHL.push({ idx: k, cls: 'found' });
+                }
+                steps.push({
+                    type: 'result',
+                    found: true,
+                    index: i - j,
+                    msg: `Found needle at index ${i - j}!`,
+                    haystackHL: foundHL, needleHL: nFoundHL, needleOffset: i - j,
+                    lps: [...lps], lpsHL: [], phase: 'done'
+                });
+                return steps;
+            } else if (i < n && haystack[i] !== needle[j]) {
+                const hHL = [];
+                const nHL = [];
+
+                for (let k = 0; k < j; k++) {
+                    hHL.push({ idx: i - j + k, cls: 'match' });
+                    nHL.push({ idx: k, cls: 'match' });
+                }
+                hHL.push({ idx: i, cls: 'mismatch' });
+                nHL.push({ idx: j, cls: 'mismatch' });
+
+                if (j > 0) {
+                    const oldJ = j;
+                    j = lps[j - 1];
+
+                    steps.push({
+                        type: 'search-mismatch-jump',
+                        msg: `Search: haystack[${i}]='${haystack[i]}' != needle[${oldJ}]='${needle[oldJ]}' -> jump: j = lps[${oldJ - 1}] = ${j}`,
+                        haystackHL: hHL, needleHL: nHL, needleOffset: i - oldJ,
+                        lps: [...lps], lpsHL: [{ idx: oldJ - 1, cls: 'active' }], phase: 'search',
+                        sI: i, sJ: j
+                    });
+                } else {
+                    steps.push({
+                        type: 'search-mismatch-advance',
+                        msg: `Search: haystack[${i}]='${haystack[i]}' != needle[0]='${needle[0]}' -> advance i to ${i + 1}`,
+                        haystackHL: [{ idx: i, cls: 'mismatch' }],
+                        needleHL: [{ idx: 0, cls: 'mismatch' }],
+                        needleOffset: i,
+                        lps: [...lps], lpsHL: [], phase: 'search',
+                        sI: i, sJ: 0
+                    });
+                    i++;
+                }
+            }
+        }
+
+        steps.push({
+            type: 'result',
+            found: false,
+            index: -1,
+            msg: `Needle not found in haystack. Return -1.`,
+            haystackHL: [], needleHL: [], needleOffset: 0,
+            lps: [...lps], lpsHL: [], phase: 'done'
+        });
+
+        return steps;
+    }
+
+    // ============================================================
+    // Rendering
+    // ============================================================
+    function renderBruteForce(s) {
+        const viz = document.getElementById('vizArea');
+        let html = '';
+
+        // Haystack row with index labels
+        html += '<div class="string-row">';
+        html += '<div class="string-label">haystack</div>';
+        html += '<div class="char-cells">';
+        for (let i = 0; i < haystack.length; i++) {
+            const hl = s.haystackHL.find(h => h.idx === i);
+            const cls = hl ? hl.cls : '';
+            html += `<div class="char-cell ${cls}">`;
+            html += `<span class="index-label">${i}</span>`;
+            html += haystack[i];
+            html += '</div>';
+        }
+        html += '</div></div>';
+
+        // Needle row (offset to align with window)
+        html += '<div class="string-row">';
+        html += '<div class="string-label">needle</div>';
+        html += '<div class="char-cells">';
+        const offset = s.needleOffset || 0;
+        for (let i = 0; i < offset; i++) {
+            html += '<div class="char-cell" style="visibility:hidden;border:none;">&nbsp;</div>';
+        }
+        for (let i = 0; i < needle.length; i++) {
+            const hl = s.needleHL.find(h => h.idx === i);
+            const cls = hl ? hl.cls : '';
+            html += `<div class="char-cell ${cls}">${needle[i]}</div>`;
+        }
+        html += '</div></div>';
+
+        viz.innerHTML = html;
+    }
+
+    function renderKMP(s) {
+        const viz = document.getElementById('vizArea');
+        let html = '';
+
+        // Haystack row
+        html += '<div class="string-row">';
+        html += '<div class="string-label">haystack</div>';
+        html += '<div class="char-cells">';
+        for (let i = 0; i < haystack.length; i++) {
+            const hl = s.haystackHL.find(h => h.idx === i);
+            const cls = hl ? hl.cls : '';
+            html += `<div class="char-cell ${cls}">`;
+            html += `<span class="index-label">${i}</span>`;
+            html += haystack[i];
+            html += '</div>';
+        }
+        html += '</div></div>';
+
+        // Needle row (offset for search phase)
+        if (s.phase === 'search' || s.phase === 'done') {
+            html += '<div class="string-row">';
+            html += '<div class="string-label">needle</div>';
+            html += '<div class="char-cells">';
+            const offset = s.needleOffset || 0;
+            for (let i = 0; i < offset; i++) {
+                html += '<div class="char-cell" style="visibility:hidden;border:none;">&nbsp;</div>';
+            }
+            for (let i = 0; i < needle.length; i++) {
+                const hl = s.needleHL.find(h => h.idx === i);
+                const cls = hl ? hl.cls : '';
+                html += `<div class="char-cell ${cls}">${needle[i]}</div>`;
+            }
+            html += '</div></div>';
+        }
+
+        // Needle row for LPS phase
+        if (s.phase === 'lps') {
+            html += '<div class="string-row">';
+            html += '<div class="string-label">needle</div>';
+            html += '<div class="char-cells">';
+            for (let i = 0; i < needle.length; i++) {
+                const hl = s.needleHL.find(h => h.idx === i);
+                const cls = hl ? hl.cls : '';
+                html += `<div class="char-cell ${cls}">`;
+                html += `<span class="index-label">${i}</span>`;
+                html += needle[i];
+                html += '</div>';
+            }
+            html += '</div></div>';
+        }
+
+        // LPS array
+        if (s.lps) {
+            html += '<div class="lps-section">';
+            html += '<h3>LPS Array (Longest Proper Prefix Suffix)</h3>';
+            html += '<div class="lps-row">';
+            for (let i = 0; i < s.lps.length; i++) {
+                const hl = s.lpsHL.find(h => h.idx === i);
+                const cls = hl ? hl.cls : '';
+                html += `<div class="lps-cell ${cls}">${s.lps[i]}</div>`;
+            }
+            html += '</div></div>';
+        }
+
+        viz.innerHTML = html;
+    }
+
+    function render(s) {
+        if (currentTab === 'brute') {
+            renderBruteForce(s);
+        } else {
+            renderKMP(s);
+        }
+
+        // Info line
+        const infoLine = document.getElementById('infoLine');
+        infoLine.textContent = s.msg;
+        infoLine.className = 'info-line';
+        if (s.type === 'compare' || s.type === 'search-match' || s.type === 'lps-match') {
+            if (s.isMatch !== false) infoLine.classList.add('success');
+        }
+        if (s.type === 'compare' || s.type === 'search-mismatch-jump' || s.type === 'search-mismatch-advance' || s.type === 'lps-fallback' || s.type === 'lps-zero') {
+            if (s.isMatch === false || s.type.includes('mismatch') || s.type.includes('fallback') || s.type.includes('zero')) {
+                infoLine.classList.add('failure');
+            }
+        }
+
+        // Result
+        const resultBox = document.getElementById('resultBox');
+        if (s.type === 'result') {
+            resultBox.classList.add('show');
+            if (s.found) {
+                resultBox.className = 'result show found';
+                resultBox.textContent = `Found! Index = ${s.index}`;
+            } else {
+                resultBox.className = 'result show not-found';
+                resultBox.textContent = `Not Found. Return -1`;
+            }
+        }
+    }
+
+    // ============================================================
+    // Log
+    // ============================================================
+    function addLog(s) {
+        const logArea = document.getElementById('logArea');
+        const cls = s.type === 'result' ? 'log-result'
+            : (s.type === 'compare' && s.isMatch === false) || s.type.includes('mismatch') || s.type.includes('fallback') || s.type.includes('zero') ? 'log-mismatch'
+            : (s.type === 'compare' && s.isMatch !== false) || s.type.includes('match') ? 'log-match'
+            : 'log-info';
+
+        logArea.innerHTML += `<div class="log-entry ${cls}">[${stepIndex}] ${s.msg}</div>`;
+        logArea.scrollTop = logArea.scrollHeight;
+    }
+
+    // ============================================================
+    // Step / Play / Reset
+    // ============================================================
+    function initSteps() {
+        haystack = document.getElementById('haystackInput').value;
+        needle = document.getElementById('needleInput').value;
+
+        if (currentTab === 'brute') {
+            steps = generateBruteForceSteps();
+        } else {
+            steps = generateKMPSteps();
+        }
+        stepIndex = 0;
+    }
+
+    function step() {
+        if (steps.length === 0) initSteps();
+
+        if (stepIndex < steps.length) {
+            const s = steps[stepIndex];
+            render(s);
+            addLog(s);
+            stepIndex++;
+
+            if (stepIndex >= steps.length) {
+                stopPlay();
+            }
+        }
+    }
+
+    function togglePlay() {
+        if (playing) {
+            stopPlay();
+        } else {
+            playing = true;
+            document.getElementById('playBtn').textContent = 'Pause';
+            if (steps.length === 0) initSteps();
+            playStep();
+        }
+    }
+
+    function playStep() {
+        if (!playing) return;
+        if (stepIndex >= steps.length) {
+            stopPlay();
+            return;
+        }
+        step();
+        playTimer = setTimeout(playStep, getDelay());
+    }
+
+    function stopPlay() {
+        playing = false;
+        document.getElementById('playBtn').textContent = 'Play';
+        if (playTimer) {
+            clearTimeout(playTimer);
+            playTimer = null;
+        }
+    }
+
+    function resetAnimation() {
+        stopPlay();
+        steps = [];
+        stepIndex = 0;
+        document.getElementById('vizArea').innerHTML = '';
+        document.getElementById('logArea').innerHTML = '';
+        document.getElementById('infoLine').textContent = 'Press Step or Play to begin';
+        document.getElementById('infoLine').className = 'info-line';
+        document.getElementById('resultBox').className = 'result';
+        document.getElementById('resultBox').textContent = '';
+    }
+</script>
+
+</body>
+</html>

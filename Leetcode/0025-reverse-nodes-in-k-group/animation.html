@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0025. Reverse Nodes in k-Group — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        .input-list { width: 200px; }
+        .input-k { width: 80px; }
+
+        .input-section label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: #22c55e; color: white; }
+        .btn-success:hover { background: #16a34a; }
+        .btn-warning { background: #f59e0b; color: #1e293b; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-generate { background: #8b5cf6; color: white; }
+        .btn-generate:hover { background: #7c3aed; }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+
+        /* PRESET OPTIONS */
+        .preset-options {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .preset-options span { color: #94a3b8; font-size: 0.85rem; }
+
+        .preset-btn {
+            padding: 4px 10px;
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 4px;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover { background: #475569; border-color: #64748b; }
+
+        /* VISUALIZATION AREA */
+        .viz-area {
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .list-row {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            position: relative;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .node-wrapper {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .node {
+            width: 56px;
+            height: 56px;
+            border: 2px solid #475569;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: #1e293b;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .node.group-a {
+            border-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.12);
+        }
+
+        .node.group-b {
+            border-color: #06b6d4;
+            background: rgba(6, 182, 212, 0.12);
+        }
+
+        .node.highlight-current {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.18);
+            box-shadow: 0 0 14px rgba(245, 158, 11, 0.35);
+        }
+
+        .node.highlight-reversing {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.18);
+            box-shadow: 0 0 14px rgba(239, 68, 68, 0.35);
+        }
+
+        .node.highlight-done {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.18);
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.3);
+        }
+
+        .node.highlight-skip {
+            border-color: #64748b;
+            background: rgba(100, 116, 139, 0.1);
+            opacity: 0.7;
+        }
+
+        .node.highlight-prev {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.15);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .arrow {
+            width: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .null-marker {
+            color: #64748b;
+            font-size: 0.85rem;
+            font-style: italic;
+            padding: 0 8px;
+        }
+
+        .pointer-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            position: absolute;
+            white-space: nowrap;
+        }
+
+        .pointer-label.top {
+            top: -22px;
+        }
+
+        .pointer-label.bottom {
+            bottom: -22px;
+        }
+
+        .pointer-label.groupPrev-label {
+            background: rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+        }
+
+        .pointer-label.curr-label {
+            background: rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+        }
+
+        .pointer-label.kth-label {
+            background: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        .group-bracket {
+            position: absolute;
+            bottom: -36px;
+            height: 16px;
+            border: 2px solid;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding-bottom: 1px;
+        }
+
+        /* INFO BOX */
+        .info-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .info-box .step-title {
+            color: #60a5fa;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .info-box .step-detail {
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .info-box .step-detail code {
+            background: #334155;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            color: #fbbf24;
+            font-size: 0.8rem;
+        }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #334155;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            border: 2px solid;
+        }
+
+        .legend-color.group-a-color { border-color: #8b5cf6; background: rgba(139, 92, 246, 0.12); }
+        .legend-color.group-b-color { border-color: #06b6d4; background: rgba(6, 182, 212, 0.12); }
+        .legend-color.reversing-color { border-color: #ef4444; background: rgba(239, 68, 68, 0.18); }
+        .legend-color.done-color { border-color: #22c55e; background: rgba(34, 197, 94, 0.18); }
+        .legend-color.skip-color { border-color: #64748b; background: rgba(100, 116, 139, 0.1); }
+
+        /* STEP COUNTER */
+        .step-counter {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin: 8px 0;
+        }
+
+        .step-counter span {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        /* SPEED CONTROL */
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            margin: 8px 0;
+        }
+
+        .speed-control label { color: #94a3b8; font-size: 0.8rem; }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        /* RESULT DISPLAY */
+        .result-display {
+            text-align: center;
+            padding: 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 0.9rem;
+        }
+
+        .result-display .result-label {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+        }
+
+        .result-display .result-value {
+            color: #22c55e;
+            font-weight: 700;
+            font-size: 1.1rem;
+            font-family: 'Fira Code', 'Consolas', monospace;
+        }
+
+        /* LOG AREA */
+        .log-area {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+            max-height: 180px;
+            overflow-y: auto;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.78rem;
+            line-height: 1.7;
+        }
+
+        .log-area .log-entry {
+            color: #94a3b8;
+            border-bottom: 1px solid #1e293b;
+            padding: 2px 0;
+        }
+
+        .log-area .log-entry:last-child { border-bottom: none; }
+        .log-area .log-highlight { color: #fbbf24; }
+        .log-area .log-success { color: #22c55e; }
+        .log-area .log-info { color: #60a5fa; }
+        .log-area .log-warn { color: #f59e0b; }
+
+        /* SCROLLBAR */
+        .log-area::-webkit-scrollbar { width: 6px; }
+        .log-area::-webkit-scrollbar-track { background: #1e293b; border-radius: 3px; }
+        .log-area::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0025. Reverse Nodes in k-Group</h1>
+        <p>Reverse every k consecutive nodes in a linked list</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('iterative')">Iterative</div>
+        <div class="tab" onclick="switchTab('recursive')">Recursive</div>
+    </div>
+
+    <div class="container">
+        <!-- Shared Input -->
+        <div class="preset-options">
+            <span>Presets:</span>
+            <button class="preset-btn" onclick="loadPreset([1,2,3,4,5], 2)">[1,2,3,4,5] k=2</button>
+            <button class="preset-btn" onclick="loadPreset([1,2,3,4,5], 3)">[1,2,3,4,5] k=3</button>
+            <button class="preset-btn" onclick="loadPreset([1,2,3,4,5], 1)">[1,2,3,4,5] k=1</button>
+            <button class="preset-btn" onclick="loadPreset([1,2,3,4,5,6], 2)">[1,2,3,4,5,6] k=2</button>
+            <button class="preset-btn" onclick="loadPreset([1,2,3,4,5,6,7,8], 3)">[1..8] k=3</button>
+            <button class="preset-btn" onclick="loadPreset([1,2,3,4,5], 5)">[1,2,3,4,5] k=5</button>
+        </div>
+
+        <div class="input-section">
+            <label>List:</label>
+            <input type="text" id="inputList" class="input-list" placeholder="1,2,3,4,5" value="1,2,3,4,5">
+            <label>k:</label>
+            <input type="number" id="inputK" class="input-k" placeholder="2" value="2" min="1">
+            <button class="btn btn-generate" onclick="generate()">Build</button>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" id="btnStep" onclick="step()">Step</button>
+            <button class="btn btn-success" id="btnPlay" onclick="play()">Play</button>
+            <button class="btn btn-warning" id="btnPause" onclick="pause()" style="display:none">Pause</button>
+            <button class="btn btn-danger" onclick="resetAnim()">Reset</button>
+        </div>
+
+        <div class="speed-control">
+            <label>Speed:</label>
+            <input type="range" id="speedSlider" min="1" max="10" value="5">
+            <label id="speedLabel">5</label>
+        </div>
+
+        <!-- Iterative Tab -->
+        <div class="tab-content active" id="tab-iterative">
+            <div class="step-counter">Step <span id="stepCountIter">0</span> / <span id="totalStepsIter">0</span></div>
+            <div class="viz-area" id="vizIter"></div>
+            <div class="info-box" id="infoIter">
+                <div class="step-title">Ready</div>
+                <div class="step-detail">Click <strong>Build</strong> to initialize the list, then use <strong>Step</strong> or <strong>Play</strong> to animate the iterative reversal.</div>
+            </div>
+            <div class="result-display" id="resultIter">
+                <div class="result-label">Result</div>
+                <div class="result-value" id="resultValueIter">—</div>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color group-a-color"></div> Group A</div>
+                <div class="legend-item"><div class="legend-color group-b-color"></div> Group B</div>
+                <div class="legend-item"><div class="legend-color reversing-color"></div> Reversing</div>
+                <div class="legend-item"><div class="legend-color done-color"></div> Done</div>
+                <div class="legend-item"><div class="legend-color skip-color"></div> Left out</div>
+            </div>
+            <div class="log-area" id="logIter"></div>
+        </div>
+
+        <!-- Recursive Tab -->
+        <div class="tab-content" id="tab-recursive">
+            <div class="step-counter">Step <span id="stepCountRec">0</span> / <span id="totalStepsRec">0</span></div>
+            <div class="viz-area" id="vizRec"></div>
+            <div class="info-box" id="infoRec">
+                <div class="step-title">Ready</div>
+                <div class="step-detail">Click <strong>Build</strong> to initialize the list, then use <strong>Step</strong> or <strong>Play</strong> to animate the recursive reversal.</div>
+            </div>
+            <div class="result-display" id="resultRec">
+                <div class="result-label">Result</div>
+                <div class="result-value" id="resultValueRec">—</div>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color group-a-color"></div> Group A</div>
+                <div class="legend-item"><div class="legend-color group-b-color"></div> Group B</div>
+                <div class="legend-item"><div class="legend-color reversing-color"></div> Reversing</div>
+                <div class="legend-item"><div class="legend-color done-color"></div> Done</div>
+                <div class="legend-item"><div class="legend-color skip-color"></div> Left out</div>
+            </div>
+            <div class="log-area" id="logRec"></div>
+        </div>
+    </div>
+
+    <script>
+    // ============================================================
+    // State
+    // ============================================================
+    let currentTab = 'iterative';
+    let animInterval = null;
+    let iterSteps = [];
+    let recSteps = [];
+    let iterStepIdx = 0;
+    let recStepIdx = 0;
+
+    const speedSlider = document.getElementById('speedSlider');
+    const speedLabel = document.getElementById('speedLabel');
+    speedSlider.addEventListener('input', () => {
+        speedLabel.textContent = speedSlider.value;
+    });
+
+    function getDelay() {
+        return 1200 - (parseInt(speedSlider.value) - 1) * 110;
+    }
+
+    // ============================================================
+    // Tab switching
+    // ============================================================
+    function switchTab(tab) {
+        pause();
+        currentTab = tab;
+        document.querySelectorAll('.tab').forEach((t, i) => {
+            t.classList.toggle('active', (i === 0 && tab === 'iterative') || (i === 1 && tab === 'recursive'));
+        });
+        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+        document.getElementById('tab-' + tab).classList.add('active');
+    }
+
+    // ============================================================
+    // Presets
+    // ============================================================
+    function loadPreset(arr, k) {
+        document.getElementById('inputList').value = arr.join(',');
+        document.getElementById('inputK').value = k;
+        generate();
+    }
+
+    // ============================================================
+    // Parse input
+    // ============================================================
+    function parseInput() {
+        const raw = document.getElementById('inputList').value.trim();
+        const nums = raw.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+        const k = parseInt(document.getElementById('inputK').value) || 1;
+        return { nums, k };
+    }
+
+    // ============================================================
+    // Generate steps for both approaches
+    // ============================================================
+    function generate() {
+        pause();
+        const { nums, k } = parseInput();
+        if (nums.length === 0) return;
+
+        iterSteps = buildIterativeSteps(nums, k);
+        recSteps = buildRecursiveSteps(nums, k);
+        iterStepIdx = 0;
+        recStepIdx = 0;
+
+        document.getElementById('totalStepsIter').textContent = iterSteps.length - 1;
+        document.getElementById('totalStepsRec').textContent = recSteps.length - 1;
+        document.getElementById('stepCountIter').textContent = '0';
+        document.getElementById('stepCountRec').textContent = '0';
+        document.getElementById('logIter').innerHTML = '';
+        document.getElementById('logRec').innerHTML = '';
+        document.getElementById('resultValueIter').textContent = '—';
+        document.getElementById('resultValueRec').textContent = '—';
+
+        renderStep('iterative', iterSteps[0]);
+        renderStep('recursive', recSteps[0]);
+    }
+
+    // ============================================================
+    // Build iterative steps
+    // ============================================================
+    function buildIterativeSteps(nums, k) {
+        const steps = [];
+        const n = nums.length;
+        let arr = [...nums]; // current order of nodes (by their original indices)
+        let order = nums.map((_, i) => i); // index order
+
+        // We'll track the actual linked list as an array of values
+        // and simulate the algorithm step by step
+        let list = [...nums];
+
+        // Step 0: initial state
+        steps.push({
+            list: [...list],
+            highlights: {},
+            pointers: {},
+            groups: [],
+            title: 'Initial State',
+            detail: `List: [${list.join(', ')}], k = ${k}`,
+            log: `Initialize: list=[${list.join(',')}], k=${k}`
+        });
+
+        if (k === 1) {
+            steps.push({
+                list: [...list],
+                highlights: Object.fromEntries(list.map((_, i) => [i, 'done'])),
+                pointers: {},
+                groups: [],
+                title: 'k = 1, No Reversal Needed',
+                detail: 'When k = 1, each group has 1 node, so no reversal is needed.',
+                log: 'k=1 → no reversal needed',
+                result: list.join(', ')
+            });
+            return steps;
+        }
+
+        let groupNum = 0;
+        let groupStart = 0;
+
+        while (groupStart + k <= list.length) {
+            const gEnd = groupStart + k - 1;
+
+            // Step: identify group
+            const hlIdent = {};
+            for (let i = groupStart; i <= gEnd; i++) {
+                hlIdent[i] = 'current';
+            }
+            steps.push({
+                list: [...list],
+                highlights: hlIdent,
+                pointers: { [groupStart]: 'groupStart', [gEnd]: 'kth' },
+                groups: buildGroupMarkers(list.length, k, groupNum),
+                title: `Group ${groupNum + 1}: Check ${k} Nodes`,
+                detail: `Found ${k} nodes: [${list.slice(groupStart, gEnd + 1).join(', ')}]. Ready to reverse.`,
+                log: `<span class="log-info">Group ${groupNum + 1}</span>: nodes [${list.slice(groupStart, gEnd + 1).join(',')}] — ${k} nodes found`
+            });
+
+            // Animate reversal step by step within the group
+            const groupVals = list.slice(groupStart, gEnd + 1);
+            const reversed = [...groupVals].reverse();
+
+            // Show reversing state
+            const hlRev = {};
+            for (let i = groupStart; i <= gEnd; i++) {
+                hlRev[i] = 'reversing';
+            }
+            steps.push({
+                list: [...list],
+                highlights: hlRev,
+                pointers: {},
+                groups: buildGroupMarkers(list.length, k, groupNum),
+                title: `Group ${groupNum + 1}: Reversing`,
+                detail: `Reversing [${groupVals.join(', ')}] by relinking pointers...`,
+                log: `<span class="log-warn">Reversing</span>: [${groupVals.join(',')}]`
+            });
+
+            // Apply reversal
+            for (let i = 0; i < k; i++) {
+                list[groupStart + i] = reversed[i];
+            }
+
+            // Show done state for this group
+            const hlDone = {};
+            for (let g = 0; g <= groupNum; g++) {
+                const gs = g * k;
+                for (let i = gs; i < gs + k && i < list.length; i++) {
+                    hlDone[i] = 'done';
+                }
+            }
+            steps.push({
+                list: [...list],
+                highlights: hlDone,
+                pointers: {},
+                groups: buildGroupMarkers(list.length, k, groupNum + 1),
+                title: `Group ${groupNum + 1}: Reversed`,
+                detail: `Group reversed: [${reversed.join(', ')}]. Reconnected to previous group.`,
+                log: `<span class="log-success">Reversed</span>: [${reversed.join(',')}] → list is now [${list.join(',')}]`
+            });
+
+            groupStart += k;
+            groupNum++;
+        }
+
+        // Remaining nodes
+        if (groupStart < list.length) {
+            const hlFinal = {};
+            for (let g = 0; g < groupNum; g++) {
+                const gs = g * k;
+                for (let i = gs; i < gs + k && i < list.length; i++) {
+                    hlFinal[i] = 'done';
+                }
+            }
+            for (let i = groupStart; i < list.length; i++) {
+                hlFinal[i] = 'skip';
+            }
+            steps.push({
+                list: [...list],
+                highlights: hlFinal,
+                pointers: {},
+                groups: buildGroupMarkers(list.length, k, groupNum),
+                title: 'Remaining Nodes',
+                detail: `Only ${list.length - groupStart} node(s) left — fewer than k=${k}. Left unchanged.`,
+                log: `<span class="log-warn">Remaining</span>: [${list.slice(groupStart).join(',')}] — fewer than k, left as-is`
+            });
+        }
+
+        // Final result
+        const hlAll = {};
+        for (let i = 0; i < list.length; i++) {
+            hlAll[i] = 'done';
+        }
+        steps.push({
+            list: [...list],
+            highlights: hlAll,
+            pointers: {},
+            groups: buildGroupMarkers(list.length, k, groupNum),
+            title: 'Complete!',
+            detail: `Final result: [${list.join(', ')}]`,
+            log: `<span class="log-success">Done!</span> Result: [${list.join(',')}]`,
+            result: list.join(', ')
+        });
+
+        return steps;
+    }
+
+    // ============================================================
+    // Build recursive steps
+    // ============================================================
+    function buildRecursiveSteps(nums, k) {
+        const steps = [];
+        const list = [...nums];
+
+        steps.push({
+            list: [...list],
+            highlights: {},
+            pointers: {},
+            groups: [],
+            title: 'Initial State',
+            detail: `List: [${list.join(', ')}], k = ${k}`,
+            log: `Initialize: list=[${list.join(',')}], k=${k}`,
+            depth: 0
+        });
+
+        if (k === 1) {
+            steps.push({
+                list: [...list],
+                highlights: Object.fromEntries(list.map((_, i) => [i, 'done'])),
+                pointers: {},
+                groups: [],
+                title: 'k = 1, No Reversal Needed',
+                detail: 'When k = 1, each group has 1 node, so no reversal is needed.',
+                log: 'k=1 → no reversal needed',
+                result: list.join(', '),
+                depth: 0
+            });
+            return steps;
+        }
+
+        function recurse(startIdx, depth) {
+            const remaining = list.length - startIdx;
+
+            if (remaining < k) {
+                // Not enough nodes
+                const hl = {};
+                for (let i = startIdx; i < list.length; i++) hl[i] = 'skip';
+                // Also mark previous groups as done
+                for (let i = 0; i < startIdx; i++) hl[i] = 'done';
+                steps.push({
+                    list: [...list],
+                    highlights: hl,
+                    pointers: {},
+                    groups: [],
+                    title: `Depth ${depth}: Base Case`,
+                    detail: `Only ${remaining} node(s) from index ${startIdx} — fewer than k=${k}. Return as-is.`,
+                    log: `${'&nbsp;&nbsp;'.repeat(depth)}<span class="log-warn">Base case</span>: ${remaining} < ${k} nodes, return unchanged`,
+                    depth
+                });
+                return;
+            }
+
+            const gEnd = startIdx + k - 1;
+
+            // Check k nodes
+            const hlCheck = {};
+            for (let i = 0; i < startIdx; i++) hlCheck[i] = 'done';
+            for (let i = startIdx; i <= gEnd; i++) hlCheck[i] = 'current';
+            for (let i = gEnd + 1; i < list.length; i++) hlCheck[i] = 'skip';
+            steps.push({
+                list: [...list],
+                highlights: hlCheck,
+                pointers: { [startIdx]: 'head', [gEnd]: 'kth' },
+                groups: [],
+                title: `Depth ${depth}: Check ${k} Nodes`,
+                detail: `Found ${k} nodes starting at index ${startIdx}: [${list.slice(startIdx, gEnd + 1).join(', ')}]`,
+                log: `${'&nbsp;&nbsp;'.repeat(depth)}<span class="log-info">Depth ${depth}</span>: check [${list.slice(startIdx, gEnd + 1).join(',')}] — ${k} nodes OK`,
+                depth
+            });
+
+            // Reverse
+            const groupVals = list.slice(startIdx, gEnd + 1);
+            const reversed = [...groupVals].reverse();
+            const hlRev = {};
+            for (let i = 0; i < startIdx; i++) hlRev[i] = 'done';
+            for (let i = startIdx; i <= gEnd; i++) hlRev[i] = 'reversing';
+            steps.push({
+                list: [...list],
+                highlights: hlRev,
+                pointers: {},
+                groups: [],
+                title: `Depth ${depth}: Reversing`,
+                detail: `Reversing [${groupVals.join(', ')}]...`,
+                log: `${'&nbsp;&nbsp;'.repeat(depth)}<span class="log-warn">Reversing</span>: [${groupVals.join(',')}]`,
+                depth
+            });
+
+            // Apply
+            for (let i = 0; i < k; i++) {
+                list[startIdx + i] = reversed[i];
+            }
+
+            const hlAfter = {};
+            for (let i = 0; i <= gEnd; i++) hlAfter[i] = 'done';
+            steps.push({
+                list: [...list],
+                highlights: hlAfter,
+                pointers: {},
+                groups: [],
+                title: `Depth ${depth}: Reversed, Now Recurse`,
+                detail: `Reversed to [${reversed.join(', ')}]. Now calling reverseKGroup on remaining nodes...`,
+                log: `${'&nbsp;&nbsp;'.repeat(depth)}<span class="log-success">Reversed</span>: [${reversed.join(',')}] → recurse on rest`,
+                depth
+            });
+
+            // Recurse on rest
+            recurse(startIdx + k, depth + 1);
+        }
+
+        recurse(0, 0);
+
+        // Final
+        const hlAll = {};
+        for (let i = 0; i < list.length; i++) hlAll[i] = 'done';
+        steps.push({
+            list: [...list],
+            highlights: hlAll,
+            pointers: {},
+            groups: [],
+            title: 'Complete!',
+            detail: `All recursive calls returned. Final result: [${list.join(', ')}]`,
+            log: `<span class="log-success">Done!</span> Result: [${list.join(',')}]`,
+            result: list.join(', '),
+            depth: 0
+        });
+
+        return steps;
+    }
+
+    // ============================================================
+    // Group markers helper
+    // ============================================================
+    function buildGroupMarkers(listLen, k, completedGroups) {
+        const markers = [];
+        for (let g = 0; g < completedGroups; g++) {
+            markers.push({ start: g * k, end: g * k + k - 1, label: `G${g + 1}` });
+        }
+        return markers;
+    }
+
+    // ============================================================
+    // Render a step
+    // ============================================================
+    function renderStep(tab, stepData) {
+        const vizId = tab === 'iterative' ? 'vizIter' : 'vizRec';
+        const infoId = tab === 'iterative' ? 'infoIter' : 'infoRec';
+        const viz = document.getElementById(vizId);
+        const info = document.getElementById(infoId);
+
+        // Build nodes
+        let html = '<div class="list-row">';
+        for (let i = 0; i < stepData.list.length; i++) {
+            const val = stepData.list[i];
+            let cls = 'node';
+            if (stepData.highlights[i]) {
+                const h = stepData.highlights[i];
+                if (h === 'current') cls += ' highlight-current';
+                else if (h === 'reversing') cls += ' highlight-reversing';
+                else if (h === 'done') cls += ' highlight-done';
+                else if (h === 'skip') cls += ' highlight-skip';
+                else if (h === 'prev') cls += ' highlight-prev';
+            }
+
+            html += '<div class="node-wrapper">';
+
+            // Top pointer labels
+            if (stepData.pointers[i]) {
+                const pName = stepData.pointers[i];
+                let labelCls = 'pointer-label top ';
+                if (pName === 'groupStart' || pName === 'head') labelCls += 'curr-label';
+                else if (pName === 'kth') labelCls += 'kth-label';
+                else if (pName === 'groupPrev') labelCls += 'groupPrev-label';
+                html += `<div class="${labelCls}">${pName}</div>`;
+            }
+
+            html += `<div class="${cls}">${val}</div>`;
+            html += '</div>';
+
+            if (i < stepData.list.length - 1) {
+                html += '<div class="arrow">\u2192</div>';
+            }
+        }
+        html += '<div class="null-marker">null</div>';
+        html += '</div>';
+
+        viz.innerHTML = html;
+
+        // Info
+        info.innerHTML = `
+            <div class="step-title">${stepData.title}</div>
+            <div class="step-detail">${stepData.detail}</div>
+        `;
+
+        // Result
+        if (stepData.result) {
+            const resId = tab === 'iterative' ? 'resultValueIter' : 'resultValueRec';
+            document.getElementById(resId).textContent = `[${stepData.result}]`;
+        }
+    }
+
+    // ============================================================
+    // Log entry
+    // ============================================================
+    function addLog(tab, html) {
+        const logId = tab === 'iterative' ? 'logIter' : 'logRec';
+        const logEl = document.getElementById(logId);
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.innerHTML = html;
+        logEl.appendChild(entry);
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    // ============================================================
+    // Step / Play / Pause / Reset
+    // ============================================================
+    function step() {
+        const tab = currentTab;
+        const steps = tab === 'iterative' ? iterSteps : recSteps;
+        let idx = tab === 'iterative' ? iterStepIdx : recStepIdx;
+
+        if (steps.length === 0 || idx >= steps.length - 1) return;
+
+        idx++;
+        if (tab === 'iterative') iterStepIdx = idx;
+        else recStepIdx = idx;
+
+        const s = steps[idx];
+        renderStep(tab, s);
+        if (s.log) addLog(tab, s.log);
+
+        const countId = tab === 'iterative' ? 'stepCountIter' : 'stepCountRec';
+        document.getElementById(countId).textContent = idx;
+
+        // Auto-pause at end
+        if (idx >= steps.length - 1) {
+            pause();
+        }
+    }
+
+    function play() {
+        pause();
+        document.getElementById('btnPlay').style.display = 'none';
+        document.getElementById('btnPause').style.display = '';
+        animInterval = setInterval(() => {
+            const steps = currentTab === 'iterative' ? iterSteps : recSteps;
+            const idx = currentTab === 'iterative' ? iterStepIdx : recStepIdx;
+            if (idx >= steps.length - 1) {
+                pause();
+                return;
+            }
+            step();
+        }, getDelay());
+    }
+
+    function pause() {
+        if (animInterval) {
+            clearInterval(animInterval);
+            animInterval = null;
+        }
+        document.getElementById('btnPlay').style.display = '';
+        document.getElementById('btnPause').style.display = 'none';
+    }
+
+    function resetAnim() {
+        pause();
+        iterStepIdx = 0;
+        recStepIdx = 0;
+        if (iterSteps.length > 0) {
+            renderStep('iterative', iterSteps[0]);
+            document.getElementById('stepCountIter').textContent = '0';
+        }
+        if (recSteps.length > 0) {
+            renderStep('recursive', recSteps[0]);
+            document.getElementById('stepCountRec').textContent = '0';
+        }
+        document.getElementById('logIter').innerHTML = '';
+        document.getElementById('logRec').innerHTML = '';
+        document.getElementById('resultValueIter').textContent = '—';
+        document.getElementById('resultValueRec').textContent = '—';
+    }
+
+    // ============================================================
+    // Initialize with default
+    // ============================================================
+    generate();
+    </script>
+</body>
+</html>

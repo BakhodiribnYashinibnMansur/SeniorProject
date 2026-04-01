@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0022. Generate Parentheses — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* PRESET BUTTONS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            padding: 8px 18px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            border-color: #60a5fa;
+            color: #60a5fa;
+        }
+
+        .preset-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .btn-step { background: #3b82f6; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-play { background: #10b981; }
+        .btn-play:hover { background: #059669; }
+        .btn-reset { background: #ef4444; }
+        .btn-reset:hover { background: #dc2626; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 80px;
+            accent-color: #a78bfa;
+        }
+
+        /* INFO BOX */
+        .info-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .info-box code {
+            background: #334155;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e2e8f0;
+        }
+
+        /* TREE VISUALIZATION */
+        .tree-area {
+            margin-bottom: 20px;
+            overflow-x: auto;
+            min-height: 250px;
+        }
+
+        .tree-svg {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .tree-node {
+            cursor: default;
+        }
+
+        .tree-node circle {
+            transition: all 0.3s;
+        }
+
+        .tree-node text {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            fill: #e2e8f0;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        .tree-edge {
+            stroke: #334155;
+            stroke-width: 1.5;
+            fill: none;
+            transition: stroke 0.3s;
+        }
+
+        .tree-edge.active {
+            stroke: #60a5fa;
+            stroke-width: 2;
+        }
+
+        .tree-edge.complete {
+            stroke: #10b981;
+            stroke-width: 2;
+        }
+
+        /* CURRENT STRING DISPLAY */
+        .current-string {
+            text-align: center;
+            margin-bottom: 16px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .current-label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-right: 8px;
+        }
+
+        .char-cell {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            border-radius: 6px;
+            background: #0f172a;
+            border: 2px solid #3b82f6;
+            color: #60a5fa;
+            animation: popIn 0.2s ease-out;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* RESULTS DISPLAY */
+        .results-area {
+            margin-bottom: 16px;
+        }
+
+        .results-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .results-grid {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            min-height: 40px;
+        }
+
+        .result-item {
+            padding: 6px 12px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid #10b981;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #10b981;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .result-item.new {
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+        }
+
+        /* LOG */
+        .log-area {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border: 1px solid #334155;
+        }
+
+        .log-entry { margin-bottom: 2px; }
+        .log-push { color: #60a5fa; }
+        .log-pop { color: #a78bfa; }
+        .log-found { color: #10b981; }
+        .log-error { color: #ef4444; }
+        .log-info { color: #94a3b8; }
+        .log-result { color: #fbbf24; font-weight: 600; }
+
+        /* RESULT SUMMARY */
+        .result-display {
+            text-align: center;
+            padding: 16px;
+            margin-top: 16px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .result-valid {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+
+        .result-pending {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid #334155;
+            color: #94a3b8;
+        }
+
+        /* DP TAB */
+        .dp-table {
+            margin-bottom: 16px;
+        }
+
+        .dp-row {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dp-row.active {
+            border-color: #3b82f6;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .dp-row-header {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .dp-row-items {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .dp-item {
+            padding: 4px 10px;
+            background: rgba(167, 139, 250, 0.15);
+            border: 1px solid #a78bfa;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #a78bfa;
+        }
+
+        .dp-item.new {
+            background: rgba(96, 165, 250, 0.2);
+            border-color: #60a5fa;
+            color: #60a5fa;
+            box-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+        }
+
+        .dp-item.empty-str {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .dp-formula {
+            text-align: center;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .dp-formula .highlight {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .dp-formula .result-hl {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        /* TAB CONTENT */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Step counter */
+        .step-counter {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0022. Generate Parentheses</h1>
+        <p>Interactive visualization of parentheses generation algorithms</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="backtrack">Backtracking</div>
+        <div class="tab" data-tab="dp">DP (Catalan Build)</div>
+    </div>
+
+    <div class="container">
+        <!-- Presets -->
+        <div class="presets">
+            <button class="preset-btn active" data-n="1">n = 1</button>
+            <button class="preset-btn" data-n="2">n = 2</button>
+            <button class="preset-btn" data-n="3">n = 3</button>
+            <button class="preset-btn" data-n="4">n = 4</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-step" id="btnStep">Step</button>
+            <button class="btn btn-play" id="btnPlay">Play</button>
+            <button class="btn btn-reset" id="btnReset">Reset</button>
+            <div class="speed-control">
+                <span>Speed:</span>
+                <input type="range" id="speedRange" min="1" max="10" value="5">
+                <span id="speedLabel">5</span>
+            </div>
+        </div>
+
+        <!-- Backtracking Tab -->
+        <div class="tab-content active" id="tab-backtrack">
+            <div class="info-box">
+                <strong>Backtracking:</strong> Build strings character by character. Add <code>(</code> if <code>open &lt; n</code>, add <code>)</code> if <code>close &lt; open</code>. When length reaches <code>2n</code>, we found a valid combination. Time: <code>O(4^n / sqrt(n))</code>
+            </div>
+
+            <div class="step-counter" id="btStepCounter">Step: 0</div>
+
+            <div class="tree-area" id="btTreeArea">
+                <svg class="tree-svg" id="btTreeSvg"></svg>
+            </div>
+
+            <div class="current-string" id="btCurrentString">
+                <span class="current-label">Current:</span>
+                <span style="color: #64748b; font-style: italic;">empty</span>
+            </div>
+
+            <div class="results-area">
+                <div class="results-label">Found combinations: <span id="btResultCount">0</span></div>
+                <div class="results-grid" id="btResults"></div>
+            </div>
+
+            <div class="log-area" id="btLog">
+                <div class="log-entry log-info">Click "Step" or "Play" to begin...</div>
+            </div>
+
+            <div class="result-display result-pending" id="btResult">
+                Waiting to start...
+            </div>
+        </div>
+
+        <!-- DP Tab -->
+        <div class="tab-content" id="tab-dp">
+            <div class="info-box">
+                <strong>DP (Catalan Build):</strong> Build from subproblems. Every valid string of <code>i</code> pairs = <code>"(" + dp[j] + ")" + dp[i-1-j]"</code> for all <code>j</code> from <code>0</code> to <code>i-1</code>. Time: <code>O(4^n / sqrt(n))</code>
+            </div>
+
+            <div class="step-counter" id="dpStepCounter">Step: 0</div>
+
+            <div class="dp-formula" id="dpFormula">
+                dp[i] = { "(" + left + ")" + right | left in dp[j], right in dp[i-1-j] }
+            </div>
+
+            <div class="dp-table" id="dpTable"></div>
+
+            <div class="log-area" id="dpLog">
+                <div class="log-entry log-info">Click "Step" or "Play" to begin...</div>
+            </div>
+
+            <div class="result-display result-pending" id="dpResult">
+                Waiting to start...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // STATE
+        // ============================================================
+        let currentTab = 'backtrack';
+        let isPlaying = false;
+        let playTimer = null;
+        let currentN = 1;
+
+        // ============================================================
+        // BACKTRACKING STATE & TREE
+        // ============================================================
+
+        // We pre-compute the entire backtracking trace, then replay it step by step.
+        // Each "event" is: { type: 'push'|'pop'|'found', char: '('|')', path: string, open, close, nodeId }
+
+        let btTrace = [];
+        let btStep = 0;
+        let btNodes = [];       // { id, parentId, char, path, x, y, state: 'pending'|'active'|'done'|'found' }
+        let btEdges = [];       // { from, to, state }
+        let btFoundResults = [];
+
+        function buildBacktrackTrace(n) {
+            btTrace = [];
+            btNodes = [{ id: 0, parentId: -1, char: '', path: '', x: 0, y: 0, state: 'pending', open: 0, close: 0 }];
+            btEdges = [];
+            let nodeCounter = 1;
+
+            function bt(path, open, close, parentId) {
+                if (path.length === 2 * n) {
+                    btTrace.push({ type: 'found', path, nodeId: parentId });
+                    return;
+                }
+
+                if (open < n) {
+                    const nid = nodeCounter++;
+                    btNodes.push({ id: nid, parentId, char: '(', path: path + '(', x: 0, y: 0, state: 'pending', open: open + 1, close });
+                    btEdges.push({ from: parentId, to: nid, state: 'pending', label: '(' });
+                    btTrace.push({ type: 'push', char: '(', path: path + '(', open: open + 1, close, nodeId: nid });
+                    bt(path + '(', open + 1, close, nid);
+                    btTrace.push({ type: 'pop', path, nodeId: nid });
+                }
+
+                if (close < open) {
+                    const nid = nodeCounter++;
+                    btNodes.push({ id: nid, parentId, char: ')', path: path + ')', x: 0, y: 0, state: 'pending', open, close: close + 1 });
+                    btEdges.push({ from: parentId, to: nid, state: 'pending', label: ')' });
+                    btTrace.push({ type: 'push', char: ')', path: path + ')', open, close: close + 1, nodeId: nid });
+                    bt(path + ')', open, close + 1, nid);
+                    btTrace.push({ type: 'pop', path, nodeId: nid });
+                }
+            }
+
+            bt('', 0, 0, 0);
+            layoutTree();
+        }
+
+        function layoutTree() {
+            // Simple layered layout: group by depth (path length)
+            const levels = {};
+            for (const node of btNodes) {
+                const depth = node.path.length;
+                if (!levels[depth]) levels[depth] = [];
+                levels[depth].push(node);
+            }
+
+            const maxDepth = Math.max(...Object.keys(levels).map(Number));
+            const levelHeight = 50;
+            const svgHeight = (maxDepth + 1) * levelHeight + 40;
+
+            // Calculate width needed
+            let maxNodesInLevel = 0;
+            for (const d in levels) {
+                maxNodesInLevel = Math.max(maxNodesInLevel, levels[d].length);
+            }
+
+            const nodeSpacing = 50;
+            const svgWidth = Math.max(400, maxNodesInLevel * nodeSpacing + 60);
+
+            for (const d in levels) {
+                const nodesInLevel = levels[d];
+                const totalWidth = nodesInLevel.length * nodeSpacing;
+                const startX = (svgWidth - totalWidth) / 2 + nodeSpacing / 2;
+                for (let i = 0; i < nodesInLevel.length; i++) {
+                    nodesInLevel[i].x = startX + i * nodeSpacing;
+                    nodesInLevel[i].y = Number(d) * levelHeight + 30;
+                }
+            }
+
+            // Store dimensions
+            btTreeWidth = svgWidth;
+            btTreeHeight = svgHeight;
+        }
+
+        let btTreeWidth = 400;
+        let btTreeHeight = 300;
+
+        function renderBacktrackTree() {
+            const svg = document.getElementById('btTreeSvg');
+            svg.setAttribute('width', btTreeWidth);
+            svg.setAttribute('height', btTreeHeight);
+
+            let html = '';
+
+            // Draw edges
+            for (const edge of btEdges) {
+                const from = btNodes[edge.from];
+                const to = btNodes[edge.to];
+                let cls = 'tree-edge';
+                if (edge.state === 'active') cls += ' active';
+                else if (edge.state === 'complete') cls += ' complete';
+                html += `<line class="${cls}" x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}"/>`;
+            }
+
+            // Draw nodes
+            for (const node of btNodes) {
+                let fill = '#334155';  // pending
+                let stroke = '#475569';
+                let r = 16;
+
+                if (node.state === 'active') {
+                    fill = '#1e40af';
+                    stroke = '#60a5fa';
+                } else if (node.state === 'done') {
+                    fill = '#1e293b';
+                    stroke = '#475569';
+                } else if (node.state === 'found') {
+                    fill = '#065f46';
+                    stroke = '#10b981';
+                }
+
+                const label = node.path.length <= 6 ? node.path : '...' + node.path.slice(-4);
+
+                html += `<g class="tree-node">`;
+                html += `<circle cx="${node.x}" cy="${node.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`;
+                html += `<text x="${node.x}" y="${node.y}" font-size="9">${node.char || 'R'}</text>`;
+                html += `</g>`;
+            }
+
+            svg.innerHTML = html;
+        }
+
+        function renderBtCurrentString(path) {
+            const container = document.getElementById('btCurrentString');
+            let html = '<span class="current-label">Current:</span>';
+            if (!path || path.length === 0) {
+                html += '<span style="color: #64748b; font-style: italic;">empty</span>';
+            } else {
+                for (const ch of path) {
+                    html += `<div class="char-cell">${ch}</div>`;
+                }
+            }
+            container.innerHTML = html;
+        }
+
+        function renderBtResults() {
+            const container = document.getElementById('btResults');
+            container.innerHTML = '';
+            for (let i = 0; i < btFoundResults.length; i++) {
+                const div = document.createElement('div');
+                div.className = 'result-item' + (i === btFoundResults.length - 1 ? ' new' : '');
+                div.textContent = btFoundResults[i];
+                container.appendChild(div);
+            }
+            document.getElementById('btResultCount').textContent = btFoundResults.length;
+        }
+
+        function initBacktrack() {
+            buildBacktrackTrace(currentN);
+            btStep = 0;
+            btFoundResults = [];
+
+            // Reset all node/edge states
+            for (const n of btNodes) n.state = 'pending';
+            for (const e of btEdges) e.state = 'pending';
+            btNodes[0].state = 'active';
+
+            renderBacktrackTree();
+            renderBtCurrentString('');
+            renderBtResults();
+            document.getElementById('btLog').innerHTML = '<div class="log-entry log-info">Click "Step" or "Play" to begin...</div>';
+            document.getElementById('btResult').className = 'result-display result-pending';
+            document.getElementById('btResult').textContent = 'Waiting to start...';
+            document.getElementById('btStepCounter').textContent = 'Step: 0';
+        }
+
+        function stepBacktrack() {
+            if (btStep >= btTrace.length) {
+                // Done
+                document.getElementById('btResult').className = 'result-display result-valid';
+                document.getElementById('btResult').textContent = `Complete! Found ${btFoundResults.length} valid combination(s)`;
+                return true;
+            }
+
+            if (btStep === 0) {
+                document.getElementById('btLog').innerHTML = '';
+            }
+
+            const event = btTrace[btStep];
+            btStep++;
+            document.getElementById('btStepCounter').textContent = `Step: ${btStep} / ${btTrace.length}`;
+
+            if (event.type === 'push') {
+                // Activate the node
+                const node = btNodes[event.nodeId];
+                node.state = 'active';
+
+                // Activate edge to this node
+                const edge = btEdges.find(e => e.to === event.nodeId);
+                if (edge) edge.state = 'active';
+
+                // Deactivate parent (set to done) unless it's root
+                if (node.parentId >= 0) {
+                    // Don't deactivate parent yet, just mark edge
+                }
+
+                addLog('btLog', `Add '${event.char}' -> "${event.path}"  (open=${event.open}, close=${event.close})`, 'log-push');
+                renderBtCurrentString(event.path);
+
+            } else if (event.type === 'pop') {
+                // Mark the node as done, backtrack
+                const node = btNodes[event.nodeId];
+                node.state = 'done';
+                const edge = btEdges.find(e => e.to === event.nodeId);
+                if (edge) edge.state = edge.state === 'active' ? 'pending' : edge.state;
+
+                addLog('btLog', `Backtrack from "${node.path}" -> "${event.path}"`, 'log-pop');
+                renderBtCurrentString(event.path);
+
+            } else if (event.type === 'found') {
+                // Mark the node as found
+                const node = btNodes[event.nodeId];
+                node.state = 'found';
+                const edge = btEdges.find(e => e.to === event.nodeId);
+                if (edge) edge.state = 'complete';
+
+                btFoundResults.push(event.path);
+                addLog('btLog', `FOUND: "${event.path}"`, 'log-found');
+                renderBtResults();
+            }
+
+            renderBacktrackTree();
+
+            // Check if next step doesn't exist
+            if (btStep >= btTrace.length) {
+                document.getElementById('btResult').className = 'result-display result-valid';
+                document.getElementById('btResult').textContent = `Complete! Found ${btFoundResults.length} valid combination(s)`;
+                return true;
+            }
+
+            return false;
+        }
+
+        // ============================================================
+        // DP STATE
+        // ============================================================
+
+        let dpTrace = [];  // { type: 'init'|'build'|'add', i, j, left, right, result }
+        let dpStep = 0;
+        let dpTable = {};
+
+        function buildDpTrace(n) {
+            dpTrace = [];
+            dpTrace.push({ type: 'init' });
+
+            const dp = { 0: [''] };
+
+            for (let i = 1; i <= n; i++) {
+                dp[i] = [];
+                dpTrace.push({ type: 'start_level', i });
+
+                for (let j = 0; j < i; j++) {
+                    for (const left of dp[j]) {
+                        for (const right of dp[i - 1 - j]) {
+                            const result = '(' + left + ')' + right;
+                            dp[i].push(result);
+                            dpTrace.push({ type: 'add', i, j, left, right, result });
+                        }
+                    }
+                }
+
+                dpTrace.push({ type: 'end_level', i, items: [...dp[i]] });
+            }
+
+            dpTrace.push({ type: 'done', result: dp[n] });
+        }
+
+        function initDp() {
+            buildDpTrace(currentN);
+            dpStep = 0;
+            dpTable = {};
+
+            document.getElementById('dpTable').innerHTML = '';
+            document.getElementById('dpLog').innerHTML = '<div class="log-entry log-info">Click "Step" or "Play" to begin...</div>';
+            document.getElementById('dpResult').className = 'result-display result-pending';
+            document.getElementById('dpResult').textContent = 'Waiting to start...';
+            document.getElementById('dpStepCounter').textContent = 'Step: 0';
+            document.getElementById('dpFormula').innerHTML = 'dp[i] = { "(" + left + ")" + right | left in dp[j], right in dp[i-1-j] }';
+        }
+
+        function renderDpTable(highlightI, newItem) {
+            const container = document.getElementById('dpTable');
+            container.innerHTML = '';
+
+            const keys = Object.keys(dpTable).map(Number).sort((a, b) => a - b);
+            for (const k of keys) {
+                const row = document.createElement('div');
+                row.className = 'dp-row' + (k === highlightI ? ' active' : '');
+
+                const header = document.createElement('div');
+                header.className = 'dp-row-header';
+                header.textContent = `dp[${k}] (${dpTable[k].length} item${dpTable[k].length !== 1 ? 's' : ''})`;
+                row.appendChild(header);
+
+                const items = document.createElement('div');
+                items.className = 'dp-row-items';
+                for (const item of dpTable[k]) {
+                    const el = document.createElement('span');
+                    el.className = 'dp-item';
+                    if (item === '' ) el.classList.add('empty-str');
+                    if (k === highlightI && item === newItem) el.classList.add('new');
+                    el.textContent = item === '' ? '""' : item;
+                    items.appendChild(el);
+                }
+                row.appendChild(items);
+                container.appendChild(row);
+            }
+        }
+
+        function stepDp() {
+            if (dpStep >= dpTrace.length) return true;
+
+            if (dpStep === 0) {
+                document.getElementById('dpLog').innerHTML = '';
+            }
+
+            const event = dpTrace[dpStep];
+            dpStep++;
+            document.getElementById('dpStepCounter').textContent = `Step: ${dpStep} / ${dpTrace.length}`;
+
+            if (event.type === 'init') {
+                dpTable[0] = [''];
+                addLog('dpLog', 'Initialize: dp[0] = [""]', 'log-info');
+                renderDpTable(0, '');
+            } else if (event.type === 'start_level') {
+                dpTable[event.i] = [];
+                addLog('dpLog', `Building dp[${event.i}]...`, 'log-push');
+                renderDpTable(event.i, null);
+            } else if (event.type === 'add') {
+                dpTable[event.i].push(event.result);
+                const leftStr = event.left === '' ? '""' : `"${event.left}"`;
+                const rightStr = event.right === '' ? '""' : `"${event.right}"`;
+                addLog('dpLog', `  j=${event.j}: "(" + ${leftStr} + ")" + ${rightStr} = "${event.result}"`, 'log-found');
+                document.getElementById('dpFormula').innerHTML =
+                    `"(" + <span class="highlight">${leftStr}</span> + ")" + <span class="highlight">${rightStr}</span> = <span class="result-hl">"${event.result}"</span>`;
+                renderDpTable(event.i, event.result);
+            } else if (event.type === 'end_level') {
+                addLog('dpLog', `dp[${event.i}] complete: ${event.items.length} item(s)`, 'log-result');
+                renderDpTable(event.i, null);
+            } else if (event.type === 'done') {
+                document.getElementById('dpResult').className = 'result-display result-valid';
+                document.getElementById('dpResult').textContent = `Complete! dp[${currentN}] has ${event.result.length} combination(s)`;
+                addLog('dpLog', `Done! Found ${event.result.length} valid combination(s)`, 'log-result');
+                return true;
+            }
+
+            return dpStep >= dpTrace.length;
+        }
+
+        // ============================================================
+        // TABS
+        // ============================================================
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = tab.dataset.tab;
+                document.getElementById('tab-' + currentTab).classList.add('active');
+                resetAll();
+            });
+        });
+
+        // ============================================================
+        // PRESETS
+        // ============================================================
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentN = parseInt(btn.dataset.n);
+                resetAll();
+            });
+        });
+
+        // ============================================================
+        // CONTROLS
+        // ============================================================
+        document.getElementById('btnStep').addEventListener('click', step);
+        document.getElementById('btnPlay').addEventListener('click', togglePlay);
+        document.getElementById('btnReset').addEventListener('click', resetAll);
+
+        document.getElementById('speedRange').addEventListener('input', (e) => {
+            document.getElementById('speedLabel').textContent = e.target.value;
+        });
+
+        function getSpeed() {
+            return 1100 - document.getElementById('speedRange').value * 100;
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                stopPlay();
+            } else {
+                isPlaying = true;
+                document.getElementById('btnPlay').textContent = 'Pause';
+                document.getElementById('btnPlay').style.background = '#f59e0b';
+                playLoop();
+            }
+        }
+
+        function stopPlay() {
+            isPlaying = false;
+            clearTimeout(playTimer);
+            document.getElementById('btnPlay').textContent = 'Play';
+            document.getElementById('btnPlay').style.background = '#10b981';
+        }
+
+        function playLoop() {
+            if (!isPlaying) return;
+            const done = step();
+            if (done) {
+                stopPlay();
+                return;
+            }
+            playTimer = setTimeout(playLoop, getSpeed());
+        }
+
+        function step() {
+            if (currentTab === 'backtrack') return stepBacktrack();
+            else return stepDp();
+        }
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+        function addLog(logId, message, cls) {
+            const logArea = document.getElementById(logId);
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + (cls || 'log-info');
+            entry.textContent = message;
+            logArea.appendChild(entry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        function resetAll() {
+            stopPlay();
+            if (currentTab === 'backtrack') {
+                initBacktrack();
+            } else {
+                initDp();
+            }
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        initBacktrack();
+        initDp();
+    </script>
+</body>
+</html>

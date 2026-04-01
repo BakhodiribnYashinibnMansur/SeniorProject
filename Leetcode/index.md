@@ -38,3 +38,13 @@ Each problem includes:
 | 18 | [4Sum](0018-4sum/solution) | Medium |
 | 19 | [Remove Nth Node From End of List](0019-remove-nth-node-from-end-of-list/solution) | Medium |
 | 20 | [Valid Parentheses](0020-valid-parentheses/solution) | Easy |
+| 21 | [Merge Two Sorted Lists](0021-merge-two-sorted-lists/solution) | Easy |
+| 22 | [Generate Parentheses](0022-generate-parentheses/solution) | Medium |
+| 23 | [Merge k Sorted Lists](0023-merge-k-sorted-lists/solution) | Hard |
+| 24 | [Swap Nodes in Pairs](0024-swap-nodes-in-pairs/solution) | Medium |
+| 25 | [Reverse Nodes in k-Group](0025-reverse-nodes-in-k-group/solution) | Hard |
+| 26 | [Remove Duplicates from Sorted Array](0026-remove-duplicates-from-sorted-array/solution) | Easy |
+| 27 | [Remove Element](0027-remove-element/solution) | Easy |
+| 28 | [Find the Index of the First Occurrence in a String](0028-find-the-index-of-the-first-occurrence-in-a-string/solution) | Easy |
+| 29 | [Divide Two Integers](0029-divide-two-integers/solution) | Medium |
+| 30 | [Substring with Concatenation of All Words](0030-substring-with-concatenation-of-all-words/solution) | Hard |

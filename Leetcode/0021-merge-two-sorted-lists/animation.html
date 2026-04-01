@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0021. Merge Two Sorted Lists — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            width: 180px;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        /* PRESET BUTTONS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            padding: 6px 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            border-color: #60a5fa;
+            color: #60a5fa;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .btn-step { background: #3b82f6; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-play { background: #10b981; }
+        .btn-play:hover { background: #059669; }
+        .btn-reset { background: #ef4444; }
+        .btn-reset:hover { background: #dc2626; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 80px;
+            accent-color: #a78bfa;
+        }
+
+        /* VISUALIZATION AREA */
+        .viz-area {
+            min-height: 280px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            overflow-x: auto;
+        }
+
+        .list-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            gap: 4px;
+        }
+
+        .list-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            width: 80px;
+            text-align: right;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .node {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .node-list1 {
+            background: #1e3a5f;
+            border: 2px solid #3b82f6;
+            color: #60a5fa;
+        }
+
+        .node-list2 {
+            background: #1a3a2a;
+            border: 2px solid #10b981;
+            color: #34d399;
+        }
+
+        .node-merged {
+            background: #2d1b4e;
+            border: 2px solid #a78bfa;
+            color: #c4b5fd;
+        }
+
+        .node.active {
+            transform: scale(1.15);
+            box-shadow: 0 0 12px rgba(96, 165, 250, 0.5);
+        }
+
+        .node.picked {
+            opacity: 0.3;
+        }
+
+        .arrow {
+            color: #475569;
+            font-size: 1.2rem;
+            margin: 0 2px;
+            flex-shrink: 0;
+        }
+
+        .pointer-marker {
+            position: absolute;
+            top: -18px;
+            font-size: 0.65rem;
+            color: #fbbf24;
+            font-weight: 700;
+        }
+
+        /* LOG AREA */
+        .log-area {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            margin-bottom: 16px;
+        }
+
+        .log-entry {
+            padding: 3px 0;
+            border-bottom: 1px solid #1e293b;
+            color: #94a3b8;
+        }
+
+        .log-entry:last-child { border-bottom: none; }
+
+        .log-entry .highlight { color: #60a5fa; font-weight: 600; }
+        .log-entry .pick { color: #10b981; font-weight: 600; }
+        .log-entry .step-num { color: #a78bfa; font-weight: 600; }
+
+        /* RESULT */
+        .result-area {
+            text-align: center;
+            padding: 12px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            font-size: 1rem;
+        }
+
+        .result-area .result-label { color: #94a3b8; margin-right: 8px; }
+        .result-area .result-value { color: #10b981; font-weight: 600; font-family: 'Courier New', monospace; }
+
+        /* RECURSIVE SPECIFIC */
+        .call-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 12px;
+        }
+
+        .call-frame {
+            padding: 8px 12px;
+            background: #1e293b;
+            border-left: 3px solid #3b82f6;
+            border-radius: 0 6px 6px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            transition: all 0.3s;
+        }
+
+        .call-frame.active-frame {
+            border-left-color: #10b981;
+            background: #0f2a1f;
+        }
+
+        .call-frame.returning {
+            border-left-color: #a78bfa;
+            background: #1f1635;
+        }
+
+        .call-frame .fn-name { color: #60a5fa; }
+        .call-frame .val { color: #fbbf24; }
+        .call-frame .ret { color: #10b981; }
+
+        .depth-indent {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0021. Merge Two Sorted Lists</h1>
+        <p>Interactive step-by-step visualization of iterative and recursive merge approaches</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('iterative')">Iterative</div>
+        <div class="tab" onclick="switchTab('recursive')">Recursive</div>
+    </div>
+
+    <div class="container">
+        <div class="input-section">
+            <label>List 1:</label>
+            <input type="text" id="input1" placeholder="e.g. 1,2,4" value="1,2,4">
+            <label>List 2:</label>
+            <input type="text" id="input2" placeholder="e.g. 1,3,4" value="1,3,4">
+        </div>
+
+        <div class="presets">
+            <button class="preset-btn" onclick="setPreset([1,2,4],[1,3,4])">[1,2,4] + [1,3,4]</button>
+            <button class="preset-btn" onclick="setPreset([],[])">[] + []</button>
+            <button class="preset-btn" onclick="setPreset([],[0])">[] + [0]</button>
+            <button class="preset-btn" onclick="setPreset([1,3,5,7],[2,4,6,8])">[1,3,5,7] + [2,4,6,8]</button>
+            <button class="preset-btn" onclick="setPreset([-3,-1,2],[- 2,0,5])">[-3,-1,2] + [-2,0,5]</button>
+            <button class="preset-btn" onclick="setPreset([1,1,1],[1,1])">[1,1,1] + [1,1]</button>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-step" id="btnStep" onclick="step()">Step</button>
+            <button class="btn btn-play" id="btnPlay" onclick="togglePlay()">Play</button>
+            <button class="btn btn-reset" onclick="reset()">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <span id="speedLabel">5</span>
+            </div>
+        </div>
+
+        <div class="viz-area" id="vizArea"></div>
+
+        <div class="log-area" id="logArea">
+            <div class="log-entry">Press <span class="highlight">Step</span> or <span class="highlight">Play</span> to begin.</div>
+        </div>
+
+        <div class="result-area" id="resultArea">
+            <span class="result-label">Result:</span>
+            <span class="result-value" id="resultValue">--</span>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // STATE
+        // ============================================================
+        let currentTab = 'iterative';
+        let list1 = [], list2 = [];
+        let playing = false;
+        let playTimer = null;
+        let finished = false;
+
+        // Iterative state
+        let iter = { i: 0, j: 0, merged: [], steps: [], stepIndex: -1 };
+
+        // Recursive state
+        let rec = { steps: [], stepIndex: -1 };
+
+        // ============================================================
+        // TABS
+        // ============================================================
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach((t, idx) => {
+                t.classList.toggle('active', (idx === 0 && tab === 'iterative') || (idx === 1 && tab === 'recursive'));
+            });
+            reset();
+        }
+
+        // ============================================================
+        // PRESETS
+        // ============================================================
+        function setPreset(a, b) {
+            document.getElementById('input1').value = a.join(',');
+            document.getElementById('input2').value = b.join(',');
+            reset();
+        }
+
+        // ============================================================
+        // PARSE INPUT
+        // ============================================================
+        function parseInput() {
+            const v1 = document.getElementById('input1').value.trim();
+            const v2 = document.getElementById('input2').value.trim();
+            list1 = v1 ? v1.split(',').map(Number).filter(n => !isNaN(n)) : [];
+            list2 = v2 ? v2.split(',').map(Number).filter(n => !isNaN(n)) : [];
+        }
+
+        // ============================================================
+        // ITERATIVE LOGIC
+        // ============================================================
+        function buildIterativeSteps() {
+            const steps = [];
+            let i = 0, j = 0;
+            const merged = [];
+            const a = [...list1], b = [...list2];
+
+            steps.push({
+                type: 'init',
+                i, j, merged: [...merged],
+                msg: `Initialize: list1=[${a}], list2=[${b}], merged=[]`
+            });
+
+            while (i < a.length && j < b.length) {
+                if (a[i] <= b[j]) {
+                    steps.push({
+                        type: 'compare',
+                        i, j, merged: [...merged],
+                        msg: `Compare list1[${i}]=${a[i]} <= list2[${j}]=${b[j]} -> pick ${a[i]} from list1`
+                    });
+                    merged.push({ val: a[i], from: 'list1' });
+                    steps.push({
+                        type: 'pick',
+                        i, j: j, merged: [...merged], pickedFrom: 'list1', pickedIdx: i,
+                        msg: `Attach ${a[i]} to merged list. Advance list1 pointer.`
+                    });
+                    i++;
+                } else {
+                    steps.push({
+                        type: 'compare',
+                        i, j, merged: [...merged],
+                        msg: `Compare list1[${i}]=${a[i]} > list2[${j}]=${b[j]} -> pick ${b[j]} from list2`
+                    });
+                    merged.push({ val: b[j], from: 'list2' });
+                    steps.push({
+                        type: 'pick',
+                        i, j, merged: [...merged], pickedFrom: 'list2', pickedIdx: j,
+                        msg: `Attach ${b[j]} to merged list. Advance list2 pointer.`
+                    });
+                    j++;
+                }
+            }
+
+            // Remaining
+            if (i < a.length) {
+                const remaining = a.slice(i);
+                for (const v of remaining) merged.push({ val: v, from: 'list1' });
+                steps.push({
+                    type: 'remaining',
+                    i: a.length, j, merged: [...merged],
+                    msg: `list2 exhausted. Attach remaining list1: [${remaining}]`
+                });
+            } else if (j < b.length) {
+                const remaining = b.slice(j);
+                for (const v of remaining) merged.push({ val: v, from: 'list2' });
+                steps.push({
+                    type: 'remaining',
+                    i, j: b.length, merged: [...merged],
+                    msg: `list1 exhausted. Attach remaining list2: [${remaining}]`
+                });
+            }
+
+            steps.push({
+                type: 'done',
+                i: a.length, j: b.length, merged: [...merged],
+                msg: `Done! Merged list: [${merged.map(m => m.val)}]`
+            });
+
+            return steps;
+        }
+
+        // ============================================================
+        // RECURSIVE LOGIC
+        // ============================================================
+        function buildRecursiveSteps() {
+            const steps = [];
+            const a = [...list1], b = [...list2];
+            let callId = 0;
+
+            function mergeRec(i, j, depth) {
+                const id = callId++;
+                if (i >= a.length) {
+                    const remaining = b.slice(j);
+                    steps.push({
+                        type: 'base',
+                        depth, id,
+                        i, j,
+                        msg: `${'  '.repeat(depth)}list1 is null -> return list2 remaining: [${remaining}]`,
+                        returnVal: remaining
+                    });
+                    return remaining;
+                }
+                if (j >= b.length) {
+                    const remaining = a.slice(i);
+                    steps.push({
+                        type: 'base',
+                        depth, id,
+                        i, j,
+                        msg: `${'  '.repeat(depth)}list2 is null -> return list1 remaining: [${remaining}]`,
+                        returnVal: remaining
+                    });
+                    return remaining;
+                }
+
+                if (a[i] <= b[j]) {
+                    steps.push({
+                        type: 'call',
+                        depth, id,
+                        i, j,
+                        pick: 'list1', pickVal: a[i],
+                        msg: `${'  '.repeat(depth)}merge(list1[${i}]=${a[i]}, list2[${j}]=${b[j]}): ${a[i]} <= ${b[j]}, pick list1(${a[i]})`
+                    });
+                    const rest = mergeRec(i + 1, j, depth + 1);
+                    const result = [a[i], ...rest];
+                    steps.push({
+                        type: 'return',
+                        depth, id,
+                        i, j,
+                        msg: `${'  '.repeat(depth)}return [${a[i]}] + [${rest}] = [${result}]`,
+                        returnVal: result
+                    });
+                    return result;
+                } else {
+                    steps.push({
+                        type: 'call',
+                        depth, id,
+                        i, j,
+                        pick: 'list2', pickVal: b[j],
+                        msg: `${'  '.repeat(depth)}merge(list1[${i}]=${a[i]}, list2[${j}]=${b[j]}): ${a[i]} > ${b[j]}, pick list2(${b[j]})`
+                    });
+                    const rest = mergeRec(i, j + 1, depth + 1);
+                    const result = [b[j], ...rest];
+                    steps.push({
+                        type: 'return',
+                        depth, id,
+                        i, j,
+                        msg: `${'  '.repeat(depth)}return [${b[j]}] + [${rest}] = [${result}]`,
+                        returnVal: result
+                    });
+                    return result;
+                }
+            }
+
+            steps.push({
+                type: 'init',
+                depth: 0,
+                i: 0, j: 0,
+                msg: `Start: merge([${a}], [${b}])`
+            });
+
+            mergeRec(0, 0, 0);
+
+            return steps;
+        }
+
+        // ============================================================
+        // RENDER — ITERATIVE
+        // ============================================================
+        function renderIterative(s) {
+            const viz = document.getElementById('vizArea');
+            if (!s) {
+                viz.innerHTML = '<div style="color:#64748b;text-align:center;padding:40px;">Press Step or Play to begin.</div>';
+                return;
+            }
+
+            let html = '';
+
+            // List 1 row
+            html += '<div class="list-row"><div class="list-label">list1</div>';
+            for (let k = 0; k < list1.length; k++) {
+                const isPicked = s.merged.some(m => m.from === 'list1') &&
+                    k < (s.i !== undefined ? s.i : 0);
+                const isActive = s.type === 'compare' && k === s.i;
+                let cls = 'node node-list1';
+                if (isPicked) cls += ' picked';
+                if (isActive) cls += ' active';
+                html += `<div class="${cls}">`;
+                if (k === (s.i !== undefined ? s.i : 0) && s.type !== 'done' && s.type !== 'remaining') {
+                    html += '<span class="pointer-marker">ptr</span>';
+                }
+                html += `${list1[k]}</div>`;
+                if (k < list1.length - 1) html += '<span class="arrow">-></span>';
+            }
+            if (list1.length === 0) html += '<span style="color:#64748b;font-style:italic;">empty</span>';
+            html += '</div>';
+
+            // List 2 row
+            html += '<div class="list-row"><div class="list-label">list2</div>';
+            for (let k = 0; k < list2.length; k++) {
+                const isPicked = s.merged.some(m => m.from === 'list2') &&
+                    k < (s.j !== undefined ? s.j : 0);
+                const isActive = s.type === 'compare' && k === s.j;
+                let cls = 'node node-list2';
+                if (isPicked) cls += ' picked';
+                if (isActive) cls += ' active';
+                html += `<div class="${cls}">`;
+                if (k === (s.j !== undefined ? s.j : 0) && s.type !== 'done' && s.type !== 'remaining') {
+                    html += '<span class="pointer-marker">ptr</span>';
+                }
+                html += `${list2[k]}</div>`;
+                if (k < list2.length - 1) html += '<span class="arrow">-></span>';
+            }
+            if (list2.length === 0) html += '<span style="color:#64748b;font-style:italic;">empty</span>';
+            html += '</div>';
+
+            // Divider
+            html += '<div style="border-top:1px dashed #334155;margin:12px 0;"></div>';
+
+            // Merged row
+            html += '<div class="list-row"><div class="list-label">merged</div>';
+            if (s.merged.length === 0) {
+                html += '<span style="color:#64748b;font-style:italic;">empty</span>';
+            } else {
+                for (let k = 0; k < s.merged.length; k++) {
+                    const m = s.merged[k];
+                    const isNew = k === s.merged.length - 1 && (s.type === 'pick' || s.type === 'remaining');
+                    html += `<div class="node node-merged${isNew ? ' active' : ''}">${m.val}</div>`;
+                    if (k < s.merged.length - 1) html += '<span class="arrow">-></span>';
+                }
+            }
+            html += '</div>';
+
+            viz.innerHTML = html;
+        }
+
+        // ============================================================
+        // RENDER — RECURSIVE
+        // ============================================================
+        function renderRecursive(stepIdx) {
+            const viz = document.getElementById('vizArea');
+            if (stepIdx < 0) {
+                viz.innerHTML = '<div style="color:#64748b;text-align:center;padding:40px;">Press Step or Play to begin.</div>';
+                return;
+            }
+
+            const steps = rec.steps;
+            let html = '';
+
+            // Show the two input lists
+            html += '<div class="list-row"><div class="list-label">list1</div>';
+            for (let k = 0; k < list1.length; k++) {
+                html += `<div class="node node-list1">${list1[k]}</div>`;
+                if (k < list1.length - 1) html += '<span class="arrow">-></span>';
+            }
+            if (list1.length === 0) html += '<span style="color:#64748b;font-style:italic;">empty</span>';
+            html += '</div>';
+
+            html += '<div class="list-row"><div class="list-label">list2</div>';
+            for (let k = 0; k < list2.length; k++) {
+                html += `<div class="node node-list2">${list2[k]}</div>`;
+                if (k < list2.length - 1) html += '<span class="arrow">-></span>';
+            }
+            if (list2.length === 0) html += '<span style="color:#64748b;font-style:italic;">empty</span>';
+            html += '</div>';
+
+            html += '<div style="border-top:1px dashed #334155;margin:12px 0;"></div>';
+
+            // Call stack visualization
+            html += '<div class="call-stack">';
+            for (let si = 0; si <= stepIdx && si < steps.length; si++) {
+                const s = steps[si];
+                if (s.type === 'init') continue;
+                const isCurrent = si === stepIdx;
+                let frameClass = 'call-frame';
+                if (isCurrent && s.type === 'call') frameClass += ' active-frame';
+                if (isCurrent && s.type === 'base') frameClass += ' active-frame';
+                if (s.type === 'return') frameClass += ' returning';
+
+                const indent = s.depth * 20;
+                html += `<div class="${frameClass}" style="margin-left:${indent}px;${isCurrent ? 'font-weight:600;' : 'opacity:0.7;'}">`;
+
+                if (s.type === 'call') {
+                    html += `<span class="fn-name">merge</span>(l1[${s.i}]=<span class="val">${list1[s.i] !== undefined ? list1[s.i] : 'null'}</span>, l2[${s.j}]=<span class="val">${list2[s.j] !== undefined ? list2[s.j] : 'null'}</span>) -> pick <span class="val">${s.pickVal}</span>`;
+                } else if (s.type === 'base') {
+                    html += `<span class="fn-name">base case</span> -> return <span class="ret">[${s.returnVal}]</span>`;
+                } else if (s.type === 'return') {
+                    html += `<span class="fn-name">return</span> <span class="ret">[${s.returnVal}]</span>`;
+                }
+
+                html += '</div>';
+            }
+            html += '</div>';
+
+            // Show final result if last step is a return at depth 0
+            const lastStep = steps[stepIdx];
+            if (lastStep && lastStep.type === 'return' && lastStep.depth === 0) {
+                html += '<div style="border-top:1px dashed #334155;margin:12px 0;"></div>';
+                html += '<div class="list-row"><div class="list-label">merged</div>';
+                for (let k = 0; k < lastStep.returnVal.length; k++) {
+                    html += `<div class="node node-merged">${lastStep.returnVal[k]}</div>`;
+                    if (k < lastStep.returnVal.length - 1) html += '<span class="arrow">-></span>';
+                }
+                html += '</div>';
+            }
+
+            viz.innerHTML = html;
+        }
+
+        // ============================================================
+        // STEP / PLAY / RESET
+        // ============================================================
+        function step() {
+            if (finished) return;
+
+            if (currentTab === 'iterative') {
+                if (iter.stepIndex === -1) {
+                    parseInput();
+                    iter.steps = buildIterativeSteps();
+                    iter.stepIndex = 0;
+                } else {
+                    iter.stepIndex++;
+                }
+
+                if (iter.stepIndex >= iter.steps.length) {
+                    finished = true;
+                    stopPlay();
+                    return;
+                }
+
+                const s = iter.steps[iter.stepIndex];
+                renderIterative(s);
+                addLog(iter.stepIndex, s.msg);
+
+                if (s.type === 'done') {
+                    document.getElementById('resultValue').textContent = `[${s.merged.map(m => m.val).join(', ')}]`;
+                    finished = true;
+                    stopPlay();
+                }
+            } else {
+                if (rec.stepIndex === -1) {
+                    parseInput();
+                    rec.steps = buildRecursiveSteps();
+                    rec.stepIndex = 0;
+                } else {
+                    rec.stepIndex++;
+                }
+
+                if (rec.stepIndex >= rec.steps.length) {
+                    finished = true;
+                    stopPlay();
+                    return;
+                }
+
+                const s = rec.steps[rec.stepIndex];
+                renderRecursive(rec.stepIndex);
+                addLog(rec.stepIndex, s.msg);
+
+                if (rec.stepIndex === rec.steps.length - 1) {
+                    if (s.returnVal) {
+                        document.getElementById('resultValue').textContent = `[${s.returnVal.join(', ')}]`;
+                    }
+                    finished = true;
+                    stopPlay();
+                }
+            }
+        }
+
+        function togglePlay() {
+            if (playing) {
+                stopPlay();
+            } else {
+                playing = true;
+                document.getElementById('btnPlay').textContent = 'Pause';
+                document.getElementById('btnPlay').classList.remove('btn-play');
+                document.getElementById('btnPlay').style.background = '#f59e0b';
+                playLoop();
+            }
+        }
+
+        function playLoop() {
+            if (!playing || finished) {
+                stopPlay();
+                return;
+            }
+            step();
+            const speed = parseInt(document.getElementById('speedSlider').value);
+            const delay = 1200 - (speed * 100);
+            playTimer = setTimeout(playLoop, delay);
+        }
+
+        function stopPlay() {
+            playing = false;
+            clearTimeout(playTimer);
+            document.getElementById('btnPlay').textContent = 'Play';
+            document.getElementById('btnPlay').style.background = '';
+            document.getElementById('btnPlay').classList.add('btn-play');
+        }
+
+        function reset() {
+            stopPlay();
+            finished = false;
+            iter = { i: 0, j: 0, merged: [], steps: [], stepIndex: -1 };
+            rec = { steps: [], stepIndex: -1 };
+
+            document.getElementById('vizArea').innerHTML =
+                '<div style="color:#64748b;text-align:center;padding:40px;">Press Step or Play to begin.</div>';
+            document.getElementById('logArea').innerHTML =
+                '<div class="log-entry">Press <span class="highlight">Step</span> or <span class="highlight">Play</span> to begin.</div>';
+            document.getElementById('resultValue').textContent = '--';
+        }
+
+        function addLog(stepNum, msg) {
+            const logArea = document.getElementById('logArea');
+            if (stepNum === 0) logArea.innerHTML = '';
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="step-num">[${stepNum}]</span> ${msg}`;
+            logArea.appendChild(entry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        // Speed label
+        document.getElementById('speedSlider').addEventListener('input', function() {
+            document.getElementById('speedLabel').textContent = this.value;
+        });
+
+        // Fix preset with negative numbers
+        function setPreset(a, b) {
+            document.getElementById('input1').value = a.join(',');
+            document.getElementById('input2').value = b.join(',');
+            reset();
+        }
+    </script>
+</body>
+</html>

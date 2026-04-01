@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0024. Swap Nodes in Pairs — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 200px;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-generate { background: #8b5cf6; color: white; }
+        .btn-generate:hover { background: #7c3aed; }
+
+        .preset-options {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .preset-label { color: #94a3b8; font-size: 0.85rem; }
+
+        .preset-btn {
+            padding: 4px 10px;
+            background: #334155;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .preset-btn:hover { background: #475569; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-play { background: #10b981; color: white; }
+        .btn-play:hover { background: #059669; }
+        .btn-pause { background: #f59e0b; color: white; }
+        .btn-pause:hover { background: #d97706; }
+        .btn-reset { background: #ef4444; color: white; }
+        .btn-reset:hover { background: #dc2626; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 80px;
+            accent-color: #8b5cf6;
+        }
+
+        /* VISUALIZATION */
+        .viz-area {
+            min-height: 220px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .step-info {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            min-height: 50px;
+        }
+
+        .step-info .step-title {
+            color: #60a5fa;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        /* SVG Nodes */
+        .ll-node {
+            cursor: default;
+        }
+
+        .ll-node rect {
+            rx: 8;
+            ry: 8;
+            stroke-width: 2;
+        }
+
+        .ll-node text {
+            font-family: 'Segoe UI', monospace;
+            font-size: 16px;
+            fill: #e2e8f0;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        .arrow-line {
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .pointer-label {
+            font-family: 'Segoe UI', monospace;
+            font-size: 12px;
+            text-anchor: middle;
+        }
+
+        /* RESULT */
+        .result-area {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .result-area .label { color: #94a3b8; margin-bottom: 4px; }
+        .result-area .value { color: #34d399; font-weight: 600; }
+
+        /* LOG */
+        .log-area {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        .log-area .log-entry { color: #94a3b8; }
+        .log-area .log-entry.highlight { color: #fbbf24; }
+        .log-area .log-entry.success { color: #34d399; }
+        .log-area .log-entry.info { color: #60a5fa; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 14px; }
+            .header h1 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0024. Swap Nodes in Pairs</h1>
+        <p>Swap every two adjacent nodes by rewiring pointers</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('iterative')">Iterative</div>
+        <div class="tab" onclick="switchTab('recursive')">Recursive</div>
+    </div>
+
+    <div class="container">
+        <!-- Iterative Tab -->
+        <div id="tab-iterative" class="tab-content active">
+            <div class="input-section">
+                <input type="text" id="input-iter" placeholder="e.g. 1,2,3,4" value="1,2,3,4">
+                <button class="btn-generate" onclick="initIterative()">Generate</button>
+                <div class="preset-options">
+                    <span class="preset-label">Presets:</span>
+                    <button class="preset-btn" onclick="setPreset('iter','1,2,3,4')">[1,2,3,4]</button>
+                    <button class="preset-btn" onclick="setPreset('iter','1,2,3')">[1,2,3]</button>
+                    <button class="preset-btn" onclick="setPreset('iter','1,2')">[1,2]</button>
+                    <button class="preset-btn" onclick="setPreset('iter','1')">[1]</button>
+                    <button class="preset-btn" onclick="setPreset('iter','1,2,3,4,5,6')">[1..6]</button>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn-step" onclick="stepIterative()">Step</button>
+                <button class="btn-play" onclick="playIterative()">Play</button>
+                <button class="btn-pause" onclick="pauseIterative()">Pause</button>
+                <button class="btn-reset" onclick="initIterative()">Reset</button>
+                <div class="speed-control">
+                    <span>Speed:</span>
+                    <input type="range" id="speed-iter" min="1" max="10" value="5">
+                    <span id="speed-iter-val">5</span>
+                </div>
+            </div>
+
+            <div class="step-info" id="step-info-iter">
+                <div class="step-title">Ready</div>
+                <div>Click "Step" or "Play" to begin the iterative swap animation.</div>
+            </div>
+
+            <div class="viz-area" id="viz-iter"></div>
+
+            <div class="result-area" id="result-iter">
+                <div class="label">Result:</div>
+                <div class="value" id="result-iter-val">—</div>
+            </div>
+
+            <div class="log-area" id="log-iter"></div>
+        </div>
+
+        <!-- Recursive Tab -->
+        <div id="tab-recursive" class="tab-content">
+            <div class="input-section">
+                <input type="text" id="input-rec" placeholder="e.g. 1,2,3,4" value="1,2,3,4">
+                <button class="btn-generate" onclick="initRecursive()">Generate</button>
+                <div class="preset-options">
+                    <span class="preset-label">Presets:</span>
+                    <button class="preset-btn" onclick="setPreset('rec','1,2,3,4')">[1,2,3,4]</button>
+                    <button class="preset-btn" onclick="setPreset('rec','1,2,3')">[1,2,3]</button>
+                    <button class="preset-btn" onclick="setPreset('rec','1,2')">[1,2]</button>
+                    <button class="preset-btn" onclick="setPreset('rec','1')">[1]</button>
+                    <button class="preset-btn" onclick="setPreset('rec','1,2,3,4,5,6')">[1..6]</button>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn-step" onclick="stepRecursive()">Step</button>
+                <button class="btn-play" onclick="playRecursive()">Play</button>
+                <button class="btn-pause" onclick="pauseRecursive()">Pause</button>
+                <button class="btn-reset" onclick="initRecursive()">Reset</button>
+                <div class="speed-control">
+                    <span>Speed:</span>
+                    <input type="range" id="speed-rec" min="1" max="10" value="5">
+                    <span id="speed-rec-val">5</span>
+                </div>
+            </div>
+
+            <div class="step-info" id="step-info-rec">
+                <div class="step-title">Ready</div>
+                <div>Click "Step" or "Play" to begin the recursive swap animation.</div>
+            </div>
+
+            <div class="viz-area" id="viz-rec"></div>
+
+            <div class="result-area" id="result-rec">
+                <div class="label">Result:</div>
+                <div class="value" id="result-rec-val">—</div>
+            </div>
+
+            <div class="log-area" id="log-rec"></div>
+        </div>
+    </div>
+
+<script>
+// ============================================================
+// Shared Utilities
+// ============================================================
+
+function parseInput(str) {
+    const trimmed = str.trim().replace(/[\[\]]/g, '');
+    if (!trimmed) return [];
+    return trimmed.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+}
+
+function switchTab(name) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    if (name === 'iterative') {
+        document.querySelectorAll('.tab')[0].classList.add('active');
+        document.getElementById('tab-iterative').classList.add('active');
+    } else {
+        document.querySelectorAll('.tab')[1].classList.add('active');
+        document.getElementById('tab-recursive').classList.add('active');
+    }
+}
+
+function setPreset(mode, val) {
+    if (mode === 'iter') {
+        document.getElementById('input-iter').value = val;
+        initIterative();
+    } else {
+        document.getElementById('input-rec').value = val;
+        initRecursive();
+    }
+}
+
+// Speed slider listeners
+document.getElementById('speed-iter').addEventListener('input', function() {
+    document.getElementById('speed-iter-val').textContent = this.value;
+});
+document.getElementById('speed-rec').addEventListener('input', function() {
+    document.getElementById('speed-rec-val').textContent = this.value;
+});
+
+function getDelay(sliderId) {
+    const speed = parseInt(document.getElementById(sliderId).value);
+    return 1200 - speed * 100;
+}
+
+// ============================================================
+// SVG Drawing Helpers
+// ============================================================
+
+const NODE_W = 60;
+const NODE_H = 40;
+const GAP = 30;
+const NULL_W = 40;
+const MARGIN_X = 30;
+const MARGIN_Y = 30;
+
+function createSVG(containerId, nodesCount) {
+    const container = document.getElementById(containerId);
+    const totalWidth = Math.max(600, MARGIN_X * 2 + (nodesCount + 1) * (NODE_W + GAP) + NULL_W);
+    container.innerHTML = '';
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', totalWidth);
+    svg.setAttribute('height', 220);
+    svg.setAttribute('viewBox', `0 0 ${totalWidth} 220`);
+    container.appendChild(svg);
+    return svg;
+}
+
+function drawNode(svg, x, y, value, id, strokeColor = '#475569', fillColor = '#1e293b') {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'll-node');
+    g.setAttribute('id', id);
+
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', x);
+    rect.setAttribute('y', y);
+    rect.setAttribute('width', NODE_W);
+    rect.setAttribute('height', NODE_H);
+    rect.setAttribute('fill', fillColor);
+    rect.setAttribute('stroke', strokeColor);
+    rect.setAttribute('rx', '8');
+    rect.setAttribute('ry', '8');
+    rect.setAttribute('stroke-width', '2');
+    g.appendChild(rect);
+
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', x + NODE_W / 2);
+    text.setAttribute('y', y + NODE_H / 2);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('dominant-baseline', 'central');
+    text.setAttribute('fill', '#e2e8f0');
+    text.setAttribute('font-size', '16');
+    text.setAttribute('font-family', "'Segoe UI', monospace");
+    text.textContent = value;
+    g.appendChild(text);
+
+    svg.appendChild(g);
+    return g;
+}
+
+function drawArrow(svg, x1, y1, x2, y2, color = '#64748b', id = '') {
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x1);
+    line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2 - 6);
+    line.setAttribute('y2', y2);
+    line.setAttribute('stroke', color);
+    line.setAttribute('stroke-width', '2');
+    line.setAttribute('marker-end', `url(#arrowhead-${color.replace('#','')})`);
+    if (id) line.setAttribute('id', id);
+    svg.appendChild(line);
+    return line;
+}
+
+function drawCurvedArrow(svg, x1, y1, x2, y2, color = '#f59e0b', curveUp = true, id = '') {
+    const midX = (x1 + x2) / 2;
+    const curveY = curveUp ? y1 - 40 : y1 + 50;
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M ${x1} ${y1} Q ${midX} ${curveY} ${x2} ${y2}`);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', color);
+    path.setAttribute('stroke-width', '2');
+    path.setAttribute('stroke-dasharray', '6,3');
+    path.setAttribute('marker-end', `url(#arrowhead-${color.replace('#','')})`);
+    if (id) path.setAttribute('id', id);
+    svg.appendChild(path);
+    return path;
+}
+
+function ensureArrowheadDef(svg, color) {
+    const id = `arrowhead-${color.replace('#','')}`;
+    if (svg.querySelector(`#${id}`)) return;
+    let defs = svg.querySelector('defs');
+    if (!defs) {
+        defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        svg.insertBefore(defs, svg.firstChild);
+    }
+    const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+    marker.setAttribute('id', id);
+    marker.setAttribute('markerWidth', '10');
+    marker.setAttribute('markerHeight', '7');
+    marker.setAttribute('refX', '10');
+    marker.setAttribute('refY', '3.5');
+    marker.setAttribute('orient', 'auto');
+    const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    polygon.setAttribute('points', '0 0, 10 3.5, 0 7');
+    polygon.setAttribute('fill', color);
+    marker.appendChild(polygon);
+    defs.appendChild(marker);
+}
+
+function drawPointerLabel(svg, x, y, label, color = '#f59e0b') {
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', x);
+    text.setAttribute('y', y);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('fill', color);
+    text.setAttribute('font-size', '12');
+    text.setAttribute('font-weight', '600');
+    text.setAttribute('font-family', "'Segoe UI', monospace");
+    text.textContent = label;
+    svg.appendChild(text);
+    return text;
+}
+
+function drawNullNode(svg, x, y) {
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', x);
+    text.setAttribute('y', y + NODE_H / 2);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('dominant-baseline', 'central');
+    text.setAttribute('fill', '#64748b');
+    text.setAttribute('font-size', '14');
+    text.setAttribute('font-family', "'Segoe UI', monospace");
+    text.textContent = 'null';
+    svg.appendChild(text);
+}
+
+function addLog(containerId, msg, cls = '') {
+    const container = document.getElementById(containerId);
+    const div = document.createElement('div');
+    div.className = 'log-entry' + (cls ? ' ' + cls : '');
+    div.textContent = msg;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+}
+
+// ============================================================
+// ITERATIVE ANIMATION
+// ============================================================
+
+let iterState = null;
+let iterTimer = null;
+
+function initIterative() {
+    pauseIterative();
+    const nums = parseInput(document.getElementById('input-iter').value);
+    document.getElementById('log-iter').innerHTML = '';
+    document.getElementById('result-iter-val').textContent = '—';
+
+    // Build steps
+    const steps = buildIterativeSteps(nums);
+    iterState = { nums, steps, currentStep: -1 };
+
+    renderIterativeStep();
+    addLog('log-iter', `Initialized list: [${nums.join(', ')}]`, 'info');
+
+    document.getElementById('step-info-iter').innerHTML =
+        '<div class="step-title">Ready</div><div>List: [' + nums.join(', ') + ']. Click Step or Play.</div>';
+}
+
+function buildIterativeSteps(nums) {
+    if (nums.length < 2) {
+        return [{ type: 'done', order: [...nums], msg: nums.length === 0 ? 'Empty list, nothing to swap.' : 'Only one node, nothing to swap.' }];
+    }
+
+    const steps = [];
+    // We'll track the node order as indices into the original array
+    let order = nums.map((_, i) => i);
+
+    // Simulate iterative swap
+    // prev is at position before each pair
+    // We track "logical positions" in the order array
+    let pos = 0; // position in order array where current pair starts
+
+    steps.push({ type: 'init', order: [...order], prevPos: -1, msg: 'Create dummy node. Set prev = dummy.' });
+
+    while (pos + 1 < order.length) {
+        const firstIdx = order[pos];
+        const secondIdx = order[pos + 1];
+
+        steps.push({
+            type: 'identify',
+            order: [...order],
+            prevPos: pos - 1,
+            firstPos: pos,
+            secondPos: pos + 1,
+            msg: `Identify pair: first = node(${nums[firstIdx]}), second = node(${nums[secondIdx]})`
+        });
+
+        // Swap in order
+        [order[pos], order[pos + 1]] = [order[pos + 1], order[pos]];
+
+        steps.push({
+            type: 'swap',
+            order: [...order],
+            prevPos: pos - 1,
+            firstPos: pos + 1, // first is now at pos+1 after swap
+            secondPos: pos,    // second is now at pos after swap
+            firstIdx,
+            secondIdx,
+            msg: `Swap: prev.next = node(${nums[secondIdx]}), second.next = node(${nums[firstIdx]}), first.next = ${pos + 2 < order.length ? 'node(' + nums[order[pos + 2]] + ')' : 'null'}`
+        });
+
+        steps.push({
+            type: 'advance',
+            order: [...order],
+            prevPos: pos + 1,
+            msg: `Advance: prev = node(${nums[firstIdx]}) (tail of swapped pair)`
+        });
+
+        pos += 2;
+    }
+
+    steps.push({
+        type: 'done',
+        order: [...order],
+        msg: 'Done! Return dummy.next → [' + order.map(i => nums[i]).join(', ') + ']'
+    });
+
+    return steps;
+}
+
+function renderIterativeStep() {
+    if (!iterState) return;
+    const { nums, steps, currentStep } = iterState;
+    const step = currentStep >= 0 && currentStep < steps.length ? steps[currentStep] : null;
+    const order = step ? step.order : nums.map((_, i) => i);
+
+    const n = nums.length;
+    const hasDummy = true;
+    const totalNodes = n + (hasDummy ? 1 : 0);
+    const svg = createSVG('viz-iter', totalNodes + 1);
+
+    ['#64748b', '#f59e0b', '#3b82f6', '#10b981', '#ef4444', '#a78bfa'].forEach(c => ensureArrowheadDef(svg, c));
+
+    const ROW_Y = 80;
+
+    // Draw dummy node
+    const dummyX = MARGIN_X;
+    drawNode(svg, dummyX, ROW_Y, 'D', 'dummy-iter', '#64748b', '#0f172a');
+
+    // Draw nodes in current order
+    const nodePositions = {};
+    for (let i = 0; i < order.length; i++) {
+        const idx = order[i];
+        const x = MARGIN_X + (i + 1) * (NODE_W + GAP);
+        let stroke = '#475569';
+        let fill = '#1e293b';
+
+        if (step) {
+            if (step.type === 'identify' || step.type === 'swap') {
+                if (step.type === 'identify') {
+                    if (i === step.firstPos) { stroke = '#3b82f6'; fill = '#1e3a5f'; }
+                    if (i === step.secondPos) { stroke = '#f59e0b'; fill = '#3d2f0a'; }
+                }
+                if (step.type === 'swap') {
+                    if (idx === step.firstIdx) { stroke = '#3b82f6'; fill = '#1e3a5f'; }
+                    if (idx === step.secondIdx) { stroke = '#f59e0b'; fill = '#3d2f0a'; }
+                }
+            }
+            if (step.type === 'done') { stroke = '#10b981'; fill = '#0d3320'; }
+        }
+
+        drawNode(svg, x, ROW_Y, nums[idx], `node-iter-${idx}`, stroke, fill);
+        nodePositions[i] = x;
+    }
+
+    // Draw null
+    const nullX = MARGIN_X + (order.length + 1) * (NODE_W + GAP) + 10;
+    drawNullNode(svg, nullX, ROW_Y);
+
+    // Draw arrows: dummy -> first, then each node -> next
+    const arrowY = ROW_Y + NODE_H / 2;
+    drawArrow(svg, dummyX + NODE_W, arrowY, MARGIN_X + (NODE_W + GAP), arrowY, '#64748b');
+
+    for (let i = 0; i < order.length - 1; i++) {
+        const x1 = nodePositions[i] + NODE_W;
+        const x2 = nodePositions[i + 1];
+        drawArrow(svg, x1, arrowY, x2, arrowY, '#64748b');
+    }
+    // Last node -> null
+    if (order.length > 0) {
+        const lastX = nodePositions[order.length - 1] + NODE_W;
+        drawArrow(svg, lastX, arrowY, nullX - 15, arrowY, '#64748b');
+    }
+
+    // Draw pointer labels
+    if (step) {
+        if (step.prevPos !== undefined && step.prevPos >= 0) {
+            const px = nodePositions[step.prevPos] + NODE_W / 2;
+            drawPointerLabel(svg, px, ROW_Y - 10, 'prev', '#a78bfa');
+        } else if (step.type === 'init' || (step.prevPos !== undefined && step.prevPos === -1)) {
+            drawPointerLabel(svg, dummyX + NODE_W / 2, ROW_Y - 10, 'prev', '#a78bfa');
+        }
+
+        if (step.type === 'identify') {
+            if (step.firstPos !== undefined) {
+                const fx = nodePositions[step.firstPos] + NODE_W / 2;
+                drawPointerLabel(svg, fx, ROW_Y + NODE_H + 18, 'first', '#3b82f6');
+            }
+            if (step.secondPos !== undefined) {
+                const sx = nodePositions[step.secondPos] + NODE_W / 2;
+                drawPointerLabel(svg, sx, ROW_Y + NODE_H + 18, 'second', '#f59e0b');
+            }
+        }
+
+        if (step.type === 'swap') {
+            // Show first and second labels at their NEW positions
+            for (let i = 0; i < order.length; i++) {
+                if (order[i] === step.firstIdx) {
+                    drawPointerLabel(svg, nodePositions[i] + NODE_W / 2, ROW_Y + NODE_H + 18, 'first', '#3b82f6');
+                }
+                if (order[i] === step.secondIdx) {
+                    drawPointerLabel(svg, nodePositions[i] + NODE_W / 2, ROW_Y + NODE_H + 18, 'second', '#f59e0b');
+                }
+            }
+        }
+    }
+}
+
+function stepIterative() {
+    if (!iterState) initIterative();
+    if (iterState.currentStep >= iterState.steps.length - 1) return;
+
+    iterState.currentStep++;
+    const step = iterState.steps[iterState.currentStep];
+
+    renderIterativeStep();
+
+    const stepNum = iterState.currentStep + 1;
+    const total = iterState.steps.length;
+    document.getElementById('step-info-iter').innerHTML =
+        `<div class="step-title">Step ${stepNum} / ${total} — ${step.type.charAt(0).toUpperCase() + step.type.slice(1)}</div>` +
+        `<div>${step.msg}</div>`;
+
+    const cls = step.type === 'done' ? 'success' : step.type === 'swap' ? 'highlight' : 'info';
+    addLog('log-iter', `[Step ${stepNum}] ${step.msg}`, cls);
+
+    if (step.type === 'done') {
+        const result = step.order.map(i => iterState.nums[i]);
+        document.getElementById('result-iter-val').textContent = '[' + result.join(', ') + ']';
+        pauseIterative();
+    }
+}
+
+function playIterative() {
+    if (!iterState) initIterative();
+    pauseIterative();
+    iterTimer = setInterval(() => {
+        if (iterState.currentStep >= iterState.steps.length - 1) {
+            pauseIterative();
+            return;
+        }
+        stepIterative();
+    }, getDelay('speed-iter'));
+}
+
+function pauseIterative() {
+    if (iterTimer) { clearInterval(iterTimer); iterTimer = null; }
+}
+
+// ============================================================
+// RECURSIVE ANIMATION
+// ============================================================
+
+let recState = null;
+let recTimer = null;
+
+function initRecursive() {
+    pauseRecursive();
+    const nums = parseInput(document.getElementById('input-rec').value);
+    document.getElementById('log-rec').innerHTML = '';
+    document.getElementById('result-rec-val').textContent = '—';
+
+    const steps = buildRecursiveSteps(nums);
+    recState = { nums, steps, currentStep: -1 };
+
+    renderRecursiveStep();
+    addLog('log-rec', `Initialized list: [${nums.join(', ')}]`, 'info');
+
+    document.getElementById('step-info-rec').innerHTML =
+        '<div class="step-title">Ready</div><div>List: [' + nums.join(', ') + ']. Click Step or Play.</div>';
+}
+
+function buildRecursiveSteps(nums) {
+    const steps = [];
+    const n = nums.length;
+
+    function recurse(startIdx, depth) {
+        if (startIdx >= n) {
+            steps.push({ type: 'base', startIdx, depth, msg: `${'  '.repeat(depth)}Base case: null reached. Return null.`, order: null });
+            return;
+        }
+        if (startIdx + 1 >= n) {
+            steps.push({ type: 'base', startIdx, depth, msg: `${'  '.repeat(depth)}Base case: single node(${nums[startIdx]}). Return as-is.`, order: null });
+            return;
+        }
+
+        steps.push({
+            type: 'call',
+            startIdx,
+            depth,
+            firstIdx: startIdx,
+            secondIdx: startIdx + 1,
+            msg: `${'  '.repeat(depth)}swapPairs(node(${nums[startIdx]})): first=${nums[startIdx]}, second=${nums[startIdx + 1]}`
+        });
+
+        // Recurse on rest
+        steps.push({
+            type: 'recurse-down',
+            startIdx,
+            depth,
+            msg: `${'  '.repeat(depth)}Recurse on rest starting at ${startIdx + 2 < n ? 'node(' + nums[startIdx + 2] + ')' : 'null'}...`
+        });
+
+        recurse(startIdx + 2, depth + 1);
+
+        steps.push({
+            type: 'rewire',
+            startIdx,
+            depth,
+            firstIdx: startIdx,
+            secondIdx: startIdx + 1,
+            msg: `${'  '.repeat(depth)}Rewire: first(${nums[startIdx]}).next = swapped_rest, second(${nums[startIdx + 1]}).next = first(${nums[startIdx]})`
+        });
+
+        steps.push({
+            type: 'return',
+            startIdx,
+            depth,
+            returnIdx: startIdx + 1,
+            msg: `${'  '.repeat(depth)}Return second = node(${nums[startIdx + 1]}) as head of this pair`
+        });
+    }
+
+    recurse(0, 0);
+
+    // Build final order
+    const finalOrder = [];
+    for (let i = 0; i + 1 < n; i += 2) {
+        finalOrder.push(i + 1, i);
+    }
+    if (n % 2 === 1) finalOrder.push(n - 1);
+
+    steps.push({
+        type: 'done',
+        order: finalOrder,
+        msg: 'Done! Result: [' + finalOrder.map(i => nums[i]).join(', ') + ']'
+    });
+
+    return steps;
+}
+
+function renderRecursiveStep() {
+    if (!recState) return;
+    const { nums, steps, currentStep } = recState;
+    const step = currentStep >= 0 && currentStep < steps.length ? steps[currentStep] : null;
+
+    const n = nums.length;
+    const svg = createSVG('viz-rec', n + 1);
+    ['#64748b', '#f59e0b', '#3b82f6', '#10b981', '#ef4444', '#a78bfa'].forEach(c => ensureArrowheadDef(svg, c));
+
+    const ROW_Y = 80;
+
+    // For recursive, show original order but highlight active nodes
+    // If done, show final order
+    let displayOrder = nums.map((_, i) => i);
+    if (step && step.type === 'done' && step.order) {
+        displayOrder = step.order;
+    }
+
+    const nodePositions = {};
+    for (let i = 0; i < displayOrder.length; i++) {
+        const idx = displayOrder[i];
+        const x = MARGIN_X + i * (NODE_W + GAP);
+        let stroke = '#475569';
+        let fill = '#1e293b';
+
+        if (step) {
+            if ((step.type === 'call' || step.type === 'rewire') && (idx === step.firstIdx || idx === step.secondIdx)) {
+                if (idx === step.firstIdx) { stroke = '#3b82f6'; fill = '#1e3a5f'; }
+                if (idx === step.secondIdx) { stroke = '#f59e0b'; fill = '#3d2f0a'; }
+            }
+            if (step.type === 'base' && idx === step.startIdx) {
+                stroke = '#a78bfa'; fill = '#2d1f5e';
+            }
+            if (step.type === 'return' && idx === step.returnIdx) {
+                stroke = '#10b981'; fill = '#0d3320';
+            }
+            if (step.type === 'done') {
+                stroke = '#10b981'; fill = '#0d3320';
+            }
+        }
+
+        drawNode(svg, x, ROW_Y, nums[idx], `node-rec-${idx}`, stroke, fill);
+        nodePositions[i] = x;
+    }
+
+    // Draw null
+    const nullX = MARGIN_X + displayOrder.length * (NODE_W + GAP) + 10;
+    drawNullNode(svg, nullX, ROW_Y);
+
+    // Draw arrows
+    const arrowY = ROW_Y + NODE_H / 2;
+    for (let i = 0; i < displayOrder.length - 1; i++) {
+        drawArrow(svg, nodePositions[i] + NODE_W, arrowY, nodePositions[i + 1], arrowY, '#64748b');
+    }
+    if (displayOrder.length > 0) {
+        drawArrow(svg, nodePositions[displayOrder.length - 1] + NODE_W, arrowY, nullX - 15, arrowY, '#64748b');
+    }
+
+    // Draw depth indicator
+    if (step && step.depth !== undefined) {
+        const depthText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        depthText.setAttribute('x', MARGIN_X);
+        depthText.setAttribute('y', 30);
+        depthText.setAttribute('fill', '#a78bfa');
+        depthText.setAttribute('font-size', '13');
+        depthText.setAttribute('font-family', "'Segoe UI', monospace");
+        depthText.textContent = `Recursion depth: ${step.depth}`;
+        svg.appendChild(depthText);
+    }
+
+    // Draw bracket showing active pair
+    if (step && (step.type === 'call' || step.type === 'rewire')) {
+        const fi = displayOrder.indexOf(step.firstIdx);
+        const si = displayOrder.indexOf(step.secondIdx);
+        if (fi >= 0 && si >= 0) {
+            const bx1 = nodePositions[Math.min(fi, si)];
+            const bx2 = nodePositions[Math.max(fi, si)] + NODE_W;
+            const by = ROW_Y + NODE_H + 25;
+            const bracket = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            bracket.setAttribute('d', `M ${bx1} ${by - 5} L ${bx1} ${by} L ${bx2} ${by} L ${bx2} ${by - 5}`);
+            bracket.setAttribute('fill', 'none');
+            bracket.setAttribute('stroke', '#f59e0b');
+            bracket.setAttribute('stroke-width', '2');
+            svg.appendChild(bracket);
+
+            const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            label.setAttribute('x', (bx1 + bx2) / 2);
+            label.setAttribute('y', by + 16);
+            label.setAttribute('text-anchor', 'middle');
+            label.setAttribute('fill', '#f59e0b');
+            label.setAttribute('font-size', '12');
+            label.setAttribute('font-family', "'Segoe UI', monospace");
+            label.textContent = step.type === 'call' ? 'current pair' : 'swapping';
+            svg.appendChild(label);
+        }
+    }
+}
+
+function stepRecursive() {
+    if (!recState) initRecursive();
+    if (recState.currentStep >= recState.steps.length - 1) return;
+
+    recState.currentStep++;
+    const step = recState.steps[recState.currentStep];
+
+    renderRecursiveStep();
+
+    const stepNum = recState.currentStep + 1;
+    const total = recState.steps.length;
+    document.getElementById('step-info-rec').innerHTML =
+        `<div class="step-title">Step ${stepNum} / ${total} — ${step.type.charAt(0).toUpperCase() + step.type.slice(1)}</div>` +
+        `<div>${step.msg}</div>`;
+
+    const cls = step.type === 'done' ? 'success' : step.type === 'rewire' ? 'highlight' :
+                step.type === 'return' ? 'highlight' : 'info';
+    addLog('log-rec', `[Step ${stepNum}] ${step.msg}`, cls);
+
+    if (step.type === 'done') {
+        const result = step.order.map(i => recState.nums[i]);
+        document.getElementById('result-rec-val').textContent = '[' + result.join(', ') + ']';
+        pauseRecursive();
+    }
+}
+
+function playRecursive() {
+    if (!recState) initRecursive();
+    pauseRecursive();
+    recTimer = setInterval(() => {
+        if (recState.currentStep >= recState.steps.length - 1) {
+            pauseRecursive();
+            return;
+        }
+        stepRecursive();
+    }, getDelay('speed-rec'));
+}
+
+function pauseRecursive() {
+    if (recTimer) { clearInterval(recTimer); recTimer = null; }
+}
+
+// ============================================================
+// Initialize on load
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+    initIterative();
+    initRecursive();
+});
+</script>
+</body>
+</html>

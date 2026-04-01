@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>0023. Merge k Sorted Lists — Interactive Animation</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+    color: #f8fafc;
+  }
+  .subtitle {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin-bottom: 18px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    justify-content: center;
+  }
+  .tab-btn {
+    padding: 8px 20px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #94a3b8;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { background: #334155; color: #e2e8f0; }
+  .tab-btn.active {
+    background: #3b82f6;
+    color: #fff;
+    border-color: #3b82f6;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  label {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+  select, input[type="text"] {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #e2e8f0;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+  }
+  input[type="text"] { width: 260px; }
+  input[type="range"] { width: 100px; accent-color: #3b82f6; }
+  button {
+    padding: 6px 14px;
+    border: 1px solid #334155;
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.15s;
+  }
+  button:hover { background: #334155; }
+  button.primary { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+  button.primary:hover { background: #2563eb; }
+
+  /* Canvas area */
+  .canvas-container {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    min-height: 360px;
+    position: relative;
+    overflow: auto;
+  }
+
+  /* Node styling */
+  .node {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  .node-default { background: #334155; color: #e2e8f0; border: 2px solid #475569; }
+  .node-active { background: #f59e0b; color: #0f172a; border: 2px solid #f59e0b; box-shadow: 0 0 12px rgba(245,158,11,0.4); }
+  .node-selected { background: #10b981; color: #0f172a; border: 2px solid #10b981; box-shadow: 0 0 12px rgba(16,185,129,0.4); }
+  .node-done { background: #3b82f6; color: #fff; border: 2px solid #3b82f6; }
+  .node-heap { background: #8b5cf6; color: #fff; border: 2px solid #8b5cf6; box-shadow: 0 0 8px rgba(139,92,246,0.3); }
+  .node-dim { background: #1e293b; color: #475569; border: 2px solid #334155; }
+
+  .arrow {
+    display: inline-flex;
+    align-items: center;
+    color: #475569;
+    font-size: 1.1rem;
+    margin: 0 2px;
+  }
+
+  /* Lists area */
+  .lists-area {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .list-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .list-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    width: 50px;
+    text-align: right;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  /* Heap visualization */
+  .heap-area {
+    margin: 16px 0;
+    padding: 12px;
+    background: #0f172a;
+    border-radius: 8px;
+    border: 1px solid #334155;
+  }
+  .heap-title {
+    font-size: 0.8rem;
+    color: #8b5cf6;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .heap-nodes {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* Result area */
+  .result-area {
+    margin-top: 16px;
+    padding: 12px;
+    background: #0f172a;
+    border-radius: 8px;
+    border: 1px solid #334155;
+  }
+  .result-title {
+    font-size: 0.8rem;
+    color: #10b981;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .result-nodes {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* D&C merge visualization */
+  .dc-round {
+    margin-bottom: 14px;
+    padding: 10px;
+    background: #0f172a;
+    border-radius: 8px;
+    border: 1px solid #334155;
+  }
+  .dc-round-title {
+    font-size: 0.8rem;
+    color: #f59e0b;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .dc-pairs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .dc-pair {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dc-merge-arrow {
+    color: #f59e0b;
+    font-size: 1.2rem;
+  }
+  .dc-list {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .dc-small-node {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.75rem;
+  }
+
+  /* Log */
+  .log-area {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 14px;
+    max-height: 200px;
+    overflow-y: auto;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.75rem;
+    line-height: 1.6;
+  }
+  .log-entry { color: #94a3b8; }
+  .log-entry.highlight { color: #f59e0b; }
+  .log-entry.success { color: #10b981; }
+  .log-entry.info { color: #3b82f6; }
+
+  /* Speed display */
+  .speed-val {
+    font-size: 0.75rem;
+    color: #64748b;
+    min-width: 32px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<h1>0023. Merge k Sorted Lists</h1>
+<p class="subtitle">Interactive visualization of merging k sorted linked lists</p>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('heap')">Min Heap</button>
+  <button class="tab-btn" onclick="switchTab('dc')">Divide & Conquer</button>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+  <div class="control-group">
+    <label>Preset:</label>
+    <select id="presetSelect" onchange="loadPreset()">
+      <option value="0">[[1,4,5],[1,3,4],[2,6]]</option>
+      <option value="1">[[2,3,7],[1,5,8],[4,6,9]]</option>
+      <option value="2">[[1,2],[3,4],[5,6],[7,8]]</option>
+      <option value="3">[[-3,0,5],[-2,1,4],[3,6]]</option>
+      <option value="4">[[1],[2],[3],[4],[5]]</option>
+      <option value="5">Custom</option>
+    </select>
+  </div>
+  <div class="control-group">
+    <label>Custom:</label>
+    <input type="text" id="customInput" placeholder="e.g. [1,4,5],[1,3,4],[2,6]" />
+  </div>
+  <div class="control-group">
+    <label>Speed:</label>
+    <input type="range" id="speedSlider" min="1" max="10" value="5" oninput="updateSpeed()" />
+    <span class="speed-val" id="speedVal">5x</span>
+  </div>
+</div>
+<div class="controls">
+  <button class="primary" onclick="startAnimation()">Play</button>
+  <button onclick="stepForward()">Step</button>
+  <button onclick="pauseAnimation()">Pause</button>
+  <button onclick="resetAnimation()">Reset</button>
+</div>
+
+<!-- Canvas -->
+<div class="canvas-container" id="canvas"></div>
+
+<!-- Log -->
+<div class="log-area" id="logArea"></div>
+
+<script>
+// ============================================================
+// State
+// ============================================================
+const PRESETS = [
+  [[1,4,5],[1,3,4],[2,6]],
+  [[2,3,7],[1,5,8],[4,6,9]],
+  [[1,2],[3,4],[5,6],[7,8]],
+  [[-3,0,5],[-2,1,4],[3,6]],
+  [[1],[2],[3],[4],[5]]
+];
+
+let currentTab = 'heap';
+let lists = [];
+let steps = [];
+let stepIndex = -1;
+let animTimer = null;
+let speed = 5;
+
+// ============================================================
+// Tab switching
+// ============================================================
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-btn')[tab === 'heap' ? 0 : 1].classList.add('active');
+  resetAnimation();
+}
+
+// ============================================================
+// Preset loading
+// ============================================================
+function loadPreset() {
+  const idx = parseInt(document.getElementById('presetSelect').value);
+  if (idx < PRESETS.length) {
+    lists = PRESETS[idx].map(a => [...a]);
+    document.getElementById('customInput').value = lists.map(a => '[' + a.join(',') + ']').join(',');
+  }
+  resetAnimation();
+}
+
+function parseCustomInput() {
+  const raw = document.getElementById('customInput').value.trim();
+  if (!raw) return false;
+  try {
+    const parsed = JSON.parse('[' + raw + ']');
+    if (!Array.isArray(parsed)) return false;
+    lists = parsed.map(a => Array.isArray(a) ? a.map(Number) : []);
+    return true;
+  } catch (e) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        lists = parsed.map(a => Array.isArray(a) ? a.map(Number) : []);
+        return true;
+      }
+    } catch (e2) {}
+    return false;
+  }
+}
+
+// ============================================================
+// Heap approach — step generation
+// ============================================================
+function generateHeapSteps(inputLists) {
+  const steps = [];
+  // Deep copy lists as arrays
+  const arrs = inputLists.map(a => [...a]);
+  const ptrs = arrs.map(() => 0); // pointer index for each list
+  const heap = []; // [{val, listIdx}]
+  const result = [];
+
+  // Helper: min heap operations
+  function heapPush(item) {
+    heap.push(item);
+    let i = heap.length - 1;
+    while (i > 0) {
+      const parent = Math.floor((i - 1) / 2);
+      if (heap[parent].val > heap[i].val) {
+        [heap[parent], heap[i]] = [heap[i], heap[parent]];
+        i = parent;
+      } else break;
+    }
+  }
+  function heapPop() {
+    if (heap.length === 1) return heap.pop();
+    const min = heap[0];
+    heap[0] = heap.pop();
+    let i = 0;
+    while (true) {
+      let smallest = i;
+      const l = 2 * i + 1, r = 2 * i + 2;
+      if (l < heap.length && heap[l].val < heap[smallest].val) smallest = l;
+      if (r < heap.length && heap[r].val < heap[smallest].val) smallest = r;
+      if (smallest !== i) {
+        [heap[smallest], heap[i]] = [heap[i], heap[smallest]];
+        i = smallest;
+      } else break;
+    }
+    return min;
+  }
+
+  // Initial state
+  steps.push({
+    type: 'init',
+    lists: arrs.map(a => [...a]),
+    ptrs: [...ptrs],
+    heap: [],
+    result: [],
+    msg: 'Initialize: push head of each non-empty list into the min heap.'
+  });
+
+  // Push heads
+  for (let i = 0; i < arrs.length; i++) {
+    if (arrs[i].length > 0) {
+      heapPush({ val: arrs[i][0], listIdx: i });
+      ptrs[i] = 1;
+      steps.push({
+        type: 'push',
+        lists: arrs.map(a => [...a]),
+        ptrs: [...ptrs],
+        heap: heap.map(h => ({ ...h })),
+        result: [...result],
+        highlightList: i,
+        highlightPtr: 0,
+        msg: `Push ${arrs[i][0]} from List ${i} into heap. Heap: [${heap.map(h => h.val).join(', ')}]`
+      });
+    }
+  }
+
+  // Process
+  while (heap.length > 0) {
+    const min = heapPop();
+    result.push(min.val);
+    const li = min.listIdx;
+
+    steps.push({
+      type: 'pop',
+      lists: arrs.map(a => [...a]),
+      ptrs: [...ptrs],
+      heap: heap.map(h => ({ ...h })),
+      result: [...result],
+      poppedVal: min.val,
+      poppedList: li,
+      msg: `Pop min ${min.val} from heap (from List ${li}). Append to result. Result: [${result.join(', ')}]`
+    });
+
+    // Push next from same list
+    if (ptrs[li] < arrs[li].length) {
+      const nextVal = arrs[li][ptrs[li]];
+      heapPush({ val: nextVal, listIdx: li });
+      ptrs[li]++;
+      steps.push({
+        type: 'push',
+        lists: arrs.map(a => [...a]),
+        ptrs: [...ptrs],
+        heap: heap.map(h => ({ ...h })),
+        result: [...result],
+        highlightList: li,
+        highlightPtr: ptrs[li] - 1,
+        msg: `Push next value ${nextVal} from List ${li} into heap. Heap: [${heap.map(h => h.val).join(', ')}]`
+      });
+    }
+  }
+
+  steps.push({
+    type: 'done',
+    lists: arrs.map(a => [...a]),
+    ptrs: [...ptrs],
+    heap: [],
+    result: [...result],
+    msg: `Done! Merged result: [${result.join(', ')}]`
+  });
+
+  return steps;
+}
+
+// ============================================================
+// Divide & Conquer — step generation
+// ============================================================
+function generateDCSteps(inputLists) {
+  const steps = [];
+  let current = inputLists.map(a => [...a]);
+
+  steps.push({
+    type: 'dc-init',
+    rounds: [],
+    currentLists: current.map(a => [...a]),
+    msg: `Start with ${current.length} lists. Will merge pairs in rounds.`
+  });
+
+  let roundNum = 0;
+  const allRounds = [];
+
+  while (current.length > 1) {
+    roundNum++;
+    const merged = [];
+    const pairs = [];
+
+    for (let i = 0; i < current.length; i += 2) {
+      const l1 = current[i];
+      const l2 = (i + 1 < current.length) ? current[i + 1] : null;
+
+      // Merge two sorted arrays
+      const mergeResult = mergeTwoArrays(l1, l2 || []);
+      merged.push(mergeResult);
+
+      pairs.push({
+        l1: [...l1],
+        l2: l2 ? [...l2] : null,
+        result: [...mergeResult]
+      });
+
+      steps.push({
+        type: 'dc-merge',
+        round: roundNum,
+        l1: [...l1],
+        l2: l2 ? [...l2] : null,
+        mergeResult: [...mergeResult],
+        currentLists: current.map(a => [...a]),
+        pairIndex: Math.floor(i / 2),
+        msg: l2
+          ? `Round ${roundNum}: Merge [${l1.join(',')}] + [${l2.join(',')}] = [${mergeResult.join(',')}]`
+          : `Round ${roundNum}: [${l1.join(',')}] has no pair, carry over.`
+      });
+    }
+
+    allRounds.push({ round: roundNum, pairs });
+    current = merged;
+
+    steps.push({
+      type: 'dc-round-done',
+      round: roundNum,
+      currentLists: current.map(a => [...a]),
+      allRounds: JSON.parse(JSON.stringify(allRounds)),
+      msg: `Round ${roundNum} complete. ${current.length} list(s) remaining: ${current.map(a => '[' + a.join(',') + ']').join(', ')}`
+    });
+  }
+
+  steps.push({
+    type: 'dc-done',
+    result: current.length > 0 ? [...current[0]] : [],
+    allRounds: JSON.parse(JSON.stringify(allRounds)),
+    msg: `Done! Merged result: [${current.length > 0 ? current[0].join(', ') : ''}]`
+  });
+
+  return steps;
+}
+
+function mergeTwoArrays(a, b) {
+  const result = [];
+  let i = 0, j = 0;
+  while (i < a.length && j < b.length) {
+    if (a[i] <= b[j]) result.push(a[i++]);
+    else result.push(b[j++]);
+  }
+  while (i < a.length) result.push(a[i++]);
+  while (j < b.length) result.push(b[j++]);
+  return result;
+}
+
+// ============================================================
+// Rendering
+// ============================================================
+function makeNode(val, cls = 'node-default') {
+  return `<div class="node ${cls}">${val}</div>`;
+}
+function makeSmallNode(val, cls = 'node-default') {
+  return `<div class="dc-small-node node ${cls}">${val}</div>`;
+}
+function makeArrow() {
+  return `<span class="arrow">\u2192</span>`;
+}
+
+function renderHeapStep(step) {
+  const canvas = document.getElementById('canvas');
+  let html = '';
+
+  // Input lists
+  html += '<div class="lists-area">';
+  for (let i = 0; i < step.lists.length; i++) {
+    html += '<div class="list-row">';
+    html += `<span class="list-label">List ${i}:</span>`;
+    const arr = step.lists[i];
+    for (let j = 0; j < arr.length; j++) {
+      let cls = 'node-default';
+      if (step.ptrs[i] !== undefined && j < step.ptrs[i]) {
+        cls = 'node-dim';
+      }
+      if (step.highlightList === i && step.highlightPtr === j) {
+        cls = 'node-active';
+      }
+      if (step.poppedList === i && j === step.ptrs[i] - 1 && step.type === 'pop') {
+        // Already consumed
+      }
+      html += makeNode(arr[j], cls);
+      if (j < arr.length - 1) html += makeArrow();
+    }
+    if (arr.length === 0) html += '<span style="color:#475569;font-size:0.8rem;">empty</span>';
+    html += '</div>';
+  }
+  html += '</div>';
+
+  // Heap
+  html += '<div class="heap-area">';
+  html += '<div class="heap-title">Min Heap (Priority Queue)</div>';
+  html += '<div class="heap-nodes">';
+  if (step.heap.length === 0) {
+    html += '<span style="color:#475569;font-size:0.8rem;">empty</span>';
+  } else {
+    // Sort heap for display (show sorted order)
+    const sorted = [...step.heap].sort((a, b) => a.val - b.val);
+    for (const h of sorted) {
+      html += makeNode(h.val, 'node-heap');
+    }
+  }
+  html += '</div></div>';
+
+  // Result
+  html += '<div class="result-area">';
+  html += '<div class="result-title">Merged Result</div>';
+  html += '<div class="result-nodes">';
+  if (step.result.length === 0) {
+    html += '<span style="color:#475569;font-size:0.8rem;">waiting...</span>';
+  } else {
+    for (let i = 0; i < step.result.length; i++) {
+      const cls = (step.type === 'pop' && i === step.result.length - 1) ? 'node-selected' : 'node-done';
+      html += makeNode(step.result[i], cls);
+      if (i < step.result.length - 1) html += makeArrow();
+    }
+  }
+  html += '</div></div>';
+
+  canvas.innerHTML = html;
+}
+
+function renderDCStep(step) {
+  const canvas = document.getElementById('canvas');
+  let html = '';
+
+  if (step.type === 'dc-init') {
+    html += '<div class="lists-area">';
+    html += '<div style="font-size:0.85rem;color:#f59e0b;margin-bottom:8px;font-weight:600;">Initial Lists</div>';
+    for (let i = 0; i < step.currentLists.length; i++) {
+      html += '<div class="list-row">';
+      html += `<span class="list-label">List ${i}:</span>`;
+      for (let j = 0; j < step.currentLists[i].length; j++) {
+        html += makeNode(step.currentLists[i][j], 'node-default');
+        if (j < step.currentLists[i].length - 1) html += makeArrow();
+      }
+      if (step.currentLists[i].length === 0) html += '<span style="color:#475569;font-size:0.8rem;">empty</span>';
+      html += '</div>';
+    }
+    html += '</div>';
+  } else if (step.type === 'dc-merge') {
+    html += '<div class="dc-round">';
+    html += `<div class="dc-round-title">Round ${step.round} — Merging Pair</div>`;
+    html += '<div class="dc-pairs"><div class="dc-pair">';
+    // L1
+    html += '<div class="dc-list">';
+    for (let i = 0; i < step.l1.length; i++) {
+      html += makeSmallNode(step.l1[i], 'node-active');
+      if (i < step.l1.length - 1) html += '<span class="arrow" style="font-size:0.8rem;">\u2192</span>';
+    }
+    html += '</div>';
+    if (step.l2) {
+      html += '<span style="color:#f59e0b;font-size:1.2rem;margin:0 8px;">+</span>';
+      html += '<div class="dc-list">';
+      for (let i = 0; i < step.l2.length; i++) {
+        html += makeSmallNode(step.l2[i], 'node-heap');
+        if (i < step.l2.length - 1) html += '<span class="arrow" style="font-size:0.8rem;">\u2192</span>';
+      }
+      html += '</div>';
+    } else {
+      html += '<span style="color:#64748b;font-size:0.8rem;margin-left:8px;">(no pair)</span>';
+    }
+    html += '<span class="dc-merge-arrow" style="margin:0 10px;">\u27A1</span>';
+    // Result
+    html += '<div class="dc-list">';
+    for (let i = 0; i < step.mergeResult.length; i++) {
+      html += makeSmallNode(step.mergeResult[i], 'node-selected');
+      if (i < step.mergeResult.length - 1) html += '<span class="arrow" style="font-size:0.8rem;">\u2192</span>';
+    }
+    html += '</div>';
+    html += '</div></div></div>';
+
+    // Show current lists
+    html += '<div class="lists-area" style="margin-top:12px;">';
+    html += '<div style="font-size:0.8rem;color:#94a3b8;margin-bottom:6px;">Current lists before this round:</div>';
+    for (let i = 0; i < step.currentLists.length; i++) {
+      html += '<div class="list-row">';
+      html += `<span class="list-label">List ${i}:</span>`;
+      for (let j = 0; j < step.currentLists[i].length; j++) {
+        html += makeSmallNode(step.currentLists[i][j], 'node-default');
+        if (j < step.currentLists[i].length - 1) html += '<span class="arrow" style="font-size:0.8rem;">\u2192</span>';
+      }
+      if (step.currentLists[i].length === 0) html += '<span style="color:#475569;font-size:0.75rem;">empty</span>';
+      html += '</div>';
+    }
+    html += '</div>';
+  } else if (step.type === 'dc-round-done') {
+    // Show all rounds completed so far
+    for (const round of step.allRounds) {
+      html += '<div class="dc-round">';
+      html += `<div class="dc-round-title">Round ${round.round}</div>`;
+      html += '<div class="dc-pairs">';
+      for (const pair of round.pairs) {
+        html += '<div class="dc-pair">';
+        html += '<div class="dc-list">';
+        for (let i = 0; i < pair.l1.length; i++) {
+          html += makeSmallNode(pair.l1[i], 'node-dim');
+          if (i < pair.l1.length - 1) html += '<span class="arrow" style="font-size:0.8rem;">\u2192</span>';
+        }
+        html += '</div>';
+        if (pair.l2) {
+          html += '<span style="color:#475569;font-size:1rem;margin:0 6px;">+</span>';
+          html += '<div class="dc-list">';
+          for (let i = 0; i < pair.l2.length; i++) {
+            html += makeSmallNode(pair.l2[i], 'node-dim');
+            if (i < pair.l2.length - 1) html += '<span class="arrow" style="font-size:0.8rem;">\u2192</span>';
+          }
+          html += '</div>';
+        }
+        html += '<span style="color:#475569;margin:0 8px;">\u27A1</span>';
+        html += '<div class="dc-list">';
+        for (let i = 0; i < pair.result.length; i++) {
+          html += makeSmallNode(pair.result[i], 'node-done');
+          if (i < pair.result.length - 1) html += '<span class="arrow" style="font-size:0.8rem;">\u2192</span>';
+        }
+        html += '</div>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+    }
+    // Show current state
+    html += '<div class="lists-area" style="margin-top:12px;">';
+    html += '<div style="font-size:0.8rem;color:#10b981;margin-bottom:6px;font-weight:600;">After Round ' + step.round + ':</div>';
+    for (let i = 0; i < step.currentLists.length; i++) {
+      html += '<div class="list-row">';
+      html += `<span class="list-label">List ${i}:</span>`;
+      for (let j = 0; j < step.currentLists[i].length; j++) {
+        html += makeNode(step.currentLists[i][j], 'node-done');
+        if (j < step.currentLists[i].length - 1) html += makeArrow();
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+  } else if (step.type === 'dc-done') {
+    // Final result
+    for (const round of step.allRounds) {
+      html += '<div class="dc-round">';
+      html += `<div class="dc-round-title">Round ${round.round}</div>`;
+      html += '<div class="dc-pairs">';
+      for (const pair of round.pairs) {
+        html += '<div class="dc-pair">';
+        html += '<div class="dc-list">';
+        for (let i = 0; i < pair.l1.length; i++) {
+          html += makeSmallNode(pair.l1[i], 'node-dim');
+          if (i < pair.l1.length - 1) html += '<span class="arrow" style="font-size:0.8rem;">\u2192</span>';
+        }
+        html += '</div>';
+        if (pair.l2) {
+          html += '<span style="color:#475569;font-size:1rem;margin:0 6px;">+</span>';
+          html += '<div class="dc-list">';
+          for (let i = 0; i < pair.l2.length; i++) {
+            html += makeSmallNode(pair.l2[i], 'node-dim');
+            if (i < pair.l2.length - 1) html += '<span class="arrow" style="font-size:0.8rem;">\u2192</span>';
+          }
+          html += '</div>';
+        }
+        html += '<span style="color:#475569;margin:0 8px;">\u27A1</span>';
+        html += '<div class="dc-list">';
+        for (let i = 0; i < pair.result.length; i++) {
+          html += makeSmallNode(pair.result[i], 'node-dim');
+          if (i < pair.result.length - 1) html += '<span class="arrow" style="font-size:0.8rem;">\u2192</span>';
+        }
+        html += '</div>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+    }
+
+    html += '<div class="result-area">';
+    html += '<div class="result-title">Final Merged Result</div>';
+    html += '<div class="result-nodes">';
+    for (let i = 0; i < step.result.length; i++) {
+      html += makeNode(step.result[i], 'node-selected');
+      if (i < step.result.length - 1) html += makeArrow();
+    }
+    if (step.result.length === 0) html += '<span style="color:#475569;font-size:0.8rem;">empty</span>';
+    html += '</div></div>';
+  }
+
+  canvas.innerHTML = html;
+}
+
+function renderStep() {
+  if (stepIndex < 0 || stepIndex >= steps.length) return;
+  const step = steps[stepIndex];
+
+  if (currentTab === 'heap') {
+    renderHeapStep(step);
+  } else {
+    renderDCStep(step);
+  }
+
+  // Log
+  const logClass = step.type === 'done' || step.type === 'dc-done' ? 'success'
+    : step.type === 'pop' ? 'highlight'
+    : step.type === 'push' || step.type === 'dc-merge' ? 'info'
+    : '';
+  addLog(step.msg, logClass);
+}
+
+function addLog(msg, cls = '') {
+  const logArea = document.getElementById('logArea');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry' + (cls ? ' ' + cls : '');
+  entry.textContent = `[Step ${stepIndex}] ${msg}`;
+  logArea.appendChild(entry);
+  logArea.scrollTop = logArea.scrollHeight;
+}
+
+// ============================================================
+// Animation controls
+// ============================================================
+function startAnimation() {
+  if (steps.length === 0) {
+    initSteps();
+  }
+  if (stepIndex >= steps.length - 1) {
+    resetAnimation();
+    initSteps();
+  }
+  if (animTimer) clearInterval(animTimer);
+  const delay = Math.max(100, 1200 - speed * 100);
+  animTimer = setInterval(() => {
+    if (stepIndex >= steps.length - 1) {
+      clearInterval(animTimer);
+      animTimer = null;
+      return;
+    }
+    stepIndex++;
+    renderStep();
+  }, delay);
+}
+
+function stepForward() {
+  if (steps.length === 0) {
+    initSteps();
+  }
+  if (stepIndex < steps.length - 1) {
+    stepIndex++;
+    renderStep();
+  }
+}
+
+function pauseAnimation() {
+  if (animTimer) {
+    clearInterval(animTimer);
+    animTimer = null;
+  }
+}
+
+function resetAnimation() {
+  pauseAnimation();
+  steps = [];
+  stepIndex = -1;
+  document.getElementById('canvas').innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:center;height:200px;color:#475569;">Press Play or Step to begin.</div>';
+  document.getElementById('logArea').innerHTML = '';
+}
+
+function initSteps() {
+  // Parse input
+  const presetIdx = parseInt(document.getElementById('presetSelect').value);
+  if (presetIdx < PRESETS.length && !document.getElementById('customInput').value.trim()) {
+    lists = PRESETS[presetIdx].map(a => [...a]);
+  } else {
+    if (!parseCustomInput()) {
+      lists = PRESETS[0].map(a => [...a]);
+    }
+  }
+
+  // Filter out truly empty arrays for meaningful visualization
+  const nonEmptyLists = lists.filter(a => a.length > 0);
+  const inputLists = nonEmptyLists.length > 0 ? nonEmptyLists : [[]];
+
+  if (currentTab === 'heap') {
+    steps = generateHeapSteps(inputLists);
+  } else {
+    steps = generateDCSteps(inputLists);
+  }
+  stepIndex = -1;
+}
+
+function updateSpeed() {
+  speed = parseInt(document.getElementById('speedSlider').value);
+  document.getElementById('speedVal').textContent = speed + 'x';
+  if (animTimer) {
+    pauseAnimation();
+    startAnimation();
+  }
+}
+
+// ============================================================
+// Initialize
+// ============================================================
+loadPreset();
+</script>
+</body>
+</html>

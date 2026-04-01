@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0026. Remove Duplicates from Sorted Array — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        #arrInput { width: 280px; }
+
+        /* PRESET BUTTONS */
+        .presets {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 6px 14px;
+            background: #334155;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover { background: #475569; color: white; }
+        .preset-btn.active { background: #6366f1; border-color: #6366f1; color: white; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-pause:hover { background: #dc2626; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-reset:hover { background: #4b5563; }
+
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select {
+            padding: 6px 10px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        /* ARRAY VISUALIZATION */
+        .viz-area {
+            margin-bottom: 20px;
+        }
+
+        .viz-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .array-container {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            min-height: 80px;
+            align-items: flex-end;
+        }
+
+        .cell-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pointer-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            min-height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pointer-slow {
+            background: #22c55e;
+            color: #0f172a;
+        }
+
+        .pointer-fast {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .pointer-both {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            color: white;
+        }
+
+        .cell {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: 2px solid #475569;
+            background: #1e293b;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .cell.unique {
+            background: #064e3b;
+            border-color: #22c55e;
+            color: #86efac;
+        }
+
+        .cell.duplicate {
+            background: #450a0a;
+            border-color: #ef4444;
+            color: #fca5a5;
+        }
+
+        .cell.current-slow {
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.6);
+        }
+
+        .cell.current-fast {
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+        }
+
+        .cell.writing {
+            animation: pulse 0.4s ease-in-out;
+        }
+
+        .cell.dimmed {
+            opacity: 0.35;
+        }
+
+        .index-label {
+            font-size: 0.65rem;
+            color: #64748b;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        /* INFO SECTION */
+        .info-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 14px;
+            border: 1px solid #334155;
+        }
+
+        .info-box h3 {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+
+        .info-value.green { color: #22c55e; }
+
+        /* RESULT */
+        .result-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #334155;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .result-box.show { display: block; }
+
+        .result-box.success {
+            border-color: #22c55e;
+            background: #052e16;
+        }
+
+        .result-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .result-text.success { color: #86efac; }
+
+        /* LOG */
+        .log-section {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 14px;
+            border: 1px solid #334155;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-section h3 {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .log-entry {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            border-bottom: 1px solid #1e293b;
+            color: #cbd5e1;
+        }
+
+        .log-entry.highlight { color: #22c55e; font-weight: 600; }
+        .log-entry.skip { color: #f87171; }
+        .log-entry.info { color: #60a5fa; }
+
+        /* EXPLANATION */
+        .explanation {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 14px;
+            border: 1px solid #334155;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+            min-height: 48px;
+        }
+
+        .explanation strong { color: #60a5fa; }
+        .explanation .green { color: #22c55e; }
+        .explanation .red { color: #f87171; }
+        .explanation .blue { color: #60a5fa; }
+
+        /* ALGORITHM BOX */
+        .algo-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 14px;
+            border: 1px solid #334155;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        .algo-line { color: #64748b; }
+        .algo-line.active { color: #fbbf24; font-weight: 600; background: #1e293b; border-radius: 4px; padding: 1px 4px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0026. Remove Duplicates from Sorted Array</h1>
+        <p>Two Pointers — Interactive Step-by-Step Animation</p>
+    </div>
+
+    <div class="container">
+        <!-- Input -->
+        <div class="input-section">
+            <input type="text" id="arrInput" placeholder="e.g. 0,0,1,1,1,2,2,3,3,4" value="0,0,1,1,1,2,2,3,3,4">
+            <button class="btn btn-step" onclick="loadCustomInput()">Load</button>
+        </div>
+
+        <!-- Presets -->
+        <div class="presets">
+            <button class="preset-btn active" onclick="loadPreset(0, this)">[0,0,1,1,1,2,2,3,3,4]</button>
+            <button class="preset-btn" onclick="loadPreset(1, this)">[1,1,2]</button>
+            <button class="preset-btn" onclick="loadPreset(2, this)">[1,1,1,1]</button>
+            <button class="preset-btn" onclick="loadPreset(3, this)">[1,2,3,4,5]</button>
+            <button class="preset-btn" onclick="loadPreset(4, this)">[-3,-1,0,0,2]</button>
+            <button class="preset-btn" onclick="loadPreset(5, this)">[1]</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-play" id="playBtn" onclick="play()">&#9654; Play</button>
+            <button class="btn btn-pause" id="pauseBtn" onclick="pause()" style="display:none">&#10074;&#10074; Pause</button>
+            <button class="btn btn-step" onclick="step()">Step &rarr;</button>
+            <button class="btn btn-reset" onclick="reset()">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <select id="speedSelect" onchange="updateSpeed()">
+                    <option value="1500">0.5x</option>
+                    <option value="800" selected>1x</option>
+                    <option value="400">2x</option>
+                    <option value="200">4x</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Algorithm pseudocode -->
+        <div class="algo-box" id="algoBox">
+            <div class="algo-line" id="algo-0">slow = 0</div>
+            <div class="algo-line" id="algo-1">for fast = 1 to n-1:</div>
+            <div class="algo-line" id="algo-2">&nbsp;&nbsp;if nums[fast] != nums[slow]:</div>
+            <div class="algo-line" id="algo-3">&nbsp;&nbsp;&nbsp;&nbsp;slow++</div>
+            <div class="algo-line" id="algo-4">&nbsp;&nbsp;&nbsp;&nbsp;nums[slow] = nums[fast]</div>
+            <div class="algo-line" id="algo-5">return slow + 1</div>
+        </div>
+
+        <!-- Explanation -->
+        <div class="explanation" id="explanation">
+            Press <strong>Step</strong> or <strong>Play</strong> to start the animation.
+        </div>
+
+        <!-- Array visualization -->
+        <div class="viz-area">
+            <div class="viz-label">Array State:</div>
+            <div class="array-container" id="arrayViz"></div>
+        </div>
+
+        <!-- Info boxes -->
+        <div class="info-section">
+            <div class="info-box">
+                <h3>Slow Pointer (write position)</h3>
+                <div class="info-value green" id="slowVal">0</div>
+            </div>
+            <div class="info-box">
+                <h3>Fast Pointer (scan position)</h3>
+                <div class="info-value" id="fastVal">1</div>
+            </div>
+            <div class="info-box">
+                <h3>Unique Count (k)</h3>
+                <div class="info-value green" id="kVal">-</div>
+            </div>
+            <div class="info-box">
+                <h3>Step</h3>
+                <div class="info-value" id="stepVal">0</div>
+            </div>
+        </div>
+
+        <!-- Result -->
+        <div class="result-box" id="resultBox">
+            <div class="result-text" id="resultText"></div>
+        </div>
+
+        <!-- Log -->
+        <div class="log-section">
+            <h3>Log</h3>
+            <div id="logArea"></div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // State
+        // ============================================================
+        const PRESETS = [
+            [0, 0, 1, 1, 1, 2, 2, 3, 3, 4],
+            [1, 1, 2],
+            [1, 1, 1, 1],
+            [1, 2, 3, 4, 5],
+            [-3, -1, 0, 0, 2],
+            [1]
+        ];
+
+        let nums = [];         // current array state
+        let original = [];     // original input
+        let slow = 0;
+        let fast = 1;
+        let stepCount = 0;
+        let isRunning = false;
+        let timer = null;
+        let speed = 800;
+        let finished = false;
+        let phase = 'init';    // 'init', 'compare', 'write', 'advance', 'done'
+
+        // ============================================================
+        // Initialization
+        // ============================================================
+
+        function loadPreset(idx, btn) {
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            const arr = PRESETS[idx];
+            document.getElementById('arrInput').value = arr.join(',');
+            initArray(arr.slice());
+        }
+
+        function loadCustomInput() {
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            const input = document.getElementById('arrInput').value.trim();
+            const arr = input.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+            if (arr.length === 0) {
+                alert('Please enter a valid sorted array (e.g. 1,1,2,3)');
+                return;
+            }
+            initArray(arr);
+        }
+
+        function initArray(arr) {
+            pause();
+            nums = arr.slice();
+            original = arr.slice();
+            slow = 0;
+            fast = 1;
+            stepCount = 0;
+            finished = false;
+            phase = 'init';
+
+            document.getElementById('slowVal').textContent = '0';
+            document.getElementById('fastVal').textContent = nums.length > 1 ? '1' : '-';
+            document.getElementById('kVal').textContent = '-';
+            document.getElementById('stepVal').textContent = '0';
+            document.getElementById('resultBox').classList.remove('show');
+            document.getElementById('logArea').innerHTML = '';
+            document.getElementById('explanation').innerHTML =
+                'Press <strong>Step</strong> or <strong>Play</strong> to start the animation.';
+
+            clearAlgoHighlight();
+            renderArray();
+        }
+
+        // ============================================================
+        // Rendering
+        // ============================================================
+
+        function renderArray() {
+            const container = document.getElementById('arrayViz');
+            container.innerHTML = '';
+
+            for (let i = 0; i < nums.length; i++) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'cell-wrapper';
+
+                // Pointer labels
+                const pLabel = document.createElement('div');
+                if (i === slow && i === fast) {
+                    pLabel.className = 'pointer-label pointer-both';
+                    pLabel.textContent = 'S+F';
+                } else if (i === slow && !finished) {
+                    pLabel.className = 'pointer-label pointer-slow';
+                    pLabel.textContent = 'slow';
+                } else if (i === fast && !finished) {
+                    pLabel.className = 'pointer-label pointer-fast';
+                    pLabel.textContent = 'fast';
+                } else {
+                    pLabel.className = 'pointer-label';
+                    pLabel.textContent = '';
+                }
+                wrapper.appendChild(pLabel);
+
+                // Cell
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.textContent = nums[i];
+                cell.id = 'cell-' + i;
+
+                if (finished) {
+                    if (i <= slow) {
+                        cell.classList.add('unique');
+                    } else {
+                        cell.classList.add('dimmed');
+                    }
+                } else if (phase !== 'init') {
+                    if (i <= slow) {
+                        cell.classList.add('unique');
+                    }
+                    if (i === slow) {
+                        cell.classList.add('current-slow');
+                    }
+                    if (i === fast) {
+                        cell.classList.add('current-fast');
+                    }
+                }
+
+                wrapper.appendChild(cell);
+
+                // Index label
+                const idxLabel = document.createElement('div');
+                idxLabel.className = 'index-label';
+                idxLabel.textContent = i;
+                wrapper.appendChild(idxLabel);
+
+                container.appendChild(wrapper);
+            }
+        }
+
+        function clearAlgoHighlight() {
+            for (let i = 0; i <= 5; i++) {
+                document.getElementById('algo-' + i).className = 'algo-line';
+            }
+        }
+
+        function highlightAlgo(lineIdx) {
+            clearAlgoHighlight();
+            document.getElementById('algo-' + lineIdx).className = 'algo-line active';
+        }
+
+        function addLog(msg, cls) {
+            const logArea = document.getElementById('logArea');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry' + (cls ? ' ' + cls : '');
+            entry.textContent = msg;
+            logArea.appendChild(entry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        // ============================================================
+        // Step logic
+        // ============================================================
+
+        function step() {
+            if (finished) return;
+
+            // Handle single-element array
+            if (nums.length <= 1) {
+                finished = true;
+                slow = 0;
+                const k = nums.length;
+                document.getElementById('kVal').textContent = k;
+                highlightAlgo(5);
+                document.getElementById('explanation').innerHTML =
+                    `Array has only ${nums.length} element${nums.length === 1 ? '' : 's'}. Return <span class="green">k = ${k}</span>.`;
+                addLog(`Return k = ${k}`, 'highlight');
+                showResult(k);
+                renderArray();
+                return;
+            }
+
+            if (phase === 'init') {
+                // First step: initialize
+                phase = 'compare';
+                stepCount++;
+                highlightAlgo(0);
+                document.getElementById('explanation').innerHTML =
+                    'Initialize: <span class="green">slow = 0</span>, <span class="blue">fast = 1</span>. The first element is always unique.';
+                addLog(`Initialize: slow=0, fast=1`, 'info');
+                document.getElementById('stepVal').textContent = stepCount;
+                renderArray();
+                return;
+            }
+
+            if (fast >= nums.length) {
+                // Done
+                finish();
+                return;
+            }
+
+            if (phase === 'compare') {
+                stepCount++;
+                document.getElementById('stepVal').textContent = stepCount;
+                highlightAlgo(2);
+
+                if (nums[fast] !== nums[slow]) {
+                    // Unique found
+                    document.getElementById('explanation').innerHTML =
+                        `<span class="blue">nums[fast=${fast}] = ${nums[fast]}</span> != <span class="green">nums[slow=${slow}] = ${nums[slow]}</span> ` +
+                        `&rarr; New unique element found!`;
+                    addLog(`Step ${stepCount}: nums[${fast}]=${nums[fast]} != nums[${slow}]=${nums[slow]} → unique!`, 'highlight');
+                    phase = 'write';
+                } else {
+                    // Duplicate
+                    document.getElementById('explanation').innerHTML =
+                        `<span class="blue">nums[fast=${fast}] = ${nums[fast]}</span> == <span class="green">nums[slow=${slow}] = ${nums[slow]}</span> ` +
+                        `&rarr; <span class="red">Duplicate, skip.</span>`;
+                    addLog(`Step ${stepCount}: nums[${fast}]=${nums[fast]} == nums[${slow}]=${nums[slow]} → duplicate, skip`, 'skip');
+
+                    // Mark cell as duplicate briefly
+                    const cell = document.getElementById('cell-' + fast);
+                    if (cell) cell.classList.add('duplicate');
+
+                    phase = 'advance';
+                }
+                renderArray();
+
+                // After rendering, mark duplicate
+                if (phase === 'advance') {
+                    const cell = document.getElementById('cell-' + fast);
+                    if (cell) cell.classList.add('duplicate');
+                }
+                return;
+            }
+
+            if (phase === 'write') {
+                stepCount++;
+                document.getElementById('stepVal').textContent = stepCount;
+
+                slow++;
+                nums[slow] = nums[fast];
+                highlightAlgo(4);
+
+                document.getElementById('slowVal').textContent = slow;
+                document.getElementById('explanation').innerHTML =
+                    `<span class="green">slow++</span> &rarr; slow = ${slow}. ` +
+                    `Write <span class="blue">nums[${fast}] = ${nums[fast]}</span> to <span class="green">nums[${slow}]</span>.`;
+                addLog(`  slow++ → ${slow}, nums[${slow}] = ${nums[fast]}`, 'info');
+
+                phase = 'advance';
+                renderArray();
+
+                // Animate write
+                const cell = document.getElementById('cell-' + slow);
+                if (cell) cell.classList.add('writing');
+
+                return;
+            }
+
+            if (phase === 'advance') {
+                fast++;
+                document.getElementById('fastVal').textContent = fast < nums.length ? fast : '-';
+                highlightAlgo(1);
+
+                if (fast >= nums.length) {
+                    document.getElementById('explanation').innerHTML =
+                        `<span class="blue">fast = ${fast}</span> reached end of array. Algorithm complete.`;
+                    finish();
+                } else {
+                    document.getElementById('explanation').innerHTML =
+                        `Advance <span class="blue">fast</span> to ${fast}.`;
+                    phase = 'compare';
+                }
+                renderArray();
+                return;
+            }
+        }
+
+        function finish() {
+            finished = true;
+            const k = slow + 1;
+            highlightAlgo(5);
+            document.getElementById('kVal').textContent = k;
+            document.getElementById('explanation').innerHTML =
+                `Done! Return <span class="green">k = slow + 1 = ${k}</span>. ` +
+                `The first ${k} element${k > 1 ? 's' : ''}: <strong>[${nums.slice(0, k).join(', ')}]</strong>`;
+            addLog(`\nResult: k = ${k}, nums = [${nums.slice(0, k).join(', ')}]`, 'highlight');
+            showResult(k);
+            renderArray();
+            pause();
+        }
+
+        function showResult(k) {
+            const box = document.getElementById('resultBox');
+            const text = document.getElementById('resultText');
+            box.classList.add('show', 'success');
+            text.className = 'result-text success';
+            text.textContent = `k = ${k}  |  Result: [${nums.slice(0, k).join(', ')}]`;
+        }
+
+        // ============================================================
+        // Controls
+        // ============================================================
+
+        function play() {
+            if (finished) return;
+            isRunning = true;
+            document.getElementById('playBtn').style.display = 'none';
+            document.getElementById('pauseBtn').style.display = 'inline-block';
+            runTimer();
+        }
+
+        function pause() {
+            isRunning = false;
+            if (timer) { clearTimeout(timer); timer = null; }
+            document.getElementById('playBtn').style.display = 'inline-block';
+            document.getElementById('pauseBtn').style.display = 'none';
+        }
+
+        function runTimer() {
+            if (!isRunning || finished) { pause(); return; }
+            step();
+            if (!finished) {
+                timer = setTimeout(runTimer, speed);
+            }
+        }
+
+        function reset() {
+            initArray(original.slice());
+        }
+
+        function updateSpeed() {
+            speed = parseInt(document.getElementById('speedSelect').value);
+        }
+
+        // ============================================================
+        // Initialize on load
+        // ============================================================
+        window.addEventListener('DOMContentLoaded', () => {
+            loadPreset(0, document.querySelector('.preset-btn'));
+        });
+    </script>
+</body>
+</html>

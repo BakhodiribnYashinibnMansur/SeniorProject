@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0027. Remove Element — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            width: 220px;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        .val-input { width: 60px !important; text-align: center; }
+
+        /* PRESET BUTTONS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            padding: 6px 14px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+        }
+
+        .preset-btn:hover {
+            border-color: #60a5fa;
+            color: #60a5fa;
+        }
+
+        .preset-btn.active {
+            background: #1e3a5f;
+            border-color: #3b82f6;
+            color: #60a5fa;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .btn:hover { border-color: #60a5fa; color: #60a5fa; }
+
+        .btn.primary {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .btn.primary:hover { background: #2563eb; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 80px;
+            accent-color: #3b82f6;
+        }
+
+        /* VISUALIZATION */
+        .viz-area {
+            min-height: 200px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .array-row {
+            display: flex;
+            gap: 4px;
+            align-items: flex-end;
+            position: relative;
+        }
+
+        .cell {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #475569;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            transition: all 0.4s ease;
+            position: relative;
+            background: #0f172a;
+        }
+
+        .cell.val-match {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+        }
+
+        .cell.kept {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.15);
+            color: #86efac;
+        }
+
+        .cell.current-left {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .cell.current-right {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.2);
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .cell.current-slow {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .cell.current-fast {
+            border-color: #a78bfa;
+            background: rgba(167, 139, 250, 0.2);
+            box-shadow: 0 0 12px rgba(167, 139, 250, 0.4);
+        }
+
+        .cell.swapping {
+            animation: swapPulse 0.5s ease;
+        }
+
+        .cell.removed {
+            opacity: 0.3;
+            border-color: #334155;
+            color: #475569;
+        }
+
+        @keyframes swapPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .pointer-row {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .pointer {
+            width: 52px;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 0;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .pointer.left-ptr { color: #60a5fa; }
+        .pointer.right-ptr { color: #fbbf24; }
+        .pointer.slow-ptr { color: #60a5fa; }
+        .pointer.fast-ptr { color: #c4b5fd; }
+
+        .index-row {
+            display: flex;
+            gap: 4px;
+        }
+
+        .index-label {
+            width: 52px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        /* INFO BAR */
+        .info-bar {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            padding: 8px 16px;
+            background: #0f172a;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            border: 1px solid #334155;
+        }
+
+        .info-item span { font-weight: 700; }
+        .info-item .blue { color: #60a5fa; }
+        .info-item .yellow { color: #fbbf24; }
+        .info-item .green { color: #4ade80; }
+        .info-item .red { color: #f87171; }
+        .info-item .purple { color: #c4b5fd; }
+
+        /* RESULT */
+        .result-box {
+            text-align: center;
+            padding: 12px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid #22c55e;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .result-box.show { display: block; }
+
+        .result-box .k-val {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #4ade80;
+        }
+
+        /* LOG */
+        .log-area {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .log-area .log-entry { margin-bottom: 2px; }
+        .log-area .step-num { color: #64748b; }
+        .log-area .action { color: #94a3b8; }
+        .log-area .highlight { color: #60a5fa; font-weight: 600; }
+        .log-area .skip { color: #f87171; }
+        .log-area .copy { color: #4ade80; }
+        .log-area .swap { color: #fbbf24; }
+        .log-area .result { color: #a78bfa; font-weight: 700; }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            border: 2px solid;
+        }
+
+        .legend-dot.blue { border-color: #3b82f6; background: rgba(59, 130, 246, 0.2); }
+        .legend-dot.yellow { border-color: #f59e0b; background: rgba(245, 158, 11, 0.2); }
+        .legend-dot.green { border-color: #22c55e; background: rgba(34, 197, 94, 0.15); }
+        .legend-dot.red { border-color: #ef4444; background: rgba(239, 68, 68, 0.15); }
+        .legend-dot.purple { border-color: #a78bfa; background: rgba(167, 139, 250, 0.2); }
+        .legend-dot.dim { border-color: #334155; background: rgba(0,0,0,0.3); }
+
+        /* TAB PANELS */
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0027. Remove Element</h1>
+        <p>Two Pointers — In-place element removal visualization</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="same">Same Direction</div>
+        <div class="tab" data-tab="opposite">Opposite Direction</div>
+    </div>
+
+    <div class="container">
+        <!-- Input -->
+        <div class="input-section">
+            <label>nums =</label>
+            <input type="text" id="arrayInput" value="3,2,2,3" placeholder="e.g. 3,2,2,3">
+            <label>val =</label>
+            <input type="text" id="valInput" class="val-input" value="3" placeholder="3">
+        </div>
+
+        <!-- Presets -->
+        <div class="presets">
+            <button class="preset-btn active" data-nums="3,2,2,3" data-val="3">[3,2,2,3] val=3</button>
+            <button class="preset-btn" data-nums="0,1,2,2,3,0,4,2" data-val="2">[0,1,2,2,3,0,4,2] val=2</button>
+            <button class="preset-btn" data-nums="1,1,1,1" data-val="1">[1,1,1,1] val=1</button>
+            <button class="preset-btn" data-nums="4,5,6,7" data-val="9">[4,5,6,7] val=9</button>
+            <button class="preset-btn" data-nums="2" data-val="2">[2] val=2</button>
+            <button class="preset-btn" data-nums="3,3,3,2,2,1" data-val="3">[3,3,3,2,2,1] val=3</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn primary" id="stepBtn">Step</button>
+            <button class="btn" id="playBtn">Play</button>
+            <button class="btn" id="pauseBtn">Pause</button>
+            <button class="btn" id="resetBtn">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <span id="speedLabel">5</span>
+            </div>
+        </div>
+
+        <!-- Same Direction Panel -->
+        <div class="tab-panel active" id="panel-same">
+            <div class="info-bar" id="infoBar-same"></div>
+            <div class="viz-area" id="vizArea-same"></div>
+            <div class="result-box" id="result-same"></div>
+            <div class="log-area" id="log-same"></div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot blue"></div> slow pointer</div>
+                <div class="legend-item"><div class="legend-dot purple"></div> fast pointer</div>
+                <div class="legend-item"><div class="legend-dot green"></div> kept element</div>
+                <div class="legend-item"><div class="legend-dot red"></div> val (to remove)</div>
+                <div class="legend-item"><div class="legend-dot dim"></div> beyond k</div>
+            </div>
+        </div>
+
+        <!-- Opposite Direction Panel -->
+        <div class="tab-panel" id="panel-opposite">
+            <div class="info-bar" id="infoBar-opposite"></div>
+            <div class="viz-area" id="vizArea-opposite"></div>
+            <div class="result-box" id="result-opposite"></div>
+            <div class="log-area" id="log-opposite"></div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot blue"></div> left pointer</div>
+                <div class="legend-item"><div class="legend-dot yellow"></div> right pointer</div>
+                <div class="legend-item"><div class="legend-dot green"></div> kept element</div>
+                <div class="legend-item"><div class="legend-dot red"></div> val (to remove)</div>
+                <div class="legend-item"><div class="legend-dot dim"></div> removed region</div>
+            </div>
+        </div>
+    </div>
+
+<script>
+// ============================================================
+// State
+// ============================================================
+let currentTab = 'same';
+let nums = [];
+let val = 0;
+let steps = [];
+let stepIndex = 0;
+let playing = false;
+let playTimer = null;
+
+// ============================================================
+// Tabs
+// ============================================================
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentTab = tab.dataset.tab;
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('panel-' + currentTab).classList.add('active');
+        resetAnimation();
+    });
+});
+
+// ============================================================
+// Presets
+// ============================================================
+document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('arrayInput').value = btn.dataset.nums;
+        document.getElementById('valInput').value = btn.dataset.val;
+        resetAnimation();
+    });
+});
+
+// ============================================================
+// Controls
+// ============================================================
+document.getElementById('stepBtn').addEventListener('click', stepForward);
+document.getElementById('playBtn').addEventListener('click', startPlay);
+document.getElementById('pauseBtn').addEventListener('click', pausePlay);
+document.getElementById('resetBtn').addEventListener('click', resetAnimation);
+
+document.getElementById('speedSlider').addEventListener('input', (e) => {
+    document.getElementById('speedLabel').textContent = e.target.value;
+});
+
+document.getElementById('arrayInput').addEventListener('change', resetAnimation);
+document.getElementById('valInput').addEventListener('change', resetAnimation);
+
+// ============================================================
+// Generate Steps — Same Direction
+// ============================================================
+function generateStepsSame(arr, v) {
+    const steps = [];
+    const a = [...arr];
+    let slow = 0;
+
+    steps.push({
+        array: [...a],
+        slow: 0,
+        fast: 0,
+        action: 'init',
+        msg: `<span class="highlight">Initialize:</span> slow=0, fast=0, val=${v}`,
+        done: false,
+        kept: []
+    });
+
+    for (let fast = 0; fast < a.length; fast++) {
+        if (a[fast] !== v) {
+            a[slow] = a[fast];
+            const kept = [];
+            for (let i = 0; i <= slow; i++) kept.push(i);
+            steps.push({
+                array: [...a],
+                slow: slow,
+                fast: fast,
+                action: 'copy',
+                msg: `<span class="copy">COPY:</span> nums[${fast}]=${arr[fast]} != ${v} -> nums[${slow}] = ${arr[fast]}`,
+                done: false,
+                kept: kept
+            });
+            slow++;
+        } else {
+            steps.push({
+                array: [...a],
+                slow: slow,
+                fast: fast,
+                action: 'skip',
+                msg: `<span class="skip">SKIP:</span> nums[${fast}]=${a[fast]} == ${v}`,
+                done: false,
+                kept: []
+            });
+        }
+    }
+
+    const keptFinal = [];
+    for (let i = 0; i < slow; i++) keptFinal.push(i);
+    steps.push({
+        array: [...a],
+        slow: slow,
+        fast: a.length,
+        action: 'done',
+        msg: `<span class="result">DONE: k = ${slow}</span>`,
+        done: true,
+        k: slow,
+        kept: keptFinal
+    });
+
+    return steps;
+}
+
+// ============================================================
+// Generate Steps — Opposite Direction
+// ============================================================
+function generateStepsOpposite(arr, v) {
+    const steps = [];
+    const a = [...arr];
+    let left = 0;
+    let right = a.length - 1;
+
+    steps.push({
+        array: [...a],
+        left: 0,
+        right: a.length - 1,
+        action: 'init',
+        msg: `<span class="highlight">Initialize:</span> left=0, right=${a.length - 1}, val=${v}`,
+        done: false,
+        removedFrom: a.length
+    });
+
+    let iter = 0;
+    while (left <= right && iter < 200) {
+        iter++;
+        if (a[left] === v) {
+            const oldVal = a[left];
+            a[left] = a[right];
+            const newRemoved = right;
+            right--;
+            steps.push({
+                array: [...a],
+                left: left,
+                right: right,
+                action: 'swap',
+                msg: `<span class="swap">SWAP:</span> nums[${left}]=${oldVal} == ${v} -> nums[${left}] = nums[${newRemoved}] = ${a[left]}, right=${right}`,
+                done: false,
+                removedFrom: right + 1
+            });
+        } else {
+            steps.push({
+                array: [...a],
+                left: left,
+                right: right,
+                action: 'advance',
+                msg: `<span class="copy">KEEP:</span> nums[${left}]=${a[left]} != ${v} -> left++`,
+                done: false,
+                removedFrom: right + 1
+            });
+            left++;
+        }
+    }
+
+    steps.push({
+        array: [...a],
+        left: left,
+        right: right,
+        action: 'done',
+        msg: `<span class="result">DONE: k = ${left}</span>`,
+        done: true,
+        k: left,
+        removedFrom: right + 1
+    });
+
+    return steps;
+}
+
+// ============================================================
+// Render — Same Direction
+// ============================================================
+function renderSame(step) {
+    const vizArea = document.getElementById('vizArea-same');
+    const infoBar = document.getElementById('infoBar-same');
+    const resultBox = document.getElementById('result-same');
+
+    const arr = step.array;
+    const n = arr.length;
+
+    // Info bar
+    let infoHtml = `<div class="info-item">slow = <span class="blue">${step.slow}</span></div>`;
+    if (step.fast < n) {
+        infoHtml += `<div class="info-item">fast = <span class="purple">${step.fast}</span></div>`;
+    }
+    infoHtml += `<div class="info-item">val = <span class="red">${val}</span></div>`;
+    infoBar.innerHTML = infoHtml;
+
+    // Array
+    let html = '<div class="pointer-row">';
+    for (let i = 0; i < n; i++) {
+        let label = '';
+        if (i === step.slow && i === step.fast) label = 'S/F';
+        else if (i === step.slow) label = 'slow';
+        else if (i === step.fast) label = 'fast';
+        const cls = i === step.slow ? 'pointer slow-ptr' : (i === step.fast ? 'pointer fast-ptr' : 'pointer');
+        html += `<div class="${cls}">${label}</div>`;
+    }
+    html += '</div><div class="array-row">';
+
+    for (let i = 0; i < n; i++) {
+        let cls = 'cell';
+        if (step.done) {
+            if (i < step.k) cls += ' kept';
+            else cls += ' removed';
+        } else {
+            if (i === step.slow && i === step.fast) cls += ' current-slow current-fast';
+            else if (i === step.slow) cls += ' current-slow';
+            else if (i === step.fast) cls += ' current-fast';
+            if (step.action === 'copy' && i === step.slow) cls += ' swapping';
+            if (arr[i] === val && !step.kept.includes(i)) cls += ' val-match';
+            if (step.kept.includes(i) && i < step.slow) cls += ' kept';
+        }
+        html += `<div class="${cls}">${arr[i]}</div>`;
+    }
+    html += '</div><div class="index-row">';
+    for (let i = 0; i < n; i++) {
+        html += `<div class="index-label">[${i}]</div>`;
+    }
+    html += '</div>';
+
+    vizArea.innerHTML = html;
+
+    // Result
+    if (step.done) {
+        resultBox.innerHTML = `Result: <span class="k-val">k = ${step.k}</span> &nbsp; nums[:k] = [${arr.slice(0, step.k).join(', ')}]`;
+        resultBox.classList.add('show');
+    } else {
+        resultBox.classList.remove('show');
+    }
+}
+
+// ============================================================
+// Render — Opposite Direction
+// ============================================================
+function renderOpposite(step) {
+    const vizArea = document.getElementById('vizArea-opposite');
+    const infoBar = document.getElementById('infoBar-opposite');
+    const resultBox = document.getElementById('result-opposite');
+
+    const arr = step.array;
+    const n = arr.length;
+
+    // Info bar
+    let infoHtml = `<div class="info-item">left = <span class="blue">${step.left}</span></div>`;
+    infoHtml += `<div class="info-item">right = <span class="yellow">${step.right}</span></div>`;
+    infoHtml += `<div class="info-item">val = <span class="red">${val}</span></div>`;
+    infoBar.innerHTML = infoHtml;
+
+    // Array
+    let html = '<div class="pointer-row">';
+    for (let i = 0; i < n; i++) {
+        let label = '';
+        if (i === step.left && i === step.right) label = 'L/R';
+        else if (i === step.left) label = 'left';
+        else if (i === step.right) label = 'right';
+        const cls = i === step.left ? 'pointer left-ptr' : (i === step.right ? 'pointer right-ptr' : 'pointer');
+        html += `<div class="${cls}">${label}</div>`;
+    }
+    html += '</div><div class="array-row">';
+
+    for (let i = 0; i < n; i++) {
+        let cls = 'cell';
+        if (step.done) {
+            if (i < step.k) cls += ' kept';
+            else cls += ' removed';
+        } else {
+            if (i === step.left && i === step.right) cls += ' current-left current-right';
+            else if (i === step.left) cls += ' current-left';
+            else if (i === step.right) cls += ' current-right';
+            if (step.action === 'swap' && i === step.left) cls += ' swapping';
+            if (i >= step.removedFrom) cls += ' removed';
+            else if (arr[i] === val && i >= step.left) cls += ' val-match';
+            if (i < step.left) cls += ' kept';
+        }
+        html += `<div class="${cls}">${arr[i]}</div>`;
+    }
+    html += '</div><div class="index-row">';
+    for (let i = 0; i < n; i++) {
+        html += `<div class="index-label">[${i}]</div>`;
+    }
+    html += '</div>';
+
+    vizArea.innerHTML = html;
+
+    // Result
+    if (step.done) {
+        resultBox.innerHTML = `Result: <span class="k-val">k = ${step.k}</span> &nbsp; nums[:k] = [${arr.slice(0, step.k).join(', ')}]`;
+        resultBox.classList.add('show');
+    } else {
+        resultBox.classList.remove('show');
+    }
+}
+
+// ============================================================
+// Log
+// ============================================================
+function addLog(msg) {
+    const logId = 'log-' + currentTab;
+    const logArea = document.getElementById(logId);
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = `<span class="step-num">[${stepIndex}]</span> ${msg}`;
+    logArea.appendChild(entry);
+    logArea.scrollTop = logArea.scrollHeight;
+}
+
+// ============================================================
+// Step / Play / Pause / Reset
+// ============================================================
+function stepForward() {
+    if (stepIndex >= steps.length) return;
+    const step = steps[stepIndex];
+    addLog(step.msg);
+    if (currentTab === 'same') renderSame(step);
+    else renderOpposite(step);
+    stepIndex++;
+    if (stepIndex >= steps.length) pausePlay();
+}
+
+function startPlay() {
+    if (playing) return;
+    if (stepIndex >= steps.length) resetAnimation();
+    playing = true;
+    const speed = document.getElementById('speedSlider').value;
+    const delay = 1200 - (speed * 100);
+    function tick() {
+        if (!playing || stepIndex >= steps.length) { pausePlay(); return; }
+        stepForward();
+        playTimer = setTimeout(tick, delay);
+    }
+    tick();
+}
+
+function pausePlay() {
+    playing = false;
+    if (playTimer) { clearTimeout(playTimer); playTimer = null; }
+}
+
+function resetAnimation() {
+    pausePlay();
+
+    // Parse input
+    const raw = document.getElementById('arrayInput').value.trim();
+    val = parseInt(document.getElementById('valInput').value.trim()) || 0;
+    nums = raw ? raw.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n)) : [];
+
+    // Generate steps
+    if (currentTab === 'same') {
+        steps = generateStepsSame(nums, val);
+    } else {
+        steps = generateStepsOpposite(nums, val);
+    }
+    stepIndex = 0;
+
+    // Clear log
+    document.getElementById('log-' + currentTab).innerHTML = '';
+
+    // Clear result
+    document.getElementById('result-' + currentTab).classList.remove('show');
+
+    // Initial render
+    if (steps.length > 0) {
+        if (currentTab === 'same') renderSame(steps[0]);
+        else renderOpposite(steps[0]);
+    }
+}
+
+// ============================================================
+// Init
+// ============================================================
+resetAnimation();
+</script>
+</body>
+</html>
