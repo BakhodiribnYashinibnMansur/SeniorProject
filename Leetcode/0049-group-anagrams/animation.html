@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0049. Group Anagrams — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* PRESET & INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .input-section input, .input-section select {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .input-section input { width: 420px; }
+        .input-section select { min-width: 180px; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            background: #1e293b;
+            color: #e2e8f0;
+            user-select: none;
+        }
+
+        .btn:hover { background: #334155; }
+        .btn.primary { background: #3b82f6; border-color: #3b82f6; color: white; }
+        .btn.primary:hover { background: #2563eb; }
+        .btn.danger { background: #ef4444; border-color: #ef4444; color: white; }
+        .btn.danger:hover { background: #dc2626; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 12px;
+        }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        .speed-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            min-width: 40px;
+        }
+
+        /* STATUS */
+        .status-bar {
+            text-align: center;
+            padding: 8px;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            background: #0f172a;
+            border-radius: 6px;
+        }
+
+        .status-bar .step-info {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        /* VISUALIZATION */
+        .viz-area {
+            min-height: 380px;
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        /* INPUT ARRAY */
+        .input-array {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .str-card {
+            padding: 10px 16px;
+            background: #334155;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            border: 2px solid #475569;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .str-card.active {
+            border-color: #f59e0b;
+            background: #92400e;
+            transform: scale(1.1);
+            box-shadow: 0 0 16px rgba(245, 158, 11, 0.4);
+        }
+
+        .str-card.processed {
+            border-color: #22c55e;
+            background: #14532d;
+        }
+
+        .str-card.dimmed {
+            opacity: 0.4;
+        }
+
+        /* KEY DISPLAY */
+        .key-display {
+            text-align: center;
+            margin-bottom: 20px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .key-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+
+        .key-box .original {
+            color: #f59e0b;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .key-box .arrow {
+            color: #64748b;
+            font-size: 1.2rem;
+        }
+
+        .key-box .sorted-key {
+            color: #22c55e;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .key-box .count-key {
+            color: #a78bfa;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* BUCKETS */
+        .buckets-area {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .bucket {
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 12px;
+            min-width: 100px;
+            transition: all 0.4s ease;
+        }
+
+        .bucket.highlight {
+            border-color: #f59e0b;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .bucket-label {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+        }
+
+        .bucket-items {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .bucket-item {
+            padding: 6px 12px;
+            background: #1e293b;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border: 1px solid #334155;
+            animation: dropIn 0.4s ease;
+        }
+
+        @keyframes dropIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CHAR COUNT VIZ */
+        .char-count-viz {
+            display: flex;
+            gap: 3px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            min-height: 50px;
+        }
+
+        .char-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .char-cell .count {
+            font-size: 0.75rem;
+            color: #a78bfa;
+            font-weight: 600;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1e1b4b;
+            border-radius: 4px;
+        }
+
+        .char-cell .count.zero { background: transparent; color: #334155; }
+
+        .char-cell .letter {
+            font-size: 0.65rem;
+            color: #64748b;
+        }
+
+        /* LOG */
+        .log-section {
+            margin-top: 16px;
+        }
+
+        .log-section h3 {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .log {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 180px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .log-entry { color: #94a3b8; }
+        .log-entry.highlight { color: #f59e0b; }
+        .log-entry.success { color: #22c55e; }
+        .log-entry.info { color: #60a5fa; }
+
+        /* RESULT */
+        .result-section {
+            margin-top: 16px;
+            padding: 12px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            display: none;
+        }
+
+        .result-section.show { display: block; }
+
+        .result-section h3 {
+            font-size: 0.85rem;
+            color: #22c55e;
+            margin-bottom: 8px;
+        }
+
+        .result-section pre {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            white-space: pre-wrap;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0049. Group Anagrams</h1>
+        <p>Visualize how strings are grouped by sorting or counting characters</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('sort')">Sort as Key</div>
+        <div class="tab" onclick="switchTab('count')">Character Count as Key</div>
+    </div>
+
+    <div class="container">
+        <div class="input-section">
+            <label>Input:</label>
+            <input type="text" id="inputField" value='["eat","tea","tan","ate","nat","bat"]'>
+            <label>Presets:</label>
+            <select id="presetSelect" onchange="loadPreset()">
+                <option value='["eat","tea","tan","ate","nat","bat"]'>Example 1: eat, tea, tan...</option>
+                <option value='[""]'>Example 2: empty string</option>
+                <option value='["a"]'>Example 3: single char</option>
+                <option value='["abc","def","ghi"]'>No anagrams</option>
+                <option value='["abc","bca","cab","acb"]'>All anagrams</option>
+                <option value='["listen","silent","enlist","inlets","tinsel"]'>Listen/Silent</option>
+                <option value='["a","a","b","b","c","c"]'>Duplicates</option>
+                <option value='["","","ab","ba","abc","bca","cab"]'>Mixed with empties</option>
+            </select>
+        </div>
+
+        <div class="controls">
+            <button class="btn" id="btnStep" onclick="step()">Step &rarr;</button>
+            <button class="btn primary" id="btnPlay" onclick="play()">&#9654; Play</button>
+            <button class="btn" id="btnPause" onclick="pause()" disabled>&#10074;&#10074; Pause</button>
+            <button class="btn danger" id="btnReset" onclick="reset()">&#8635; Reset</button>
+            <div class="speed-control">
+                <label class="speed-label">Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="10" value="5" oninput="updateSpeed()">
+                <span class="speed-label" id="speedValue">5x</span>
+            </div>
+        </div>
+
+        <div class="status-bar" id="statusBar">
+            Press <strong>Step</strong> or <strong>Play</strong> to begin
+        </div>
+
+        <div class="viz-area">
+            <div class="input-array" id="inputArray"></div>
+            <div class="key-display" id="keyDisplay"></div>
+            <div class="char-count-viz" id="charCountViz"></div>
+            <div class="buckets-area" id="bucketsArea"></div>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <h3>Result</h3>
+            <pre id="resultContent"></pre>
+        </div>
+
+        <div class="log-section">
+            <h3>Log</h3>
+            <div class="log" id="logPanel"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'sort';
+        let strs = [];
+        let steps = [];
+        let currentStep = -1;
+        let playInterval = null;
+        let speed = 5;
+        let buckets = {};
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach((t, i) => {
+                t.classList.toggle('active', (i === 0 && tab === 'sort') || (i === 1 && tab === 'count'));
+            });
+            reset();
+        }
+
+        function loadPreset() {
+            document.getElementById('inputField').value = document.getElementById('presetSelect').value;
+            reset();
+        }
+
+        function parseInput() {
+            try {
+                const val = document.getElementById('inputField').value.trim();
+                strs = JSON.parse(val);
+                if (!Array.isArray(strs)) throw new Error();
+                return true;
+            } catch {
+                alert('Invalid input. Use JSON array format: ["eat","tea","tan"]');
+                return false;
+            }
+        }
+
+        function generateSteps() {
+            steps = [];
+            buckets = {};
+
+            for (let idx = 0; idx < strs.length; idx++) {
+                const s = strs[idx];
+                let key, keyDisplay;
+
+                if (currentTab === 'sort') {
+                    const sorted = s.split('').sort().join('');
+                    key = sorted;
+                    keyDisplay = sorted;
+                    steps.push({
+                        type: 'process',
+                        index: idx,
+                        original: s,
+                        key: key,
+                        keyDisplay: keyDisplay,
+                        method: 'sort'
+                    });
+                } else {
+                    const count = new Array(26).fill(0);
+                    for (const c of s) {
+                        count[c.charCodeAt(0) - 97]++;
+                    }
+                    key = count.join(',');
+                    keyDisplay = count.map((c, i) => c > 0 ? String.fromCharCode(97 + i) + ':' + c : '').filter(Boolean).join(' ') || '(empty)';
+                    steps.push({
+                        type: 'process',
+                        index: idx,
+                        original: s,
+                        key: key,
+                        keyDisplay: keyDisplay,
+                        charCount: [...count],
+                        method: 'count'
+                    });
+                }
+
+                steps.push({
+                    type: 'group',
+                    index: idx,
+                    original: s,
+                    key: key,
+                    keyDisplay: keyDisplay
+                });
+            }
+
+            steps.push({ type: 'done' });
+        }
+
+        function renderInputArray() {
+            const container = document.getElementById('inputArray');
+            container.innerHTML = '';
+            strs.forEach((s, i) => {
+                const card = document.createElement('div');
+                card.className = 'str-card';
+                card.id = `card-${i}`;
+                card.textContent = `"${s}"`;
+                container.appendChild(card);
+            });
+        }
+
+        function clearViz() {
+            document.getElementById('keyDisplay').innerHTML = '';
+            document.getElementById('charCountViz').innerHTML = '';
+            document.getElementById('bucketsArea').innerHTML = '';
+            document.getElementById('logPanel').innerHTML = '';
+            document.getElementById('resultSection').classList.remove('show');
+            document.getElementById('statusBar').innerHTML = 'Press <strong>Step</strong> or <strong>Play</strong> to begin';
+        }
+
+        function renderBuckets() {
+            const area = document.getElementById('bucketsArea');
+            area.innerHTML = '';
+            for (const [key, data] of Object.entries(buckets)) {
+                const bucket = document.createElement('div');
+                bucket.className = 'bucket';
+                bucket.id = `bucket-${key.replace(/[^a-z0-9]/gi, '_')}`;
+
+                const label = document.createElement('div');
+                label.className = 'bucket-label';
+                label.textContent = data.display;
+                bucket.appendChild(label);
+
+                const items = document.createElement('div');
+                items.className = 'bucket-items';
+                for (const s of data.items) {
+                    const item = document.createElement('div');
+                    item.className = 'bucket-item';
+                    item.textContent = `"${s}"`;
+                    items.appendChild(item);
+                }
+                bucket.appendChild(items);
+                area.appendChild(bucket);
+            }
+        }
+
+        function renderCharCount(count) {
+            const viz = document.getElementById('charCountViz');
+            viz.innerHTML = '';
+            if (!count) return;
+            for (let i = 0; i < 26; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'char-cell';
+
+                const countEl = document.createElement('div');
+                countEl.className = 'count' + (count[i] === 0 ? ' zero' : '');
+                countEl.textContent = count[i];
+                cell.appendChild(countEl);
+
+                const letter = document.createElement('div');
+                letter.className = 'letter';
+                letter.textContent = String.fromCharCode(97 + i);
+                cell.appendChild(letter);
+
+                viz.appendChild(cell);
+            }
+        }
+
+        function addLog(text, cls = '') {
+            const log = document.getElementById('logPanel');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry' + (cls ? ' ' + cls : '');
+            entry.textContent = text;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function step() {
+            if (currentStep === -1 && strs.length === 0) {
+                if (!parseInput()) return;
+                generateSteps();
+                renderInputArray();
+                clearViz();
+            } else if (currentStep === -1) {
+                // Already parsed from reset
+            }
+
+            currentStep++;
+            if (currentStep >= steps.length) {
+                pause();
+                return;
+            }
+
+            const s = steps[currentStep];
+
+            // Reset all card styles
+            document.querySelectorAll('.str-card').forEach(c => {
+                c.classList.remove('active', 'dimmed');
+            });
+
+            if (s.type === 'process') {
+                // Highlight active card
+                const card = document.getElementById(`card-${s.index}`);
+                if (card) card.classList.add('active');
+
+                // Dim future cards
+                for (let i = s.index + 1; i < strs.length; i++) {
+                    const c = document.getElementById(`card-${i}`);
+                    if (c && !c.classList.contains('processed')) c.classList.add('dimmed');
+                }
+
+                // Show key
+                const keyDisp = document.getElementById('keyDisplay');
+                if (s.method === 'sort') {
+                    keyDisp.innerHTML = `
+                        <div class="key-box">
+                            <span class="original">"${s.original}"</span>
+                            <span class="arrow">&rarr; sort &rarr;</span>
+                            <span class="sorted-key">"${s.keyDisplay}"</span>
+                        </div>`;
+                    addLog(`Processing "${s.original}" -> sort -> key: "${s.keyDisplay}"`, 'highlight');
+                    document.getElementById('charCountViz').innerHTML = '';
+                } else {
+                    keyDisp.innerHTML = `
+                        <div class="key-box">
+                            <span class="original">"${s.original}"</span>
+                            <span class="arrow">&rarr; count &rarr;</span>
+                            <span class="count-key">${s.keyDisplay}</span>
+                        </div>`;
+                    renderCharCount(s.charCount);
+                    addLog(`Processing "${s.original}" -> count -> key: [${s.keyDisplay}]`, 'highlight');
+                }
+
+                document.getElementById('statusBar').innerHTML =
+                    `<span class="step-info">Step ${currentStep + 1}/${steps.length}</span> &mdash; ` +
+                    `Processing string "${s.original}" (index ${s.index})`;
+
+            } else if (s.type === 'group') {
+                // Mark card as processed
+                const card = document.getElementById(`card-${s.index}`);
+                if (card) {
+                    card.classList.remove('active');
+                    card.classList.add('processed');
+                }
+
+                // Add to bucket
+                if (!buckets[s.key]) {
+                    buckets[s.key] = { display: s.keyDisplay, items: [] };
+                }
+                buckets[s.key].items.push(s.original);
+
+                renderBuckets();
+
+                // Highlight the target bucket
+                const bucketId = `bucket-${s.key.replace(/[^a-z0-9]/gi, '_')}`;
+                const bucket = document.getElementById(bucketId);
+                if (bucket) {
+                    bucket.classList.add('highlight');
+                    setTimeout(() => bucket.classList.remove('highlight'), 600);
+                }
+
+                addLog(`  -> Added "${s.original}" to group [${s.keyDisplay}]`, 'success');
+
+                document.getElementById('statusBar').innerHTML =
+                    `<span class="step-info">Step ${currentStep + 1}/${steps.length}</span> &mdash; ` +
+                    `Grouped "${s.original}" into bucket "${s.keyDisplay}"`;
+
+            } else if (s.type === 'done') {
+                pause();
+                document.querySelectorAll('.str-card').forEach(c => {
+                    c.classList.remove('active', 'dimmed');
+                    c.classList.add('processed');
+                });
+                document.getElementById('keyDisplay').innerHTML = '';
+                document.getElementById('charCountViz').innerHTML = '';
+
+                // Show result
+                const result = Object.values(buckets).map(b => b.items);
+                const resultStr = JSON.stringify(result, null, 2);
+                document.getElementById('resultContent').textContent = resultStr;
+                document.getElementById('resultSection').classList.add('show');
+
+                addLog(`\nDone! Found ${Object.keys(buckets).length} group(s)`, 'success');
+                addLog(`Result: ${JSON.stringify(result)}`, 'info');
+
+                document.getElementById('statusBar').innerHTML =
+                    `<span class="step-info">Complete!</span> &mdash; ` +
+                    `${strs.length} strings grouped into ${Object.keys(buckets).length} group(s)`;
+            }
+        }
+
+        function play() {
+            if (currentStep === -1 && strs.length === 0) {
+                if (!parseInput()) return;
+                generateSteps();
+                renderInputArray();
+                clearViz();
+            }
+
+            document.getElementById('btnPlay').disabled = true;
+            document.getElementById('btnPause').disabled = false;
+            document.getElementById('btnStep').disabled = true;
+
+            const interval = Math.max(100, 1200 - speed * 100);
+            playInterval = setInterval(() => {
+                step();
+                if (currentStep >= steps.length - 1) {
+                    pause();
+                }
+            }, interval);
+        }
+
+        function pause() {
+            if (playInterval) {
+                clearInterval(playInterval);
+                playInterval = null;
+            }
+            document.getElementById('btnPlay').disabled = false;
+            document.getElementById('btnPause').disabled = true;
+            document.getElementById('btnStep').disabled = false;
+        }
+
+        function reset() {
+            pause();
+            currentStep = -1;
+            buckets = {};
+            steps = [];
+
+            if (!parseInput()) return;
+            generateSteps();
+            renderInputArray();
+            clearViz();
+
+            document.getElementById('btnStep').disabled = false;
+        }
+
+        function updateSpeed() {
+            speed = parseInt(document.getElementById('speedSlider').value);
+            document.getElementById('speedValue').textContent = speed + 'x';
+
+            // If playing, restart with new speed
+            if (playInterval) {
+                pause();
+                play();
+            }
+        }
+
+        // Initialize
+        parseInput();
+        generateSteps();
+        renderInputArray();
+    </script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0042. Trapping Rain Water — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 320px;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        /* BUTTONS */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-apply { background: #3b82f6; color: white; }
+        .btn-apply:hover { background: #2563eb; }
+
+        .btn-step { background: #8b5cf6; color: white; }
+        .btn-step:hover { background: #7c3aed; }
+
+        .btn-play { background: #10b981; color: white; }
+        .btn-play:hover { background: #059669; }
+
+        .btn-pause { background: #f59e0b; color: white; }
+        .btn-pause:hover { background: #d97706; }
+
+        .btn-reset { background: #ef4444; color: white; }
+        .btn-reset:hover { background: #dc2626; }
+
+        /* PRESETS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset {
+            padding: 5px 12px;
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            color: #cbd5e1;
+            transition: all 0.2s;
+        }
+
+        .preset:hover { background: #475569; color: white; }
+        .preset.active { background: #3b82f6; border-color: #3b82f6; color: white; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 12px;
+        }
+
+        .speed-control label {
+            font-size: 0.82rem;
+            color: #94a3b8;
+        }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        /* CANVAS AREA */
+        .canvas-wrapper {
+            position: relative;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            padding: 16px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* INFO BAR */
+        .info-bar {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .info-label { color: #94a3b8; }
+        .info-value { font-weight: 700; font-size: 1rem; }
+        .info-value.water { color: #38bdf8; }
+        .info-value.left-ptr { color: #f472b6; }
+        .info-value.right-ptr { color: #a78bfa; }
+        .info-value.left-max { color: #fb923c; }
+        .info-value.right-max { color: #34d399; }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .legend-swatch {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+
+        /* LOG */
+        .log-section {
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            padding: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .log-section::-webkit-scrollbar { width: 6px; }
+        .log-section::-webkit-scrollbar-track { background: #1e293b; }
+        .log-section::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+        .log-entry { color: #94a3b8; }
+        .log-entry.water-add { color: #38bdf8; }
+        .log-entry.update-max { color: #fb923c; }
+        .log-entry.done { color: #10b981; font-weight: 700; }
+
+        /* RESULT */
+        .result {
+            text-align: center;
+            margin-top: 16px;
+            padding: 12px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            font-size: 1.1rem;
+            display: none;
+        }
+
+        .result.show { display: block; }
+        .result .label { color: #94a3b8; }
+        .result .value { color: #38bdf8; font-weight: 700; font-size: 1.4rem; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>42. Trapping Rain Water</h1>
+    <p>Two Pointers — O(n) time, O(1) space</p>
+</div>
+
+<div class="container">
+    <!-- Input -->
+    <div class="input-section">
+        <input type="text" id="arrInput" placeholder="Enter heights: 0,1,0,2,1,0,1,3,2,1,2,1">
+        <button class="btn btn-apply" onclick="applyInput()">Apply</button>
+    </div>
+
+    <!-- Presets -->
+    <div class="presets">
+        <div class="preset active" onclick="loadPreset(0)">Example 1</div>
+        <div class="preset" onclick="loadPreset(1)">Example 2</div>
+        <div class="preset" onclick="loadPreset(2)">V-Shape</div>
+        <div class="preset" onclick="loadPreset(3)">Complex</div>
+        <div class="preset" onclick="loadPreset(4)">Staircase</div>
+        <div class="preset" onclick="loadPreset(5)">W-Shape</div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="btn btn-step" id="btnStep" onclick="step()">Step</button>
+        <button class="btn btn-play" id="btnPlay" onclick="play()">Play</button>
+        <button class="btn btn-pause" id="btnPause" onclick="pause()" disabled>Pause</button>
+        <button class="btn btn-reset" onclick="resetAnimation()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <input type="range" id="speedSlider" min="1" max="10" value="5">
+            <span id="speedLabel" style="color:#94a3b8;font-size:0.82rem;">5x</span>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#475569;"></div>
+            <span>Bar</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:rgba(56,189,248,0.5);border:1px solid #38bdf8;"></div>
+            <span>Water</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#f472b6;"></div>
+            <span>Left Pointer</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#a78bfa;"></div>
+            <span>Right Pointer</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#fb923c;border-radius:50%;"></div>
+            <span>leftMax</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-swatch" style="background:#34d399;border-radius:50%;"></div>
+            <span>rightMax</span>
+        </div>
+    </div>
+
+    <!-- Info Bar -->
+    <div class="info-bar">
+        <div class="info-item">
+            <span class="info-label">Water:</span>
+            <span class="info-value water" id="infoWater">0</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Left:</span>
+            <span class="info-value left-ptr" id="infoLeft">0</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Right:</span>
+            <span class="info-value right-ptr" id="infoRight">-</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">leftMax:</span>
+            <span class="info-value left-max" id="infoLeftMax">0</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">rightMax:</span>
+            <span class="info-value right-max" id="infoRightMax">0</span>
+        </div>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas-wrapper">
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <!-- Result -->
+    <div class="result" id="resultBox">
+        <span class="label">Total Water Trapped: </span>
+        <span class="value" id="resultValue">0</span>
+        <span class="label"> units</span>
+    </div>
+
+    <!-- Log -->
+    <div class="log-section" id="logSection">
+        <div class="log-entry">Ready. Press Step or Play to begin.</div>
+    </div>
+</div>
+
+<script>
+    // ============================
+    // State
+    // ============================
+    const presets = [
+        { name: 'Example 1', data: [0,1,0,2,1,0,1,3,2,1,2,1] },
+        { name: 'Example 2', data: [4,2,0,3,2,5] },
+        { name: 'V-Shape',   data: [5,1,0,1,5] },
+        { name: 'Complex',   data: [3,1,2,4,0,1,3,2,1,0,2,4,1] },
+        { name: 'Staircase', data: [0,1,2,3,4,3,2,1,0] },
+        { name: 'W-Shape',   data: [3,0,2,0,4] },
+    ];
+
+    let height = [...presets[0].data];
+    let left, right, leftMax, rightMax, water;
+    let waterAt = [];         // water[i] = water accumulated at position i so far
+    let finished = false;
+    let animTimer = null;
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // ============================
+    // Init / Reset
+    // ============================
+    function init() {
+        left = 0;
+        right = height.length - 1;
+        leftMax = 0;
+        rightMax = 0;
+        water = 0;
+        waterAt = new Array(height.length).fill(0);
+        finished = false;
+        pause();
+        updateInfo();
+        clearLog();
+        addLog('Ready. Press Step or Play to begin.');
+        document.getElementById('resultBox').classList.remove('show');
+        document.getElementById('btnStep').disabled = false;
+        document.getElementById('btnPlay').disabled = false;
+        draw();
+    }
+
+    function resetAnimation() {
+        init();
+    }
+
+    // ============================
+    // Presets
+    // ============================
+    function loadPreset(idx) {
+        document.querySelectorAll('.preset').forEach((p, i) => {
+            p.classList.toggle('active', i === idx);
+        });
+        height = [...presets[idx].data];
+        document.getElementById('arrInput').value = height.join(',');
+        init();
+    }
+
+    function applyInput() {
+        const val = document.getElementById('arrInput').value.trim();
+        const parsed = val.split(/[\s,]+/).map(Number).filter(n => !isNaN(n) && n >= 0);
+        if (parsed.length < 1) return;
+        height = parsed;
+        document.querySelectorAll('.preset').forEach(p => p.classList.remove('active'));
+        init();
+    }
+
+    // ============================
+    // Algorithm Step
+    // ============================
+    function step() {
+        if (finished) return;
+
+        if (left >= right) {
+            finish();
+            return;
+        }
+
+        if (height[left] < height[right]) {
+            if (height[left] >= leftMax) {
+                leftMax = height[left];
+                addLog(`left=${left}: h[${left}]=${height[left]} >= leftMax -> leftMax=${leftMax}`, 'update-max');
+            } else {
+                const w = leftMax - height[left];
+                water += w;
+                waterAt[left] = w;
+                addLog(`left=${left}: h[${left}]=${height[left]} < leftMax=${leftMax} -> water += ${w} (total=${water})`, 'water-add');
+            }
+            left++;
+        } else {
+            if (height[right] >= rightMax) {
+                rightMax = height[right];
+                addLog(`right=${right}: h[${right}]=${height[right]} >= rightMax -> rightMax=${rightMax}`, 'update-max');
+            } else {
+                const w = rightMax - height[right];
+                water += w;
+                waterAt[right] = w;
+                addLog(`right=${right}: h[${right}]=${height[right]} < rightMax=${rightMax} -> water += ${w} (total=${water})`, 'water-add');
+            }
+            right--;
+        }
+
+        updateInfo();
+        draw();
+
+        if (left >= right) {
+            finish();
+        }
+    }
+
+    function finish() {
+        finished = true;
+        pause();
+        document.getElementById('btnStep').disabled = true;
+        document.getElementById('btnPlay').disabled = true;
+        addLog(`Done! Total water trapped = ${water}`, 'done');
+        document.getElementById('resultValue').textContent = water;
+        document.getElementById('resultBox').classList.add('show');
+        draw();
+    }
+
+    // ============================
+    // Play / Pause
+    // ============================
+    function play() {
+        if (finished) return;
+        document.getElementById('btnPlay').disabled = true;
+        document.getElementById('btnPause').disabled = false;
+        const speed = parseInt(document.getElementById('speedSlider').value);
+        const delay = Math.max(50, 1000 - speed * 90);
+        animTimer = setInterval(() => {
+            if (finished) { pause(); return; }
+            step();
+        }, delay);
+    }
+
+    function pause() {
+        if (animTimer) { clearInterval(animTimer); animTimer = null; }
+        document.getElementById('btnPlay').disabled = finished;
+        document.getElementById('btnPause').disabled = true;
+    }
+
+    document.getElementById('speedSlider').addEventListener('input', function() {
+        document.getElementById('speedLabel').textContent = this.value + 'x';
+        if (animTimer) { pause(); play(); }
+    });
+
+    // ============================
+    // Info & Log
+    // ============================
+    function updateInfo() {
+        document.getElementById('infoWater').textContent = water;
+        document.getElementById('infoLeft').textContent = left;
+        document.getElementById('infoRight').textContent = right;
+        document.getElementById('infoLeftMax').textContent = leftMax;
+        document.getElementById('infoRightMax').textContent = rightMax;
+    }
+
+    function clearLog() {
+        document.getElementById('logSection').innerHTML = '';
+    }
+
+    function addLog(msg, cls = '') {
+        const el = document.createElement('div');
+        el.className = 'log-entry' + (cls ? ' ' + cls : '');
+        el.textContent = msg;
+        const logSection = document.getElementById('logSection');
+        logSection.appendChild(el);
+        logSection.scrollTop = logSection.scrollHeight;
+    }
+
+    // ============================
+    // Drawing
+    // ============================
+    function draw() {
+        const n = height.length;
+        const maxH = Math.max(...height, 1);
+
+        // Sizing
+        const barW = Math.max(20, Math.min(60, Math.floor(800 / n)));
+        const gap = Math.max(2, Math.floor(barW * 0.15));
+        const actualBarW = barW - gap;
+        const canvasW = n * barW + 60;
+        const canvasH = Math.min(420, Math.max(200, maxH * 30 + 80));
+        const bottomPad = 40;
+        const topPad = 30;
+        const drawH = canvasH - bottomPad - topPad;
+
+        canvas.width = canvasW;
+        canvas.height = canvasH;
+
+        ctx.clearRect(0, 0, canvasW, canvasH);
+
+        const scale = drawH / maxH;
+        const baseY = canvasH - bottomPad;
+
+        // Draw bars and water
+        for (let i = 0; i < n; i++) {
+            const x = 30 + i * barW;
+            const barHeight = height[i] * scale;
+
+            // Water
+            if (waterAt[i] > 0) {
+                const waterH = waterAt[i] * scale;
+                const waterY = baseY - barHeight - waterH;
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
+                ctx.fillRect(x, waterY, actualBarW, waterH);
+                ctx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, waterY, actualBarW, waterH);
+            }
+
+            // Bar
+            let barColor = '#475569';
+            if (!finished && i === left && i === right) {
+                barColor = '#c084fc';
+            } else if (!finished && i === left) {
+                barColor = '#f472b6';
+            } else if (!finished && i === right) {
+                barColor = '#a78bfa';
+            }
+
+            if (barHeight > 0) {
+                ctx.fillStyle = barColor;
+                ctx.fillRect(x, baseY - barHeight, actualBarW, barHeight);
+
+                // Bar border
+                ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, baseY - barHeight, actualBarW, barHeight);
+            }
+
+            // Height label
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '11px Segoe UI, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(height[i], x + actualBarW / 2, baseY - barHeight - 5);
+
+            // Index label
+            ctx.fillStyle = '#64748b';
+            ctx.font = '10px Segoe UI, sans-serif';
+            ctx.fillText(i, x + actualBarW / 2, baseY + 14);
+        }
+
+        // Draw leftMax line
+        if (!finished && leftMax > 0) {
+            const y = baseY - leftMax * scale;
+            ctx.strokeStyle = '#fb923c';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(30, y);
+            ctx.lineTo(30 + left * barW + actualBarW, y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#fb923c';
+            ctx.font = 'bold 10px Segoe UI, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('L=' + leftMax, 4, y + 4);
+        }
+
+        // Draw rightMax line
+        if (!finished && rightMax > 0) {
+            const y = baseY - rightMax * scale;
+            ctx.strokeStyle = '#34d399';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(30 + right * barW, y);
+            ctx.lineTo(30 + (n - 1) * barW + actualBarW, y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#34d399';
+            ctx.font = 'bold 10px Segoe UI, sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText('R=' + rightMax, canvasW - 4, y + 4);
+        }
+
+        // Draw pointer labels
+        if (!finished) {
+            const lx = 30 + left * barW + actualBarW / 2;
+            ctx.fillStyle = '#f472b6';
+            ctx.font = 'bold 11px Segoe UI, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('\u25B2 L', lx, baseY + 28);
+
+            const rx = 30 + right * barW + actualBarW / 2;
+            ctx.fillStyle = '#a78bfa';
+            ctx.fillText('\u25B2 R', rx, baseY + 28);
+        }
+
+        // Draw base line
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(25, baseY);
+        ctx.lineTo(canvasW - 5, baseY);
+        ctx.stroke();
+    }
+
+    // ============================
+    // Init on load
+    // ============================
+    document.getElementById('arrInput').value = presets[0].data.join(',');
+    init();
+</script>
+
+</body>
+</html>

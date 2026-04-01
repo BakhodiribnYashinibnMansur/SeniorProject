@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0040. Combination Sum II — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        #candidatesInput { width: 220px; }
+        #targetInput { width: 60px; }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        button:hover { transform: translateY(-1px); }
+
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: #22c55e; color: white; }
+        .btn-success:hover { background: #16a34a; }
+        .btn-warning { background: #f59e0b; color: #1e293b; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-secondary { background: #475569; color: white; }
+        .btn-secondary:hover { background: #64748b; }
+
+        /* PRESETS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 5px 12px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #94a3b8;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover { background: #334155; color: #e2e8f0; border-color: #3b82f6; }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        /* ARRAY DISPLAY */
+        .array-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .array-display {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .array-cell {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #334155;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .array-cell.active {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+        }
+
+        .array-cell.chosen {
+            background: #22c55e;
+            color: white;
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.5);
+        }
+
+        .array-cell.skipped {
+            background: #ef4444;
+            color: white;
+            opacity: 0.6;
+        }
+
+        .array-cell.pruned {
+            background: #f59e0b;
+            color: #1e293b;
+            opacity: 0.6;
+        }
+
+        .array-cell .index {
+            position: absolute;
+            top: -16px;
+            font-size: 0.65rem;
+            color: #64748b;
+        }
+
+        /* STATUS */
+        .status-bar {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .status-item {
+            padding: 8px 16px;
+            background: #0f172a;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .status-item .label { color: #64748b; }
+        .status-item .value { color: #60a5fa; font-weight: 700; }
+
+        /* TREE VISUALIZATION */
+        .tree-section {
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .tree-canvas {
+            min-height: 300px;
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* CURRENT PATH & RESULTS */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 700px) {
+            .info-grid { grid-template-columns: 1fr; }
+        }
+
+        .info-panel {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #334155;
+        }
+
+        .info-panel h3 {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .current-path {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            min-height: 36px;
+            align-items: center;
+        }
+
+        .path-item {
+            padding: 4px 10px;
+            background: #3b82f6;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .result-list {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            min-height: 36px;
+            align-items: center;
+        }
+
+        .result-combo {
+            padding: 4px 10px;
+            background: #22c55e;
+            color: white;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .result-combo.highlight {
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.6);
+            animation: pulse 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* LOG */
+        .log-section {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #334155;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-section h3 {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .log-entry {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            padding: 2px 0;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .log-entry.found { color: #22c55e; font-weight: 600; }
+        .log-entry.skip { color: #ef4444; }
+        .log-entry.prune { color: #f59e0b; }
+        .log-entry.choose { color: #60a5fa; }
+        .log-entry.backtrack { color: #a78bfa; }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .step-counter {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0040. Combination Sum II</h1>
+        <p>Backtracking with Duplicate Pruning — Interactive Animation</p>
+    </div>
+
+    <!-- Input -->
+    <div class="input-section">
+        <label>Candidates:</label>
+        <input type="text" id="candidatesInput" value="10,1,2,7,6,1,5" placeholder="e.g., 10,1,2,7,6,1,5">
+        <label>Target:</label>
+        <input type="text" id="targetInput" value="8" placeholder="8">
+        <button class="btn-primary" onclick="loadInput()">Load</button>
+    </div>
+
+    <!-- Presets -->
+    <div class="presets">
+        <button class="preset-btn" onclick="loadPreset([10,1,2,7,6,1,5], 8)">Example 1: [10,1,2,7,6,1,5] t=8</button>
+        <button class="preset-btn" onclick="loadPreset([2,5,2,1,2], 5)">Example 2: [2,5,2,1,2] t=5</button>
+        <button class="preset-btn" onclick="loadPreset([1,1,1,1,1], 3)">[1,1,1,1,1] t=3</button>
+        <button class="preset-btn" onclick="loadPreset([3,1,3,5,1,1], 8)">[3,1,3,5,1,1] t=8</button>
+        <button class="preset-btn" onclick="loadPreset([1,2,3], 6)">[1,2,3] t=6</button>
+    </div>
+
+    <div class="container">
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn-success" id="stepBtn" onclick="step()">Step</button>
+            <button class="btn-primary" id="playBtn" onclick="play()">Play</button>
+            <button class="btn-warning" id="pauseBtn" onclick="pause()" style="display:none;">Pause</button>
+            <button class="btn-danger" onclick="reset()">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <span id="speedLabel" style="color:#94a3b8;font-size:0.85rem;">5x</span>
+            </div>
+        </div>
+
+        <!-- Sorted Array -->
+        <div class="array-section">
+            <div class="section-title">Sorted Candidates</div>
+            <div class="array-display" id="arrayDisplay"></div>
+        </div>
+
+        <!-- Status -->
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="label">Remaining: </span>
+                <span class="value" id="remainingVal">-</span>
+            </div>
+            <div class="status-item">
+                <span class="label">Start Index: </span>
+                <span class="value" id="startVal">-</span>
+            </div>
+            <div class="status-item">
+                <span class="label">Current Index: </span>
+                <span class="value" id="currentIdxVal">-</span>
+            </div>
+            <div class="status-item">
+                <span class="label">Depth: </span>
+                <span class="value" id="depthVal">-</span>
+            </div>
+        </div>
+
+        <!-- Tree Canvas -->
+        <div class="tree-section">
+            <div class="section-title">Backtracking Tree</div>
+            <canvas id="treeCanvas" width="1150" height="350"></canvas>
+        </div>
+
+        <!-- Current Path & Results -->
+        <div class="info-grid">
+            <div class="info-panel">
+                <h3>Current Path</h3>
+                <div class="current-path" id="currentPath"></div>
+            </div>
+            <div class="info-panel">
+                <h3>Found Combinations</h3>
+                <div class="result-list" id="resultList"></div>
+            </div>
+        </div>
+
+        <!-- Log -->
+        <div class="log-section">
+            <h3>Execution Log</h3>
+            <div id="logContainer"></div>
+        </div>
+
+        <div class="step-counter" id="stepCounter">Step 0</div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div> Exploring</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div> Chosen / Found</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div> Duplicate Skipped</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div> Pruned (exceeds target)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div> Backtrack</div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // State
+        // ============================================================
+        let candidates = [];
+        let target = 0;
+        let steps = [];
+        let stepIndex = 0;
+        let playing = false;
+        let playTimer = null;
+        let treeNodes = [];
+        let treeNodeId = 0;
+        let foundResults = [];
+
+        // ============================================================
+        // Precompute all steps
+        // ============================================================
+        function precomputeSteps(cands, tgt) {
+            steps = [];
+            treeNodes = [];
+            treeNodeId = 0;
+            foundResults = [];
+
+            const sorted = [...cands].sort((a, b) => a - b);
+            candidates = sorted;
+            target = tgt;
+
+            const current = [];
+
+            // Root node
+            const rootId = treeNodeId++;
+            treeNodes.push({
+                id: rootId, parentId: -1, label: `T=${tgt}`,
+                status: 'root', children: [], value: null
+            });
+
+            steps.push({
+                type: 'init',
+                msg: `Sorted candidates: [${sorted.join(', ')}], target = ${tgt}`,
+                arrayHighlight: {},
+                current: [],
+                remaining: tgt,
+                start: 0,
+                idx: -1,
+                depth: 0,
+                treeNodeId: rootId,
+                results: []
+            });
+
+            function backtrack(start, remaining, depth, parentTreeId) {
+                if (remaining === 0) {
+                    const combo = [...current];
+                    foundResults.push(combo);
+
+                    const nodeId = treeNodeId++;
+                    treeNodes.push({
+                        id: nodeId, parentId: parentTreeId,
+                        label: `FOUND`, status: 'found', children: [], value: null
+                    });
+                    treeNodes[parentTreeId].children.push(nodeId);
+
+                    steps.push({
+                        type: 'found',
+                        msg: `FOUND combination: [${combo.join(', ')}]`,
+                        arrayHighlight: buildHighlight(current, sorted),
+                        current: [...current],
+                        remaining: 0,
+                        start,
+                        idx: -1,
+                        depth,
+                        treeNodeId: nodeId,
+                        results: foundResults.map(r => [...r])
+                    });
+                    return;
+                }
+
+                for (let i = start; i < sorted.length; i++) {
+                    if (sorted[i] > remaining) {
+                        const nodeId = treeNodeId++;
+                        treeNodes.push({
+                            id: nodeId, parentId: parentTreeId,
+                            label: `${sorted[i]}>R`, status: 'pruned', children: [], value: sorted[i]
+                        });
+                        treeNodes[parentTreeId].children.push(nodeId);
+
+                        const hl = {};
+                        for (let k = i; k < sorted.length; k++) hl[k] = 'pruned';
+                        addChosenHighlights(hl, current, sorted);
+
+                        steps.push({
+                            type: 'prune',
+                            msg: `${indent(depth)}Prune: candidates[${i}]=${sorted[i]} > remaining=${remaining} — break`,
+                            arrayHighlight: hl,
+                            current: [...current],
+                            remaining,
+                            start,
+                            idx: i,
+                            depth,
+                            treeNodeId: nodeId,
+                            results: foundResults.map(r => [...r])
+                        });
+                        break;
+                    }
+
+                    if (i > start && sorted[i] === sorted[i - 1]) {
+                        const nodeId = treeNodeId++;
+                        treeNodes.push({
+                            id: nodeId, parentId: parentTreeId,
+                            label: `${sorted[i]}=dup`, status: 'skipped', children: [], value: sorted[i]
+                        });
+                        treeNodes[parentTreeId].children.push(nodeId);
+
+                        const hl = { [i]: 'skipped' };
+                        addChosenHighlights(hl, current, sorted);
+
+                        steps.push({
+                            type: 'skip',
+                            msg: `${indent(depth)}Skip: candidates[${i}]=${sorted[i]} == candidates[${i-1}]=${sorted[i-1]} (duplicate)`,
+                            arrayHighlight: hl,
+                            current: [...current],
+                            remaining,
+                            start,
+                            idx: i,
+                            depth,
+                            treeNodeId: nodeId,
+                            results: foundResults.map(r => [...r])
+                        });
+                        continue;
+                    }
+
+                    // Choose
+                    const nodeId = treeNodeId++;
+                    treeNodes.push({
+                        id: nodeId, parentId: parentTreeId,
+                        label: `${sorted[i]}`, status: 'chosen', children: [], value: sorted[i]
+                    });
+                    treeNodes[parentTreeId].children.push(nodeId);
+
+                    current.push(sorted[i]);
+
+                    const hl = { [i]: 'active' };
+                    addChosenHighlights(hl, current, sorted);
+
+                    steps.push({
+                        type: 'choose',
+                        msg: `${indent(depth)}Choose: candidates[${i}]=${sorted[i]}, path=[${current.join(', ')}], remaining=${remaining - sorted[i]}`,
+                        arrayHighlight: hl,
+                        current: [...current],
+                        remaining: remaining - sorted[i],
+                        start,
+                        idx: i,
+                        depth,
+                        treeNodeId: nodeId,
+                        results: foundResults.map(r => [...r])
+                    });
+
+                    backtrack(i + 1, remaining - sorted[i], depth + 1, nodeId);
+
+                    current.pop();
+
+                    const hlBack = {};
+                    addChosenHighlights(hlBack, current, sorted);
+
+                    steps.push({
+                        type: 'backtrack',
+                        msg: `${indent(depth)}Backtrack: remove ${sorted[i]}, path=[${current.join(', ')}], remaining=${remaining}`,
+                        arrayHighlight: hlBack,
+                        current: [...current],
+                        remaining,
+                        start,
+                        idx: i,
+                        depth,
+                        treeNodeId: parentTreeId,
+                        results: foundResults.map(r => [...r])
+                    });
+                }
+            }
+
+            backtrack(0, tgt, 0, rootId);
+
+            steps.push({
+                type: 'done',
+                msg: `Done! Found ${foundResults.length} combination(s).`,
+                arrayHighlight: {},
+                current: [],
+                remaining: tgt,
+                start: 0,
+                idx: -1,
+                depth: 0,
+                treeNodeId: rootId,
+                results: foundResults.map(r => [...r])
+            });
+        }
+
+        function indent(d) {
+            return '  '.repeat(d);
+        }
+
+        function buildHighlight(current, sorted) {
+            const hl = {};
+            const used = new Array(sorted.length).fill(false);
+            for (const val of current) {
+                for (let k = 0; k < sorted.length; k++) {
+                    if (!used[k] && sorted[k] === val) {
+                        hl[k] = 'chosen';
+                        used[k] = true;
+                        break;
+                    }
+                }
+            }
+            return hl;
+        }
+
+        function addChosenHighlights(hl, current, sorted) {
+            const used = new Array(sorted.length).fill(false);
+            // Mark already used indices
+            for (const k in hl) used[k] = true;
+            for (const val of current) {
+                for (let k = 0; k < sorted.length; k++) {
+                    if (!used[k] && sorted[k] === val) {
+                        if (!hl[k]) hl[k] = 'chosen';
+                        used[k] = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // ============================================================
+        // Rendering
+        // ============================================================
+        function renderArray(highlight) {
+            const container = document.getElementById('arrayDisplay');
+            container.innerHTML = '';
+            for (let i = 0; i < candidates.length; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'array-cell';
+                if (highlight[i]) cell.classList.add(highlight[i]);
+                cell.innerHTML = `<span class="index">${i}</span>${candidates[i]}`;
+                container.appendChild(cell);
+            }
+        }
+
+        function renderStatus(s) {
+            document.getElementById('remainingVal').textContent = s.remaining;
+            document.getElementById('startVal').textContent = s.start;
+            document.getElementById('currentIdxVal').textContent = s.idx >= 0 ? s.idx : '-';
+            document.getElementById('depthVal').textContent = s.depth;
+        }
+
+        function renderCurrentPath(current) {
+            const container = document.getElementById('currentPath');
+            container.innerHTML = '';
+            if (current.length === 0) {
+                container.innerHTML = '<span style="color:#64748b;font-size:0.85rem">[ empty ]</span>';
+                return;
+            }
+            for (const val of current) {
+                const item = document.createElement('span');
+                item.className = 'path-item';
+                item.textContent = val;
+                container.appendChild(item);
+            }
+        }
+
+        function renderResults(results) {
+            const container = document.getElementById('resultList');
+            container.innerHTML = '';
+            if (results.length === 0) {
+                container.innerHTML = '<span style="color:#64748b;font-size:0.85rem">none yet</span>';
+                return;
+            }
+            for (let i = 0; i < results.length; i++) {
+                const item = document.createElement('span');
+                item.className = 'result-combo';
+                if (i === results.length - 1 && stepIndex > 0 && steps[stepIndex - 1] && steps[stepIndex - 1].type === 'found') {
+                    item.classList.add('highlight');
+                }
+                item.textContent = `[${results[i].join(', ')}]`;
+                container.appendChild(item);
+            }
+        }
+
+        function addLog(msg, type) {
+            const container = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + type;
+            entry.textContent = msg;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // ============================================================
+        // Tree Drawing
+        // ============================================================
+        function drawTree(activeNodeId) {
+            const canvas = document.getElementById('treeCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Compute layout
+            const layout = computeTreeLayout();
+            if (!layout) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+
+            // Resize canvas
+            const maxX = Math.max(...Object.values(layout).map(l => l.x)) + 60;
+            const maxY = Math.max(...Object.values(layout).map(l => l.y)) + 40;
+            canvas.width = Math.max(1150, maxX);
+            canvas.height = Math.max(200, maxY);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Determine which nodes have been visited
+            const visitedNodes = new Set();
+            for (let i = 0; i < stepIndex; i++) {
+                visitedNodes.add(steps[i].treeNodeId);
+            }
+
+            // Draw edges
+            for (const node of treeNodes) {
+                if (node.parentId >= 0 && visitedNodes.has(node.id)) {
+                    const parentPos = layout[node.parentId];
+                    const childPos = layout[node.id];
+                    if (parentPos && childPos) {
+                        ctx.beginPath();
+                        ctx.moveTo(parentPos.x, parentPos.y + 14);
+                        ctx.lineTo(childPos.x, childPos.y - 14);
+                        ctx.strokeStyle = node.id === activeNodeId ? '#60a5fa' : '#334155';
+                        ctx.lineWidth = node.id === activeNodeId ? 2 : 1;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Draw nodes
+            for (const node of treeNodes) {
+                if (!visitedNodes.has(node.id)) continue;
+                const pos = layout[node.id];
+                if (!pos) continue;
+
+                const isActive = node.id === activeNodeId;
+                let fillColor = '#334155';
+                let textColor = '#e2e8f0';
+
+                if (node.status === 'found') { fillColor = '#22c55e'; textColor = '#fff'; }
+                else if (node.status === 'skipped') { fillColor = '#ef4444'; textColor = '#fff'; }
+                else if (node.status === 'pruned') { fillColor = '#f59e0b'; textColor = '#1e293b'; }
+                else if (node.status === 'chosen') { fillColor = '#3b82f6'; textColor = '#fff'; }
+                else if (node.status === 'root') { fillColor = '#475569'; textColor = '#e2e8f0'; }
+
+                if (isActive) {
+                    ctx.shadowColor = fillColor;
+                    ctx.shadowBlur = 12;
+                }
+
+                // Draw rounded rect
+                const w = Math.max(ctx.measureText(node.label).width + 16, 32);
+                const h = 26;
+                const r = 6;
+                const x = pos.x - w / 2;
+                const y = pos.y - h / 2;
+
+                ctx.beginPath();
+                ctx.moveTo(x + r, y);
+                ctx.lineTo(x + w - r, y);
+                ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+                ctx.lineTo(x + w, y + h - r);
+                ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+                ctx.lineTo(x + r, y + h);
+                ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+                ctx.lineTo(x, y + r);
+                ctx.quadraticCurveTo(x, y, x + r, y);
+                ctx.closePath();
+
+                ctx.fillStyle = fillColor;
+                ctx.fill();
+
+                if (isActive) {
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+
+                ctx.shadowBlur = 0;
+
+                ctx.fillStyle = textColor;
+                ctx.font = '11px Segoe UI, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(node.label, pos.x, pos.y);
+            }
+        }
+
+        function computeTreeLayout() {
+            if (treeNodes.length === 0) return null;
+
+            const layout = {};
+            const leafCounts = {};
+            const depths = {};
+
+            // Compute depths
+            function setDepth(id, d) {
+                depths[id] = d;
+                const node = treeNodes[id];
+                for (const child of node.children) {
+                    setDepth(child, d + 1);
+                }
+            }
+            setDepth(0, 0);
+
+            // Count leaves for sizing
+            function countLeaves(id) {
+                const node = treeNodes[id];
+                if (node.children.length === 0) {
+                    leafCounts[id] = 1;
+                    return 1;
+                }
+                let count = 0;
+                for (const child of node.children) {
+                    count += countLeaves(child);
+                }
+                leafCounts[id] = count;
+                return count;
+            }
+            countLeaves(0);
+
+            // Position nodes
+            let nextLeafX = 30;
+            const spacingX = 52;
+            const spacingY = 55;
+
+            function position(id) {
+                const node = treeNodes[id];
+                const y = depths[id] * spacingY + 30;
+
+                if (node.children.length === 0) {
+                    layout[id] = { x: nextLeafX, y };
+                    nextLeafX += spacingX;
+                    return;
+                }
+
+                for (const child of node.children) {
+                    position(child);
+                }
+
+                // Center parent over children
+                const firstChild = layout[node.children[0]];
+                const lastChild = layout[node.children[node.children.length - 1]];
+                layout[id] = { x: (firstChild.x + lastChild.x) / 2, y };
+            }
+
+            position(0);
+            return layout;
+        }
+
+        // ============================================================
+        // Controls
+        // ============================================================
+        function step() {
+            if (stepIndex >= steps.length) return;
+
+            const s = steps[stepIndex];
+            renderArray(s.arrayHighlight);
+            renderStatus(s);
+            renderCurrentPath(s.current);
+            renderResults(s.results);
+            addLog(s.msg, s.type);
+            drawTree(s.treeNodeId);
+
+            stepIndex++;
+            document.getElementById('stepCounter').textContent = `Step ${stepIndex} / ${steps.length}`;
+
+            if (stepIndex >= steps.length) {
+                pause();
+            }
+        }
+
+        function play() {
+            if (stepIndex >= steps.length) return;
+            playing = true;
+            document.getElementById('playBtn').style.display = 'none';
+            document.getElementById('pauseBtn').style.display = '';
+            scheduleNext();
+        }
+
+        function scheduleNext() {
+            if (!playing) return;
+            const speed = parseInt(document.getElementById('speedSlider').value);
+            const delay = Math.max(100, 1200 - speed * 110);
+            playTimer = setTimeout(() => {
+                step();
+                if (stepIndex < steps.length && playing) {
+                    scheduleNext();
+                } else {
+                    pause();
+                }
+            }, delay);
+        }
+
+        function pause() {
+            playing = false;
+            clearTimeout(playTimer);
+            document.getElementById('playBtn').style.display = '';
+            document.getElementById('pauseBtn').style.display = 'none';
+        }
+
+        function reset() {
+            pause();
+            stepIndex = 0;
+            document.getElementById('logContainer').innerHTML = '';
+            document.getElementById('stepCounter').textContent = 'Step 0';
+            renderArray({});
+            renderStatus({ remaining: target, start: 0, idx: -1, depth: 0 });
+            renderCurrentPath([]);
+            renderResults([]);
+
+            const canvas = document.getElementById('treeCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function loadInput() {
+            const candsStr = document.getElementById('candidatesInput').value.trim();
+            const tgtStr = document.getElementById('targetInput').value.trim();
+            const cands = candsStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+            const tgt = parseInt(tgtStr);
+            if (cands.length === 0 || isNaN(tgt) || tgt <= 0) {
+                alert('Please enter valid candidates and target.');
+                return;
+            }
+            precomputeSteps(cands, tgt);
+            reset();
+        }
+
+        function loadPreset(cands, tgt) {
+            document.getElementById('candidatesInput').value = cands.join(',');
+            document.getElementById('targetInput').value = tgt;
+            precomputeSteps(cands, tgt);
+            reset();
+        }
+
+        // Speed label
+        document.getElementById('speedSlider').addEventListener('input', function() {
+            document.getElementById('speedLabel').textContent = this.value + 'x';
+        });
+
+        // ============================================================
+        // Init
+        // ============================================================
+        precomputeSteps([10, 1, 2, 7, 6, 1, 5], 8);
+        reset();
+    </script>
+</body>
+</html>

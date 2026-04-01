@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0043. Multiply Strings — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 140px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        /* BUTTONS */
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        button:hover { transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
+
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+
+        .btn-warning { background: #f59e0b; color: #1e293b; }
+        .btn-warning:hover { background: #d97706; }
+
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+
+        .btn-secondary { background: #475569; color: white; }
+        .btn-secondary:hover { background: #64748b; }
+
+        /* PRESETS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            padding: 6px 12px;
+            background: #334155;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover { background: #475569; border-color: #64748b; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        /* INFO BAR */
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: #0f172a;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .info-item { color: #94a3b8; }
+        .info-item span { color: #60a5fa; font-weight: 600; }
+
+        /* MULTIPLICATION GRID */
+        .grid-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+
+        .grid-table {
+            border-collapse: collapse;
+        }
+
+        .grid-table td, .grid-table th {
+            width: 48px;
+            height: 48px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            font-weight: 600;
+            border: 1px solid #334155;
+            position: relative;
+        }
+
+        .grid-table th {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .grid-table td {
+            background: #1e293b;
+            color: #64748b;
+        }
+
+        .grid-table td.active {
+            background: #1e3a5f;
+            color: #60a5fa;
+            border-color: #3b82f6;
+            box-shadow: inset 0 0 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .grid-table td.computed {
+            background: #1a2e1a;
+            color: #4ade80;
+        }
+
+        .grid-table td.carry-cell {
+            background: #3b1f1f;
+            color: #fbbf24;
+        }
+
+        .grid-table td.highlight-num1 {
+            background: #3b1f5f;
+            color: #c084fc;
+        }
+
+        .grid-table td.highlight-num2 {
+            background: #1f3b5f;
+            color: #60a5fa;
+        }
+
+        .carry-badge {
+            position: absolute;
+            top: 2px;
+            right: 3px;
+            font-size: 0.55rem;
+            color: #fbbf24;
+            background: #78350f;
+            padding: 1px 3px;
+            border-radius: 3px;
+        }
+
+        /* RESULT ARRAY */
+        .result-section {
+            margin-bottom: 20px;
+        }
+
+        .result-section h3 {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .result-array {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .result-cell {
+            width: 44px;
+            height: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+
+        .result-cell .digit {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+
+        .result-cell .index {
+            font-size: 0.6rem;
+            color: #64748b;
+        }
+
+        .result-cell.active-p2 {
+            border-color: #3b82f6;
+            background: #1e3a5f;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+        }
+
+        .result-cell.active-p1 {
+            border-color: #f59e0b;
+            background: #422006;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+        }
+
+        .result-cell.final {
+            border-color: #10b981;
+            background: #064e3b;
+        }
+
+        .result-cell.leading-zero {
+            opacity: 0.3;
+        }
+
+        /* FINAL RESULT */
+        .final-result {
+            text-align: center;
+            padding: 16px;
+            background: #0f172a;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #10b981;
+            border: 2px solid #065f46;
+            display: none;
+        }
+
+        .final-result.visible { display: block; }
+
+        /* LOG */
+        .log-section {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-section h3 {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .log-entry {
+            font-family: 'Courier New', monospace;
+            font-size: 0.78rem;
+            padding: 3px 0;
+            border-bottom: 1px solid #1e293b;
+            color: #94a3b8;
+        }
+
+        .log-entry .step-num { color: #60a5fa; font-weight: 600; }
+        .log-entry .multiply-op { color: #c084fc; }
+        .log-entry .carry-op { color: #fbbf24; }
+        .log-entry .result-op { color: #4ade80; }
+
+        /* STEP DESCRIPTION */
+        .step-desc {
+            text-align: center;
+            padding: 12px;
+            background: #0f172a;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1e293b; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0043. Multiply Strings</h1>
+        <p>Grade School Multiplication — digit by digit with carry propagation</p>
+    </div>
+
+    <div class="container">
+        <!-- Input Section -->
+        <div class="input-section">
+            <label>num1:</label>
+            <input type="text" id="num1Input" value="123" placeholder="e.g. 123">
+            <label>num2:</label>
+            <input type="text" id="num2Input" value="456" placeholder="e.g. 456">
+            <button class="btn-primary" onclick="initialize()">Set</button>
+        </div>
+
+        <!-- Presets -->
+        <div class="presets">
+            <button class="preset-btn" onclick="loadPreset('2','3')">2 x 3</button>
+            <button class="preset-btn" onclick="loadPreset('12','34')">12 x 34</button>
+            <button class="preset-btn" onclick="loadPreset('123','456')">123 x 456</button>
+            <button class="preset-btn" onclick="loadPreset('99','99')">99 x 99</button>
+            <button class="preset-btn" onclick="loadPreset('999','999')">999 x 999</button>
+            <button class="preset-btn" onclick="loadPreset('100','100')">100 x 100</button>
+            <button class="preset-btn" onclick="loadPreset('0','12345')">0 x 12345</button>
+            <button class="preset-btn" onclick="loadPreset('789','56')">789 x 56</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn-primary" id="stepBtn" onclick="step()">Step</button>
+            <button class="btn-success" id="playBtn" onclick="play()">Play</button>
+            <button class="btn-warning" id="pauseBtn" onclick="pause()" style="display:none">Pause</button>
+            <button class="btn-danger" onclick="resetAnimation()">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <span id="speedLabel">5x</span>
+            </div>
+        </div>
+
+        <!-- Info Bar -->
+        <div class="info-bar">
+            <div class="info-item">Step: <span id="stepCounter">0</span> / <span id="totalSteps">0</span></div>
+            <div class="info-item">Current: <span id="currentOp">Ready</span></div>
+            <div class="info-item">Complexity: <span>O(m*n)</span></div>
+        </div>
+
+        <!-- Step Description -->
+        <div class="step-desc" id="stepDesc">Press "Step" or "Play" to begin the multiplication.</div>
+
+        <!-- Multiplication Grid -->
+        <div class="grid-container" id="gridContainer"></div>
+
+        <!-- Result Array -->
+        <div class="result-section">
+            <h3>Result Array</h3>
+            <div class="result-array" id="resultArray"></div>
+        </div>
+
+        <!-- Final Result -->
+        <div class="final-result" id="finalResult"></div>
+
+        <!-- Log -->
+        <div class="log-section">
+            <h3>Execution Log</h3>
+            <div id="logContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let num1 = "", num2 = "";
+        let m = 0, n = 0;
+        let result = [];
+        let steps = [];
+        let currentStep = 0;
+        let isPlaying = false;
+        let playTimer = null;
+
+        const speedSlider = document.getElementById('speedSlider');
+        speedSlider.addEventListener('input', () => {
+            document.getElementById('speedLabel').textContent = speedSlider.value + 'x';
+        });
+
+        function getDelay() {
+            return 1200 - (speedSlider.value - 1) * 110;
+        }
+
+        function loadPreset(n1, n2) {
+            document.getElementById('num1Input').value = n1;
+            document.getElementById('num2Input').value = n2;
+            initialize();
+        }
+
+        function initialize() {
+            pause();
+            num1 = document.getElementById('num1Input').value.replace(/[^0-9]/g, '') || "0";
+            num2 = document.getElementById('num2Input').value.replace(/[^0-9]/g, '') || "0";
+
+            // Remove leading zeros (keep at least one digit)
+            num1 = num1.replace(/^0+/, '') || "0";
+            num2 = num2.replace(/^0+/, '') || "0";
+
+            document.getElementById('num1Input').value = num1;
+            document.getElementById('num2Input').value = num2;
+
+            m = num1.length;
+            n = num2.length;
+            result = new Array(m + n).fill(0);
+            currentStep = 0;
+
+            // Generate steps
+            generateSteps();
+
+            document.getElementById('totalSteps').textContent = steps.length;
+            document.getElementById('stepCounter').textContent = 0;
+            document.getElementById('currentOp').textContent = 'Ready';
+            document.getElementById('stepDesc').textContent = `Multiplying "${num1}" x "${num2}" — press Step or Play to begin.`;
+            document.getElementById('finalResult').classList.remove('visible');
+            document.getElementById('logContent').innerHTML = '';
+
+            renderGrid(-1, -1);
+            renderResult([]);
+        }
+
+        function generateSteps() {
+            steps = [];
+
+            if (num1 === "0" || num2 === "0") {
+                steps.push({
+                    type: 'zero',
+                    desc: `One of the inputs is "0", so the result is "0".`
+                });
+                return;
+            }
+
+            let tempResult = new Array(m + n).fill(0);
+
+            for (let i = m - 1; i >= 0; i--) {
+                for (let j = n - 1; j >= 0; j--) {
+                    const d1 = parseInt(num1[i]);
+                    const d2 = parseInt(num2[j]);
+                    const mul = d1 * d2;
+                    const p1 = i + j;
+                    const p2 = i + j + 1;
+                    const prevP2 = tempResult[p2];
+                    const total = mul + prevP2;
+                    const newP2 = total % 10;
+                    const carry = Math.floor(total / 10);
+                    const prevP1 = tempResult[p1];
+
+                    tempResult[p2] = newP2;
+                    tempResult[p1] += carry;
+
+                    steps.push({
+                        type: 'multiply',
+                        i, j, d1, d2, mul, p1, p2,
+                        prevP2, total, newP2, carry, prevP1,
+                        resultSnapshot: [...tempResult],
+                        desc: `num1[${i}]='${d1}' x num2[${j}]='${d2}' = ${mul}. ` +
+                              `pos[${p2}] = (${mul} + ${prevP2}) % 10 = ${newP2}. ` +
+                              (carry > 0 ? `Carry ${carry} to pos[${p1}] (now ${tempResult[p1]}).` : 'No carry.')
+                    });
+                }
+            }
+
+            // Final step
+            const finalStr = tempResult.map(String).join('').replace(/^0+/, '') || "0";
+            steps.push({
+                type: 'done',
+                finalResult: finalStr,
+                resultSnapshot: [...tempResult],
+                desc: `Done! Result: ${num1} x ${num2} = ${finalStr}`
+            });
+        }
+
+        function renderGrid(activeI, activeJ) {
+            const container = document.getElementById('gridContainer');
+
+            if (num1 === "0" || num2 === "0") {
+                container.innerHTML = '<p style="color:#94a3b8;">Zero multiplication — no grid needed.</p>';
+                return;
+            }
+
+            let html = '<table class="grid-table">';
+
+            // Header row: x | num2 digits
+            html += '<tr><th>x</th>';
+            for (let j = 0; j < n; j++) {
+                const cls = (j === activeJ) ? ' class="highlight-num2"' : '';
+                html += `<th${cls}>${num2[j]}</th>`;
+            }
+            html += '</tr>';
+
+            // Data rows
+            for (let i = 0; i < m; i++) {
+                html += '<tr>';
+                const cls = (i === activeI) ? ' class="highlight-num1"' : '';
+                html += `<th${cls}>${num1[i]}</th>`;
+
+                for (let j = 0; j < n; j++) {
+                    const d1 = parseInt(num1[i]);
+                    const d2 = parseInt(num2[j]);
+                    const product = d1 * d2;
+
+                    // Determine cell state
+                    let cellClass = '';
+                    let cellContent = '';
+
+                    // Check if this cell has been computed
+                    const stepIndex = getStepIndex(i, j);
+
+                    if (i === activeI && j === activeJ) {
+                        cellClass = 'active';
+                        cellContent = product;
+                    } else if (stepIndex !== -1 && stepIndex < currentStep) {
+                        cellClass = 'computed';
+                        cellContent = product;
+                    }
+
+                    html += `<td class="${cellClass}">${cellContent}</td>`;
+                }
+                html += '</tr>';
+            }
+
+            html += '</table>';
+            container.innerHTML = html;
+        }
+
+        function getStepIndex(i, j) {
+            for (let s = 0; s < steps.length; s++) {
+                if (steps[s].type === 'multiply' && steps[s].i === i && steps[s].j === j) {
+                    return s;
+                }
+            }
+            return -1;
+        }
+
+        function renderResult(highlights) {
+            const container = document.getElementById('resultArray');
+            let html = '';
+
+            for (let k = 0; k < result.length; k++) {
+                let cls = 'result-cell';
+                if (highlights.includes('p2-' + k)) cls += ' active-p2';
+                if (highlights.includes('p1-' + k)) cls += ' active-p1';
+                if (highlights.includes('final')) {
+                    cls += ' final';
+                    // Mark leading zeros
+                    const firstNonZero = result.findIndex(d => d !== 0);
+                    if (firstNonZero === -1 || k < firstNonZero) cls += ' leading-zero';
+                }
+
+                html += `<div class="${cls}">
+                    <div class="digit">${result[k]}</div>
+                    <div class="index">[${k}]</div>
+                </div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function addLog(entry) {
+            const logContent = document.getElementById('logContent');
+            const div = document.createElement('div');
+            div.className = 'log-entry';
+            div.innerHTML = entry;
+            logContent.appendChild(div);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        function step() {
+            if (currentStep >= steps.length) return;
+
+            const s = steps[currentStep];
+            currentStep++;
+
+            document.getElementById('stepCounter').textContent = currentStep;
+            document.getElementById('stepDesc').textContent = s.desc;
+
+            if (s.type === 'zero') {
+                result = [0];
+                renderResult(['final']);
+                document.getElementById('currentOp').textContent = 'Done (zero)';
+                document.getElementById('finalResult').textContent = `Result: 0`;
+                document.getElementById('finalResult').classList.add('visible');
+                addLog(`<span class="result-op">Result: "0" (zero input)</span>`);
+                pause();
+                return;
+            }
+
+            if (s.type === 'multiply') {
+                result = s.resultSnapshot;
+
+                const highlights = ['p2-' + s.p2];
+                if (s.carry > 0) highlights.push('p1-' + s.p1);
+
+                renderGrid(s.i, s.j);
+                renderResult(highlights);
+
+                document.getElementById('currentOp').textContent =
+                    `${s.d1} x ${s.d2} = ${s.mul}`;
+
+                let logEntry = `<span class="step-num">Step ${currentStep}:</span> `;
+                logEntry += `<span class="multiply-op">${s.d1} x ${s.d2} = ${s.mul}</span>`;
+                logEntry += ` | pos[${s.p2}]=${s.newP2}`;
+                if (s.carry > 0) {
+                    logEntry += ` <span class="carry-op">carry ${s.carry} -> pos[${s.p1}]=${s.resultSnapshot[s.p1]}</span>`;
+                }
+                addLog(logEntry);
+            }
+
+            if (s.type === 'done') {
+                result = s.resultSnapshot;
+                renderGrid(-1, -1);
+                renderResult(['final']);
+
+                document.getElementById('currentOp').textContent = 'Complete';
+                document.getElementById('finalResult').textContent = `Result: ${num1} x ${num2} = ${s.finalResult}`;
+                document.getElementById('finalResult').classList.add('visible');
+
+                addLog(`<span class="result-op">Final Result: ${s.finalResult}</span>`);
+                pause();
+            }
+        }
+
+        function play() {
+            if (currentStep >= steps.length) {
+                resetAnimation();
+            }
+            isPlaying = true;
+            document.getElementById('playBtn').style.display = 'none';
+            document.getElementById('pauseBtn').style.display = 'inline-block';
+
+            function tick() {
+                if (!isPlaying || currentStep >= steps.length) {
+                    pause();
+                    return;
+                }
+                step();
+                playTimer = setTimeout(tick, getDelay());
+            }
+            tick();
+        }
+
+        function pause() {
+            isPlaying = false;
+            if (playTimer) {
+                clearTimeout(playTimer);
+                playTimer = null;
+            }
+            document.getElementById('playBtn').style.display = 'inline-block';
+            document.getElementById('pauseBtn').style.display = 'none';
+        }
+
+        function resetAnimation() {
+            pause();
+            currentStep = 0;
+            result = new Array(m + n).fill(0);
+
+            document.getElementById('stepCounter').textContent = 0;
+            document.getElementById('currentOp').textContent = 'Ready';
+            document.getElementById('stepDesc').textContent = `Multiplying "${num1}" x "${num2}" — press Step or Play to begin.`;
+            document.getElementById('finalResult').classList.remove('visible');
+            document.getElementById('logContent').innerHTML = '';
+
+            renderGrid(-1, -1);
+            renderResult([]);
+        }
+
+        // Initialize on load
+        initialize();
+    </script>
+</body>
+</html>

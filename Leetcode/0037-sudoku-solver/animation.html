@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0037. Sudoku Solver — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        .main-layout {
+            display: flex;
+            gap: 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .right-panel {
+            flex: 1;
+            min-width: 300px;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* SUDOKU GRID */
+        .grid-container {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #334155;
+        }
+
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 48px);
+            grid-template-rows: repeat(9, 48px);
+            gap: 1px;
+            background: #475569;
+            border: 3px solid #475569;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            background: #1e293b;
+            color: #e2e8f0;
+            transition: background 0.15s, color 0.15s, transform 0.15s;
+            position: relative;
+        }
+
+        .cell.given {
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .cell.trying {
+            background: #854d0e;
+            color: #fbbf24;
+            transform: scale(1.05);
+            z-index: 1;
+        }
+
+        .cell.placed {
+            background: #166534;
+            color: #4ade80;
+        }
+
+        .cell.backtracked {
+            background: #991b1b;
+            color: #fca5a5;
+        }
+
+        .cell.solved {
+            background: #1e3a5f;
+            color: #60a5fa;
+        }
+
+        .cell.highlight-row,
+        .cell.highlight-col,
+        .cell.highlight-box {
+            background: #1e293b;
+            box-shadow: inset 0 0 0 2px rgba(96, 165, 250, 0.3);
+        }
+
+        /* Thick borders for 3x3 boxes */
+        .cell:nth-child(3n) { border-right: 2px solid #475569; }
+        .cell:nth-child(9n) { border-right: none; }
+        .cell:nth-child(n+19):nth-child(-n+27) { border-bottom: 2px solid #475569; }
+        .cell:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid #475569; }
+
+        /* CONTROLS */
+        .controls {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #334155;
+        }
+
+        .controls-title {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        button:hover { background: #475569; }
+        button:active { transform: scale(0.97); }
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .btn-primary { background: #3b82f6; border-color: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+
+        .btn-success { background: #16a34a; border-color: #16a34a; color: white; }
+        .btn-success:hover { background: #15803d; }
+
+        .btn-danger { background: #dc2626; border-color: #dc2626; color: white; }
+        .btn-danger:hover { background: #b91c1c; }
+
+        .btn-warning { background: #d97706; border-color: #d97706; color: white; }
+        .btn-warning:hover { background: #b45309; }
+
+        /* SPEED SLIDER */
+        .speed-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .speed-section label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+
+        .speed-section input[type="range"] {
+            flex: 1;
+            accent-color: #3b82f6;
+        }
+
+        .speed-value {
+            font-size: 0.8rem;
+            color: #60a5fa;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        /* PRESETS */
+        .presets {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #334155;
+        }
+
+        .preset-btn {
+            font-size: 0.8rem;
+            padding: 6px 12px;
+        }
+
+        .preset-btn.active {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+        }
+
+        /* STATS */
+        .stats {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #334155;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .stat-item {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        /* LOG */
+        .log-section {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #334155;
+            flex: 1;
+        }
+
+        .log {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 10px;
+            height: 220px;
+            overflow-y: auto;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.78rem;
+            line-height: 1.5;
+        }
+
+        .log-entry { padding: 1px 0; }
+        .log-try { color: #fbbf24; }
+        .log-place { color: #4ade80; }
+        .log-backtrack { color: #f87171; }
+        .log-info { color: #94a3b8; }
+        .log-solved { color: #60a5fa; font-weight: 700; }
+
+        /* RESULT */
+        .result {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .result-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .result-text.success { color: #4ade80; }
+        .result-text.in-progress { color: #fbbf24; }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+
+        .legend-given { background: #1e293b; border: 1px solid #475569; }
+        .legend-trying { background: #854d0e; }
+        .legend-placed { background: #166534; }
+        .legend-backtracked { background: #991b1b; }
+        .legend-solved { background: #1e3a5f; }
+
+        /* Scrollbar */
+        .log::-webkit-scrollbar { width: 6px; }
+        .log::-webkit-scrollbar-track { background: transparent; }
+        .log::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+        @media (max-width: 768px) {
+            .sudoku-grid {
+                grid-template-columns: repeat(9, 38px);
+                grid-template-rows: repeat(9, 38px);
+            }
+            .cell { font-size: 1rem; }
+            .main-layout { flex-direction: column; align-items: center; }
+            .right-panel { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>0037. Sudoku Solver</h1>
+    <p>Backtracking algorithm — step-by-step visualization</p>
+</div>
+
+<div class="main-layout">
+    <div class="left-panel">
+        <div class="grid-container">
+            <div class="sudoku-grid" id="grid"></div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color legend-given"></div> Given</div>
+                <div class="legend-item"><div class="legend-color legend-trying"></div> Trying</div>
+                <div class="legend-item"><div class="legend-color legend-placed"></div> Placed</div>
+                <div class="legend-item"><div class="legend-color legend-backtracked"></div> Backtracked</div>
+                <div class="legend-item"><div class="legend-color legend-solved"></div> Solved</div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="controls-title">Statistics</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="stepCount">0</div>
+                    <div class="stat-label">Steps</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="backtrackCount">0</div>
+                    <div class="stat-label">Backtracks</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="filledCount">0</div>
+                    <div class="stat-label">Filled</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="emptyCount">0</div>
+                    <div class="stat-label">Remaining</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="presets">
+            <div class="controls-title">Presets</div>
+            <div class="btn-row">
+                <button class="preset-btn active" onclick="loadPreset(0)">Easy</button>
+                <button class="preset-btn" onclick="loadPreset(1)">Medium</button>
+                <button class="preset-btn" onclick="loadPreset(2)">Hard</button>
+                <button class="preset-btn" onclick="loadPreset(3)">Evil</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="controls-title">Controls</div>
+            <div class="btn-row">
+                <button class="btn-primary" id="btnStep" onclick="step()">Step</button>
+                <button class="btn-success" id="btnPlay" onclick="play()">Play</button>
+                <button class="btn-warning" id="btnPause" onclick="pause()" disabled>Pause</button>
+                <button class="btn-danger" id="btnReset" onclick="reset()">Reset</button>
+            </div>
+            <div class="speed-section">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="100" value="50">
+                <span class="speed-value" id="speedLabel">50ms</span>
+            </div>
+        </div>
+
+        <div class="log-section">
+            <div class="controls-title">Algorithm Log</div>
+            <div class="log" id="log"></div>
+        </div>
+
+        <div class="result" id="resultBox" style="display: none;">
+            <div class="result-text" id="resultText"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// Sudoku Solver Animation
+// ============================================================
+
+const PRESETS = [
+    { // Easy
+        name: 'Easy',
+        board: [
+            '53..7....',
+            '6..195...',
+            '.98....6.',
+            '8...6...3',
+            '4..8.3..1',
+            '7...2...6',
+            '.6....28.',
+            '...419..5',
+            '....8..79'
+        ]
+    },
+    { // Medium
+        name: 'Medium',
+        board: [
+            '..6.9...2',
+            '..1......',
+            '5..31..8.',
+            '.8.......5',
+            '...5.2...',
+            '7.......1',
+            '.3..76..4',
+            '......5..',
+            '4...1.7..'
+        ]
+    },
+    { // Hard
+        name: 'Hard',
+        board: [
+            '..9748...',
+            '7........',
+            '.2.1.9...',
+            '..7...24.',
+            '.64.1.59.',
+            '.98...3..',
+            '...8.3.2.',
+            '........6',
+            '...2759..'
+        ]
+    },
+    { // Evil
+        name: 'Evil',
+        board: [
+            '.....6...',
+            '..3.2...8',
+            '....7.5..',
+            '1........',
+            '...4.5...',
+            '........7',
+            '..8.6....',
+            '5...9.3..',
+            '...7.....'
+        ]
+    }
+];
+
+// Fix Medium preset row 3 length
+PRESETS[1].board[3] = '.8......5';
+
+let board = [];
+let given = [];
+let steps = [];
+let stepIndex = 0;
+let playing = false;
+let playTimer = null;
+let totalEmpty = 0;
+
+function getSpeed() {
+    const val = document.getElementById('speedSlider').value;
+    // Map 1-100 to 500ms-5ms (logarithmic feel)
+    const ms = Math.round(500 * Math.pow(0.01, (val - 1) / 99));
+    return Math.max(5, ms);
+}
+
+document.getElementById('speedSlider').addEventListener('input', function() {
+    const ms = getSpeed();
+    document.getElementById('speedLabel').textContent = ms + 'ms';
+});
+
+function parseBoard(strings) {
+    const b = [];
+    const g = [];
+    for (let r = 0; r < 9; r++) {
+        b[r] = [];
+        g[r] = [];
+        for (let c = 0; c < 9; c++) {
+            const ch = strings[r][c];
+            if (ch !== '.') {
+                b[r][c] = parseInt(ch);
+                g[r][c] = true;
+            } else {
+                b[r][c] = 0;
+                g[r][c] = false;
+            }
+        }
+    }
+    return { board: b, given: g };
+}
+
+function generateSteps(boardData) {
+    const b = boardData.map(r => [...r]);
+    const rows = Array.from({length: 9}, () => new Set());
+    const cols = Array.from({length: 9}, () => new Set());
+    const boxes = Array.from({length: 9}, () => new Set());
+    const empty = [];
+    const result = [];
+
+    for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+            if (b[r][c] !== 0) {
+                rows[r].add(b[r][c]);
+                cols[c].add(b[r][c]);
+                boxes[Math.floor(r/3)*3 + Math.floor(c/3)].add(b[r][c]);
+            } else {
+                empty.push([r, c]);
+            }
+        }
+    }
+
+    function solve(idx) {
+        if (idx === empty.length) {
+            result.push({ type: 'solved' });
+            return true;
+        }
+
+        const [r, c] = empty[idx];
+        const boxId = Math.floor(r/3)*3 + Math.floor(c/3);
+
+        for (let d = 1; d <= 9; d++) {
+            if (!rows[r].has(d) && !cols[c].has(d) && !boxes[boxId].has(d)) {
+                // Try
+                result.push({ type: 'try', r, c, d });
+
+                b[r][c] = d;
+                rows[r].add(d);
+                cols[c].add(d);
+                boxes[boxId].add(d);
+
+                // Place
+                result.push({ type: 'place', r, c, d });
+
+                if (solve(idx + 1)) {
+                    return true;
+                }
+
+                // Backtrack
+                result.push({ type: 'backtrack', r, c, d });
+                b[r][c] = 0;
+                rows[r].delete(d);
+                cols[c].delete(d);
+                boxes[boxId].delete(d);
+            }
+        }
+
+        return false;
+    }
+
+    solve(0);
+    return result;
+}
+
+function renderGrid() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.id = `cell-${r}-${c}`;
+            if (given[r][c]) {
+                cell.classList.add('given');
+                cell.textContent = board[r][c];
+            }
+            grid.appendChild(cell);
+        }
+    }
+}
+
+function clearCellStates() {
+    document.querySelectorAll('.cell').forEach(cell => {
+        cell.classList.remove('trying', 'placed', 'backtracked', 'solved',
+                             'highlight-row', 'highlight-col', 'highlight-box');
+    });
+}
+
+function updateStats() {
+    let filled = 0;
+    for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+            const cell = document.getElementById(`cell-${r}-${c}`);
+            if (cell.textContent !== '') filled++;
+        }
+    }
+    document.getElementById('filledCount').textContent = filled;
+    document.getElementById('emptyCount').textContent = 81 - filled;
+}
+
+function addLog(message, className) {
+    const log = document.getElementById('log');
+    const entry = document.createElement('div');
+    entry.className = `log-entry ${className}`;
+    entry.textContent = message;
+    log.appendChild(entry);
+    log.scrollTop = log.scrollHeight;
+}
+
+function step() {
+    if (stepIndex >= steps.length) return;
+
+    const s = steps[stepIndex];
+    const stepNum = parseInt(document.getElementById('stepCount').textContent) + 1;
+    document.getElementById('stepCount').textContent = stepNum;
+
+    // Clear previous trying/backtracked highlights (keep placed)
+    document.querySelectorAll('.cell.trying, .cell.backtracked').forEach(cell => {
+        cell.classList.remove('trying', 'backtracked');
+    });
+
+    if (s.type === 'try') {
+        const cell = document.getElementById(`cell-${s.r}-${s.c}`);
+        cell.textContent = s.d;
+        cell.classList.add('trying');
+        cell.classList.remove('placed', 'backtracked');
+        addLog(`Try ${s.d} at (${s.r},${s.c})`, 'log-try');
+    } else if (s.type === 'place') {
+        const cell = document.getElementById(`cell-${s.r}-${s.c}`);
+        cell.textContent = s.d;
+        cell.classList.remove('trying', 'backtracked');
+        cell.classList.add('placed');
+        addLog(`Place ${s.d} at (${s.r},${s.c})`, 'log-place');
+    } else if (s.type === 'backtrack') {
+        const cell = document.getElementById(`cell-${s.r}-${s.c}`);
+        cell.classList.remove('trying', 'placed');
+        cell.classList.add('backtracked');
+        setTimeout(() => {
+            cell.textContent = '';
+            cell.classList.remove('backtracked');
+        }, getSpeed() * 0.8);
+        const bt = parseInt(document.getElementById('backtrackCount').textContent) + 1;
+        document.getElementById('backtrackCount').textContent = bt;
+        addLog(`Backtrack ${s.d} from (${s.r},${s.c})`, 'log-backtrack');
+    } else if (s.type === 'solved') {
+        // Mark all placed cells as solved
+        document.querySelectorAll('.cell.placed').forEach(cell => {
+            cell.classList.remove('placed');
+            cell.classList.add('solved');
+        });
+        addLog('Sudoku solved!', 'log-solved');
+        showResult(true);
+        pause();
+    }
+
+    stepIndex++;
+    updateStats();
+}
+
+function play() {
+    if (stepIndex >= steps.length) return;
+    playing = true;
+    document.getElementById('btnPlay').disabled = true;
+    document.getElementById('btnPause').disabled = false;
+    document.getElementById('btnStep').disabled = true;
+
+    function tick() {
+        if (!playing || stepIndex >= steps.length) {
+            pause();
+            return;
+        }
+        step();
+        playTimer = setTimeout(tick, getSpeed());
+    }
+    tick();
+}
+
+function pause() {
+    playing = false;
+    if (playTimer) {
+        clearTimeout(playTimer);
+        playTimer = null;
+    }
+    document.getElementById('btnPlay').disabled = false;
+    document.getElementById('btnPause').disabled = true;
+    document.getElementById('btnStep').disabled = false;
+}
+
+function reset() {
+    pause();
+    stepIndex = 0;
+    document.getElementById('stepCount').textContent = '0';
+    document.getElementById('backtrackCount').textContent = '0';
+    document.getElementById('resultBox').style.display = 'none';
+    document.getElementById('log').innerHTML = '';
+    renderGrid();
+    updateStats();
+    addLog('Board reset. Ready to solve.', 'log-info');
+}
+
+function showResult(success) {
+    const box = document.getElementById('resultBox');
+    const text = document.getElementById('resultText');
+    box.style.display = 'block';
+    if (success) {
+        text.className = 'result-text success';
+        const steps_taken = document.getElementById('stepCount').textContent;
+        const backtracks = document.getElementById('backtrackCount').textContent;
+        text.textContent = `Solved in ${steps_taken} steps with ${backtracks} backtracks`;
+    }
+}
+
+function loadPreset(index) {
+    // Update active button
+    document.querySelectorAll('.preset-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+    });
+
+    const preset = PRESETS[index];
+    const parsed = parseBoard(preset.board);
+    board = parsed.board;
+    given = parsed.given;
+    steps = generateSteps(board.map(r => [...r]));
+
+    addLog(`Loaded "${preset.name}" puzzle (${steps.length} total steps)`, 'log-info');
+    reset();
+}
+
+// Initialize
+loadPreset(0);
+// Update speed label
+document.getElementById('speedLabel').textContent = getSpeed() + 'ms';
+</script>
+
+</body>
+</html>

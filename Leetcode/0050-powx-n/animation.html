@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0050. Pow(x, n) — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 100px;
+            text-align: center;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        /* PRESETS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            padding: 6px 14px;
+            background: #334155;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover { background: #475569; color: white; }
+        .preset-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .btn:hover { background: #475569; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-step { background: #3b82f6; border-color: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-play { background: #10b981; border-color: #10b981; color: white; }
+        .btn-play:hover { background: #059669; }
+        .btn-pause { background: #f59e0b; border-color: #f59e0b; color: #1e293b; }
+        .btn-pause:hover { background: #d97706; }
+        .btn-reset { background: #ef4444; border-color: #ef4444; color: white; }
+        .btn-reset:hover { background: #dc2626; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 10px;
+        }
+
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #8b5cf6;
+        }
+
+        /* STATUS BAR */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #0f172a;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .status-label { color: #64748b; }
+        .status-value { color: #60a5fa; font-weight: 700; font-family: 'Courier New', monospace; }
+        .status-value.result { color: #10b981; font-size: 1.1rem; }
+
+        /* BINARY DISPLAY */
+        .binary-section {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #0f172a;
+            border-radius: 8px;
+        }
+
+        .binary-title {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .binary-bits {
+            display: flex;
+            gap: 3px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .bit {
+            width: 32px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            font-weight: 700;
+            background: #1e293b;
+            color: #64748b;
+            border: 1px solid #334155;
+            transition: all 0.3s;
+        }
+
+        .bit.processed { background: #334155; color: #94a3b8; }
+        .bit.current { background: #3b82f6; color: white; border-color: #60a5fa; box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); }
+        .bit.current.is-one { background: #10b981; border-color: #34d399; box-shadow: 0 0 12px rgba(16, 185, 129, 0.4); }
+        .bit.unprocessed { background: #1e293b; color: #94a3b8; }
+
+        .bit-index {
+            width: 32px;
+            text-align: center;
+            font-size: 0.65rem;
+            color: #475569;
+            font-family: 'Courier New', monospace;
+        }
+
+        .bit-indices {
+            display: flex;
+            gap: 3px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2px;
+        }
+
+        /* COMPUTATION DISPLAY */
+        .computation {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #0f172a;
+            border-radius: 8px;
+        }
+
+        .comp-title {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .comp-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .comp-box {
+            padding: 10px 18px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .comp-box-label {
+            font-size: 0.7rem;
+            color: #64748b;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .comp-box-value {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+
+        .comp-box.highlight {
+            border-color: #3b82f6;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .comp-box.multiply {
+            border-color: #10b981;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .comp-box.square {
+            border-color: #f59e0b;
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+        }
+
+        .comp-arrow {
+            color: #475569;
+            font-size: 1.2rem;
+        }
+
+        .comp-operation {
+            text-align: center;
+            padding: 8px 16px;
+            background: #1e293b;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-top: 8px;
+        }
+
+        .comp-operation .op-highlight { color: #60a5fa; font-weight: 700; }
+        .comp-operation .op-multiply { color: #10b981; font-weight: 700; }
+        .comp-operation .op-square { color: #f59e0b; font-weight: 700; }
+
+        /* LOG */
+        .log-section {
+            margin-top: 20px;
+        }
+
+        .log-title {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .log {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 250px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .log::-webkit-scrollbar { width: 6px; }
+        .log::-webkit-scrollbar-track { background: #0f172a; }
+        .log::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+        .log-entry { padding: 2px 0; }
+        .log-entry.info { color: #60a5fa; }
+        .log-entry.step { color: #a78bfa; }
+        .log-entry.multiply { color: #10b981; }
+        .log-entry.square { color: #f59e0b; }
+        .log-entry.result { color: #10b981; font-weight: 700; font-size: 0.9rem; }
+        .log-entry.skip { color: #64748b; }
+
+        /* FORMULA DISPLAY */
+        .formula-section {
+            text-align: center;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: #0f172a;
+            border-radius: 8px;
+        }
+
+        .formula {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            color: #e2e8f0;
+        }
+
+        .formula .base { color: #60a5fa; }
+        .formula .exp { color: #a78bfa; }
+        .formula .equals { color: #64748b; }
+        .formula .answer { color: #10b981; font-weight: 700; }
+
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 16px; }
+            .input-section { flex-direction: column; align-items: stretch; }
+            .input-section input { width: 100%; }
+            .controls { flex-direction: column; }
+            .speed-control { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0050. Pow(x, n)</h1>
+        <p>Binary Exponentiation — Iterative step-by-step visualization</p>
+    </div>
+
+    <div class="container">
+        <!-- Input -->
+        <div class="input-section">
+            <label for="inputX">x =</label>
+            <input type="number" id="inputX" value="2" step="0.1" placeholder="base">
+            <label for="inputN">n =</label>
+            <input type="number" id="inputN" value="10" step="1" placeholder="exponent">
+            <button class="btn btn-step" onclick="loadInput()" style="background:#8b5cf6; border-color:#8b5cf6;">Load</button>
+        </div>
+
+        <!-- Presets -->
+        <div class="presets">
+            <button class="preset-btn active" onclick="loadPreset(2, 10, this)">2^10</button>
+            <button class="preset-btn" onclick="loadPreset(2, -2, this)">2^(-2)</button>
+            <button class="preset-btn" onclick="loadPreset(2.1, 3, this)">2.1^3</button>
+            <button class="preset-btn" onclick="loadPreset(3, 0, this)">3^0</button>
+            <button class="preset-btn" onclick="loadPreset(-1, 5, this)">(-1)^5</button>
+            <button class="preset-btn" onclick="loadPreset(0.5, -3, this)">0.5^(-3)</button>
+            <button class="preset-btn" onclick="loadPreset(2, 13, this)">2^13</button>
+            <button class="preset-btn" onclick="loadPreset(-2, 4, this)">(-2)^4</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-step" id="btnStep" onclick="step()">Step</button>
+            <button class="btn btn-play" id="btnPlay" onclick="play()">Play</button>
+            <button class="btn btn-pause" id="btnPause" onclick="pause()" disabled>Pause</button>
+            <button class="btn btn-reset" id="btnReset" onclick="reset()">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <span id="speedLabel" style="color:#94a3b8;font-size:0.8rem;">5x</span>
+            </div>
+        </div>
+
+        <!-- Formula -->
+        <div class="formula-section">
+            <div class="formula" id="formulaDisplay">
+                <span class="base">2.0</span><sup class="exp">10</sup>
+                <span class="equals"> = </span>
+                <span class="answer" id="formulaAnswer">?</span>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-label">Step:</span>
+                <span class="status-value" id="stepCount">0</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">x (current):</span>
+                <span class="status-value" id="currentX">2.0</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">n (remaining):</span>
+                <span class="status-value" id="currentN">10</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Result:</span>
+                <span class="status-value result" id="currentResult">1.0</span>
+            </div>
+        </div>
+
+        <!-- Binary Display -->
+        <div class="binary-section">
+            <div class="binary-title" id="binaryTitle">Binary representation of n = 10</div>
+            <div class="binary-bits" id="binaryBits"></div>
+            <div class="bit-indices" id="bitIndices"></div>
+        </div>
+
+        <!-- Computation Display -->
+        <div class="computation">
+            <div class="comp-title">Current Operation</div>
+            <div class="comp-row" id="compRow">
+                <div class="comp-box">
+                    <div class="comp-box-label">result</div>
+                    <div class="comp-box-value" id="compResult">1.0</div>
+                </div>
+                <div class="comp-arrow" id="compArrow"></div>
+                <div class="comp-box" id="compAction" style="display:none;">
+                    <div class="comp-box-label" id="compActionLabel">action</div>
+                    <div class="comp-box-value" id="compActionValue">-</div>
+                </div>
+            </div>
+            <div class="comp-operation" id="compOperation">Press Step or Play to begin</div>
+        </div>
+
+        <!-- Log -->
+        <div class="log-section">
+            <div class="log-title">Execution Log</div>
+            <div class="log" id="log"></div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let origX, origN;
+        let x, n, result, stepNum, bitIndex;
+        let bits = [];
+        let isRunning = false;
+        let animTimer = null;
+        let done = false;
+        let isNegativeN = false;
+        let subStep = 0; // 0 = check bit, 1 = multiply if needed, 2 = square x, 3 = shift n
+
+        const speedSlider = document.getElementById('speedSlider');
+        speedSlider.addEventListener('input', () => {
+            document.getElementById('speedLabel').textContent = speedSlider.value + 'x';
+        });
+
+        function formatNum(v) {
+            if (Number.isInteger(v) && Math.abs(v) < 1e12) return v.toString();
+            if (Math.abs(v) < 1e-10) return '0';
+            if (Math.abs(v) > 1e15) return v.toExponential(4);
+            let s = v.toPrecision(8);
+            // Remove trailing zeros after decimal
+            if (s.includes('.')) {
+                s = s.replace(/\.?0+$/, '');
+                if (s === '' || s === '-') s = '0';
+            }
+            return s;
+        }
+
+        function loadPreset(px, pn, btn) {
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            document.getElementById('inputX').value = px;
+            document.getElementById('inputN').value = pn;
+            initState(px, pn);
+        }
+
+        function loadInput() {
+            const px = parseFloat(document.getElementById('inputX').value) || 0;
+            const pn = parseInt(document.getElementById('inputN').value) || 0;
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            initState(px, pn);
+        }
+
+        function initState(px, pn) {
+            pause();
+            origX = px;
+            origN = pn;
+            isNegativeN = pn < 0;
+
+            // Convert negative n
+            if (pn < 0) {
+                x = 1 / px;
+                n = -pn;
+            } else {
+                x = px;
+                n = pn;
+            }
+
+            result = 1.0;
+            stepNum = 0;
+            bitIndex = 0;
+            subStep = 0;
+            done = false;
+
+            // Compute bits
+            bits = [];
+            if (n === 0) {
+                bits = [0];
+            } else {
+                let temp = n;
+                while (temp > 0) {
+                    bits.push(temp & 1);
+                    temp >>= 1;
+                }
+            }
+
+            updateUI();
+            clearLog();
+            addLog(`Computing ${formatNum(origX)}^${origN}`, 'info');
+            if (isNegativeN) {
+                addLog(`n is negative: convert x = 1/${formatNum(origX)} = ${formatNum(x)}, n = ${n}`, 'info');
+            }
+            addLog(`Binary of n=${n}: ${bits.slice().reverse().join('')}`, 'info');
+            addLog(`Initial: result = 1.0, x = ${formatNum(x)}`, 'info');
+            addLog('---', 'skip');
+
+            // Update formula
+            document.getElementById('formulaDisplay').innerHTML =
+                `<span class="base">${formatNum(origX)}</span><sup class="exp">${origN}</sup>` +
+                `<span class="equals"> = </span><span class="answer" id="formulaAnswer">?</span>`;
+
+            document.getElementById('btnStep').disabled = false;
+            document.getElementById('btnPlay').disabled = false;
+        }
+
+        function updateUI() {
+            document.getElementById('stepCount').textContent = stepNum;
+            document.getElementById('currentX').textContent = formatNum(x);
+            document.getElementById('currentN').textContent = n;
+            document.getElementById('currentResult').textContent = formatNum(result);
+
+            // Binary bits
+            const bitsContainer = document.getElementById('binaryBits');
+            const indicesContainer = document.getElementById('bitIndices');
+            bitsContainer.innerHTML = '';
+            indicesContainer.innerHTML = '';
+
+            // Display bits from MSB to LSB (reverse of our array)
+            for (let i = bits.length - 1; i >= 0; i--) {
+                const bitEl = document.createElement('div');
+                bitEl.className = 'bit';
+                bitEl.textContent = bits[i];
+
+                if (i < bitIndex) {
+                    bitEl.classList.add('processed');
+                } else if (i === bitIndex && !done) {
+                    bitEl.classList.add('current');
+                    if (bits[i] === 1) bitEl.classList.add('is-one');
+                } else {
+                    bitEl.classList.add('unprocessed');
+                }
+
+                bitsContainer.appendChild(bitEl);
+
+                const idxEl = document.createElement('div');
+                idxEl.className = 'bit-index';
+                idxEl.textContent = `2^${i}`;
+                indicesContainer.appendChild(idxEl);
+            }
+
+            const effN = isNegativeN ? n : n;
+            document.getElementById('binaryTitle').textContent =
+                `Binary representation of |n| = ${bits.length > 0 ? bits.slice().reverse().join('') : '0'} (remaining n = ${n})`;
+
+            // Computation display
+            document.getElementById('compResult').textContent = formatNum(result);
+        }
+
+        function step() {
+            if (done) return;
+
+            // n=0 special case
+            if (bits.length === 1 && bits[0] === 0 && stepNum === 0) {
+                stepNum = 1;
+                done = true;
+                result = 1.0;
+                addLog(`n = 0, so result = 1.0`, 'result');
+                finishAnimation();
+                return;
+            }
+
+            if (n <= 0 && subStep === 0) {
+                done = true;
+                finishAnimation();
+                return;
+            }
+
+            stepNum++;
+
+            const currentBit = bits[bitIndex];
+            const oldResult = result;
+            const oldX = x;
+
+            // Step: check bit, multiply if 1, square x, shift n
+            addLog(`Step ${stepNum}: bit[${bitIndex}] = ${currentBit} (2^${bitIndex} = ${Math.pow(2, bitIndex)})`, 'step');
+
+            // Multiply if bit is 1
+            if (currentBit === 1) {
+                result *= x;
+                addLog(`  Bit is 1: result = ${formatNum(oldResult)} * ${formatNum(x)} = ${formatNum(result)}`, 'multiply');
+
+                showOperation(`result *= x`, formatNum(oldResult), formatNum(x), formatNum(result), 'multiply');
+            } else {
+                addLog(`  Bit is 0: skip multiply`, 'skip');
+                showOperation(`bit is 0, skip multiply`, formatNum(oldResult), '-', formatNum(result), 'skip');
+            }
+
+            // Square x
+            const prevX = x;
+            x *= x;
+            addLog(`  Square x: x = ${formatNum(prevX)} * ${formatNum(prevX)} = ${formatNum(x)}`, 'square');
+
+            // Shift n
+            n >>= 1;
+            bitIndex++;
+
+            if (n <= 0) {
+                addLog('---', 'skip');
+                addLog(`All bits processed.`, 'info');
+                done = true;
+                finishAnimation();
+            }
+
+            updateUI();
+        }
+
+        function showOperation(desc, val1, val2, res, type) {
+            const compAction = document.getElementById('compAction');
+            const compArrow = document.getElementById('compArrow');
+            const compOperation = document.getElementById('compOperation');
+
+            compAction.style.display = 'block';
+            compArrow.textContent = '\u2192';
+
+            if (type === 'multiply') {
+                compAction.className = 'comp-box multiply';
+                document.getElementById('compActionLabel').textContent = 'result * x';
+                document.getElementById('compActionValue').textContent = res;
+                compOperation.innerHTML = `<span class="op-multiply">${val1} \u00d7 ${val2} = ${res}</span>`;
+            } else {
+                compAction.className = 'comp-box';
+                document.getElementById('compActionLabel').textContent = 'no change';
+                document.getElementById('compActionValue').textContent = res;
+                compOperation.innerHTML = `<span style="color:#64748b">Bit is 0, result unchanged = ${res}</span>`;
+            }
+        }
+
+        function finishAnimation() {
+            const finalResult = result;
+            addLog(`\u2714 Final result: ${formatNum(origX)}^${origN} = ${formatNum(finalResult)}`, 'result');
+            document.getElementById('formulaAnswer').textContent = formatNum(finalResult);
+            document.getElementById('currentResult').textContent = formatNum(finalResult);
+
+            document.getElementById('btnStep').disabled = true;
+            document.getElementById('btnPlay').disabled = true;
+            pause();
+
+            // Highlight result
+            document.getElementById('compOperation').innerHTML =
+                `<span class="op-multiply">DONE: ${formatNum(origX)}^${origN} = ${formatNum(finalResult)}</span>`;
+        }
+
+        function play() {
+            if (done) return;
+            isRunning = true;
+            document.getElementById('btnPlay').disabled = true;
+            document.getElementById('btnPause').disabled = false;
+            document.getElementById('btnStep').disabled = true;
+
+            function tick() {
+                if (!isRunning || done) return;
+                step();
+                if (!done) {
+                    const speed = parseInt(speedSlider.value);
+                    const delay = Math.max(100, 1200 - speed * 100);
+                    animTimer = setTimeout(tick, delay);
+                }
+            }
+            tick();
+        }
+
+        function pause() {
+            isRunning = false;
+            if (animTimer) {
+                clearTimeout(animTimer);
+                animTimer = null;
+            }
+            document.getElementById('btnPlay').disabled = done;
+            document.getElementById('btnPause').disabled = true;
+            document.getElementById('btnStep').disabled = done;
+        }
+
+        function reset() {
+            initState(origX, origN);
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        function addLog(msg, cls) {
+            const log = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${cls || ''}`;
+            entry.textContent = msg;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Initialize
+        initState(2, 10);
+    </script>
+</body>
+</html>

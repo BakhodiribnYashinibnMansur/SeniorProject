@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0035. Search Insert Position — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        #arrInput { width: 280px; }
+        #targetInput { width: 80px; }
+
+        .input-section label { color: #94a3b8; font-size: 0.85rem; }
+
+        /* PRESETS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 6px 12px;
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover { background: #334155; color: #e2e8f0; }
+        .preset-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-pause:hover { background: #dc2626; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-reset:hover { background: #4b5563; }
+
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+        .speed-label { color: #60a5fa; font-size: 0.85rem; font-weight: 600; min-width: 40px; }
+
+        /* STEP DESCRIPTION */
+        .step-description {
+            background: #0f172a;
+            border-left: 3px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 50px;
+            white-space: pre-line;
+        }
+
+        /* VIZ AREA */
+        .viz-area {
+            min-height: 300px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        /* ARRAY VISUALIZATION */
+        .array-container {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .cell-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 48px;
+        }
+
+        .cell {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.35s ease;
+            border: 2px solid #334155;
+            background: #1e293b;
+        }
+
+        .cell-idx {
+            font-size: 0.65rem;
+            color: #475569;
+            margin-top: 4px;
+        }
+
+        .cell-ptr {
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-height: 20px;
+            margin-top: 2px;
+            display: flex;
+            gap: 4px;
+        }
+
+        /* Cell colors */
+        .cell-default { background: #1e293b; border-color: #334155; }
+        .cell-left { background: #052e16; border-color: #22c55e; box-shadow: 0 0 12px rgba(34,197,94,0.3); }
+        .cell-right { background: #2d0a0a; border-color: #ef4444; box-shadow: 0 0 12px rgba(239,68,68,0.3); }
+        .cell-mid { background: #1e1b4b; border-color: #a78bfa; box-shadow: 0 0 12px rgba(167,139,250,0.4); }
+        .cell-found { background: #052e16; border-color: #22c55e; box-shadow: 0 0 20px rgba(34,197,94,0.6); }
+        .cell-insert { background: #422006; border-color: #f59e0b; box-shadow: 0 0 20px rgba(245,158,11,0.6); }
+        .cell-eliminated { background: #0f172a; border-color: #1e293b; color: #334155; }
+        .cell-left-right { background: #1a1a2e; border-color: #60a5fa; box-shadow: 0 0 12px rgba(96,165,250,0.3); }
+
+        .ptr-left { color: #22c55e; }
+        .ptr-right { color: #ef4444; }
+        .ptr-mid { color: #a78bfa; }
+
+        /* Insert marker */
+        .insert-marker {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            min-width: 8px;
+            justify-content: flex-end;
+        }
+
+        .insert-marker.visible { display: flex; }
+
+        .insert-line {
+            width: 3px;
+            height: 48px;
+            background: #f59e0b;
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(245,158,11,0.5);
+        }
+
+        .insert-label {
+            font-size: 0.7rem;
+            color: #f59e0b;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        /* INFO PANEL */
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .info-box h3 {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .info-box .value { font-size: 1.1rem; font-weight: 700; }
+        .val-left { color: #22c55e; }
+        .val-right { color: #ef4444; }
+        .val-mid { color: #a78bfa; }
+        .val-target { color: #60a5fa; }
+        .val-result { color: #f59e0b; }
+
+        /* COMPARISON BOX */
+        .compare-box {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            text-align: center;
+            font-size: 1.1rem;
+            border: 1px solid #334155;
+        }
+
+        .compare-box .op { color: #94a3b8; margin: 0 8px; }
+        .compare-box .val-a { color: #a78bfa; font-weight: 700; }
+        .compare-box .val-b { color: #60a5fa; font-weight: 700; }
+        .compare-box .cmp-result { margin-left: 12px; font-weight: 700; }
+        .cmp-eq { color: #22c55e; }
+        .cmp-lt { color: #f59e0b; }
+        .cmp-gt { color: #ef4444; }
+
+        /* LOG */
+        .log-section {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #334155;
+        }
+
+        .log-entry {
+            font-size: 0.8rem;
+            padding: 4px 0;
+            border-bottom: 1px solid #1e293b;
+            font-family: 'Courier New', monospace;
+        }
+
+        .log-entry:last-child { border-bottom: none; }
+        .log-step { color: #60a5fa; }
+        .log-compare { color: #a78bfa; }
+        .log-move { color: #f59e0b; }
+        .log-found { color: #22c55e; }
+        .log-insert { color: #f59e0b; }
+
+        /* RESULT BANNER */
+        .result-banner {
+            display: none;
+            background: linear-gradient(135deg, #052e16, #0f172a);
+            border: 2px solid #22c55e;
+            border-radius: 12px;
+            padding: 16px 24px;
+            margin-top: 16px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .result-banner.found { border-color: #22c55e; }
+        .result-banner.inserted {
+            background: linear-gradient(135deg, #422006, #0f172a);
+            border-color: #f59e0b;
+        }
+
+        .result-banner.visible { display: block; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .info-panel { grid-template-columns: repeat(3, 1fr); }
+            .cell { width: 40px; height: 40px; font-size: 0.85rem; }
+            .cell-wrapper { min-width: 40px; }
+        }
+
+        @media (max-width: 480px) {
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0035. Search Insert Position</h1>
+        <p>Binary search to find target or its insert position in a sorted array</p>
+    </div>
+
+    <div class="container">
+        <!-- Input Section -->
+        <div class="input-section">
+            <label>Array:</label>
+            <input type="text" id="arrInput" placeholder="e.g. 1,3,5,6" value="1,3,5,6">
+            <label>Target:</label>
+            <input type="text" id="targetInput" placeholder="e.g. 5" value="5">
+            <button class="btn btn-play" onclick="applyInput()" style="background:#8b5cf6;">Apply</button>
+        </div>
+
+        <!-- Presets -->
+        <div class="presets">
+            <button class="preset-btn active" onclick="loadPreset(0)">Ex1: [1,3,5,6] t=5</button>
+            <button class="preset-btn" onclick="loadPreset(1)">Ex2: [1,3,5,6] t=2</button>
+            <button class="preset-btn" onclick="loadPreset(2)">Ex3: [1,3,5,6] t=7</button>
+            <button class="preset-btn" onclick="loadPreset(3)">Ex4: [1,3,5,6] t=0</button>
+            <button class="preset-btn" onclick="loadPreset(4)">[1] t=1</button>
+            <button class="preset-btn" onclick="loadPreset(5)">[1,3,5,7,9,11] t=8</button>
+            <button class="preset-btn" onclick="loadPreset(6)">[2,4,6,8,10,12,14] t=6</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-play" id="btnPlay" onclick="play()">Play</button>
+            <button class="btn btn-pause" id="btnPause" onclick="pause()" style="display:none;">Pause</button>
+            <button class="btn btn-step" onclick="step()">Step</button>
+            <button class="btn btn-reset" onclick="reset()">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="5" value="3" oninput="updateSpeed()">
+                <span class="speed-label" id="speedLabel">1.0x</span>
+            </div>
+        </div>
+
+        <!-- Step Description -->
+        <div class="step-description" id="stepDesc">
+            Click "Step" or "Play" to begin binary search.
+        </div>
+
+        <!-- Info Panel -->
+        <div class="info-panel">
+            <div class="info-box">
+                <h3>Left</h3>
+                <div class="value val-left" id="valLeft">0</div>
+            </div>
+            <div class="info-box">
+                <h3>Right</h3>
+                <div class="value val-right" id="valRight">3</div>
+            </div>
+            <div class="info-box">
+                <h3>Mid</h3>
+                <div class="value val-mid" id="valMid">-</div>
+            </div>
+            <div class="info-box">
+                <h3>Target</h3>
+                <div class="value val-target" id="valTarget">5</div>
+            </div>
+            <div class="info-box">
+                <h3>Result</h3>
+                <div class="value val-result" id="valResult">-</div>
+            </div>
+        </div>
+
+        <!-- Visualization -->
+        <div class="viz-area">
+            <div class="section-label">Array Visualization</div>
+            <div class="array-container" id="arrayViz"></div>
+            <div class="compare-box" id="compareBox" style="visibility:hidden;">
+                <span>nums[<span class="val-a" id="cmpIdx">mid</span>] = <span class="val-a" id="cmpValA">?</span></span>
+                <span class="op" id="cmpOp">?</span>
+                <span>target = <span class="val-b" id="cmpValB">?</span></span>
+                <span class="cmp-result" id="cmpResult"></span>
+            </div>
+        </div>
+
+        <!-- Result Banner -->
+        <div class="result-banner" id="resultBanner"></div>
+
+        <!-- Log -->
+        <div class="section-label">Step Log</div>
+        <div class="log-section" id="logSection"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        // STATE
+        // ============================================================
+        const PRESETS = [
+            { arr: [1, 3, 5, 6], target: 5, label: "Ex1: target found at index 2" },
+            { arr: [1, 3, 5, 6], target: 2, label: "Ex2: insert at index 1" },
+            { arr: [1, 3, 5, 6], target: 7, label: "Ex3: insert after all (index 4)" },
+            { arr: [1, 3, 5, 6], target: 0, label: "Ex4: insert before all (index 0)" },
+            { arr: [1], target: 1, label: "Single element, found" },
+            { arr: [1, 3, 5, 7, 9, 11], target: 8, label: "Insert between 7 and 9" },
+            { arr: [2, 4, 6, 8, 10, 12, 14], target: 6, label: "Target found in 7-element array" },
+        ];
+
+        let nums = [];
+        let target = 0;
+        let left = 0, right = 0, mid = -1;
+        let stepIndex = 0;
+        let steps = [];
+        let playing = false;
+        let playTimer = null;
+        let speed = 1000;
+        let finished = false;
+
+        // ============================================================
+        // STEP GENERATION — precompute all binary search steps
+        // ============================================================
+        function generateSteps(arr, tgt) {
+            const result = [];
+            let l = 0, r = arr.length - 1;
+
+            result.push({
+                type: 'init',
+                left: l, right: r, mid: -1,
+                desc: `Initialize: left = 0, right = ${r}\nSearching for target = ${tgt} in [${arr.join(', ')}]`,
+                eliminated: []
+            });
+
+            let eliminated = [];
+
+            while (l <= r) {
+                const m = l + Math.floor((r - l) / 2);
+
+                result.push({
+                    type: 'calc_mid',
+                    left: l, right: r, mid: m,
+                    desc: `Calculate mid = ${l} + (${r} - ${l}) / 2 = ${m}\nnums[${m}] = ${arr[m]}`,
+                    eliminated: [...eliminated]
+                });
+
+                if (arr[m] === tgt) {
+                    result.push({
+                        type: 'found',
+                        left: l, right: r, mid: m,
+                        desc: `nums[${m}] = ${arr[m]} == ${tgt} (target)\nTarget FOUND at index ${m}!`,
+                        resultIndex: m,
+                        eliminated: [...eliminated]
+                    });
+                    return result;
+                } else if (arr[m] < tgt) {
+                    const newEliminated = [];
+                    for (let i = l; i <= m; i++) newEliminated.push(i);
+                    eliminated = [...eliminated, ...newEliminated];
+
+                    result.push({
+                        type: 'move_left',
+                        left: l, right: r, mid: m,
+                        newLeft: m + 1,
+                        desc: `nums[${m}] = ${arr[m]} < ${tgt} (target)\nTarget is in the RIGHT half → left = ${m} + 1 = ${m + 1}`,
+                        eliminated: [...eliminated]
+                    });
+                    l = m + 1;
+                } else {
+                    const newEliminated = [];
+                    for (let i = m; i <= r; i++) newEliminated.push(i);
+                    eliminated = [...eliminated, ...newEliminated];
+
+                    result.push({
+                        type: 'move_right',
+                        left: l, right: r, mid: m,
+                        newRight: m - 1,
+                        desc: `nums[${m}] = ${arr[m]} > ${tgt} (target)\nTarget is in the LEFT half → right = ${m} - 1 = ${m - 1}`,
+                        eliminated: [...eliminated]
+                    });
+                    r = m - 1;
+                }
+            }
+
+            result.push({
+                type: 'not_found',
+                left: l, right: r, mid: -1,
+                desc: `left (${l}) > right (${r}) → Loop ends\nTarget not found. Insert position = left = ${l}`,
+                resultIndex: l,
+                eliminated: [...eliminated]
+            });
+
+            return result;
+        }
+
+        // ============================================================
+        // RENDERING
+        // ============================================================
+        function renderArray(stepData) {
+            const container = document.getElementById('arrayViz');
+            container.innerHTML = '';
+
+            const insertIdx = stepData.type === 'not_found' ? stepData.resultIndex : -1;
+
+            for (let i = 0; i <= nums.length; i++) {
+                // Insert marker before element
+                if (i === insertIdx && stepData.type === 'not_found') {
+                    const markerDiv = document.createElement('div');
+                    markerDiv.className = 'insert-marker visible';
+                    markerDiv.innerHTML = `
+                        <div class="insert-line"></div>
+                        <div class="insert-label">INSERT</div>
+                    `;
+                    container.appendChild(markerDiv);
+                }
+
+                if (i >= nums.length) break;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'cell-wrapper';
+
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.textContent = nums[i];
+
+                // Determine cell style
+                const isLeft = (i === stepData.left && stepData.type !== 'not_found');
+                const isRight = (i === stepData.right && stepData.type !== 'not_found');
+                const isMid = (i === stepData.mid);
+                const isFound = (stepData.type === 'found' && i === stepData.mid);
+                const isEliminated = stepData.eliminated && stepData.eliminated.includes(i);
+
+                if (isFound) {
+                    cell.classList.add('cell-found');
+                } else if (isMid) {
+                    cell.classList.add('cell-mid');
+                } else if (isLeft && isRight) {
+                    cell.classList.add('cell-left-right');
+                } else if (isLeft) {
+                    cell.classList.add('cell-left');
+                } else if (isRight) {
+                    cell.classList.add('cell-right');
+                } else if (isEliminated) {
+                    cell.classList.add('cell-eliminated');
+                } else {
+                    cell.classList.add('cell-default');
+                }
+
+                const idxLabel = document.createElement('div');
+                idxLabel.className = 'cell-idx';
+                idxLabel.textContent = i;
+
+                const ptrLabel = document.createElement('div');
+                ptrLabel.className = 'cell-ptr';
+                let ptrs = [];
+                if (isLeft && stepData.type !== 'not_found') ptrs.push('<span class="ptr-left">L</span>');
+                if (isRight && stepData.type !== 'not_found') ptrs.push('<span class="ptr-right">R</span>');
+                if (isMid) ptrs.push('<span class="ptr-mid">M</span>');
+                if (isFound) ptrs = ['<span class="ptr-left" style="color:#22c55e;">FOUND</span>'];
+                ptrLabel.innerHTML = ptrs.join('');
+
+                wrapper.appendChild(cell);
+                wrapper.appendChild(idxLabel);
+                wrapper.appendChild(ptrLabel);
+                container.appendChild(wrapper);
+            }
+        }
+
+        function renderInfo(stepData) {
+            document.getElementById('valLeft').textContent = stepData.type === 'not_found' ? stepData.left : (stepData.left !== undefined ? stepData.left : '-');
+            document.getElementById('valRight').textContent = stepData.type === 'not_found' ? stepData.right : (stepData.right !== undefined ? stepData.right : '-');
+            document.getElementById('valMid').textContent = stepData.mid >= 0 ? stepData.mid : '-';
+            document.getElementById('valTarget').textContent = target;
+
+            if (stepData.type === 'found') {
+                document.getElementById('valResult').textContent = stepData.resultIndex;
+            } else if (stepData.type === 'not_found') {
+                document.getElementById('valResult').textContent = stepData.resultIndex;
+            } else {
+                document.getElementById('valResult').textContent = '-';
+            }
+        }
+
+        function renderCompare(stepData) {
+            const box = document.getElementById('compareBox');
+
+            if (stepData.type === 'calc_mid' || stepData.type === 'move_left' || stepData.type === 'move_right' || stepData.type === 'found') {
+                box.style.visibility = 'visible';
+                document.getElementById('cmpIdx').textContent = stepData.mid;
+                document.getElementById('cmpValA').textContent = nums[stepData.mid];
+                document.getElementById('cmpValB').textContent = target;
+
+                const resultEl = document.getElementById('cmpResult');
+                const opEl = document.getElementById('cmpOp');
+
+                if (nums[stepData.mid] === target) {
+                    opEl.textContent = '==';
+                    resultEl.textContent = 'FOUND!';
+                    resultEl.className = 'cmp-result cmp-eq';
+                } else if (nums[stepData.mid] < target) {
+                    opEl.textContent = '<';
+                    resultEl.textContent = 'go RIGHT';
+                    resultEl.className = 'cmp-result cmp-lt';
+                } else {
+                    opEl.textContent = '>';
+                    resultEl.textContent = 'go LEFT';
+                    resultEl.className = 'cmp-result cmp-gt';
+                }
+            } else {
+                box.style.visibility = 'hidden';
+            }
+        }
+
+        function renderResult(stepData) {
+            const banner = document.getElementById('resultBanner');
+            if (stepData.type === 'found') {
+                banner.className = 'result-banner found visible';
+                banner.innerHTML = `<span style="color:#22c55e;">Target ${target} found at index ${stepData.resultIndex}</span>`;
+            } else if (stepData.type === 'not_found') {
+                banner.className = 'result-banner inserted visible';
+                banner.innerHTML = `<span style="color:#f59e0b;">Target ${target} not found. Insert at index ${stepData.resultIndex}</span>`;
+            } else {
+                banner.className = 'result-banner';
+            }
+        }
+
+        function addLog(stepData, stepNum) {
+            const log = document.getElementById('logSection');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+
+            let cls = 'log-step';
+            let text = '';
+
+            switch (stepData.type) {
+                case 'init':
+                    text = `[Init] left=0, right=${stepData.right}, target=${target}`;
+                    break;
+                case 'calc_mid':
+                    cls = 'log-compare';
+                    text = `[Step ${stepNum}] mid=${stepData.mid}, nums[${stepData.mid}]=${nums[stepData.mid]}`;
+                    break;
+                case 'move_left':
+                    cls = 'log-move';
+                    text = `  ${nums[stepData.mid]} < ${target} → left = ${stepData.newLeft}`;
+                    break;
+                case 'move_right':
+                    cls = 'log-move';
+                    text = `  ${nums[stepData.mid]} > ${target} → right = ${stepData.newRight}`;
+                    break;
+                case 'found':
+                    cls = 'log-found';
+                    text = `  ${nums[stepData.mid]} == ${target} → FOUND at index ${stepData.resultIndex}`;
+                    break;
+                case 'not_found':
+                    cls = 'log-insert';
+                    text = `[Done] left(${stepData.left}) > right(${stepData.right}) → Insert at index ${stepData.resultIndex}`;
+                    break;
+            }
+
+            entry.className = `log-entry ${cls}`;
+            entry.textContent = text;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function renderStep() {
+            if (stepIndex >= steps.length) return;
+            const stepData = steps[stepIndex];
+
+            document.getElementById('stepDesc').textContent = stepData.desc;
+            renderArray(stepData);
+            renderInfo(stepData);
+            renderCompare(stepData);
+            renderResult(stepData);
+            addLog(stepData, Math.ceil(stepIndex / 2));
+        }
+
+        // ============================================================
+        // CONTROLS
+        // ============================================================
+        function step() {
+            if (finished) return;
+            if (stepIndex >= steps.length) {
+                finished = true;
+                pause();
+                return;
+            }
+            renderStep();
+            stepIndex++;
+            if (stepIndex >= steps.length) {
+                finished = true;
+                pause();
+            }
+        }
+
+        function play() {
+            if (finished) return;
+            playing = true;
+            document.getElementById('btnPlay').style.display = 'none';
+            document.getElementById('btnPause').style.display = 'inline-block';
+            playTimer = setInterval(() => {
+                if (finished || stepIndex >= steps.length) {
+                    if (!finished && stepIndex < steps.length) step();
+                    finished = true;
+                    pause();
+                    return;
+                }
+                step();
+            }, speed);
+        }
+
+        function pause() {
+            playing = false;
+            clearInterval(playTimer);
+            document.getElementById('btnPlay').style.display = 'inline-block';
+            document.getElementById('btnPause').style.display = 'none';
+        }
+
+        function reset() {
+            pause();
+            finished = false;
+            stepIndex = 0;
+            steps = generateSteps(nums, target);
+            document.getElementById('logSection').innerHTML = '';
+            document.getElementById('stepDesc').textContent = 'Click "Step" or "Play" to begin binary search.';
+            document.getElementById('compareBox').style.visibility = 'hidden';
+            document.getElementById('resultBanner').className = 'result-banner';
+            document.getElementById('valLeft').textContent = '0';
+            document.getElementById('valRight').textContent = nums.length - 1;
+            document.getElementById('valMid').textContent = '-';
+            document.getElementById('valTarget').textContent = target;
+            document.getElementById('valResult').textContent = '-';
+
+            // Render initial array with no highlights
+            renderArray({ type: 'idle', left: -1, right: -1, mid: -1, eliminated: [] });
+        }
+
+        function updateSpeed() {
+            const slider = document.getElementById('speedSlider');
+            const val = parseInt(slider.value);
+            const speeds = [2000, 1500, 1000, 600, 300];
+            const labels = ['0.5x', '0.75x', '1.0x', '1.5x', '3.0x'];
+            speed = speeds[val - 1];
+            document.getElementById('speedLabel').textContent = labels[val - 1];
+            if (playing) {
+                pause();
+                play();
+            }
+        }
+
+        function applyInput() {
+            const arrStr = document.getElementById('arrInput').value.trim();
+            const tgtStr = document.getElementById('targetInput').value.trim();
+            const arr = arrStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+            const tgt = parseInt(tgtStr);
+
+            if (arr.length === 0 || isNaN(tgt)) return;
+
+            // Clear active preset
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+
+            nums = arr;
+            target = tgt;
+            reset();
+        }
+
+        function loadPreset(idx) {
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.preset-btn')[idx].classList.add('active');
+
+            const preset = PRESETS[idx];
+            nums = [...preset.arr];
+            target = preset.target;
+            document.getElementById('arrInput').value = nums.join(',');
+            document.getElementById('targetInput').value = target;
+            reset();
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        function init() {
+            loadPreset(0);
+            updateSpeed();
+        }
+
+        init();
+    </script>
+</body>
+</html>

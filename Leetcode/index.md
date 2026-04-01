@@ -48,3 +48,23 @@ Each problem includes:
 | 28 | [Find the Index of the First Occurrence in a String](0028-find-the-index-of-the-first-occurrence-in-a-string/solution) | Easy |
 | 29 | [Divide Two Integers](0029-divide-two-integers/solution) | Medium |
 | 30 | [Substring with Concatenation of All Words](0030-substring-with-concatenation-of-all-words/solution) | Hard |
+| 31 | [Next Permutation](0031-next-permutation/solution) | Medium |
+| 32 | [Longest Valid Parentheses](0032-longest-valid-parentheses/solution) | Hard |
+| 33 | [Search in Rotated Sorted Array](0033-search-in-rotated-sorted-array/solution) | Medium |
+| 34 | [Find First and Last Position of Element in Sorted Array](0034-find-first-and-last-position-of-element-in-sorted-array/solution) | Medium |
+| 35 | [Search Insert Position](0035-search-insert-position/solution) | Easy |
+| 36 | [Valid Sudoku](0036-valid-sudoku/solution) | Medium |
+| 37 | [Sudoku Solver](0037-sudoku-solver/solution) | Hard |
+| 38 | [Count and Say](0038-count-and-say/solution) | Medium |
+| 39 | [Combination Sum](0039-combination-sum/solution) | Medium |
+| 40 | [Combination Sum II](0040-combination-sum-ii/solution) | Medium |
+| 41 | [First Missing Positive](0041-first-missing-positive/solution) | Hard |
+| 42 | [Trapping Rain Water](0042-trapping-rain-water/solution) | Hard |
+| 43 | [Multiply Strings](0043-multiply-strings/solution) | Medium |
+| 44 | [Wildcard Matching](0044-wildcard-matching/solution) | Hard |
+| 45 | [Jump Game II](0045-jump-game-ii/solution) | Medium |
+| 46 | [Permutations](0046-permutations/solution) | Medium |
+| 47 | [Permutations II](0047-permutations-ii/solution) | Medium |
+| 48 | [Rotate Image](0048-rotate-image/solution) | Medium |
+| 49 | [Group Anagrams](0049-group-anagrams/solution) | Medium |
+| 50 | [Pow(x, n)](0050-powx-n/solution) | Medium |

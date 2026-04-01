@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0031. Next Permutation — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 280px;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        /* BUTTONS */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-primary { background: #3b82f6; }
+        .btn-success { background: #10b981; }
+        .btn-warning { background: #f59e0b; }
+        .btn-danger { background: #ef4444; }
+        .btn-purple { background: #8b5cf6; }
+
+        /* PRESETS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            padding: 6px 12px;
+            background: #334155;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover { background: #475569; color: white; }
+
+        /* VISUALIZATION */
+        .viz-area {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .step-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #60a5fa;
+            text-align: center;
+            min-height: 28px;
+        }
+
+        .array-container {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cell-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .cell {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: all 0.4s ease;
+            border: 2px solid #334155;
+            background: #1e293b;
+            color: #e2e8f0;
+            position: relative;
+        }
+
+        .cell.pivot {
+            background: #fbbf24;
+            color: #0f172a;
+            border-color: #f59e0b;
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
+        }
+
+        .cell.swap-target {
+            background: #10b981;
+            color: #0f172a;
+            border-color: #059669;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .cell.descending {
+            background: #1e3a5f;
+            border-color: #60a5fa;
+            color: #93c5fd;
+        }
+
+        .cell.swapped {
+            background: #ef4444;
+            color: white;
+            border-color: #dc2626;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .cell.reversing {
+            background: #8b5cf6;
+            color: white;
+            border-color: #7c3aed;
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .cell.done {
+            background: #10b981;
+            color: white;
+            border-color: #059669;
+        }
+
+        .cell.scanning {
+            background: #3b82f6;
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .index-label {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        .pointer-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            min-height: 16px;
+            color: #fbbf24;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #60a5fa;
+        }
+
+        /* LOG */
+        .log-area {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 14px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            border: 1px solid #334155;
+        }
+
+        .log-area div { padding: 2px 0; }
+        .log-step { color: #60a5fa; }
+        .log-found { color: #10b981; }
+        .log-swap { color: #ef4444; }
+        .log-reverse { color: #a78bfa; }
+        .log-info { color: #94a3b8; }
+        .log-result { color: #fbbf24; font-weight: 700; }
+
+        /* RESULT */
+        .result-area {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+
+        .result-area .label { color: #94a3b8; font-size: 0.85rem; margin-bottom: 6px; }
+        .result-area .value { font-size: 1.3rem; font-weight: 700; color: #10b981; }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 0.8rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0031. Next Permutation</h1>
+        <p>Find the next lexicographically greater permutation of an array</p>
+    </div>
+
+    <div class="container">
+        <!-- Input -->
+        <div class="input-section">
+            <input type="text" id="arrInput" placeholder="Enter array (e.g. 1,2,3)" value="1,5,8,4,7,6,5,3,1">
+            <button class="btn btn-primary" onclick="loadArray()">Load</button>
+        </div>
+
+        <!-- Presets -->
+        <div class="presets">
+            <button class="preset-btn" onclick="loadPreset([1,2,3])">Example 1: [1,2,3]</button>
+            <button class="preset-btn" onclick="loadPreset([3,2,1])">Example 2: [3,2,1]</button>
+            <button class="preset-btn" onclick="loadPreset([1,1,5])">Example 3: [1,1,5]</button>
+            <button class="preset-btn" onclick="loadPreset([1,5,8,4,7,6,5,3,1])">Long: [1,5,8,4,7,6,5,3,1]</button>
+            <button class="preset-btn" onclick="loadPreset([2,3,1])">Swap: [2,3,1]</button>
+            <button class="preset-btn" onclick="loadPreset([1,3,5,4,2])">Mid: [1,3,5,4,2]</button>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color" style="background:#3b82f6"></div>Scanning</div>
+            <div class="legend-item"><div class="legend-color" style="background:#1e3a5f;border:1px solid #60a5fa"></div>Descending suffix</div>
+            <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div>Pivot</div>
+            <div class="legend-item"><div class="legend-color" style="background:#10b981"></div>Swap target</div>
+            <div class="legend-item"><div class="legend-color" style="background:#ef4444"></div>Swapped</div>
+            <div class="legend-item"><div class="legend-color" style="background:#8b5cf6"></div>Reversing</div>
+            <div class="legend-item"><div class="legend-color" style="background:#10b981"></div>Done</div>
+        </div>
+
+        <!-- Visualization -->
+        <div class="viz-area">
+            <div class="step-label" id="stepLabel">Click "Step" or "Play" to begin</div>
+            <div class="array-container" id="arrayContainer"></div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-primary" id="stepBtn" onclick="step()">Step</button>
+            <button class="btn btn-success" id="playBtn" onclick="play()">Play</button>
+            <button class="btn btn-warning" id="pauseBtn" onclick="pause()" disabled>Pause</button>
+            <button class="btn btn-danger" id="resetBtn" onclick="reset()">Reset</button>
+            <div class="speed-control">
+                <span>Speed:</span>
+                <input type="range" id="speedSlider" min="100" max="2000" value="800" step="100">
+                <span id="speedValue">800ms</span>
+            </div>
+        </div>
+
+        <!-- Log -->
+        <div class="log-area" id="logArea">
+            <div class="log-info">Ready. Load an array and click Step or Play.</div>
+        </div>
+
+        <!-- Result -->
+        <div class="result-area">
+            <div class="label">Result</div>
+            <div class="value" id="resultValue">—</div>
+        </div>
+    </div>
+
+    <script>
+        let nums = [];
+        let original = [];
+        let steps = [];
+        let currentStep = -1;
+        let playing = false;
+        let playTimer = null;
+
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        speedSlider.addEventListener('input', () => {
+            speedValue.textContent = speedSlider.value + 'ms';
+        });
+
+        function loadPreset(arr) {
+            document.getElementById('arrInput').value = arr.join(',');
+            loadArray();
+        }
+
+        function loadArray() {
+            const input = document.getElementById('arrInput').value.trim();
+            const parsed = input.split(/[,\s]+/).map(Number).filter(n => !isNaN(n));
+            if (parsed.length === 0) return;
+
+            nums = [...parsed];
+            original = [...parsed];
+            generateSteps();
+            currentStep = -1;
+            playing = false;
+            clearInterval(playTimer);
+            renderArray({});
+            document.getElementById('stepLabel').textContent = 'Click "Step" or "Play" to begin';
+            document.getElementById('logArea').innerHTML = '<div class="log-info">Array loaded: [' + original.join(', ') + ']. Ready.</div>';
+            document.getElementById('resultValue').textContent = '—';
+            document.getElementById('stepBtn').disabled = false;
+            document.getElementById('playBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+        }
+
+        function generateSteps() {
+            steps = [];
+            const arr = [...original];
+            const n = arr.length;
+
+            // Step: Show initial array
+            steps.push({
+                type: 'init',
+                arr: [...arr],
+                label: 'Initial array',
+                log: 'Starting Next Permutation on [' + arr.join(', ') + ']',
+                logClass: 'log-info',
+                highlights: {}
+            });
+
+            // Phase 1: Find pivot — scan right to left
+            let pivotIdx = -1;
+            for (let i = n - 2; i >= 0; i--) {
+                // Show scanning step
+                const h = {};
+                // Mark descending suffix
+                for (let k = i + 1; k < n; k++) h[k] = 'descending';
+                h[i] = 'scanning';
+
+                steps.push({
+                    type: 'scan-pivot',
+                    arr: [...arr],
+                    label: `Step 1: Scanning i=${i} — nums[${i}]=${arr[i]} ${arr[i] >= arr[i+1] ? '>=' : '<'} nums[${i+1}]=${arr[i+1]}`,
+                    log: `Check i=${i}: nums[${i}]=${arr[i]} ${arr[i] >= arr[i+1] ? '>= ' + arr[i+1] + ' — continue scanning' : '< ' + arr[i+1] + ' — PIVOT FOUND!'}`,
+                    logClass: arr[i] < arr[i+1] ? 'log-found' : 'log-info',
+                    highlights: h
+                });
+
+                if (arr[i] < arr[i + 1]) {
+                    pivotIdx = i;
+                    break;
+                }
+            }
+
+            if (pivotIdx === -1) {
+                // No pivot — entire array is descending
+                const h = {};
+                for (let k = 0; k < n; k++) h[k] = 'descending';
+                steps.push({
+                    type: 'no-pivot',
+                    arr: [...arr],
+                    label: 'No pivot found — entire array is descending. Reverse to get smallest permutation.',
+                    log: 'No ascending pair found. Array is the last permutation.',
+                    logClass: 'log-swap',
+                    highlights: h
+                });
+
+                // Reverse entire array
+                let left = 0, right = n - 1;
+                while (left < right) {
+                    const hRev = {};
+                    for (let k = 0; k < n; k++) {
+                        if (k >= left && k <= right) hRev[k] = 'reversing';
+                        else hRev[k] = 'done';
+                    }
+                    hRev[left] = 'reversing';
+                    hRev[right] = 'reversing';
+
+                    steps.push({
+                        type: 'reverse',
+                        arr: [...arr],
+                        label: `Reverse: swap nums[${left}]=${arr[left]} and nums[${right}]=${arr[right]}`,
+                        log: `Reverse: swap index ${left} (${arr[left]}) ↔ index ${right} (${arr[right]})`,
+                        logClass: 'log-reverse',
+                        highlights: hRev,
+                        swapIndices: [left, right]
+                    });
+
+                    [arr[left], arr[right]] = [arr[right], arr[left]];
+                    left++;
+                    right--;
+                }
+
+                // Final state
+                const hDone = {};
+                for (let k = 0; k < n; k++) hDone[k] = 'done';
+                steps.push({
+                    type: 'done',
+                    arr: [...arr],
+                    label: 'Done! Next permutation: [' + arr.join(', ') + ']',
+                    log: 'Result: [' + arr.join(', ') + ']',
+                    logClass: 'log-result',
+                    highlights: hDone
+                });
+                return;
+            }
+
+            // Show pivot found
+            const hPivot = {};
+            for (let k = pivotIdx + 1; k < n; k++) hPivot[k] = 'descending';
+            hPivot[pivotIdx] = 'pivot';
+            steps.push({
+                type: 'pivot-found',
+                arr: [...arr],
+                label: `Pivot found at index ${pivotIdx} (value ${arr[pivotIdx]}). Descending suffix starts at index ${pivotIdx + 1}.`,
+                log: `Pivot = index ${pivotIdx}, value = ${arr[pivotIdx]}`,
+                logClass: 'log-found',
+                highlights: hPivot
+            });
+
+            // Phase 2: Find swap target — scan right to left for smallest > pivot
+            let swapIdx = -1;
+            for (let j = n - 1; j > pivotIdx; j--) {
+                const hScan = {};
+                for (let k = pivotIdx + 1; k < n; k++) hScan[k] = 'descending';
+                hScan[pivotIdx] = 'pivot';
+                hScan[j] = 'scanning';
+
+                steps.push({
+                    type: 'scan-swap',
+                    arr: [...arr],
+                    label: `Step 2: Scanning j=${j} — nums[${j}]=${arr[j]} ${arr[j] <= arr[pivotIdx] ? '<=' : '>'} pivot(${arr[pivotIdx]})`,
+                    log: `Check j=${j}: nums[${j}]=${arr[j]} ${arr[j] > arr[pivotIdx] ? '> ' + arr[pivotIdx] + ' — SWAP TARGET FOUND!' : '<= ' + arr[pivotIdx] + ' — continue'}`,
+                    logClass: arr[j] > arr[pivotIdx] ? 'log-found' : 'log-info',
+                    highlights: hScan
+                });
+
+                if (arr[j] > arr[pivotIdx]) {
+                    swapIdx = j;
+                    break;
+                }
+            }
+
+            // Show swap target found
+            const hSwapTarget = {};
+            for (let k = pivotIdx + 1; k < n; k++) hSwapTarget[k] = 'descending';
+            hSwapTarget[pivotIdx] = 'pivot';
+            hSwapTarget[swapIdx] = 'swap-target';
+            steps.push({
+                type: 'swap-target-found',
+                arr: [...arr],
+                label: `Swap target at index ${swapIdx} (value ${arr[swapIdx]}). Will swap with pivot.`,
+                log: `Swap target = index ${swapIdx}, value = ${arr[swapIdx]}`,
+                logClass: 'log-found',
+                highlights: hSwapTarget
+            });
+
+            // Phase 3: Swap
+            const hSwap = {};
+            for (let k = 0; k < n; k++) hSwap[k] = '';
+            hSwap[pivotIdx] = 'swapped';
+            hSwap[swapIdx] = 'swapped';
+            steps.push({
+                type: 'swap',
+                arr: [...arr],
+                label: `Step 3: Swap nums[${pivotIdx}]=${arr[pivotIdx]} ↔ nums[${swapIdx}]=${arr[swapIdx]}`,
+                log: `Swap: index ${pivotIdx} (${arr[pivotIdx]}) ↔ index ${swapIdx} (${arr[swapIdx]})`,
+                logClass: 'log-swap',
+                highlights: hSwap,
+                swapIndices: [pivotIdx, swapIdx]
+            });
+
+            [arr[pivotIdx], arr[swapIdx]] = [arr[swapIdx], arr[pivotIdx]];
+
+            // Show after swap
+            const hAfterSwap = {};
+            for (let k = pivotIdx + 1; k < n; k++) hAfterSwap[k] = 'descending';
+            hAfterSwap[pivotIdx] = 'pivot';
+            steps.push({
+                type: 'after-swap',
+                arr: [...arr],
+                label: `After swap: [${arr.join(', ')}]. Suffix is still descending. Now reverse it.`,
+                log: `After swap: [${arr.join(', ')}]`,
+                logClass: 'log-info',
+                highlights: hAfterSwap
+            });
+
+            // Phase 4: Reverse suffix
+            let left = pivotIdx + 1, right = n - 1;
+            if (left < right) {
+                steps.push({
+                    type: 'reverse-start',
+                    arr: [...arr],
+                    label: `Step 4: Reverse suffix from index ${left} to ${right}`,
+                    log: `Reversing suffix [${left}..${right}]`,
+                    logClass: 'log-reverse',
+                    highlights: hAfterSwap
+                });
+            }
+
+            while (left < right) {
+                const hRev = {};
+                hRev[pivotIdx] = 'pivot';
+                for (let k = pivotIdx + 1; k < n; k++) {
+                    if (k === left || k === right) hRev[k] = 'reversing';
+                    else if (k < left || k > right) hRev[k] = 'done';
+                    else hRev[k] = 'descending';
+                }
+
+                steps.push({
+                    type: 'reverse',
+                    arr: [...arr],
+                    label: `Reverse: swap nums[${left}]=${arr[left]} ↔ nums[${right}]=${arr[right]}`,
+                    log: `Reverse: swap index ${left} (${arr[left]}) ↔ index ${right} (${arr[right]})`,
+                    logClass: 'log-reverse',
+                    highlights: hRev,
+                    swapIndices: [left, right]
+                });
+
+                [arr[left], arr[right]] = [arr[right], arr[left]];
+                left++;
+                right--;
+            }
+
+            // Final state
+            const hDone = {};
+            for (let k = 0; k < n; k++) hDone[k] = 'done';
+            steps.push({
+                type: 'done',
+                arr: [...arr],
+                label: 'Done! Next permutation: [' + arr.join(', ') + ']',
+                log: 'Result: [' + arr.join(', ') + ']',
+                logClass: 'log-result',
+                highlights: hDone
+            });
+        }
+
+        function renderArray(highlights) {
+            const container = document.getElementById('arrayContainer');
+            container.innerHTML = '';
+            const arr = currentStep >= 0 && currentStep < steps.length ? steps[currentStep].arr : nums;
+
+            arr.forEach((val, idx) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'cell-wrapper';
+
+                const pointer = document.createElement('div');
+                pointer.className = 'pointer-label';
+                const cls = highlights[idx] || '';
+                if (cls === 'pivot') pointer.textContent = 'pivot';
+                else if (cls === 'swap-target') pointer.textContent = 'swap';
+                else if (cls === 'scanning') pointer.textContent = '?';
+                wrapper.appendChild(pointer);
+
+                const cell = document.createElement('div');
+                cell.className = 'cell' + (cls ? ' ' + cls : '');
+                cell.textContent = val;
+                wrapper.appendChild(cell);
+
+                const label = document.createElement('div');
+                label.className = 'index-label';
+                label.textContent = idx;
+                wrapper.appendChild(label);
+
+                container.appendChild(wrapper);
+            });
+        }
+
+        function step() {
+            if (currentStep >= steps.length - 1) return;
+            currentStep++;
+            const s = steps[currentStep];
+
+            // For swap steps, update the displayed array after swap
+            if (s.swapIndices && currentStep > 0) {
+                // The step's arr already contains the state BEFORE swap;
+                // the NEXT step's arr has the state after swap
+                // We show the current arr (before swap) with highlights
+            }
+
+            renderArray(s.highlights);
+            document.getElementById('stepLabel').textContent = s.label;
+
+            const logArea = document.getElementById('logArea');
+            const logDiv = document.createElement('div');
+            logDiv.className = s.logClass;
+            logDiv.textContent = s.log;
+            logArea.appendChild(logDiv);
+            logArea.scrollTop = logArea.scrollHeight;
+
+            if (s.type === 'done') {
+                document.getElementById('resultValue').textContent = '[' + s.arr.join(', ') + ']';
+                document.getElementById('stepBtn').disabled = true;
+                document.getElementById('playBtn').disabled = true;
+                pause();
+            }
+        }
+
+        function play() {
+            if (currentStep >= steps.length - 1) return;
+            playing = true;
+            document.getElementById('playBtn').disabled = true;
+            document.getElementById('pauseBtn').disabled = false;
+            document.getElementById('stepBtn').disabled = true;
+
+            function tick() {
+                if (!playing || currentStep >= steps.length - 1) {
+                    pause();
+                    return;
+                }
+                step();
+                playTimer = setTimeout(tick, parseInt(speedSlider.value));
+            }
+            tick();
+        }
+
+        function pause() {
+            playing = false;
+            clearTimeout(playTimer);
+            document.getElementById('playBtn').disabled = currentStep >= steps.length - 1;
+            document.getElementById('pauseBtn').disabled = true;
+            document.getElementById('stepBtn').disabled = currentStep >= steps.length - 1;
+        }
+
+        function reset() {
+            pause();
+            nums = [...original];
+            currentStep = -1;
+            renderArray({});
+            document.getElementById('stepLabel').textContent = 'Click "Step" or "Play" to begin';
+            document.getElementById('logArea').innerHTML = '<div class="log-info">Reset. Array: [' + original.join(', ') + ']</div>';
+            document.getElementById('resultValue').textContent = '—';
+            document.getElementById('stepBtn').disabled = false;
+            document.getElementById('playBtn').disabled = false;
+        }
+
+        // Initialize with default input
+        loadArray();
+    </script>
+</body>
+</html>

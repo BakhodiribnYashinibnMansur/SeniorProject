@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0045. Jump Game II — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* PRESETS */
+        .presets {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            padding: 6px 14px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover { border-color: #60a5fa; color: #60a5fa; }
+        .preset-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 280px;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-pause:hover { background: #dc2626; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-reset:hover { background: #4b5563; }
+        .btn-apply { background: #8b5cf6; color: white; }
+        .btn-apply:hover { background: #7c3aed; }
+
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        /* INFO PANEL */
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .info-box h3 {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .info-box .value {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .val-jumps { color: #f59e0b; }
+        .val-current { color: #3b82f6; }
+        .val-farthest { color: #a78bfa; }
+        .val-end { color: #22c55e; }
+
+        /* STEP DESCRIPTION */
+        .step-description {
+            background: #0f172a;
+            border-left: 3px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 50px;
+            white-space: pre-line;
+        }
+
+        /* VIZ AREA */
+        .viz-area {
+            min-height: 280px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        /* BARS */
+        .bars-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            justify-content: center;
+            height: 200px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            max-width: 70px;
+            min-width: 28px;
+            height: 100%;
+            justify-content: flex-end;
+            position: relative;
+        }
+
+        .bar {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.35s ease;
+            position: relative;
+            min-height: 4px;
+        }
+
+        .bar-height-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 2px;
+            font-weight: 600;
+        }
+
+        .bar-idx-label {
+            font-size: 0.65rem;
+            color: #475569;
+            margin-top: 4px;
+        }
+
+        .bar-ptr-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            min-height: 18px;
+            margin-top: 2px;
+        }
+
+        /* Bar colors */
+        .bar-default { background: #334155; }
+        .bar-current { background: #3b82f6; box-shadow: 0 0 12px rgba(59,130,246,0.5); }
+        .bar-in-range { background: #60a5fa; opacity: 0.7; }
+        .bar-end { background: #22c55e; box-shadow: 0 0 12px rgba(34,197,94,0.4); }
+        .bar-farthest { background: #a78bfa; box-shadow: 0 0 12px rgba(167,139,250,0.4); }
+        .bar-visited { background: #475569; }
+        .bar-done { background: #f59e0b; box-shadow: 0 0 20px rgba(245,158,11,0.6); }
+
+        .ptr-current { color: #3b82f6; }
+        .ptr-end { color: #22c55e; }
+        .ptr-farthest { color: #a78bfa; }
+
+        /* Jump range overlay */
+        .range-overlay {
+            position: absolute;
+            bottom: 0;
+            height: 4px;
+            background: rgba(59, 130, 246, 0.4);
+            border-radius: 2px;
+            transition: all 0.35s ease;
+            pointer-events: none;
+        }
+
+        /* Level bracket */
+        .level-bracket {
+            position: absolute;
+            bottom: -20px;
+            height: 12px;
+            border: 2px solid;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            transition: all 0.35s ease;
+            pointer-events: none;
+        }
+
+        .level-label {
+            position: absolute;
+            bottom: -36px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        /* RESULT BOX */
+        .result-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            font-size: 1.2rem;
+            border: 2px solid #334155;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .result-box.show { display: block; }
+        .result-box.success { border-color: #22c55e; }
+        .result-box .result-value { font-weight: 700; color: #22c55e; font-size: 1.4rem; }
+
+        /* LOG */
+        .log-section {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #334155;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-section h3 {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .log-entry {
+            font-size: 0.8rem;
+            padding: 3px 0;
+            border-bottom: 1px solid #1e293b;
+            font-family: 'Courier New', monospace;
+        }
+
+        .log-jump { color: #f59e0b; font-weight: 600; }
+        .log-update { color: #a78bfa; }
+        .log-scan { color: #94a3b8; }
+        .log-done { color: #22c55e; font-weight: 600; }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 600px) {
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .bars-container { height: 160px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0045. Jump Game II</h1>
+        <p>Greedy (BFS-like) — Minimum jumps to reach the last index</p>
+    </div>
+
+    <div class="container">
+        <!-- Presets -->
+        <div class="presets">
+            <button class="preset-btn active" onclick="loadPreset(0)">Example 1</button>
+            <button class="preset-btn" onclick="loadPreset(1)">Example 2</button>
+            <button class="preset-btn" onclick="loadPreset(2)">All Ones</button>
+            <button class="preset-btn" onclick="loadPreset(3)">Big First</button>
+            <button class="preset-btn" onclick="loadPreset(4)">Increasing</button>
+            <button class="preset-btn" onclick="loadPreset(5)">Long Array</button>
+        </div>
+
+        <!-- Input -->
+        <div class="input-section">
+            <input type="text" id="arrInput" placeholder="e.g. 2,3,1,1,4" value="2,3,1,1,4">
+            <button class="btn btn-apply" onclick="applyInput()">Apply</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-step" id="btnStep" onclick="step()">Step</button>
+            <button class="btn btn-play" id="btnPlay" onclick="play()">Play</button>
+            <button class="btn btn-pause" id="btnPause" onclick="pause()" style="display:none">Pause</button>
+            <button class="btn btn-reset" onclick="reset()">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+            </div>
+        </div>
+
+        <!-- Info Panel -->
+        <div class="info-panel">
+            <div class="info-box">
+                <h3>Jumps</h3>
+                <div class="value val-jumps" id="infoJumps">0</div>
+            </div>
+            <div class="info-box">
+                <h3>Current (i)</h3>
+                <div class="value val-current" id="infoCurrent">0</div>
+            </div>
+            <div class="info-box">
+                <h3>Farthest</h3>
+                <div class="value val-farthest" id="infoFarthest">0</div>
+            </div>
+            <div class="info-box">
+                <h3>End</h3>
+                <div class="value val-end" id="infoEnd">0</div>
+            </div>
+        </div>
+
+        <!-- Step Description -->
+        <div class="step-description" id="stepDesc">
+            Click "Step" or "Play" to begin the greedy algorithm.
+            We scan left to right, tracking the farthest reachable index.
+            When we pass the current level boundary (end), we take a jump.
+        </div>
+
+        <!-- Visualization -->
+        <div class="viz-area">
+            <div class="section-label">Array Visualization</div>
+            <div class="bars-container" id="barsContainer"></div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background:#3b82f6"></div>Current (i)</div>
+                <div class="legend-item"><div class="legend-color" style="background:#60a5fa;opacity:0.7"></div>Jump Range</div>
+                <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div>End</div>
+                <div class="legend-item"><div class="legend-color" style="background:#a78bfa"></div>Farthest</div>
+                <div class="legend-item"><div class="legend-color" style="background:#f59e0b"></div>Destination</div>
+            </div>
+        </div>
+
+        <!-- Result -->
+        <div class="result-box" id="resultBox">
+            Minimum jumps: <span class="result-value" id="resultValue"></span>
+        </div>
+
+        <!-- Log -->
+        <div class="log-section">
+            <h3>Execution Log</h3>
+            <div id="logContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // State
+        // ============================================================
+        const presets = [
+            { name: 'Example 1', arr: [2, 3, 1, 1, 4] },
+            { name: 'Example 2', arr: [2, 3, 0, 1, 4] },
+            { name: 'All Ones',  arr: [1, 1, 1, 1, 1] },
+            { name: 'Big First', arr: [5, 1, 1, 1, 1] },
+            { name: 'Increasing', arr: [1, 2, 3, 4, 5] },
+            { name: 'Long Array', arr: [3, 2, 1, 1, 2, 3, 1, 1, 4] },
+        ];
+
+        let nums = [...presets[0].arr];
+        let n = nums.length;
+
+        // Algorithm state
+        let i = 0;
+        let jumps = 0;
+        let end = 0;
+        let farthest = 0;
+        let done = false;
+        let started = false;
+
+        // Steps for animation: we pre-generate or step through live
+        let playInterval = null;
+
+        // ============================================================
+        // Rendering
+        // ============================================================
+        function getMaxVal() {
+            return Math.max(...nums, 1);
+        }
+
+        function render() {
+            const container = document.getElementById('barsContainer');
+            container.innerHTML = '';
+            const maxVal = getMaxVal();
+
+            for (let idx = 0; idx < n; idx++) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'bar-wrapper';
+
+                // Height label
+                const hLabel = document.createElement('div');
+                hLabel.className = 'bar-height-label';
+                hLabel.textContent = nums[idx];
+
+                // Bar
+                const bar = document.createElement('div');
+                const heightPercent = (nums[idx] / maxVal) * 85 + 5;
+                bar.style.height = heightPercent + '%';
+
+                // Determine bar class
+                let barClass = 'bar bar-default';
+                if (done && idx === n - 1) {
+                    barClass = 'bar bar-done';
+                } else if (started && idx === i && !done) {
+                    barClass = 'bar bar-current';
+                } else if (started && !done && idx > i && idx <= i + nums[i] && idx !== n - 1) {
+                    barClass = 'bar bar-in-range';
+                } else if (started && idx === end && end !== i && !done) {
+                    barClass = 'bar bar-end';
+                } else if (started && idx === farthest && farthest !== i && farthest !== end && !done) {
+                    barClass = 'bar bar-farthest';
+                } else if (started && idx < i) {
+                    barClass = 'bar bar-visited';
+                }
+
+                bar.className = barClass;
+
+                // Index label
+                const idxLabel = document.createElement('div');
+                idxLabel.className = 'bar-idx-label';
+                idxLabel.textContent = idx;
+
+                // Pointer label
+                const ptrLabel = document.createElement('div');
+                ptrLabel.className = 'bar-ptr-label';
+                let ptrs = [];
+                if (started) {
+                    if (idx === i && !done) ptrs.push('<span class="ptr-current">i</span>');
+                    if (idx === end && !done) ptrs.push('<span class="ptr-end">end</span>');
+                    if (idx === farthest && !done) ptrs.push('<span class="ptr-farthest">far</span>');
+                }
+                ptrLabel.innerHTML = ptrs.join(' ');
+
+                wrapper.appendChild(hLabel);
+                wrapper.appendChild(bar);
+                wrapper.appendChild(idxLabel);
+                wrapper.appendChild(ptrLabel);
+                container.appendChild(wrapper);
+            }
+
+            // Update info panel
+            document.getElementById('infoJumps').textContent = jumps;
+            document.getElementById('infoCurrent').textContent = done ? '-' : i;
+            document.getElementById('infoFarthest').textContent = farthest;
+            document.getElementById('infoEnd').textContent = end;
+        }
+
+        function addLog(text, cls) {
+            const container = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + (cls || 'log-scan');
+            entry.textContent = text;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function setDesc(text) {
+            document.getElementById('stepDesc').textContent = text;
+        }
+
+        // ============================================================
+        // Algorithm Step
+        // ============================================================
+        function step() {
+            if (done) return;
+
+            if (!started) {
+                started = true;
+                addLog(`Starting: nums = [${nums.join(', ')}], n = ${n}`, 'log-scan');
+                addLog(`Initialize: jumps=0, end=0, farthest=0`, 'log-scan');
+
+                if (n <= 1) {
+                    done = true;
+                    setDesc(`Array has only ${n} element. Already at destination. 0 jumps needed.`);
+                    addLog(`Result: 0 jumps (already at destination)`, 'log-done');
+                    showResult(0);
+                    render();
+                    return;
+                }
+
+                setDesc(`Initialized. i=0, jumps=0, end=0, farthest=0\nWe will scan from index 0 to ${n - 2}.`);
+                render();
+                return;
+            }
+
+            if (i >= n - 1) {
+                done = true;
+                setDesc(`Scan complete. Minimum jumps to reach index ${n - 1}: ${jumps}`);
+                addLog(`Result: ${jumps} jumps`, 'log-done');
+                showResult(jumps);
+                render();
+                return;
+            }
+
+            // Process current index
+            const oldFarthest = farthest;
+            const reach = i + nums[i];
+            farthest = Math.max(farthest, reach);
+
+            let desc = `i=${i}: nums[${i}]=${nums[i]}, can reach index ${reach}\n`;
+            if (farthest > oldFarthest) {
+                desc += `farthest updated: ${oldFarthest} -> ${farthest}\n`;
+                addLog(`i=${i}: reach=${reach}, farthest: ${oldFarthest} -> ${farthest}`, 'log-update');
+            } else {
+                desc += `farthest stays at ${farthest} (${reach} <= ${farthest})\n`;
+                addLog(`i=${i}: reach=${reach}, farthest unchanged (${farthest})`, 'log-scan');
+            }
+
+            if (i === end) {
+                jumps++;
+                end = farthest;
+                desc += `i reached end boundary! Jump #${jumps}! New end = ${end}`;
+                addLog(`JUMP #${jumps}! end updated to ${end}`, 'log-jump');
+
+                if (end >= n - 1) {
+                    i++;
+                    done = true;
+                    desc += `\nend >= ${n - 1} (last index). Done!`;
+                    addLog(`Reached the end. Result: ${jumps} jumps`, 'log-done');
+                    setDesc(desc);
+                    showResult(jumps);
+                    render();
+                    return;
+                }
+            }
+
+            i++;
+            setDesc(desc);
+            render();
+        }
+
+        function showResult(val) {
+            const box = document.getElementById('resultBox');
+            document.getElementById('resultValue').textContent = val;
+            box.className = 'result-box show success';
+        }
+
+        // ============================================================
+        // Controls
+        // ============================================================
+        function play() {
+            if (done) return;
+            document.getElementById('btnPlay').style.display = 'none';
+            document.getElementById('btnPause').style.display = '';
+            const speed = document.getElementById('speedSlider').value;
+            const delay = 1200 - speed * 100;
+            playInterval = setInterval(() => {
+                if (done) { pause(); return; }
+                step();
+            }, delay);
+        }
+
+        function pause() {
+            clearInterval(playInterval);
+            playInterval = null;
+            document.getElementById('btnPlay').style.display = '';
+            document.getElementById('btnPause').style.display = 'none';
+        }
+
+        function reset() {
+            pause();
+            i = 0;
+            jumps = 0;
+            end = 0;
+            farthest = 0;
+            done = false;
+            started = false;
+            document.getElementById('logContainer').innerHTML = '';
+            document.getElementById('resultBox').className = 'result-box';
+            setDesc('Click "Step" or "Play" to begin the greedy algorithm.\nWe scan left to right, tracking the farthest reachable index.\nWhen we pass the current level boundary (end), we take a jump.');
+            render();
+        }
+
+        function loadPreset(idx) {
+            document.querySelectorAll('.preset-btn').forEach((b, bi) => {
+                b.classList.toggle('active', bi === idx);
+            });
+            nums = [...presets[idx].arr];
+            n = nums.length;
+            document.getElementById('arrInput').value = nums.join(',');
+            reset();
+        }
+
+        function applyInput() {
+            const val = document.getElementById('arrInput').value.trim();
+            const parsed = val.split(/[\s,]+/).map(Number).filter(x => !isNaN(x) && x >= 0);
+            if (parsed.length === 0) {
+                setDesc('Invalid input. Enter comma-separated non-negative integers.');
+                return;
+            }
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            nums = parsed;
+            n = nums.length;
+            reset();
+        }
+
+        // Speed slider live update
+        document.getElementById('speedSlider').addEventListener('input', () => {
+            if (playInterval) {
+                pause();
+                play();
+            }
+        });
+
+        // ============================================================
+        // Init
+        // ============================================================
+        render();
+    </script>
+</body>
+</html>

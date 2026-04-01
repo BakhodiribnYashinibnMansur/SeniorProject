@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0034. Find First and Last Position — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        #arrInput { width: 260px; }
+        #targetInput { width: 60px; }
+
+        /* BUTTONS */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-warning { background: #f59e0b; color: #1e293b; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-purple { background: #8b5cf6; color: white; }
+        .btn-purple:hover { background: #7c3aed; }
+
+        /* PRESETS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            padding: 5px 12px;
+            background: #334155;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover { background: #475569; }
+
+        /* PHASE INDICATOR */
+        .phase-indicator {
+            text-align: center;
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .phase-left { color: #60a5fa; }
+        .phase-right { color: #f472b6; }
+        .phase-done { color: #34d399; }
+
+        /* ARRAY VISUALIZATION */
+        .array-container {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .cell-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .cell {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: 2px solid #475569;
+            background: #1e293b;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .cell-index {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        /* Cell states */
+        .cell.target-found {
+            background: #166534;
+            border-color: #22c55e;
+            color: #bbf7d0;
+        }
+
+        .cell.mid-cell {
+            background: #7c2d12;
+            border-color: #f97316;
+            color: #fed7aa;
+        }
+
+        .cell.in-range {
+            background: #1e3a5f;
+            border-color: #3b82f6;
+        }
+
+        .cell.out-of-range {
+            background: #0f172a;
+            border-color: #334155;
+            color: #475569;
+        }
+
+        .cell.left-bound {
+            background: #1e3a8a;
+            border-color: #60a5fa;
+            box-shadow: 0 0 12px rgba(96, 165, 250, 0.4);
+        }
+
+        .cell.right-bound {
+            background: #831843;
+            border-color: #f472b6;
+            box-shadow: 0 0 12px rgba(244, 114, 182, 0.4);
+        }
+
+        .cell.result-cell {
+            background: #064e3b;
+            border-color: #34d399;
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.5);
+            color: #a7f3d0;
+        }
+
+        /* POINTER LABELS */
+        .pointer-row {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 20px;
+            min-height: 28px;
+        }
+
+        .pointer-slot {
+            width: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .pointer-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .pointer-lo { background: #3b82f6; color: white; }
+        .pointer-hi { background: #a855f7; color: white; }
+        .pointer-mid { background: #f97316; color: white; }
+        .pointer-res { background: #22c55e; color: white; }
+
+        /* INFO PANEL */
+        .info-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #334155;
+        }
+
+        .info-box h3 {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .info-detail {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 10px;
+        }
+
+        .speed-control label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        /* LOG */
+        .log-container {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #334155;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-container h3 {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .log-entry {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .log-entry:last-child { border-bottom: none; }
+
+        .log-phase { color: #60a5fa; font-weight: 600; }
+        .log-compare { color: #fbbf24; }
+        .log-move { color: #a78bfa; }
+        .log-found { color: #34d399; font-weight: 600; }
+        .log-result { color: #f472b6; font-weight: 600; }
+
+        /* RESULT BANNER */
+        .result-banner {
+            text-align: center;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: none;
+        }
+
+        .result-banner.show { display: block; }
+
+        .result-banner.found {
+            background: linear-gradient(135deg, #064e3b, #166534);
+            border: 1px solid #34d399;
+            color: #a7f3d0;
+        }
+
+        .result-banner.not-found {
+            background: linear-gradient(135deg, #7f1d1d, #991b1b);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        @media (max-width: 600px) {
+            .info-panel { grid-template-columns: 1fr; }
+            .cell { width: 40px; height: 40px; font-size: 0.9rem; }
+            .pointer-slot { width: 40px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0034. Find First and Last Position of Element in Sorted Array</h1>
+        <p>Two Binary Searches: Left Bound + Right Bound | O(log n) Time</p>
+    </div>
+
+    <div class="container">
+        <!-- Input Section -->
+        <div class="input-section">
+            <label>Array:</label>
+            <input type="text" id="arrInput" placeholder="e.g. 5,7,7,8,8,10" value="5,7,7,8,8,10">
+            <label>Target:</label>
+            <input type="text" id="targetInput" placeholder="8" value="8">
+            <button class="btn btn-purple" onclick="loadInput()">Load</button>
+        </div>
+
+        <!-- Presets -->
+        <div class="presets">
+            <button class="preset-btn" onclick="loadPreset(0)">Example 1: [5,7,7,8,8,10] t=8</button>
+            <button class="preset-btn" onclick="loadPreset(1)">Not Found: [5,7,7,8,8,10] t=6</button>
+            <button class="preset-btn" onclick="loadPreset(2)">All Same: [8,8,8,8,8] t=8</button>
+            <button class="preset-btn" onclick="loadPreset(3)">Single: [1] t=1</button>
+            <button class="preset-btn" onclick="loadPreset(4)">Long Run: [1,2,2,2,2,2,3] t=2</button>
+            <button class="preset-btn" onclick="loadPreset(5)">At Edges: [3,3,5,5,7,7] t=7</button>
+        </div>
+
+        <!-- Phase Indicator -->
+        <div class="phase-indicator" id="phaseIndicator">
+            Ready — Press Step or Play to begin
+        </div>
+
+        <!-- Array Visualization -->
+        <div class="pointer-row" id="pointerRow"></div>
+        <div class="array-container" id="arrayContainer"></div>
+
+        <!-- Info Panel -->
+        <div class="info-panel">
+            <div class="info-box">
+                <h3>Search Phase</h3>
+                <div class="info-value" id="infoPhase">—</div>
+                <div class="info-detail" id="infoPhaseDetail">Not started</div>
+            </div>
+            <div class="info-box">
+                <h3>Pointers</h3>
+                <div class="info-value" id="infoPointers">lo=? hi=? mid=?</div>
+                <div class="info-detail" id="infoCompare">—</div>
+            </div>
+            <div class="info-box">
+                <h3>Result (so far)</h3>
+                <div class="info-value" id="infoResult">[-1, -1]</div>
+                <div class="info-detail" id="infoResultDetail">No occurrence found yet</div>
+            </div>
+            <div class="info-box">
+                <h3>Step</h3>
+                <div class="info-value" id="infoStep">0</div>
+                <div class="info-detail" id="infoStepDetail">Total binary search steps</div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-primary" id="btnStep" onclick="step()">Step</button>
+            <button class="btn btn-success" id="btnPlay" onclick="play()">Play</button>
+            <button class="btn btn-warning" id="btnPause" onclick="pause()" disabled>Pause</button>
+            <button class="btn btn-danger" id="btnReset" onclick="reset()">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <span id="speedLabel">5x</span>
+            </div>
+        </div>
+
+        <!-- Log -->
+        <div class="log-container" id="logContainer">
+            <h3>Step Log</h3>
+            <div id="logEntries"></div>
+        </div>
+
+        <!-- Result Banner -->
+        <div class="result-banner" id="resultBanner"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        // State
+        // ============================================================
+        const presets = [
+            { arr: [5,7,7,8,8,10], target: 8 },
+            { arr: [5,7,7,8,8,10], target: 6 },
+            { arr: [8,8,8,8,8], target: 8 },
+            { arr: [1], target: 1 },
+            { arr: [1,2,2,2,2,2,3], target: 2 },
+            { arr: [3,3,5,5,7,7], target: 7 },
+        ];
+
+        let nums = [];
+        let target = 0;
+        let steps = [];       // precomputed steps
+        let currentStep = 0;
+        let playInterval = null;
+        let leftResult = -1;
+        let rightResult = -1;
+
+        // ============================================================
+        // Step Generation (precompute all steps)
+        // ============================================================
+        function generateSteps(arr, tgt) {
+            const s = [];
+            const n = arr.length;
+
+            if (n === 0) {
+                s.push({
+                    phase: 'done',
+                    message: 'Empty array — target not found',
+                    lo: -1, hi: -1, mid: -1,
+                    leftRes: -1, rightRes: -1,
+                    type: 'result'
+                });
+                return s;
+            }
+
+            // Phase 1: Find left bound
+            let lo = 0, hi = n - 1, leftRes = -1;
+
+            s.push({
+                phase: 'left',
+                message: `Phase 1: Finding FIRST occurrence of ${tgt}`,
+                lo, hi, mid: -1,
+                leftRes: -1, rightRes: -1,
+                type: 'phase-start'
+            });
+
+            while (lo <= hi) {
+                const mid = lo + Math.floor((hi - lo) / 2);
+                const cmp = arr[mid] === tgt ? 'equal' : (arr[mid] < tgt ? 'less' : 'greater');
+
+                s.push({
+                    phase: 'left',
+                    message: `mid=${mid}, nums[${mid}]=${arr[mid]} ${cmp === 'equal' ? '==' : (cmp === 'less' ? '<' : '>')} target=${tgt}`,
+                    lo, hi, mid,
+                    leftRes,
+                    rightRes: -1,
+                    type: 'compare',
+                    cmp
+                });
+
+                if (arr[mid] === tgt) {
+                    leftRes = mid;
+                    hi = mid - 1;
+                    s.push({
+                        phase: 'left',
+                        message: `Found target at ${mid}! Record result=${mid}, search LEFT: hi=${hi}`,
+                        lo, hi, mid,
+                        leftRes,
+                        rightRes: -1,
+                        type: 'found'
+                    });
+                } else if (arr[mid] < tgt) {
+                    lo = mid + 1;
+                    s.push({
+                        phase: 'left',
+                        message: `nums[${mid}]=${arr[mid]} < ${tgt} — search RIGHT: lo=${lo}`,
+                        lo, hi, mid,
+                        leftRes,
+                        rightRes: -1,
+                        type: 'move'
+                    });
+                } else {
+                    hi = mid - 1;
+                    s.push({
+                        phase: 'left',
+                        message: `nums[${mid}]=${arr[mid]} > ${tgt} — search LEFT: hi=${hi}`,
+                        lo, hi, mid,
+                        leftRes,
+                        rightRes: -1,
+                        type: 'move'
+                    });
+                }
+            }
+
+            s.push({
+                phase: 'left-done',
+                message: `Left bound result: ${leftRes === -1 ? 'NOT FOUND' : 'index ' + leftRes}`,
+                lo: -1, hi: -1, mid: -1,
+                leftRes,
+                rightRes: -1,
+                type: 'phase-end'
+            });
+
+            // If target not found, we're done
+            if (leftRes === -1) {
+                s.push({
+                    phase: 'done',
+                    message: `Target ${tgt} not found in array. Result: [-1, -1]`,
+                    lo: -1, hi: -1, mid: -1,
+                    leftRes: -1, rightRes: -1,
+                    type: 'result'
+                });
+                return s;
+            }
+
+            // Phase 2: Find right bound
+            lo = 0; hi = n - 1;
+            let rightRes = -1;
+
+            s.push({
+                phase: 'right',
+                message: `Phase 2: Finding LAST occurrence of ${tgt}`,
+                lo, hi, mid: -1,
+                leftRes,
+                rightRes: -1,
+                type: 'phase-start'
+            });
+
+            while (lo <= hi) {
+                const mid = lo + Math.floor((hi - lo) / 2);
+                const cmp = arr[mid] === tgt ? 'equal' : (arr[mid] < tgt ? 'less' : 'greater');
+
+                s.push({
+                    phase: 'right',
+                    message: `mid=${mid}, nums[${mid}]=${arr[mid]} ${cmp === 'equal' ? '==' : (cmp === 'less' ? '<' : '>')} target=${tgt}`,
+                    lo, hi, mid,
+                    leftRes,
+                    rightRes,
+                    type: 'compare',
+                    cmp
+                });
+
+                if (arr[mid] === tgt) {
+                    rightRes = mid;
+                    lo = mid + 1;
+                    s.push({
+                        phase: 'right',
+                        message: `Found target at ${mid}! Record result=${mid}, search RIGHT: lo=${lo}`,
+                        lo, hi, mid,
+                        leftRes,
+                        rightRes,
+                        type: 'found'
+                    });
+                } else if (arr[mid] < tgt) {
+                    lo = mid + 1;
+                    s.push({
+                        phase: 'right',
+                        message: `nums[${mid}]=${arr[mid]} < ${tgt} — search RIGHT: lo=${lo}`,
+                        lo, hi, mid,
+                        leftRes,
+                        rightRes,
+                        type: 'move'
+                    });
+                } else {
+                    hi = mid - 1;
+                    s.push({
+                        phase: 'right',
+                        message: `nums[${mid}]=${arr[mid]} > ${tgt} — search LEFT: hi=${hi}`,
+                        lo, hi, mid,
+                        leftRes,
+                        rightRes,
+                        type: 'move'
+                    });
+                }
+            }
+
+            s.push({
+                phase: 'right-done',
+                message: `Right bound result: index ${rightRes}`,
+                lo: -1, hi: -1, mid: -1,
+                leftRes,
+                rightRes,
+                type: 'phase-end'
+            });
+
+            s.push({
+                phase: 'done',
+                message: `Result: [${leftRes}, ${rightRes}]`,
+                lo: -1, hi: -1, mid: -1,
+                leftRes,
+                rightRes,
+                type: 'result'
+            });
+
+            return s;
+        }
+
+        // ============================================================
+        // Rendering
+        // ============================================================
+        function renderArray(state) {
+            const container = document.getElementById('arrayContainer');
+            const pointerRow = document.getElementById('pointerRow');
+            container.innerHTML = '';
+            pointerRow.innerHTML = '';
+
+            nums.forEach((val, i) => {
+                // Pointer slot
+                const slot = document.createElement('div');
+                slot.className = 'pointer-slot';
+
+                if (state) {
+                    if (state.mid === i) {
+                        const lbl = document.createElement('span');
+                        lbl.className = 'pointer-label pointer-mid';
+                        lbl.textContent = 'mid';
+                        slot.appendChild(lbl);
+                    }
+                    if (state.lo === i) {
+                        const lbl = document.createElement('span');
+                        lbl.className = 'pointer-label pointer-lo';
+                        lbl.textContent = 'lo';
+                        slot.appendChild(lbl);
+                    }
+                    if (state.hi === i) {
+                        const lbl = document.createElement('span');
+                        lbl.className = 'pointer-label pointer-hi';
+                        lbl.textContent = 'hi';
+                        slot.appendChild(lbl);
+                    }
+                    if (state.leftRes === i || state.rightRes === i) {
+                        const lbl = document.createElement('span');
+                        lbl.className = 'pointer-label pointer-res';
+                        lbl.textContent = state.leftRes === i && state.rightRes === i ? 'L/R' :
+                                          state.leftRes === i ? 'L' : 'R';
+                        slot.appendChild(lbl);
+                    }
+                }
+
+                pointerRow.appendChild(slot);
+
+                // Cell
+                const wrapper = document.createElement('div');
+                wrapper.className = 'cell-wrapper';
+
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.textContent = val;
+
+                if (state) {
+                    const isDone = state.phase === 'done';
+                    const isLeftDone = state.phase === 'left-done' || state.phase === 'right' || state.phase === 'right-done' || isDone;
+                    const isRightDone = state.phase === 'right-done' || isDone;
+
+                    // Final result highlight
+                    if (isDone && state.leftRes !== -1 && i >= state.leftRes && i <= state.rightRes) {
+                        cell.classList.add('result-cell');
+                    }
+                    // Mid cell highlight
+                    else if (state.mid === i) {
+                        cell.classList.add('mid-cell');
+                    }
+                    // Target found markers
+                    else if ((isLeftDone && state.leftRes === i) || (isRightDone && state.rightRes === i)) {
+                        cell.classList.add('target-found');
+                    }
+                    // In-range cells
+                    else if (state.lo !== -1 && state.hi !== -1 && i >= state.lo && i <= state.hi) {
+                        cell.classList.add('in-range');
+                    }
+                    // Out of range
+                    else if (state.lo !== -1 || state.hi !== -1) {
+                        cell.classList.add('out-of-range');
+                    }
+                }
+
+                const idx = document.createElement('div');
+                idx.className = 'cell-index';
+                idx.textContent = i;
+
+                wrapper.appendChild(cell);
+                wrapper.appendChild(idx);
+                container.appendChild(wrapper);
+            });
+        }
+
+        function renderInfo(state) {
+            const phaseEl = document.getElementById('phaseIndicator');
+            const infoPhase = document.getElementById('infoPhase');
+            const infoPhaseDetail = document.getElementById('infoPhaseDetail');
+            const infoPointers = document.getElementById('infoPointers');
+            const infoCompare = document.getElementById('infoCompare');
+            const infoResult = document.getElementById('infoResult');
+            const infoResultDetail = document.getElementById('infoResultDetail');
+            const infoStep = document.getElementById('infoStep');
+
+            if (!state) {
+                phaseEl.innerHTML = 'Ready — Press <strong>Step</strong> or <strong>Play</strong> to begin';
+                phaseEl.className = 'phase-indicator';
+                infoPhase.textContent = '—';
+                infoPhaseDetail.textContent = 'Not started';
+                infoPointers.textContent = 'lo=? hi=? mid=?';
+                infoCompare.textContent = '—';
+                infoResult.textContent = '[-1, -1]';
+                infoResultDetail.textContent = 'No occurrence found yet';
+                infoStep.textContent = '0';
+                return;
+            }
+
+            infoStep.textContent = currentStep;
+
+            // Phase
+            if (state.phase === 'left' || state.phase === 'left-done') {
+                phaseEl.innerHTML = 'Phase 1: Finding <strong>FIRST</strong> occurrence (Left Bound)';
+                phaseEl.className = 'phase-indicator phase-left';
+                infoPhase.textContent = 'Left Bound';
+                infoPhaseDetail.textContent = 'Searching for first occurrence';
+            } else if (state.phase === 'right' || state.phase === 'right-done') {
+                phaseEl.innerHTML = 'Phase 2: Finding <strong>LAST</strong> occurrence (Right Bound)';
+                phaseEl.className = 'phase-indicator phase-right';
+                infoPhase.textContent = 'Right Bound';
+                infoPhaseDetail.textContent = 'Searching for last occurrence';
+            } else if (state.phase === 'done') {
+                phaseEl.innerHTML = 'Search Complete';
+                phaseEl.className = 'phase-indicator phase-done';
+                infoPhase.textContent = 'Done';
+                infoPhaseDetail.textContent = 'Both bounds found';
+            }
+
+            // Pointers
+            if (state.lo !== -1 && state.hi !== -1) {
+                infoPointers.textContent = `lo=${state.lo}  hi=${state.hi}  mid=${state.mid >= 0 ? state.mid : '?'}`;
+            } else {
+                infoPointers.textContent = '—';
+            }
+
+            // Compare info
+            infoCompare.textContent = state.message;
+
+            // Result
+            const lr = state.leftRes !== undefined ? state.leftRes : -1;
+            const rr = state.rightRes !== undefined ? state.rightRes : -1;
+            infoResult.textContent = `[${lr}, ${rr}]`;
+
+            if (state.phase === 'done') {
+                if (lr === -1) {
+                    infoResultDetail.textContent = 'Target not found in array';
+                } else {
+                    infoResultDetail.textContent = `Found at indices ${lr} to ${rr} (${rr - lr + 1} occurrence${rr - lr ? 's' : ''})`;
+                }
+            } else {
+                infoResultDetail.textContent = lr >= 0 ? `Left bound candidate: ${lr}` : 'Searching...';
+            }
+
+            // Result banner
+            if (state.phase === 'done') {
+                const banner = document.getElementById('resultBanner');
+                if (lr !== -1) {
+                    banner.className = 'result-banner show found';
+                    banner.innerHTML = `Target ${target} found at positions [${lr}, ${rr}] — ${rr - lr + 1} occurrence${rr - lr ? 's' : ''}`;
+                } else {
+                    banner.className = 'result-banner show not-found';
+                    banner.innerHTML = `Target ${target} not found — Result: [-1, -1]`;
+                }
+            }
+        }
+
+        function addLog(state) {
+            const entries = document.getElementById('logEntries');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+
+            let cls = 'log-move';
+            if (state.type === 'phase-start' || state.type === 'phase-end') cls = 'log-phase';
+            else if (state.type === 'compare') cls = 'log-compare';
+            else if (state.type === 'found') cls = 'log-found';
+            else if (state.type === 'result') cls = 'log-result';
+
+            const phaseTag = state.phase.includes('left') ? '[LEFT] ' :
+                             state.phase.includes('right') ? '[RIGHT] ' : '[DONE] ';
+
+            entry.innerHTML = `<span class="${cls}">${phaseTag}${state.message}</span>`;
+            entries.appendChild(entry);
+
+            // Auto-scroll
+            const container = document.getElementById('logContainer');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // ============================================================
+        // Controls
+        // ============================================================
+        function step() {
+            if (currentStep >= steps.length) return;
+
+            const state = steps[currentStep];
+            renderArray(state);
+            renderInfo(state);
+            addLog(state);
+            currentStep++;
+
+            if (currentStep >= steps.length) {
+                pause();
+                document.getElementById('btnStep').disabled = true;
+            }
+        }
+
+        function play() {
+            if (currentStep >= steps.length) return;
+            document.getElementById('btnPlay').disabled = true;
+            document.getElementById('btnPause').disabled = false;
+
+            const speed = 11 - document.getElementById('speedSlider').value;
+            const interval = speed * 120;
+
+            playInterval = setInterval(() => {
+                step();
+                if (currentStep >= steps.length) {
+                    pause();
+                }
+            }, interval);
+        }
+
+        function pause() {
+            if (playInterval) {
+                clearInterval(playInterval);
+                playInterval = null;
+            }
+            document.getElementById('btnPlay').disabled = false;
+            document.getElementById('btnPause').disabled = true;
+        }
+
+        function reset() {
+            pause();
+            currentStep = 0;
+            document.getElementById('btnStep').disabled = false;
+            document.getElementById('logEntries').innerHTML = '';
+            document.getElementById('resultBanner').className = 'result-banner';
+            renderArray(null);
+            renderInfo(null);
+        }
+
+        function loadInput() {
+            const arrStr = document.getElementById('arrInput').value.trim();
+            const tgtStr = document.getElementById('targetInput').value.trim();
+
+            nums = arrStr ? arrStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n)) : [];
+            target = parseInt(tgtStr) || 0;
+
+            steps = generateSteps(nums, target);
+            reset();
+        }
+
+        function loadPreset(idx) {
+            const p = presets[idx];
+            document.getElementById('arrInput').value = p.arr.join(',');
+            document.getElementById('targetInput').value = p.target;
+            loadInput();
+        }
+
+        // Speed slider label
+        document.getElementById('speedSlider').addEventListener('input', function() {
+            document.getElementById('speedLabel').textContent = this.value + 'x';
+        });
+
+        // Initialize
+        loadInput();
+    </script>
+</body>
+</html>

@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0046. Permutations — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .preset-btns {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            padding: 6px 12px;
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            color: #e2e8f0;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .preset-btn:hover { background: #475569; }
+        .preset-btn.active { background: #3b82f6; border-color: #60a5fa; }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-warning { background: #f59e0b; color: #1e293b; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 12px;
+        }
+
+        .speed-control label { font-size: 0.8rem; color: #94a3b8; }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        /* MAIN LAYOUT */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 20px;
+        }
+
+        @media (max-width: 800px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ARRAY DISPLAY */
+        .array-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .array-section h3 {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .array-display {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            align-items: center;
+            min-height: 50px;
+        }
+
+        .array-cell {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #334155;
+            border: 2px solid #475569;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .array-cell.used {
+            background: #475569;
+            border-color: #64748b;
+            color: #64748b;
+        }
+
+        .array-cell.current {
+            background: #7c3aed;
+            border-color: #a78bfa;
+            color: white;
+            box-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
+        }
+
+        .array-cell.swapping {
+            background: #f59e0b;
+            border-color: #fbbf24;
+            color: #1e293b;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .array-cell.fixed {
+            background: #3b82f6;
+            border-color: #60a5fa;
+            color: white;
+        }
+
+        /* CURRENT PERMUTATION */
+        .perm-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .perm-display h3 {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .perm-cells {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            min-height: 50px;
+        }
+
+        .perm-cell {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #334155;
+            border: 2px solid #475569;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .perm-cell.filled {
+            background: #3b82f6;
+            border-color: #60a5fa;
+            color: white;
+        }
+
+        .perm-cell.active {
+            background: #7c3aed;
+            border-color: #a78bfa;
+            color: white;
+            animation: pulse 0.6s ease-in-out infinite alternate;
+        }
+
+        .perm-cell.complete {
+            background: #10b981;
+            border-color: #34d399;
+            color: white;
+        }
+
+        @keyframes pulse {
+            from { box-shadow: 0 0 4px rgba(124, 58, 237, 0.4); }
+            to { box-shadow: 0 0 16px rgba(124, 58, 237, 0.8); }
+        }
+
+        /* TREE CANVAS */
+        .tree-section {
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .tree-section h3 {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .tree-canvas {
+            width: 100%;
+            min-height: 350px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+
+        /* RIGHT PANEL */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* RESULT LIST */
+        .result-section h3 {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .result-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            min-height: 36px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .result-item {
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            transition: all 0.3s;
+        }
+
+        .result-item.new {
+            background: #10b981;
+            border-color: #34d399;
+            color: white;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* LOG */
+        .log-section h3 {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .log-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.78rem;
+            max-height: 220px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .log-entry { padding: 2px 0; }
+        .log-entry.choose { color: #60a5fa; }
+        .log-entry.explore { color: #a78bfa; }
+        .log-entry.found { color: #34d399; font-weight: 600; }
+        .log-entry.backtrack { color: #f87171; }
+        .log-entry.swap { color: #fbbf24; }
+        .log-entry.info { color: #94a3b8; }
+
+        /* INFO BOX */
+        .info-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+
+        .info-box .step-info {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        /* STATUS BAR */
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .status-bar span { color: #60a5fa; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0046. Permutations</h1>
+        <p>Backtracking — Interactive Visualization</p>
+    </div>
+
+    <div class="container">
+        <!-- PRESETS -->
+        <div class="input-section">
+            <label>Presets:</label>
+            <div class="preset-btns">
+                <div class="preset-btn" data-nums="1,2">[1, 2]</div>
+                <div class="preset-btn active" data-nums="1,2,3">[1, 2, 3]</div>
+                <div class="preset-btn" data-nums="1,2,3,4">[1, 2, 3, 4]</div>
+                <div class="preset-btn" data-nums="0,-1,1">[0, -1, 1]</div>
+            </div>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="controls">
+            <button class="btn-primary" id="btnStep">Step</button>
+            <button class="btn-success" id="btnPlay">Play</button>
+            <button class="btn-warning" id="btnPause" style="display:none">Pause</button>
+            <button class="btn-danger" id="btnReset">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <label id="speedLabel">5x</label>
+            </div>
+        </div>
+
+        <!-- ARRAY DISPLAY -->
+        <div class="array-section">
+            <h3>Input Array (nums)</h3>
+            <div class="array-display" id="arrayDisplay"></div>
+        </div>
+
+        <!-- CURRENT PERMUTATION -->
+        <div class="perm-display">
+            <h3>Current Permutation</h3>
+            <div class="perm-cells" id="permDisplay"></div>
+        </div>
+
+        <!-- MAIN LAYOUT -->
+        <div class="main-layout">
+            <div class="left-panel">
+                <!-- TREE -->
+                <div class="tree-section">
+                    <h3>Backtracking Tree</h3>
+                    <canvas class="tree-canvas" id="treeCanvas"></canvas>
+                </div>
+
+                <!-- INFO -->
+                <div class="info-box" id="infoBox">
+                    Click <strong>Step</strong> or <strong>Play</strong> to start the animation.
+                </div>
+
+                <div class="status-bar">
+                    Step: <span id="stepNum">0</span> / <span id="totalSteps">0</span>
+                    &nbsp;|&nbsp; Permutations found: <span id="permCount">0</span>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <!-- RESULTS -->
+                <div class="result-section">
+                    <h3>Found Permutations (<span id="resultCount">0</span>)</h3>
+                    <div class="result-list" id="resultList"></div>
+                </div>
+
+                <!-- LOG -->
+                <div class="log-section">
+                    <h3>Step Log</h3>
+                    <div class="log-box" id="logBox"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // State
+        // ============================================================
+        let nums = [1, 2, 3];
+        let steps = [];
+        let stepIndex = 0;
+        let results = [];
+        let playing = false;
+        let playTimer = null;
+
+        // ============================================================
+        // Pre-compute all steps via backtracking simulation
+        // ============================================================
+        function generateSteps() {
+            steps = [];
+            results = [];
+            stepIndex = 0;
+            const n = nums.length;
+            const used = new Array(n).fill(false);
+            const current = [];
+
+            // Initial state
+            steps.push({
+                type: 'init',
+                current: [],
+                used: [...used],
+                results: [],
+                msg: `Start backtracking with nums = [${nums.join(', ')}]`,
+                logClass: 'info',
+                depth: 0,
+                treeNode: null
+            });
+
+            // Tree structure for visualization
+            let treeNodes = [];
+            let treeEdges = [];
+            let nodeId = 0;
+
+            // Root node
+            const rootId = nodeId++;
+            treeNodes.push({ id: rootId, label: '[ ]', depth: 0, parentId: -1, status: 'active', value: null });
+
+            function backtrack(depth, parentNodeId) {
+                if (current.length === n) {
+                    const perm = [...current];
+                    results.push(perm);
+
+                    steps.push({
+                        type: 'found',
+                        current: [...current],
+                        used: [...used],
+                        results: results.map(r => [...r]),
+                        msg: `Permutation complete: [${perm.join(', ')}]`,
+                        logClass: 'found',
+                        depth: depth,
+                        treeNodes: treeNodes.map(n => ({...n})),
+                        treeEdges: [...treeEdges],
+                        foundNodeId: parentNodeId
+                    });
+                    return;
+                }
+
+                for (let i = 0; i < n; i++) {
+                    if (used[i]) continue;
+
+                    // Choose
+                    used[i] = true;
+                    current.push(nums[i]);
+
+                    const childId = nodeId++;
+                    treeNodes.push({
+                        id: childId,
+                        label: `${nums[i]}`,
+                        fullPath: [...current],
+                        depth: depth + 1,
+                        parentId: parentNodeId,
+                        status: 'active',
+                        value: nums[i]
+                    });
+                    treeEdges.push({ from: parentNodeId, to: childId });
+
+                    steps.push({
+                        type: 'choose',
+                        current: [...current],
+                        used: [...used],
+                        results: results.map(r => [...r]),
+                        msg: `Choose nums[${i}] = ${nums[i]}  |  current = [${current.join(', ')}]`,
+                        logClass: 'choose',
+                        depth: depth,
+                        treeNodes: treeNodes.map(n => ({...n})),
+                        treeEdges: [...treeEdges],
+                        activeNodeId: childId,
+                        chosenIndex: i
+                    });
+
+                    // Explore
+                    backtrack(depth + 1, childId);
+
+                    // Unchoose
+                    current.pop();
+                    used[i] = false;
+
+                    // Mark node as done
+                    const node = treeNodes.find(n => n.id === childId);
+                    if (node) node.status = 'done';
+
+                    steps.push({
+                        type: 'backtrack',
+                        current: [...current],
+                        used: [...used],
+                        results: results.map(r => [...r]),
+                        msg: `Backtrack: remove ${nums[i]}  |  current = [${current.join(', ')}]`,
+                        logClass: 'backtrack',
+                        depth: depth,
+                        treeNodes: treeNodes.map(n => ({...n})),
+                        treeEdges: [...treeEdges],
+                        activeNodeId: parentNodeId,
+                        removedIndex: i
+                    });
+                }
+            }
+
+            backtrack(0, rootId);
+
+            // Final step
+            steps.push({
+                type: 'done',
+                current: [],
+                used: new Array(n).fill(false),
+                results: results.map(r => [...r]),
+                msg: `Done! Found ${results.length} permutations (${n}! = ${results.length})`,
+                logClass: 'found',
+                depth: 0,
+                treeNodes: treeNodes.map(n => ({...n})),
+                treeEdges: [...treeEdges]
+            });
+
+            updateUI();
+        }
+
+        // ============================================================
+        // Rendering
+        // ============================================================
+        function updateUI() {
+            const step = steps[stepIndex] || steps[0];
+
+            // Array display
+            const arrayDiv = document.getElementById('arrayDisplay');
+            arrayDiv.innerHTML = '';
+            nums.forEach((v, i) => {
+                const cell = document.createElement('div');
+                cell.className = 'array-cell';
+                cell.textContent = v;
+                if (step.used && step.used[i]) cell.classList.add('used');
+                if (step.chosenIndex === i && step.type === 'choose') cell.classList.add('current');
+                arrayDiv.appendChild(cell);
+            });
+
+            // Permutation display
+            const permDiv = document.getElementById('permDisplay');
+            permDiv.innerHTML = '';
+            for (let i = 0; i < nums.length; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'perm-cell';
+                if (step.current && i < step.current.length) {
+                    cell.textContent = step.current[i];
+                    if (step.type === 'found') {
+                        cell.classList.add('complete');
+                    } else if (i === step.current.length - 1 && step.type === 'choose') {
+                        cell.classList.add('active');
+                    } else {
+                        cell.classList.add('filled');
+                    }
+                } else {
+                    cell.textContent = '?';
+                    cell.style.color = '#475569';
+                }
+                permDiv.appendChild(cell);
+            }
+
+            // Results
+            const resultList = document.getElementById('resultList');
+            resultList.innerHTML = '';
+            const curResults = step.results || [];
+            curResults.forEach((r, idx) => {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                if (idx === curResults.length - 1 && step.type === 'found') {
+                    item.classList.add('new');
+                }
+                item.textContent = `[${r.join(',')}]`;
+                resultList.appendChild(item);
+            });
+            document.getElementById('resultCount').textContent = curResults.length;
+            document.getElementById('permCount').textContent = curResults.length;
+
+            // Info
+            document.getElementById('infoBox').innerHTML = `<span class="step-info">${step.msg}</span>`;
+            document.getElementById('stepNum').textContent = stepIndex;
+            document.getElementById('totalSteps').textContent = steps.length - 1;
+
+            // Draw tree
+            if (step.treeNodes) {
+                drawTree(step.treeNodes, step.treeEdges, step.activeNodeId, step.foundNodeId);
+            }
+        }
+
+        // ============================================================
+        // Tree drawing on canvas
+        // ============================================================
+        function drawTree(nodes, edges, activeId, foundId) {
+            const canvas = document.getElementById('treeCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Group nodes by depth
+            const depthGroups = {};
+            let maxDepth = 0;
+            nodes.forEach(n => {
+                if (!depthGroups[n.depth]) depthGroups[n.depth] = [];
+                depthGroups[n.depth].push(n);
+                if (n.depth > maxDepth) maxDepth = n.depth;
+            });
+
+            // Calculate canvas size
+            let maxWidth = 0;
+            for (let d = 0; d <= maxDepth; d++) {
+                const count = (depthGroups[d] || []).length;
+                maxWidth = Math.max(maxWidth, count);
+            }
+
+            const nodeRadius = 20;
+            const hSpacing = Math.max(50, Math.min(80, 700 / maxWidth));
+            const vSpacing = 70;
+            const canvasW = Math.max(canvas.parentElement.clientWidth - 2, maxWidth * hSpacing + 60);
+            const canvasH = (maxDepth + 1) * vSpacing + 60;
+
+            canvas.width = canvasW;
+            canvas.height = canvasH;
+
+            // Position nodes
+            const positions = {};
+            for (let d = 0; d <= maxDepth; d++) {
+                const group = depthGroups[d] || [];
+                const totalW = group.length * hSpacing;
+                const startX = (canvasW - totalW) / 2 + hSpacing / 2;
+                group.forEach((n, idx) => {
+                    positions[n.id] = {
+                        x: startX + idx * hSpacing,
+                        y: 30 + d * vSpacing + nodeRadius
+                    };
+                });
+            }
+
+            ctx.clearRect(0, 0, canvasW, canvasH);
+
+            // Draw edges
+            edges.forEach(e => {
+                const from = positions[e.from];
+                const to = positions[e.to];
+                if (!from || !to) return;
+                ctx.beginPath();
+                ctx.moveTo(from.x, from.y + nodeRadius);
+                ctx.lineTo(to.x, to.y - nodeRadius);
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            });
+
+            // Draw nodes
+            nodes.forEach(n => {
+                const pos = positions[n.id];
+                if (!pos) return;
+
+                let fillColor = '#334155';
+                let strokeColor = '#475569';
+                let textColor = '#e2e8f0';
+
+                if (n.id === foundId) {
+                    fillColor = '#10b981';
+                    strokeColor = '#34d399';
+                    textColor = '#ffffff';
+                } else if (n.id === activeId) {
+                    fillColor = '#7c3aed';
+                    strokeColor = '#a78bfa';
+                    textColor = '#ffffff';
+                } else if (n.status === 'done') {
+                    fillColor = '#1e3a5f';
+                    strokeColor = '#3b82f6';
+                    textColor = '#93c5fd';
+                } else if (n.status === 'active') {
+                    fillColor = '#3b82f6';
+                    strokeColor = '#60a5fa';
+                    textColor = '#ffffff';
+                }
+
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, nodeRadius, 0, Math.PI * 2);
+                ctx.fillStyle = fillColor;
+                ctx.fill();
+                ctx.strokeStyle = strokeColor;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = textColor;
+                ctx.font = 'bold 12px Segoe UI, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(n.label, pos.x, pos.y);
+            });
+        }
+
+        // ============================================================
+        // Log
+        // ============================================================
+        function addLog(msg, cls) {
+            const logBox = document.getElementById('logBox');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${cls}`;
+            entry.textContent = msg;
+            logBox.appendChild(entry);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('logBox').innerHTML = '';
+        }
+
+        // ============================================================
+        // Controls
+        // ============================================================
+        function doStep() {
+            if (stepIndex >= steps.length - 1) {
+                stopPlaying();
+                return;
+            }
+            stepIndex++;
+            const step = steps[stepIndex];
+            addLog(step.msg, step.logClass);
+            updateUI();
+
+            if (stepIndex >= steps.length - 1) {
+                stopPlaying();
+            }
+        }
+
+        function startPlaying() {
+            if (stepIndex >= steps.length - 1) {
+                resetAnimation();
+            }
+            playing = true;
+            document.getElementById('btnPlay').style.display = 'none';
+            document.getElementById('btnPause').style.display = '';
+            scheduleNext();
+        }
+
+        function stopPlaying() {
+            playing = false;
+            document.getElementById('btnPlay').style.display = '';
+            document.getElementById('btnPause').style.display = 'none';
+            if (playTimer) {
+                clearTimeout(playTimer);
+                playTimer = null;
+            }
+        }
+
+        function scheduleNext() {
+            if (!playing) return;
+            const speed = parseInt(document.getElementById('speedSlider').value);
+            const delay = Math.max(50, 1200 - speed * 110);
+            playTimer = setTimeout(() => {
+                doStep();
+                if (playing && stepIndex < steps.length - 1) {
+                    scheduleNext();
+                }
+            }, delay);
+        }
+
+        function resetAnimation() {
+            stopPlaying();
+            stepIndex = 0;
+            clearLog();
+            updateUI();
+        }
+
+        // Event listeners
+        document.getElementById('btnStep').addEventListener('click', doStep);
+        document.getElementById('btnPlay').addEventListener('click', startPlaying);
+        document.getElementById('btnPause').addEventListener('click', stopPlaying);
+        document.getElementById('btnReset').addEventListener('click', resetAnimation);
+
+        document.getElementById('speedSlider').addEventListener('input', (e) => {
+            document.getElementById('speedLabel').textContent = e.target.value + 'x';
+        });
+
+        // Presets
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                nums = btn.dataset.nums.split(',').map(Number);
+                stopPlaying();
+                clearLog();
+                generateSteps();
+            });
+        });
+
+        // ============================================================
+        // Initialize
+        // ============================================================
+        generateSteps();
+    </script>
+</body>
+</html>

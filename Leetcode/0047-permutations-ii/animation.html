@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0047. Permutations II — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* PRESETS */
+        .preset-section {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset-section label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-right: 4px;
+        }
+
+        .preset-btn {
+            padding: 6px 14px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover { background: #334155; border-color: #60a5fa; }
+        .preset-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; font-weight: 600; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .btn:hover { background: #334155; }
+
+        .btn.primary {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .btn.primary:hover { background: #2563eb; }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .speed-control label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        .speed-value {
+            font-size: 0.85rem;
+            color: #60a5fa;
+            min-width: 40px;
+        }
+
+        /* VISUALIZATION */
+        .viz-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .viz-grid { grid-template-columns: 1fr; }
+        }
+
+        .viz-panel {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .viz-panel h3 {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ARRAY DISPLAY */
+        .array-display {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .array-cell {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s;
+            border: 2px solid #334155;
+            background: #1e293b;
+        }
+
+        .array-cell.used {
+            background: #1e3a5f;
+            border-color: #3b82f6;
+            color: #60a5fa;
+        }
+
+        .array-cell.current {
+            background: #065f46;
+            border-color: #10b981;
+            color: #34d399;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .array-cell.skipped {
+            background: #4c1d29;
+            border-color: #ef4444;
+            color: #f87171;
+        }
+
+        /* USED ARRAY */
+        .used-display {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .used-cell {
+            width: 44px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid #334155;
+            background: #1e293b;
+            color: #64748b;
+        }
+
+        .used-cell.true {
+            background: #1e3a5f;
+            border-color: #3b82f6;
+            color: #60a5fa;
+        }
+
+        /* PATH */
+        .path-display {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            min-height: 44px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .path-cell {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 1rem;
+            background: #1e3a5f;
+            border: 2px solid #3b82f6;
+            color: #60a5fa;
+            animation: pathPop 0.3s ease;
+        }
+
+        @keyframes pathPop {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .path-empty {
+            color: #475569;
+            font-style: italic;
+            font-size: 0.85rem;
+        }
+
+        /* RESULT */
+        .result-section {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .result-section h3 {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .result-perms {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            min-height: 36px;
+        }
+
+        .result-perm {
+            padding: 6px 12px;
+            background: #065f46;
+            border: 1px solid #10b981;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #34d399;
+            animation: resultPop 0.4s ease;
+        }
+
+        @keyframes resultPop {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .result-empty {
+            color: #475569;
+            font-style: italic;
+            font-size: 0.85rem;
+        }
+
+        .result-count {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        /* LOG */
+        .log-section {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .log-section h3 {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .step-counter {
+            font-size: 0.8rem;
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .log-entries {
+            max-height: 260px;
+            overflow-y: auto;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .log-entries::-webkit-scrollbar { width: 6px; }
+        .log-entries::-webkit-scrollbar-track { background: #0f172a; }
+        .log-entries::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+        .log-entry { padding: 2px 0; }
+        .log-entry.place { color: #34d399; }
+        .log-entry.skip-used { color: #64748b; }
+        .log-entry.skip-dup { color: #f87171; }
+        .log-entry.found { color: #fbbf24; font-weight: 700; }
+        .log-entry.backtrack { color: #a78bfa; }
+        .log-entry.recurse { color: #60a5fa; }
+
+        /* STATUS BAR */
+        .status-bar {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 20px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #94a3b8;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-bar .highlight { color: #60a5fa; font-weight: 600; }
+        .status-bar .skip-text { color: #f87171; font-weight: 600; }
+        .status-bar .found-text { color: #fbbf24; font-weight: 600; }
+        .status-bar .place-text { color: #34d399; font-weight: 600; }
+
+        /* DEPTH INDICATOR */
+        .depth-bar {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .depth-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #334155;
+            transition: all 0.3s;
+        }
+
+        .depth-dot.active {
+            background: #3b82f6;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0047. Permutations II</h1>
+        <p>Backtracking with Sorting + Duplicate Pruning</p>
+    </div>
+
+    <div class="container">
+        <!-- PRESETS -->
+        <div class="preset-section">
+            <label>Presets:</label>
+            <button class="preset-btn active" onclick="loadPreset([1,1,2])">[ 1, 1, 2 ]</button>
+            <button class="preset-btn" onclick="loadPreset([1,2,3])">[ 1, 2, 3 ]</button>
+            <button class="preset-btn" onclick="loadPreset([1,1,1])">[ 1, 1, 1 ]</button>
+            <button class="preset-btn" onclick="loadPreset([1,1,2,2])">[ 1, 1, 2, 2 ]</button>
+            <button class="preset-btn" onclick="loadPreset([-1,1,1])">[ -1, 1, 1 ]</button>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="controls">
+            <button class="btn" id="stepBtn" onclick="step()">Step</button>
+            <button class="btn primary" id="playBtn" onclick="togglePlay()">Play</button>
+            <button class="btn" id="resetBtn" onclick="reset()">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="10" value="5" oninput="updateSpeed()">
+                <span class="speed-value" id="speedValue">5x</span>
+            </div>
+        </div>
+
+        <!-- STATUS -->
+        <div class="status-bar" id="statusBar">
+            Press <span class="highlight">Step</span> or <span class="highlight">Play</span> to begin
+        </div>
+
+        <!-- VISUALIZATION -->
+        <div class="viz-grid">
+            <div class="viz-panel">
+                <h3>Sorted Array (nums)</h3>
+                <div class="array-display" id="arrayDisplay"></div>
+                <div style="margin-top:8px">
+                    <h3 style="font-size:0.8rem;margin-bottom:6px">Used [ ]</h3>
+                    <div class="used-display" id="usedDisplay"></div>
+                </div>
+                <div class="depth-bar" id="depthBar"></div>
+            </div>
+            <div class="viz-panel">
+                <h3>Current Path</h3>
+                <div class="path-display" id="pathDisplay">
+                    <span class="path-empty">empty</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULT -->
+        <div class="result-section">
+            <h3>Found Permutations</h3>
+            <div class="result-perms" id="resultDisplay">
+                <span class="result-empty">No permutations found yet</span>
+            </div>
+            <div class="result-count" id="resultCount"></div>
+        </div>
+
+        <!-- LOG -->
+        <div class="log-section">
+            <h3>
+                Execution Log
+                <span class="step-counter" id="stepCounter">Step 0</span>
+            </h3>
+            <div class="log-entries" id="logEntries"></div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // State
+        // ============================================================
+        let nums = [];
+        let steps = [];
+        let currentStep = 0;
+        let isPlaying = false;
+        let playTimer = null;
+        let speed = 5;
+
+        // ============================================================
+        // Precompute all steps
+        // ============================================================
+        function generateSteps(inputNums) {
+            const sorted = [...inputNums].sort((a, b) => a - b);
+            const n = sorted.length;
+            const allSteps = [];
+            const used = new Array(n).fill(false);
+            const path = [];
+            const result = [];
+
+            function addStep(type, data) {
+                allSteps.push({
+                    type,
+                    ...data,
+                    used: [...used],
+                    path: [...path],
+                    result: result.map(r => [...r]),
+                    depth: path.length
+                });
+            }
+
+            addStep('init', { message: `Sorted array: [${sorted.join(', ')}]. Starting backtracking.` });
+
+            function backtrack() {
+                if (path.length === n) {
+                    result.push([...path]);
+                    addStep('found', {
+                        message: `Permutation complete: [${path.join(', ')}] -- added to result!`,
+                        foundPerm: [...path]
+                    });
+                    return;
+                }
+
+                for (let i = 0; i < n; i++) {
+                    if (used[i]) {
+                        addStep('skip-used', {
+                            message: `i=${i}: nums[${i}]=${sorted[i]} is already used -- skip`,
+                            index: i
+                        });
+                        continue;
+                    }
+
+                    if (i > 0 && sorted[i] === sorted[i - 1] && !used[i - 1]) {
+                        addStep('skip-dup', {
+                            message: `i=${i}: nums[${i}]=${sorted[i]} == nums[${i-1}]=${sorted[i-1]} and used[${i-1}]=false -- DUPLICATE PRUNED`,
+                            index: i,
+                            dupIndex: i - 1
+                        });
+                        continue;
+                    }
+
+                    // Place
+                    used[i] = true;
+                    path.push(sorted[i]);
+                    addStep('place', {
+                        message: `i=${i}: Place nums[${i}]=${sorted[i]} at position ${path.length - 1}. path=[${path.join(', ')}]`,
+                        index: i
+                    });
+
+                    backtrack();
+
+                    // Backtrack
+                    path.pop();
+                    used[i] = false;
+                    addStep('backtrack', {
+                        message: `Backtrack: remove ${sorted[i]} from position ${path.length}. path=[${path.join(', ')}]`,
+                        index: i
+                    });
+                }
+            }
+
+            backtrack();
+            addStep('done', { message: `Done! Found ${result.length} unique permutation(s).` });
+
+            return { sorted, steps: allSteps };
+        }
+
+        // ============================================================
+        // Rendering
+        // ============================================================
+        function renderArray(sorted, stepData) {
+            const container = document.getElementById('arrayDisplay');
+            container.innerHTML = '';
+            sorted.forEach((val, i) => {
+                const cell = document.createElement('div');
+                cell.className = 'array-cell';
+                cell.textContent = val;
+                if (stepData) {
+                    if (stepData.used[i]) cell.classList.add('used');
+                    if (stepData.index === i && stepData.type === 'place') cell.classList.add('current');
+                    if (stepData.index === i && stepData.type === 'skip-dup') cell.classList.add('skipped');
+                    if (stepData.dupIndex === i) cell.classList.add('skipped');
+                }
+                container.appendChild(cell);
+            });
+        }
+
+        function renderUsed(stepData) {
+            const container = document.getElementById('usedDisplay');
+            container.innerHTML = '';
+            if (!stepData) return;
+            stepData.used.forEach((val, i) => {
+                const cell = document.createElement('div');
+                cell.className = 'used-cell' + (val ? ' true' : '');
+                cell.textContent = val ? 'T' : 'F';
+                container.appendChild(cell);
+            });
+        }
+
+        function renderPath(stepData) {
+            const container = document.getElementById('pathDisplay');
+            container.innerHTML = '';
+            if (!stepData || stepData.path.length === 0) {
+                container.innerHTML = '<span class="path-empty">empty</span>';
+                return;
+            }
+            stepData.path.forEach(val => {
+                const cell = document.createElement('div');
+                cell.className = 'path-cell';
+                cell.textContent = val;
+                container.appendChild(cell);
+            });
+        }
+
+        function renderResult(stepData) {
+            const container = document.getElementById('resultDisplay');
+            const countEl = document.getElementById('resultCount');
+            container.innerHTML = '';
+            if (!stepData || stepData.result.length === 0) {
+                container.innerHTML = '<span class="result-empty">No permutations found yet</span>';
+                countEl.textContent = '';
+                return;
+            }
+            stepData.result.forEach(perm => {
+                const el = document.createElement('div');
+                el.className = 'result-perm';
+                el.textContent = `[${perm.join(', ')}]`;
+                container.appendChild(el);
+            });
+            countEl.textContent = `Total: ${stepData.result.length} permutation(s)`;
+        }
+
+        function renderDepth(stepData, n) {
+            const container = document.getElementById('depthBar');
+            container.innerHTML = '';
+            for (let i = 0; i < n; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'depth-dot' + (stepData && i < stepData.depth ? ' active' : '');
+                container.appendChild(dot);
+            }
+        }
+
+        function renderStatus(stepData) {
+            const bar = document.getElementById('statusBar');
+            if (!stepData) {
+                bar.innerHTML = 'Press <span class="highlight">Step</span> or <span class="highlight">Play</span> to begin';
+                return;
+            }
+            const msg = stepData.message;
+            switch (stepData.type) {
+                case 'place':
+                    bar.innerHTML = `<span class="place-text">${msg}</span>`;
+                    break;
+                case 'skip-dup':
+                    bar.innerHTML = `<span class="skip-text">${msg}</span>`;
+                    break;
+                case 'skip-used':
+                    bar.innerHTML = msg;
+                    break;
+                case 'found':
+                    bar.innerHTML = `<span class="found-text">${msg}</span>`;
+                    break;
+                case 'backtrack':
+                    bar.innerHTML = `<span style="color:#a78bfa">${msg}</span>`;
+                    break;
+                case 'done':
+                    bar.innerHTML = `<span class="found-text">${msg}</span>`;
+                    break;
+                default:
+                    bar.innerHTML = msg;
+            }
+        }
+
+        function addLogEntry(stepData) {
+            const container = document.getElementById('logEntries');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + stepData.type;
+
+            const indent = '  '.repeat(stepData.depth || 0);
+            let prefix = '';
+            switch (stepData.type) {
+                case 'place': prefix = '+ '; break;
+                case 'skip-used': prefix = '~ '; break;
+                case 'skip-dup': prefix = 'X '; break;
+                case 'found': prefix = '* '; break;
+                case 'backtrack': prefix = '- '; break;
+                default: prefix = '> '; break;
+            }
+
+            entry.textContent = indent + prefix + stepData.message;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function renderStep() {
+            if (currentStep === 0 || currentStep > steps.length) {
+                renderArray(nums, null);
+                renderUsed(null);
+                renderPath(null);
+                renderResult(null);
+                renderDepth(null, nums.length);
+                renderStatus(null);
+                document.getElementById('stepCounter').textContent = 'Step 0';
+                return;
+            }
+
+            const stepData = steps[currentStep - 1];
+            renderArray(nums, stepData);
+            renderUsed(stepData);
+            renderPath(stepData);
+            renderResult(stepData);
+            renderDepth(stepData, nums.length);
+            renderStatus(stepData);
+            addLogEntry(stepData);
+            document.getElementById('stepCounter').textContent = `Step ${currentStep} / ${steps.length}`;
+        }
+
+        // ============================================================
+        // Controls
+        // ============================================================
+        function step() {
+            if (currentStep >= steps.length) return;
+            currentStep++;
+            renderStep();
+            if (currentStep >= steps.length) {
+                stopPlay();
+            }
+            updateButtons();
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                stopPlay();
+            } else {
+                startPlay();
+            }
+        }
+
+        function startPlay() {
+            if (currentStep >= steps.length) return;
+            isPlaying = true;
+            document.getElementById('playBtn').textContent = 'Pause';
+            playTimer = setInterval(() => {
+                step();
+                if (currentStep >= steps.length) {
+                    stopPlay();
+                }
+            }, getInterval());
+            updateButtons();
+        }
+
+        function stopPlay() {
+            isPlaying = false;
+            document.getElementById('playBtn').textContent = 'Play';
+            if (playTimer) {
+                clearInterval(playTimer);
+                playTimer = null;
+            }
+            updateButtons();
+        }
+
+        function reset() {
+            stopPlay();
+            currentStep = 0;
+            document.getElementById('logEntries').innerHTML = '';
+            renderStep();
+            updateButtons();
+        }
+
+        function getInterval() {
+            // Speed 1 = 1200ms, speed 10 = 100ms
+            return Math.max(100, 1300 - speed * 130);
+        }
+
+        function updateSpeed() {
+            speed = parseInt(document.getElementById('speedSlider').value);
+            document.getElementById('speedValue').textContent = speed + 'x';
+            if (isPlaying) {
+                clearInterval(playTimer);
+                playTimer = setInterval(() => {
+                    step();
+                    if (currentStep >= steps.length) stopPlay();
+                }, getInterval());
+            }
+        }
+
+        function updateButtons() {
+            const atEnd = currentStep >= steps.length;
+            document.getElementById('stepBtn').disabled = atEnd;
+            document.getElementById('playBtn').disabled = atEnd && !isPlaying;
+        }
+
+        function loadPreset(arr) {
+            stopPlay();
+            // Update active button
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.replace(/\s/g, '') === `[${arr.join(',')}]`);
+            });
+
+            const result = generateSteps(arr);
+            nums = result.sorted;
+            steps = result.steps;
+            currentStep = 0;
+            document.getElementById('logEntries').innerHTML = '';
+            renderStep();
+            updateButtons();
+        }
+
+        // ============================================================
+        // Initialize
+        // ============================================================
+        loadPreset([1, 1, 2]);
+    </script>
+</body>
+</html>

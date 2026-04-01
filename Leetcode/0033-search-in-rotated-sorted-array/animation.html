@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0033. Search in Rotated Sorted Array — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        #arrInput { width: 220px; }
+        #targetInput { width: 80px; }
+
+        /* PRESETS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 6px 12px;
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover { background: #475569; color: white; }
+
+        .preset-btn.active {
+            background: #6366f1;
+            border-color: #6366f1;
+            color: white;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-pause:hover { background: #dc2626; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-reset:hover { background: #4b5563; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+
+        .speed-slider {
+            -webkit-appearance: none;
+            width: 120px;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #60a5fa;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .speed-value { color: #60a5fa; font-size: 0.85rem; min-width: 40px; }
+
+        /* STEP DESCRIPTION */
+        .step-description {
+            background: #0f172a;
+            border-left: 3px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 50px;
+            white-space: pre-line;
+        }
+
+        /* VIZ AREA */
+        .viz-area {
+            min-height: 200px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        /* ARRAY */
+        .array-container {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: nowrap;
+            margin-bottom: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .array-container::-webkit-scrollbar { height: 6px; }
+        .array-container::-webkit-scrollbar-track { background: #1e293b; border-radius: 3px; }
+        .array-container::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+        .array-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .array-element {
+            width: 3.5rem;
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            transition: all 0.35s ease;
+            position: relative;
+        }
+
+        .idx-label { font-size: 0.7rem; color: #475569; }
+        .ptr-label { font-size: 0.75rem; font-weight: 700; min-height: 18px; }
+
+        /* Colors */
+        .el-default { background: #334155; color: #e2e8f0; }
+        .el-left-sorted { background: #1e3a5f; color: #93c5fd; border: 2px solid #3b82f6; }
+        .el-right-sorted { background: #3b1f4e; color: #c4b5fd; border: 2px solid #8b5cf6; }
+        .el-mid { background: #f59e0b; color: #0f172a; box-shadow: 0 0 16px rgba(245,158,11,0.4); transform: scale(1.08); }
+        .el-found { background: #22c55e; color: white; box-shadow: 0 0 20px rgba(34,197,94,0.6); transform: scale(1.15); }
+        .el-eliminated { background: #1e293b; color: #475569; opacity: 0.4; }
+        .el-active-range { background: #334155; color: #e2e8f0; border: 1px solid #64748b; }
+
+        .ptr-left { color: #22c55e; }
+        .ptr-mid { color: #f59e0b; }
+        .ptr-right { color: #ef4444; }
+
+        /* SORTED HALF INDICATOR */
+        .sorted-indicator {
+            text-align: center;
+            margin: 12px 0;
+            font-size: 0.85rem;
+            min-height: 24px;
+        }
+
+        .sorted-left { color: #60a5fa; }
+        .sorted-right { color: #a78bfa; }
+
+        /* INFO PANEL */
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .info-box h3 {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .info-box .value { font-size: 1.1rem; font-weight: 700; }
+
+        /* RESULT */
+        .result-box {
+            text-align: center;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: none;
+        }
+
+        .result-found {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid #22c55e;
+            color: #22c55e;
+        }
+
+        .result-not-found {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        /* LOG */
+        .log-area {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #334155;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        .log-area::-webkit-scrollbar { width: 6px; }
+        .log-area::-webkit-scrollbar-track { background: #1e293b; border-radius: 3px; }
+        .log-area::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+        .log-entry { padding: 2px 0; border-bottom: 1px solid #1e293b; }
+        .log-step { color: #60a5fa; }
+        .log-check { color: #f59e0b; }
+        .log-decision { color: #a78bfa; }
+        .log-found { color: #22c55e; font-weight: 700; }
+        .log-not-found { color: #ef4444; font-weight: 700; }
+
+        @media (max-width: 600px) {
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .array-element { width: 2.8rem; height: 2.8rem; font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0033. Search in Rotated Sorted Array</h1>
+        <p>Modified Binary Search — O(log n) | Interactive Visualization</p>
+    </div>
+
+    <div class="container">
+        <!-- Input -->
+        <div class="input-section">
+            <input type="text" id="arrInput" placeholder="Array: 4,5,6,7,0,1,2" value="4,5,6,7,0,1,2">
+            <input type="text" id="targetInput" placeholder="Target" value="0">
+            <button class="btn btn-step" onclick="loadInput()">Load</button>
+        </div>
+
+        <!-- Presets -->
+        <div class="presets">
+            <button class="preset-btn active" onclick="loadPreset(0, this)">target=0 (found)</button>
+            <button class="preset-btn" onclick="loadPreset(1, this)">target=3 (not found)</button>
+            <button class="preset-btn" onclick="loadPreset(2, this)">No rotation</button>
+            <button class="preset-btn" onclick="loadPreset(3, this)">Single element</button>
+            <button class="preset-btn" onclick="loadPreset(4, this)">Two elements</button>
+            <button class="preset-btn" onclick="loadPreset(5, this)">target=5 (left half)</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-step" id="btnStep" onclick="stepForward()">Step</button>
+            <button class="btn btn-play" id="btnPlay" onclick="play()">Play</button>
+            <button class="btn btn-pause" id="btnPause" onclick="pause()" style="display:none;">Pause</button>
+            <button class="btn btn-reset" onclick="resetAnimation()">Reset</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" class="speed-slider" id="speedSlider" min="100" max="2000" value="800" oninput="updateSpeed()">
+                <span class="speed-value" id="speedValue">800ms</span>
+            </div>
+        </div>
+
+        <!-- Step Description -->
+        <div class="step-description" id="stepDesc">Click "Step" or "Play" to start the binary search animation.</div>
+
+        <!-- Info Panel -->
+        <div class="info-panel">
+            <div class="info-box">
+                <h3>Target</h3>
+                <div class="value" id="infoTarget" style="color: #f59e0b;">0</div>
+            </div>
+            <div class="info-box">
+                <h3>Step</h3>
+                <div class="value" id="infoStep" style="color: #60a5fa;">0</div>
+            </div>
+            <div class="info-box">
+                <h3>Sorted Half</h3>
+                <div class="value" id="infoSorted" style="color: #94a3b8;">—</div>
+            </div>
+            <div class="info-box">
+                <h3>Status</h3>
+                <div class="value" id="infoStatus" style="color: #94a3b8;">Ready</div>
+            </div>
+        </div>
+
+        <!-- Viz Area -->
+        <div class="viz-area">
+            <div class="section-label">Array</div>
+            <div class="array-container" id="ptrRow"></div>
+            <div class="array-container" id="arrayRow"></div>
+            <div class="array-container" id="idxRow"></div>
+            <div class="sorted-indicator" id="sortedIndicator"></div>
+        </div>
+
+        <!-- Result -->
+        <div class="result-box" id="resultBox"></div>
+
+        <!-- Log -->
+        <div class="section-label">Step Log</div>
+        <div class="log-area" id="logArea"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        // State
+        // ============================================================
+        const presets = [
+            { arr: [4,5,6,7,0,1,2], target: 0, label: "target=0 (found)" },
+            { arr: [4,5,6,7,0,1,2], target: 3, label: "target=3 (not found)" },
+            { arr: [1,2,3,4,5,6,7], target: 4, label: "No rotation" },
+            { arr: [1], target: 0, label: "Single element" },
+            { arr: [3,1], target: 1, label: "Two elements" },
+            { arr: [4,5,6,7,0,1,2], target: 5, label: "target=5 (left half)" },
+        ];
+
+        let nums = [];
+        let target = 0;
+        let steps = [];
+        let currentStep = -1;
+        let playing = false;
+        let playTimer = null;
+        let speed = 800;
+
+        // ============================================================
+        // Algorithm — pre-compute all steps
+        // ============================================================
+        function computeSteps(nums, target) {
+            const steps = [];
+            let left = 0, right = nums.length - 1;
+            let stepNum = 0;
+
+            steps.push({
+                type: 'init',
+                left, right,
+                mid: -1,
+                desc: `Initialize: left=${left}, right=${right}, target=${target}\nArray: [${nums.join(', ')}]`,
+                sortedSide: null,
+                sortedRange: null,
+                eliminated: [],
+            });
+
+            while (left <= right) {
+                stepNum++;
+                const mid = left + Math.floor((right - left) / 2);
+
+                if (nums[mid] === target) {
+                    steps.push({
+                        type: 'found',
+                        left, right, mid,
+                        desc: `Step ${stepNum}: mid=${mid}, nums[mid]=${nums[mid]} == target=${target}\nFOUND at index ${mid}!`,
+                        sortedSide: null,
+                        sortedRange: null,
+                        eliminated: [],
+                        foundIdx: mid,
+                    });
+                    return steps;
+                }
+
+                let sortedSide, sortedRange, elimRange;
+                let newLeft = left, newRight = right;
+                let decision;
+
+                if (nums[left] <= nums[mid]) {
+                    // Left half is sorted
+                    sortedSide = 'left';
+                    sortedRange = [left, mid];
+                    if (nums[left] <= target && target < nums[mid]) {
+                        // Target in left half
+                        decision = `target=${target} is in sorted left half [${nums[left]}..${nums[mid-1] !== undefined ? nums[mid-1] : nums[left]}]`;
+                        elimRange = range(mid, right + 1);
+                        newRight = mid - 1;
+                    } else {
+                        // Target in right half
+                        decision = `target=${target} is NOT in sorted left half [${nums[left]}..${nums[mid]}], search right`;
+                        elimRange = range(left, mid + 1);
+                        newLeft = mid + 1;
+                    }
+                } else {
+                    // Right half is sorted
+                    sortedSide = 'right';
+                    sortedRange = [mid, right];
+                    if (nums[mid] < target && target <= nums[right]) {
+                        // Target in right half
+                        decision = `target=${target} is in sorted right half [${nums[mid+1] !== undefined ? nums[mid+1] : nums[mid]}..${nums[right]}]`;
+                        elimRange = range(left, mid + 1);
+                        newLeft = mid + 1;
+                    } else {
+                        // Target in left half
+                        decision = `target=${target} is NOT in sorted right half [${nums[mid]}..${nums[right]}], search left`;
+                        elimRange = range(mid, right + 1);
+                        newRight = mid - 1;
+                    }
+                }
+
+                steps.push({
+                    type: 'check',
+                    left, right, mid,
+                    desc: `Step ${stepNum}: left=${left}, right=${right}, mid=${mid}\nnums[mid]=${nums[mid]} != target=${target}\n${sortedSide === 'left' ? 'Left' : 'Right'} half is sorted: nums[${sortedSide === 'left' ? 'left' : 'mid'}]=${sortedSide === 'left' ? nums[left] : nums[mid]} ${sortedSide === 'left' ? '<=' : '<'} nums[${sortedSide === 'left' ? 'mid' : 'right'}]=${sortedSide === 'left' ? nums[mid] : nums[right]}\n${decision}`,
+                    sortedSide,
+                    sortedRange,
+                    eliminated: elimRange,
+                });
+
+                left = newLeft;
+                right = newRight;
+            }
+
+            steps.push({
+                type: 'not_found',
+                left, right,
+                mid: -1,
+                desc: `left=${left} > right=${right}, search space exhausted.\nTarget ${target} NOT FOUND. Return -1.`,
+                sortedSide: null,
+                sortedRange: null,
+                eliminated: [],
+            });
+
+            return steps;
+        }
+
+        function range(start, end) {
+            const r = [];
+            for (let i = start; i < end; i++) r.push(i);
+            return r;
+        }
+
+        // ============================================================
+        // Rendering
+        // ============================================================
+        function renderArray(step) {
+            const ptrRow = document.getElementById('ptrRow');
+            const arrayRow = document.getElementById('arrayRow');
+            const idxRow = document.getElementById('idxRow');
+            const sortedIndicator = document.getElementById('sortedIndicator');
+
+            ptrRow.innerHTML = '';
+            arrayRow.innerHTML = '';
+            idxRow.innerHTML = '';
+
+            // Collect all eliminated indices up to current step
+            const allEliminated = new Set();
+            for (let s = 0; s <= currentStep; s++) {
+                if (steps[s].eliminated) {
+                    steps[s].eliminated.forEach(i => allEliminated.add(i));
+                }
+            }
+
+            for (let i = 0; i < nums.length; i++) {
+                // Pointer label
+                const ptrDiv = document.createElement('div');
+                ptrDiv.className = 'array-cell';
+                const ptrSpan = document.createElement('span');
+                ptrSpan.className = 'ptr-label';
+                const ptrs = [];
+                if (step && i === step.left) ptrs.push('<span class="ptr-left">L</span>');
+                if (step && i === step.mid) ptrs.push('<span class="ptr-mid">M</span>');
+                if (step && i === step.right) ptrs.push('<span class="ptr-right">R</span>');
+                ptrSpan.innerHTML = ptrs.join(' ');
+                ptrDiv.appendChild(ptrSpan);
+                ptrRow.appendChild(ptrDiv);
+
+                // Array element
+                const cellDiv = document.createElement('div');
+                cellDiv.className = 'array-cell';
+                const elDiv = document.createElement('div');
+                elDiv.className = 'array-element';
+
+                if (step && step.type === 'found' && i === step.foundIdx) {
+                    elDiv.classList.add('el-found');
+                } else if (step && i === step.mid && step.type === 'check') {
+                    elDiv.classList.add('el-mid');
+                } else if (allEliminated.has(i) && step && step.type !== 'init') {
+                    elDiv.classList.add('el-eliminated');
+                } else if (step && step.sortedSide === 'left' && step.sortedRange && i >= step.sortedRange[0] && i <= step.sortedRange[1]) {
+                    elDiv.classList.add('el-left-sorted');
+                } else if (step && step.sortedSide === 'right' && step.sortedRange && i >= step.sortedRange[0] && i <= step.sortedRange[1]) {
+                    elDiv.classList.add('el-right-sorted');
+                } else if (step && step.left !== undefined && step.right !== undefined && i >= step.left && i <= step.right) {
+                    elDiv.classList.add('el-active-range');
+                } else if (!step || step.type === 'init') {
+                    elDiv.classList.add('el-default');
+                } else {
+                    elDiv.classList.add('el-eliminated');
+                }
+
+                elDiv.textContent = nums[i];
+                cellDiv.appendChild(elDiv);
+                arrayRow.appendChild(cellDiv);
+
+                // Index label
+                const idxDiv = document.createElement('div');
+                idxDiv.className = 'array-cell';
+                const idxSpan = document.createElement('span');
+                idxSpan.className = 'idx-label';
+                idxSpan.textContent = i;
+                idxDiv.appendChild(idxSpan);
+                idxRow.appendChild(idxDiv);
+            }
+
+            // Sorted indicator
+            if (step && step.sortedSide) {
+                const cls = step.sortedSide === 'left' ? 'sorted-left' : 'sorted-right';
+                const side = step.sortedSide === 'left' ? 'Left' : 'Right';
+                sortedIndicator.innerHTML = `<span class="${cls}">${side} half [${step.sortedRange[0]}..${step.sortedRange[1]}] is sorted</span>`;
+            } else {
+                sortedIndicator.innerHTML = '';
+            }
+        }
+
+        function updateInfo(step) {
+            document.getElementById('infoTarget').textContent = target;
+            document.getElementById('infoStep').textContent = currentStep >= 0 ? currentStep : 0;
+
+            if (!step) {
+                document.getElementById('infoSorted').textContent = '—';
+                document.getElementById('infoSorted').style.color = '#94a3b8';
+                document.getElementById('infoStatus').textContent = 'Ready';
+                document.getElementById('infoStatus').style.color = '#94a3b8';
+                return;
+            }
+
+            if (step.sortedSide === 'left') {
+                document.getElementById('infoSorted').textContent = 'Left';
+                document.getElementById('infoSorted').style.color = '#60a5fa';
+            } else if (step.sortedSide === 'right') {
+                document.getElementById('infoSorted').textContent = 'Right';
+                document.getElementById('infoSorted').style.color = '#a78bfa';
+            } else {
+                document.getElementById('infoSorted').textContent = '—';
+                document.getElementById('infoSorted').style.color = '#94a3b8';
+            }
+
+            if (step.type === 'found') {
+                document.getElementById('infoStatus').textContent = 'Found!';
+                document.getElementById('infoStatus').style.color = '#22c55e';
+            } else if (step.type === 'not_found') {
+                document.getElementById('infoStatus').textContent = 'Not Found';
+                document.getElementById('infoStatus').style.color = '#ef4444';
+            } else {
+                document.getElementById('infoStatus').textContent = 'Searching';
+                document.getElementById('infoStatus').style.color = '#f59e0b';
+            }
+        }
+
+        function showResult(step) {
+            const box = document.getElementById('resultBox');
+            if (step && step.type === 'found') {
+                box.className = 'result-box result-found';
+                box.textContent = `Found! nums[${step.foundIdx}] = ${nums[step.foundIdx]}, return ${step.foundIdx}`;
+                box.style.display = 'block';
+            } else if (step && step.type === 'not_found') {
+                box.className = 'result-box result-not-found';
+                box.textContent = `Not Found! Target ${target} is not in the array, return -1`;
+                box.style.display = 'block';
+            } else {
+                box.style.display = 'none';
+            }
+        }
+
+        function addLog(step) {
+            if (!step) return;
+            const logArea = document.getElementById('logArea');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+
+            if (step.type === 'init') {
+                entry.innerHTML = `<span class="log-step">[INIT]</span> ${escHtml(step.desc)}`;
+            } else if (step.type === 'found') {
+                entry.innerHTML = `<span class="log-found">[FOUND]</span> ${escHtml(step.desc)}`;
+            } else if (step.type === 'not_found') {
+                entry.innerHTML = `<span class="log-not-found">[NOT FOUND]</span> ${escHtml(step.desc)}`;
+            } else {
+                entry.innerHTML = `<span class="log-check">[STEP]</span> ${escHtml(step.desc)}`;
+            }
+
+            logArea.appendChild(entry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        function escHtml(s) {
+            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+        }
+
+        // ============================================================
+        // Controls
+        // ============================================================
+        function stepForward() {
+            if (currentStep >= steps.length - 1) return;
+            currentStep++;
+            const step = steps[currentStep];
+            document.getElementById('stepDesc').textContent = step.desc;
+            renderArray(step);
+            updateInfo(step);
+            showResult(step);
+            addLog(step);
+
+            if (currentStep >= steps.length - 1) {
+                pause();
+                document.getElementById('btnStep').disabled = true;
+                document.getElementById('btnPlay').disabled = true;
+            }
+        }
+
+        function play() {
+            if (currentStep >= steps.length - 1) return;
+            playing = true;
+            document.getElementById('btnPlay').style.display = 'none';
+            document.getElementById('btnPause').style.display = '';
+            playTimer = setInterval(() => {
+                if (currentStep >= steps.length - 1) {
+                    pause();
+                    return;
+                }
+                stepForward();
+            }, speed);
+        }
+
+        function pause() {
+            playing = false;
+            clearInterval(playTimer);
+            document.getElementById('btnPlay').style.display = '';
+            document.getElementById('btnPause').style.display = 'none';
+        }
+
+        function updateSpeed() {
+            speed = parseInt(document.getElementById('speedSlider').value);
+            document.getElementById('speedValue').textContent = speed + 'ms';
+            if (playing) {
+                clearInterval(playTimer);
+                playTimer = setInterval(() => {
+                    if (currentStep >= steps.length - 1) { pause(); return; }
+                    stepForward();
+                }, speed);
+            }
+        }
+
+        function resetAnimation() {
+            pause();
+            currentStep = -1;
+            steps = computeSteps(nums, target);
+            document.getElementById('stepDesc').textContent = 'Click "Step" or "Play" to start the binary search animation.';
+            document.getElementById('logArea').innerHTML = '';
+            document.getElementById('resultBox').style.display = 'none';
+            document.getElementById('btnStep').disabled = false;
+            document.getElementById('btnPlay').disabled = false;
+            renderArray(null);
+            updateInfo(null);
+        }
+
+        function loadInput() {
+            const arrStr = document.getElementById('arrInput').value.trim();
+            const tgtStr = document.getElementById('targetInput').value.trim();
+            const parsed = arrStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+            const t = parseInt(tgtStr);
+            if (parsed.length === 0 || isNaN(t)) return;
+            nums = parsed;
+            target = t;
+            // Clear active preset
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            resetAnimation();
+        }
+
+        function loadPreset(idx, btn) {
+            const p = presets[idx];
+            nums = [...p.arr];
+            target = p.target;
+            document.getElementById('arrInput').value = nums.join(',');
+            document.getElementById('targetInput').value = target;
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            resetAnimation();
+        }
+
+        // ============================================================
+        // Init
+        // ============================================================
+        function init() {
+            loadPreset(0, document.querySelector('.preset-btn'));
+        }
+
+        init();
+    </script>
+</body>
+</html>

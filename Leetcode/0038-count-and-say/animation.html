@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0038. Count and Say — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            font-size: 0.95rem;
+            color: #94a3b8;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 60px;
+            text-align: center;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        /* PRESET BUTTONS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 6px 14px;
+            background: #334155;
+            color: #e2e8f0;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .preset-btn:hover { background: #475569; }
+
+        .preset-btn.active {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            user-select: none;
+            color: white;
+        }
+
+        .btn:hover { filter: brightness(1.15); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .btn-step { background: #3b82f6; border-color: #3b82f6; }
+        .btn-play { background: #22c55e; border-color: #22c55e; }
+        .btn-pause { background: #f59e0b; border-color: #f59e0b; }
+        .btn-reset { background: #ef4444; border-color: #ef4444; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #8b5cf6;
+        }
+
+        /* SEQUENCE DISPLAY */
+        .sequence-area {
+            margin-bottom: 20px;
+        }
+
+        .sequence-title {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .sequence-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .seq-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            transition: all 0.3s;
+            min-height: 42px;
+        }
+
+        .seq-row.active {
+            border-color: #3b82f6;
+            background: #1e3a5f;
+        }
+
+        .seq-row.completed {
+            border-color: #22c55e;
+            background: #0f2a1e;
+        }
+
+        .seq-row.future {
+            opacity: 0.35;
+        }
+
+        .seq-label {
+            font-weight: 600;
+            color: #60a5fa;
+            min-width: 42px;
+            font-size: 0.9rem;
+        }
+
+        .seq-value {
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1px;
+        }
+
+        .seq-char {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 28px;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .seq-char.digit-1 { background: #1e3a5f; color: #60a5fa; }
+        .seq-char.digit-2 { background: #2d1f4e; color: #a78bfa; }
+        .seq-char.digit-3 { background: #1f3d2e; color: #4ade80; }
+
+        /* RLE VISUALIZATION */
+        .rle-area {
+            margin-bottom: 20px;
+        }
+
+        .rle-title {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .rle-container {
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            padding: 16px;
+            min-height: 120px;
+        }
+
+        .rle-source {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            margin-bottom: 16px;
+            justify-content: center;
+        }
+
+        .rle-char {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 34px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .rle-char.digit-1 { background: #1e3a5f; color: #60a5fa; }
+        .rle-char.digit-2 { background: #2d1f4e; color: #a78bfa; }
+        .rle-char.digit-3 { background: #1f3d2e; color: #4ade80; }
+
+        .rle-char.highlight {
+            border-color: #fbbf24;
+            transform: scale(1.15);
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
+        }
+
+        .rle-char.processed {
+            opacity: 0.35;
+        }
+
+        .rle-arrow {
+            text-align: center;
+            margin: 10px 0;
+            color: #64748b;
+            font-size: 1.2rem;
+        }
+
+        .rle-groups {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .rle-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background: #1e293b;
+            transition: all 0.3s;
+        }
+
+        .rle-group.active {
+            border-color: #fbbf24;
+            background: #2d2510;
+        }
+
+        .rle-group.done {
+            border-color: #22c55e;
+            background: #0f2a1e;
+        }
+
+        .rle-group-chars {
+            display: flex;
+            gap: 2px;
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .rle-group-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .rle-group-result {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fbbf24;
+        }
+
+        .rle-output {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            justify-content: center;
+        }
+
+        .rle-output-label {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        /* RESULT */
+        .result-box {
+            text-align: center;
+            padding: 16px;
+            background: #0f2a1e;
+            border: 1px solid #22c55e;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .result-box.show { display: block; }
+
+        .result-box .label {
+            font-size: 0.85rem;
+            color: #4ade80;
+            margin-bottom: 4px;
+        }
+
+        .result-box .value {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #22c55e;
+            word-break: break-all;
+        }
+
+        /* LOG */
+        .log-section {
+            margin-top: 20px;
+        }
+
+        .log-title {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .log-container {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .log-container::-webkit-scrollbar { width: 6px; }
+        .log-container::-webkit-scrollbar-track { background: #1e293b; border-radius: 3px; }
+        .log-container::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+        .log-entry { color: #94a3b8; }
+        .log-entry.step { color: #60a5fa; }
+        .log-entry.rle { color: #a78bfa; }
+        .log-entry.result { color: #4ade80; font-weight: 600; }
+
+        /* INFO */
+        .info-box {
+            margin-top: 16px;
+            padding: 12px;
+            background: #1a1a3e;
+            border: 1px solid #3b3b8f;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #a5b4fc;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0038. Count and Say</h1>
+        <p>Visualize the count-and-say sequence with run-length encoding step by step</p>
+    </div>
+
+    <div class="container">
+        <!-- Input -->
+        <div class="input-section">
+            <label for="nInput">n =</label>
+            <input type="number" id="nInput" value="5" min="1" max="10" placeholder="n">
+        </div>
+
+        <!-- Presets -->
+        <div class="presets">
+            <span style="color: #94a3b8; font-size: 0.85rem; margin-right: 4px;">Presets:</span>
+            <button class="preset-btn" data-n="1">n=1</button>
+            <button class="preset-btn" data-n="2">n=2</button>
+            <button class="preset-btn" data-n="3">n=3</button>
+            <button class="preset-btn" data-n="4">n=4</button>
+            <button class="preset-btn" data-n="5" id="defaultPreset">n=5</button>
+            <button class="preset-btn" data-n="6">n=6</button>
+            <button class="preset-btn" data-n="7">n=7</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-step" id="btnStep">Step</button>
+            <button class="btn btn-play" id="btnPlay">Play</button>
+            <button class="btn btn-pause" id="btnPause" disabled>Pause</button>
+            <button class="btn btn-reset" id="btnReset">Reset</button>
+            <div class="speed-control">
+                <span>Speed:</span>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <span id="speedLabel">5x</span>
+            </div>
+        </div>
+
+        <!-- Sequence Display -->
+        <div class="sequence-area">
+            <div class="sequence-title">Sequence Building</div>
+            <div class="sequence-steps" id="sequenceSteps"></div>
+        </div>
+
+        <!-- RLE Visualization -->
+        <div class="rle-area" id="rleArea" style="display: none;">
+            <div class="rle-title">Run-Length Encoding Process</div>
+            <div class="rle-container" id="rleContainer"></div>
+        </div>
+
+        <!-- Result -->
+        <div class="result-box" id="resultBox">
+            <div class="label">Final Result</div>
+            <div class="value" id="resultValue"></div>
+        </div>
+
+        <!-- Log -->
+        <div class="log-section">
+            <div class="log-title">Step Log</div>
+            <div class="log-container" id="logContainer"></div>
+        </div>
+
+        <!-- Info -->
+        <div class="info-box">
+            The count-and-say sequence: each term describes the previous term using run-length encoding.<br>
+            "Read aloud" the digits — count consecutive identical digits and say the count followed by the digit.
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // State
+        // ============================================================
+        let targetN = 5;
+        let sequence = [];      // precomputed sequence terms
+        let steps = [];         // animation steps
+        let currentStep = 0;
+        let isPlaying = false;
+        let playTimer = null;
+
+        // ============================================================
+        // Count and Say logic
+        // ============================================================
+        function countAndSay(n) {
+            const terms = ["1"];
+            for (let i = 1; i < n; i++) {
+                const prev = terms[i - 1];
+                let next = "";
+                let j = 0;
+                while (j < prev.length) {
+                    const digit = prev[j];
+                    let count = 1;
+                    while (j + count < prev.length && prev[j + count] === digit) {
+                        count++;
+                    }
+                    next += count.toString() + digit;
+                    j += count;
+                }
+                terms.push(next);
+            }
+            return terms;
+        }
+
+        function getRLEGroups(s) {
+            const groups = [];
+            let i = 0;
+            while (i < s.length) {
+                const digit = s[i];
+                let count = 1;
+                while (i + count < s.length && s[i + count] === digit) {
+                    count++;
+                }
+                groups.push({ digit, count, start: i, end: i + count - 1 });
+                i += count;
+            }
+            return groups;
+        }
+
+        // ============================================================
+        // Build animation steps
+        // ============================================================
+        function buildSteps() {
+            steps = [];
+            // Step 0: show base case n=1
+            steps.push({ type: 'base', termIndex: 0 });
+
+            for (let i = 1; i < targetN; i++) {
+                const prev = sequence[i - 1];
+                const groups = getRLEGroups(prev);
+
+                // Step: start RLE for term i+1
+                steps.push({ type: 'rle-start', termIndex: i, prev, groups });
+
+                // Step for each group
+                for (let g = 0; g < groups.length; g++) {
+                    steps.push({ type: 'rle-group', termIndex: i, prev, groups, groupIndex: g });
+                }
+
+                // Step: complete term
+                steps.push({ type: 'rle-done', termIndex: i });
+            }
+
+            // Final step
+            steps.push({ type: 'complete' });
+        }
+
+        // ============================================================
+        // Rendering
+        // ============================================================
+        function getDigitClass(ch) {
+            if (ch === '1') return 'digit-1';
+            if (ch === '2') return 'digit-2';
+            if (ch === '3') return 'digit-3';
+            return 'digit-1';
+        }
+
+        function renderCharSpans(str, className) {
+            return str.split('').map(ch =>
+                `<span class="${className} ${getDigitClass(ch)}">${ch}</span>`
+            ).join('');
+        }
+
+        function renderSequence(activeIndex, completedUpTo) {
+            const container = document.getElementById('sequenceSteps');
+            let html = '';
+            for (let i = 0; i < targetN; i++) {
+                let rowClass = 'seq-row';
+                if (i === activeIndex) rowClass += ' active';
+                else if (i <= completedUpTo) rowClass += ' completed';
+                else rowClass += ' future';
+
+                const value = i <= completedUpTo ? renderCharSpans(sequence[i], 'seq-char') :
+                              i === activeIndex ? '...' : '?';
+
+                html += `<div class="${rowClass}">
+                    <span class="seq-label">n=${i + 1}:</span>
+                    <div class="seq-value">${value}</div>
+                </div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        function renderRLE(step) {
+            const area = document.getElementById('rleArea');
+            const container = document.getElementById('rleContainer');
+
+            if (step.type === 'rle-start' || step.type === 'rle-group') {
+                area.style.display = 'block';
+                const { prev, groups, groupIndex } = step;
+                const activeG = step.type === 'rle-group' ? groupIndex : -1;
+
+                // Source characters
+                let sourceHtml = '<div class="rle-source">';
+                for (let i = 0; i < prev.length; i++) {
+                    let cls = `rle-char ${getDigitClass(prev[i])}`;
+                    // Find which group this char belongs to
+                    let charGroupIdx = -1;
+                    for (let g = 0; g < groups.length; g++) {
+                        if (i >= groups[g].start && i <= groups[g].end) {
+                            charGroupIdx = g;
+                            break;
+                        }
+                    }
+                    if (activeG >= 0 && charGroupIdx === activeG) {
+                        cls += ' highlight';
+                    } else if (activeG >= 0 && charGroupIdx < activeG) {
+                        cls += ' processed';
+                    }
+                    sourceHtml += `<span class="${cls}">${prev[i]}</span>`;
+                }
+                sourceHtml += '</div>';
+
+                // Arrow
+                let arrowHtml = '<div class="rle-arrow">&#x2193; Run-Length Encoding &#x2193;</div>';
+
+                // Groups
+                let groupsHtml = '<div class="rle-groups">';
+                for (let g = 0; g < groups.length; g++) {
+                    const gr = groups[g];
+                    let gCls = 'rle-group';
+                    if (activeG >= 0 && g === activeG) gCls += ' active';
+                    else if (activeG >= 0 && g < activeG) gCls += ' done';
+                    else if (activeG < 0) gCls = 'rle-group';
+
+                    if (activeG >= 0 && g > activeG) {
+                        // future group - show placeholder
+                        groupsHtml += `<div class="${gCls}" style="opacity:0.3">
+                            <div class="rle-group-chars">${renderCharSpans(gr.digit.repeat(gr.count), 'seq-char')}</div>
+                            <div class="rle-group-label">?</div>
+                            <div class="rle-group-result">?</div>
+                        </div>`;
+                    } else {
+                        groupsHtml += `<div class="${gCls}">
+                            <div class="rle-group-chars">${renderCharSpans(gr.digit.repeat(gr.count), 'seq-char')}</div>
+                            <div class="rle-group-label">${gr.count} &times; "${gr.digit}"</div>
+                            <div class="rle-group-result">&rarr; ${gr.count}${gr.digit}</div>
+                        </div>`;
+                    }
+                }
+                groupsHtml += '</div>';
+
+                // Output so far
+                let outputStr = '';
+                const limit = activeG >= 0 ? activeG + 1 : 0;
+                for (let g = 0; g < limit; g++) {
+                    outputStr += groups[g].count.toString() + groups[g].digit;
+                }
+                let outputHtml = '';
+                if (outputStr) {
+                    outputHtml = `<div class="rle-output-label">Result so far:</div>
+                        <div class="rle-output">${renderCharSpans(outputStr, 'rle-char')}</div>`;
+                }
+
+                container.innerHTML = sourceHtml + arrowHtml + groupsHtml + outputHtml;
+            } else {
+                area.style.display = 'none';
+                container.innerHTML = '';
+            }
+        }
+
+        function addLog(text, type = '') {
+            const container = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = text;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('logContainer').innerHTML = '';
+        }
+
+        // ============================================================
+        // Step execution
+        // ============================================================
+        function executeStep() {
+            if (currentStep >= steps.length) {
+                stopPlaying();
+                return;
+            }
+
+            const step = steps[currentStep];
+
+            switch (step.type) {
+                case 'base':
+                    renderSequence(-1, 0);
+                    renderRLE(step);
+                    addLog(`n=1: Base case = "1"`, 'step');
+                    break;
+
+                case 'rle-start':
+                    renderSequence(step.termIndex, step.termIndex - 1);
+                    renderRLE(step);
+                    addLog(`n=${step.termIndex + 1}: Starting RLE on "${step.prev}"`, 'step');
+                    break;
+
+                case 'rle-group': {
+                    const g = step.groups[step.groupIndex];
+                    renderSequence(step.termIndex, step.termIndex - 1);
+                    renderRLE(step);
+                    addLog(`  Group: "${g.digit.repeat(g.count)}" → ${g.count} × "${g.digit}" → "${g.count}${g.digit}"`, 'rle');
+                    break;
+                }
+
+                case 'rle-done':
+                    renderSequence(-1, step.termIndex);
+                    renderRLE(step);
+                    addLog(`n=${step.termIndex + 1}: Result = "${sequence[step.termIndex]}"`, 'result');
+                    break;
+
+                case 'complete':
+                    renderSequence(-1, targetN - 1);
+                    document.getElementById('rleArea').style.display = 'none';
+                    const resultBox = document.getElementById('resultBox');
+                    resultBox.classList.add('show');
+                    document.getElementById('resultValue').textContent =
+                        `countAndSay(${targetN}) = "${sequence[targetN - 1]}"`;
+                    addLog(`\nComplete! countAndSay(${targetN}) = "${sequence[targetN - 1]}"`, 'result');
+                    stopPlaying();
+                    break;
+            }
+
+            currentStep++;
+            updateButtons();
+        }
+
+        // ============================================================
+        // Controls
+        // ============================================================
+        function getDelay() {
+            const speed = parseInt(document.getElementById('speedSlider').value);
+            return 1200 / speed;
+        }
+
+        function startPlaying() {
+            if (currentStep >= steps.length) return;
+            isPlaying = true;
+            updateButtons();
+            playTimer = setInterval(() => {
+                if (currentStep >= steps.length) {
+                    stopPlaying();
+                    return;
+                }
+                executeStep();
+            }, getDelay());
+        }
+
+        function stopPlaying() {
+            isPlaying = false;
+            if (playTimer) {
+                clearInterval(playTimer);
+                playTimer = null;
+            }
+            updateButtons();
+        }
+
+        function resetAnimation() {
+            stopPlaying();
+            currentStep = 0;
+            clearLog();
+            document.getElementById('resultBox').classList.remove('show');
+            document.getElementById('rleArea').style.display = 'none';
+            renderSequence(-1, -1);
+            updateButtons();
+            addLog(`Ready to build countAndSay(${targetN})`, '');
+        }
+
+        function updateButtons() {
+            const done = currentStep >= steps.length;
+            document.getElementById('btnStep').disabled = done;
+            document.getElementById('btnPlay').disabled = done || isPlaying;
+            document.getElementById('btnPause').disabled = !isPlaying;
+        }
+
+        function initWithN(n) {
+            targetN = Math.max(1, Math.min(10, n));
+            document.getElementById('nInput').value = targetN;
+            sequence = countAndSay(targetN);
+            buildSteps();
+            resetAnimation();
+
+            // Update preset buttons
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.n) === targetN);
+            });
+        }
+
+        // ============================================================
+        // Event listeners
+        // ============================================================
+        document.getElementById('btnStep').addEventListener('click', () => {
+            if (isPlaying) stopPlaying();
+            executeStep();
+        });
+
+        document.getElementById('btnPlay').addEventListener('click', startPlaying);
+        document.getElementById('btnPause').addEventListener('click', stopPlaying);
+        document.getElementById('btnReset').addEventListener('click', resetAnimation);
+
+        document.getElementById('speedSlider').addEventListener('input', (e) => {
+            document.getElementById('speedLabel').textContent = e.target.value + 'x';
+            if (isPlaying) {
+                stopPlaying();
+                startPlaying();
+            }
+        });
+
+        document.getElementById('nInput').addEventListener('change', (e) => {
+            initWithN(parseInt(e.target.value) || 5);
+        });
+
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                initWithN(parseInt(btn.dataset.n));
+            });
+        });
+
+        // ============================================================
+        // Initialize
+        // ============================================================
+        initWithN(5);
+    </script>
+</body>
+</html>

@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0044. Wildcard Matching — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+        #sInput { width: 180px; }
+        #pInput { width: 180px; }
+
+        .btn-apply { background: #8b5cf6; color: white; }
+        .btn-apply:hover { background: #7c3aed; }
+
+        /* PRESET EXAMPLES */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 5px 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-family: 'Courier New', monospace;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover { border-color: #60a5fa; color: #60a5fa; }
+        .preset-btn.active { border-color: #3b82f6; color: #3b82f6; background: #1e293b; }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-pause { background: #f59e0b; color: #1e293b; }
+        .btn-pause:hover { background: #d97706; }
+        .btn-reset { background: #ef4444; color: white; }
+        .btn-reset:hover { background: #dc2626; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #3b82f6;
+        }
+
+        /* STRING DISPLAY */
+        .string-display {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .string-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .string-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            font-weight: 600;
+            min-width: 20px;
+        }
+
+        .char-box {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #334155;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            font-weight: 600;
+            background: #0f172a;
+            transition: all 0.3s;
+        }
+
+        .char-box.highlight-s {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+
+        .char-box.highlight-p {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+
+        .char-box.matched {
+            border-color: #a78bfa;
+            background: rgba(167, 139, 250, 0.15);
+            color: #a78bfa;
+        }
+
+        .char-box.star {
+            color: #f59e0b;
+        }
+
+        .char-box.question {
+            color: #ec4899;
+        }
+
+        /* DP TABLE */
+        .dp-section {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        .dp-table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        .dp-table th, .dp-table td {
+            width: 44px;
+            height: 40px;
+            text-align: center;
+            border: 1px solid #334155;
+            font-size: 0.8rem;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+
+        .dp-table th {
+            background: #334155;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .dp-table td {
+            background: #0f172a;
+            color: #64748b;
+        }
+
+        .dp-table td.current {
+            border: 2px solid #f59e0b;
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        .dp-table td.true-cell {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            font-weight: 600;
+        }
+
+        .dp-table td.false-cell {
+            background: rgba(239, 68, 68, 0.08);
+            color: #475569;
+        }
+
+        .dp-table td.result-cell {
+            border: 2px solid #a78bfa;
+            background: rgba(167, 139, 250, 0.2);
+            color: #a78bfa;
+            font-weight: 700;
+        }
+
+        .dp-table td.dep-cell {
+            border: 2px solid #60a5fa;
+            background: rgba(96, 165, 250, 0.1);
+        }
+
+        /* GREEDY DISPLAY */
+        .greedy-section {
+            margin-bottom: 20px;
+        }
+
+        .pointer-display {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .pointer-info {
+            padding: 8px 16px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .pointer-info .label { color: #94a3b8; }
+        .pointer-info .value { color: #60a5fa; font-weight: 600; }
+        .pointer-info .value.star-val { color: #f59e0b; }
+        .pointer-info .value.match-val { color: #a78bfa; }
+
+        /* LOG */
+        .log-section {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+        }
+
+        .log-section h3 {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .log-entry {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            color: #cbd5e1;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .log-entry:last-child { border-bottom: none; }
+        .log-entry .step-num { color: #60a5fa; }
+        .log-entry .action { color: #f59e0b; }
+        .log-entry .result-true { color: #22c55e; font-weight: 600; }
+        .log-entry .result-false { color: #ef4444; font-weight: 600; }
+
+        /* RESULT */
+        .result-box {
+            text-align: center;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .result-box.match {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid #22c55e;
+            color: #22c55e;
+        }
+
+        .result-box.no-match {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        .result-box.pending {
+            background: rgba(148, 163, 184, 0.1);
+            border: 1px solid #334155;
+            color: #94a3b8;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0044. Wildcard Matching</h1>
+        <p>Interactive visualization of DP and Greedy approaches</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('dp')">DP Table</div>
+        <div class="tab" onclick="switchTab('greedy')">Greedy</div>
+    </div>
+
+    <div class="container">
+        <!-- Input -->
+        <div class="input-section">
+            <label>s =</label>
+            <input type="text" id="sInput" value="adceb" placeholder="string">
+            <label>p =</label>
+            <input type="text" id="pInput" value="*a*b" placeholder="pattern">
+            <button class="btn btn-apply" onclick="applyInput()">Apply</button>
+        </div>
+
+        <!-- Presets -->
+        <div class="presets">
+            <button class="preset-btn active" onclick="loadPreset(0)">s="adceb" p="*a*b"</button>
+            <button class="preset-btn" onclick="loadPreset(1)">s="aa" p="*"</button>
+            <button class="preset-btn" onclick="loadPreset(2)">s="cb" p="?a"</button>
+            <button class="preset-btn" onclick="loadPreset(3)">s="acdcb" p="a*c?b"</button>
+            <button class="preset-btn" onclick="loadPreset(4)">s="" p="*"</button>
+            <button class="preset-btn" onclick="loadPreset(5)">s="abc" p="a?c"</button>
+            <button class="preset-btn" onclick="loadPreset(6)">s="ho" p="**ho"</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-step" id="stepBtn" onclick="step()">Step</button>
+            <button class="btn btn-play" id="playBtn" onclick="play()">Play</button>
+            <button class="btn btn-pause" id="pauseBtn" onclick="pause()" style="display:none">Pause</button>
+            <button class="btn btn-reset" onclick="reset()">Reset</button>
+            <div class="speed-control">
+                <span>Speed:</span>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <span id="speedLabel">5x</span>
+            </div>
+        </div>
+
+        <!-- String Display -->
+        <div class="string-display" id="stringDisplay"></div>
+
+        <!-- DP Tab -->
+        <div class="tab-content active" id="dpTab">
+            <div class="dp-section" id="dpSection"></div>
+        </div>
+
+        <!-- Greedy Tab -->
+        <div class="tab-content" id="greedyTab">
+            <div class="greedy-section">
+                <div class="pointer-display" id="pointerDisplay"></div>
+            </div>
+        </div>
+
+        <!-- Log -->
+        <div class="log-section" id="logSection">
+            <h3>Step Log</h3>
+            <div id="logEntries"></div>
+        </div>
+
+        <!-- Result -->
+        <div class="result-box pending" id="resultBox">
+            Press Step or Play to begin
+        </div>
+    </div>
+
+    <script>
+        const presets = [
+            { s: "adceb", p: "*a*b" },
+            { s: "aa", p: "*" },
+            { s: "cb", p: "?a" },
+            { s: "acdcb", p: "a*c?b" },
+            { s: "", p: "*" },
+            { s: "abc", p: "a?c" },
+            { s: "ho", p: "**ho" }
+        ];
+
+        let s = "", p = "";
+        let currentTab = "dp";
+        let animInterval = null;
+        let dpSteps = [];
+        let greedySteps = [];
+        let stepIndex = 0;
+        let finished = false;
+
+        // Init
+        window.onload = () => {
+            document.getElementById('speedSlider').addEventListener('input', (e) => {
+                document.getElementById('speedLabel').textContent = e.target.value + 'x';
+            });
+            loadPreset(0);
+        };
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach((t, i) => {
+                t.classList.toggle('active', (i === 0 && tab === 'dp') || (i === 1 && tab === 'greedy'));
+            });
+            document.getElementById('dpTab').classList.toggle('active', tab === 'dp');
+            document.getElementById('greedyTab').classList.toggle('active', tab === 'greedy');
+            reset();
+        }
+
+        function loadPreset(idx) {
+            document.querySelectorAll('.preset-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+            document.getElementById('sInput').value = presets[idx].s;
+            document.getElementById('pInput').value = presets[idx].p;
+            applyInput();
+        }
+
+        function applyInput() {
+            s = document.getElementById('sInput').value;
+            p = document.getElementById('pInput').value;
+            reset();
+        }
+
+        function getSpeed() {
+            return 1100 - (document.getElementById('speedSlider').value * 100);
+        }
+
+        // ==================== DP ====================
+        function generateDPSteps() {
+            const m = s.length, n = p.length;
+            const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(false));
+            const steps = [];
+
+            // Base case
+            dp[0][0] = true;
+            steps.push({ type: 'base', i: 0, j: 0, val: true, deps: [],
+                msg: 'Base case: dp[0][0] = true (empty matches empty)' });
+
+            // Leading '*'s
+            for (let j = 1; j <= n; j++) {
+                if (p[j - 1] === '*') {
+                    dp[0][j] = dp[0][j - 1];
+                    steps.push({ type: 'base-star', i: 0, j: j, val: dp[0][j],
+                        deps: [[0, j - 1]],
+                        msg: `p[${j-1}]='*': dp[0][${j}] = dp[0][${j-1}] = ${dp[0][j]}` });
+                } else {
+                    steps.push({ type: 'base-star', i: 0, j: j, val: false, deps: [],
+                        msg: `p[${j-1}]='${p[j-1]}': dp[0][${j}] = false (not '*')` });
+                }
+            }
+
+            // Fill
+            for (let i = 1; i <= m; i++) {
+                for (let j = 1; j <= n; j++) {
+                    let deps = [];
+                    let msg = '';
+                    if (p[j - 1] === '*') {
+                        dp[i][j] = dp[i][j - 1] || dp[i - 1][j];
+                        deps = [[i, j - 1], [i - 1, j]];
+                        msg = `p[${j-1}]='*': dp[${i}][${j}] = dp[${i}][${j-1}](${dp[i][j-1]}) OR dp[${i-1}][${j}](${dp[i-1][j]}) = ${dp[i][j]}`;
+                    } else if (p[j - 1] === '?' || p[j - 1] === s[i - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1];
+                        deps = [[i - 1, j - 1]];
+                        const reason = p[j - 1] === '?' ? "'?' matches any" : `'${p[j-1]}'=='${s[i-1]}'`;
+                        msg = `${reason}: dp[${i}][${j}] = dp[${i-1}][${j-1}] = ${dp[i][j]}`;
+                    } else {
+                        msg = `'${p[j-1]}'!='${s[i-1]}': dp[${i}][${j}] = false`;
+                    }
+                    steps.push({ type: 'fill', i, j, val: dp[i][j], deps, msg,
+                        si: i - 1, pj: j - 1 });
+                }
+            }
+
+            // Result
+            steps.push({ type: 'result', val: dp[m][n],
+                msg: `Result: dp[${m}][${n}] = ${dp[m][n]} ${dp[m][n] ? '(MATCH)' : '(NO MATCH)'}` });
+
+            return steps;
+        }
+
+        function renderDPTable() {
+            const m = s.length, n = p.length;
+            let html = '<table class="dp-table"><tr><th></th><th>""</th>';
+            for (let j = 0; j < n; j++) {
+                const ch = p[j] === '*' ? '*' : p[j] === '?' ? '?' : p[j];
+                html += `<th>"${ch}"</th>`;
+            }
+            html += '</tr>';
+
+            for (let i = 0; i <= m; i++) {
+                const rowLabel = i === 0 ? '""' : `"${s[i-1]}"`;
+                html += `<tr><th>${rowLabel}</th>`;
+                for (let j = 0; j <= n; j++) {
+                    html += `<td id="dp-${i}-${j}">-</td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</table>';
+            document.getElementById('dpSection').innerHTML = html;
+        }
+
+        function updateDPCell(i, j, val, isCurrent, isDep, isResult) {
+            const cell = document.getElementById(`dp-${i}-${j}`);
+            if (!cell) return;
+            cell.textContent = val === true ? 'T' : val === false ? 'F' : '-';
+            cell.className = '';
+            if (isResult) cell.classList.add('result-cell');
+            else if (isCurrent) cell.classList.add('current');
+            else if (isDep) cell.classList.add('dep-cell');
+            else if (val === true) cell.classList.add('true-cell');
+            else if (val === false) cell.classList.add('false-cell');
+        }
+
+        // ==================== GREEDY ====================
+        function generateGreedySteps() {
+            const steps = [];
+            let sIdx = 0, pIdx = 0, starIdx = -1, matchIdx = 0;
+            let stepNum = 0;
+
+            steps.push({ type: 'init', sIdx, pIdx, starIdx, matchIdx,
+                msg: 'Initialize: sIdx=0, pIdx=0, starIdx=-1, matchIdx=0' });
+
+            while (sIdx < s.length) {
+                stepNum++;
+                if (pIdx < p.length && (p[pIdx] === s[sIdx] || p[pIdx] === '?')) {
+                    const reason = p[pIdx] === '?' ? `'?' matches '${s[sIdx]}'` : `'${p[pIdx]}'=='${s[sIdx]}'`;
+                    sIdx++; pIdx++;
+                    steps.push({ type: 'match', sIdx, pIdx, starIdx, matchIdx,
+                        msg: `Step ${stepNum}: ${reason} -> advance both (sIdx=${sIdx}, pIdx=${pIdx})` });
+                } else if (pIdx < p.length && p[pIdx] === '*') {
+                    starIdx = pIdx; matchIdx = sIdx; pIdx++;
+                    steps.push({ type: 'star', sIdx, pIdx, starIdx, matchIdx,
+                        msg: `Step ${stepNum}: '*' found -> starIdx=${starIdx}, matchIdx=${matchIdx}, pIdx=${pIdx}` });
+                } else if (starIdx !== -1) {
+                    matchIdx++; sIdx = matchIdx; pIdx = starIdx + 1;
+                    steps.push({ type: 'backtrack', sIdx, pIdx, starIdx, matchIdx,
+                        msg: `Step ${stepNum}: Backtrack -> '*' at ${starIdx} matches one more char (matchIdx=${matchIdx}, sIdx=${sIdx})` });
+                } else {
+                    steps.push({ type: 'fail', sIdx, pIdx, starIdx, matchIdx,
+                        msg: `Step ${stepNum}: No match and no '*' to backtrack -> false` });
+                    steps.push({ type: 'result', val: false,
+                        msg: 'Result: false (NO MATCH)' });
+                    return steps;
+                }
+            }
+
+            // Skip trailing '*'s
+            while (pIdx < p.length && p[pIdx] === '*') {
+                pIdx++;
+                steps.push({ type: 'skip-star', sIdx, pIdx, starIdx, matchIdx,
+                    msg: `Skip trailing '*' -> pIdx=${pIdx}` });
+            }
+
+            const result = pIdx === p.length;
+            steps.push({ type: 'result', val: result,
+                msg: `Result: pIdx=${pIdx}, len(p)=${p.length} -> ${result ? 'true (MATCH)' : 'false (NO MATCH)'}` });
+            return steps;
+        }
+
+        function renderPointers(sIdx, pIdx, starIdx, matchIdx) {
+            let html = `
+                <div class="pointer-info"><span class="label">sIdx: </span><span class="value">${sIdx}</span></div>
+                <div class="pointer-info"><span class="label">pIdx: </span><span class="value">${pIdx}</span></div>
+                <div class="pointer-info"><span class="label">starIdx: </span><span class="value star-val">${starIdx}</span></div>
+                <div class="pointer-info"><span class="label">matchIdx: </span><span class="value match-val">${matchIdx}</span></div>
+            `;
+            document.getElementById('pointerDisplay').innerHTML = html;
+        }
+
+        // ==================== COMMON ====================
+        function renderStrings(highlightS, highlightP) {
+            let html = '<div class="string-row"><span class="string-label">s:</span>';
+            if (s.length === 0) {
+                html += '<span class="char-box" style="color:#64748b;font-style:italic;width:50px;font-size:0.75rem">empty</span>';
+            }
+            for (let i = 0; i < s.length; i++) {
+                let cls = 'char-box';
+                if (highlightS !== undefined && highlightS === i) cls += ' highlight-s';
+                html += `<div class="${cls}">${s[i]}</div>`;
+            }
+            html += '</div><div class="string-row"><span class="string-label">p:</span>';
+            if (p.length === 0) {
+                html += '<span class="char-box" style="color:#64748b;font-style:italic;width:50px;font-size:0.75rem">empty</span>';
+            }
+            for (let i = 0; i < p.length; i++) {
+                let cls = 'char-box';
+                if (p[i] === '*') cls += ' star';
+                else if (p[i] === '?') cls += ' question';
+                if (highlightP !== undefined && highlightP === i) cls += ' highlight-p';
+                html += `<div class="${cls}">${p[i]}</div>`;
+            }
+            html += '</div>';
+            document.getElementById('stringDisplay').innerHTML = html;
+        }
+
+        function addLog(msg) {
+            const entries = document.getElementById('logEntries');
+            const div = document.createElement('div');
+            div.className = 'log-entry';
+            div.innerHTML = msg;
+            entries.appendChild(div);
+            const logSection = document.getElementById('logSection');
+            logSection.scrollTop = logSection.scrollHeight;
+        }
+
+        function showResult(val) {
+            const box = document.getElementById('resultBox');
+            if (val) {
+                box.className = 'result-box match';
+                box.textContent = 'MATCH - Pattern matches the string';
+            } else {
+                box.className = 'result-box no-match';
+                box.textContent = 'NO MATCH - Pattern does not match the string';
+            }
+        }
+
+        function reset() {
+            pause();
+            stepIndex = 0;
+            finished = false;
+            document.getElementById('logEntries').innerHTML = '';
+            document.getElementById('resultBox').className = 'result-box pending';
+            document.getElementById('resultBox').textContent = 'Press Step or Play to begin';
+
+            if (currentTab === 'dp') {
+                dpSteps = generateDPSteps();
+                renderDPTable();
+            } else {
+                greedySteps = generateGreedySteps();
+                renderPointers(0, 0, -1, 0);
+            }
+            renderStrings();
+        }
+
+        function step() {
+            if (finished) return;
+            const steps = currentTab === 'dp' ? dpSteps : greedySteps;
+            if (stepIndex >= steps.length) { finished = true; pause(); return; }
+
+            const st = steps[stepIndex];
+
+            if (currentTab === 'dp') {
+                // Clear previous highlights
+                for (let i = 0; i <= s.length; i++) {
+                    for (let j = 0; j <= p.length; j++) {
+                        const cell = document.getElementById(`dp-${i}-${j}`);
+                        if (cell && (cell.classList.contains('current') || cell.classList.contains('dep-cell'))) {
+                            const val = cell.textContent === 'T';
+                            cell.className = val ? 'true-cell' : 'false-cell';
+                        }
+                    }
+                }
+
+                if (st.type === 'result') {
+                    showResult(st.val);
+                    // Highlight final cell
+                    updateDPCell(s.length, p.length, st.val, false, false, true);
+                } else {
+                    updateDPCell(st.i, st.j, st.val, true, false, false);
+                    if (st.deps) {
+                        st.deps.forEach(([di, dj]) => {
+                            const depCell = document.getElementById(`dp-${di}-${dj}`);
+                            if (depCell) {
+                                const depVal = depCell.textContent === 'T';
+                                updateDPCell(di, dj, depVal, false, true, false);
+                            }
+                        });
+                    }
+                    if (st.si !== undefined) {
+                        renderStrings(st.si, st.pj);
+                    } else {
+                        renderStrings();
+                    }
+                }
+
+                addLog(`<span class="step-num">[${stepIndex}]</span> ${st.msg}`);
+            } else {
+                // Greedy
+                if (st.type === 'result') {
+                    showResult(st.val);
+                    const cls = st.val ? 'result-true' : 'result-false';
+                    addLog(`<span class="step-num">[${stepIndex}]</span> <span class="${cls}">${st.msg}</span>`);
+                } else {
+                    renderPointers(st.sIdx, st.pIdx, st.starIdx, st.matchIdx);
+                    const highlightS = st.sIdx < s.length ? st.sIdx : undefined;
+                    const highlightP = st.pIdx < p.length ? st.pIdx : undefined;
+                    // For match/backtrack, highlight the char being examined
+                    if (st.type === 'match') {
+                        renderStrings(st.sIdx > 0 ? st.sIdx - 1 : undefined, st.pIdx > 0 ? st.pIdx - 1 : undefined);
+                    } else {
+                        renderStrings(highlightS, highlightP);
+                    }
+
+                    let actionClass = 'action';
+                    if (st.type === 'fail') actionClass = 'result-false';
+                    addLog(`<span class="step-num">[${stepIndex}]</span> <span class="${actionClass}">${st.msg}</span>`);
+                }
+            }
+
+            stepIndex++;
+            if (stepIndex >= steps.length) { finished = true; pause(); }
+        }
+
+        function play() {
+            if (finished) reset();
+            document.getElementById('playBtn').style.display = 'none';
+            document.getElementById('pauseBtn').style.display = '';
+            animInterval = setInterval(() => {
+                if (finished) { pause(); return; }
+                step();
+            }, getSpeed());
+        }
+
+        function pause() {
+            clearInterval(animInterval);
+            animInterval = null;
+            document.getElementById('playBtn').style.display = '';
+            document.getElementById('pauseBtn').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

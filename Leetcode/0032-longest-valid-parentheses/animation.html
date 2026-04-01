@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0032. Longest Valid Parentheses — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .tab:hover { background: #334155; }
+
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            width: 250px;
+        }
+
+        .input-section input::placeholder { color: #64748b; }
+
+        /* PRESET BUTTONS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            padding: 6px 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            border-color: #60a5fa;
+            color: #60a5fa;
+        }
+
+        .preset-label {
+            font-size: 0.7rem;
+            color: #64748b;
+            display: block;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .btn-step { background: #3b82f6; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-play { background: #10b981; }
+        .btn-play:hover { background: #059669; }
+        .btn-reset { background: #ef4444; }
+        .btn-reset:hover { background: #dc2626; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 80px;
+            accent-color: #8b5cf6;
+        }
+
+        /* STRING DISPLAY */
+        .string-display {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            min-height: 60px;
+            align-items: center;
+        }
+
+        .char-box {
+            width: 42px;
+            height: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            border-radius: 8px;
+            background: #0f172a;
+            border: 2px solid #334155;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .char-index {
+            font-size: 0.6rem;
+            color: #64748b;
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        .char-box.current {
+            border-color: #fbbf24;
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
+            transform: scale(1.1);
+        }
+
+        .char-box.processed {
+            opacity: 0.4;
+        }
+
+        .char-box.matched {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .char-box.best-match {
+            border-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.2);
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+        }
+
+        .char-box.error {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        /* Bracket colors */
+        .bracket-open { color: #60a5fa; }
+        .bracket-close { color: #f472b6; }
+
+        /* STACK VISUALIZATION */
+        .stack-area {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: flex-end;
+            margin-bottom: 20px;
+            min-height: 220px;
+        }
+
+        .stack-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stack-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .stack-visual {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            min-width: 70px;
+            min-height: 180px;
+            border-left: 3px solid #475569;
+            border-right: 3px solid #475569;
+            border-bottom: 3px solid #475569;
+            border-radius: 0 0 8px 8px;
+            padding: 4px;
+            position: relative;
+            justify-content: flex-start;
+        }
+
+        .stack-item {
+            width: 60px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            border-radius: 6px;
+            margin: 2px 0;
+            animation: stackPush 0.3s ease-out;
+        }
+
+        @keyframes stackPush {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .stack-item.base {
+            background: rgba(148, 163, 184, 0.2);
+            color: #94a3b8;
+            border: 1px solid #475569;
+        }
+
+        .stack-item.index-item {
+            background: rgba(96, 165, 250, 0.25);
+            color: #60a5fa;
+            border: 1px solid #60a5fa;
+        }
+
+        .stack-item.new-base {
+            background: rgba(244, 114, 182, 0.25);
+            color: #f472b6;
+            border: 1px solid #f472b6;
+        }
+
+        .stack-empty-label {
+            color: #475569;
+            font-size: 0.8rem;
+            font-style: italic;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* MAX LENGTH DISPLAY */
+        .max-len-display {
+            text-align: center;
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+        }
+
+        .max-len-display span {
+            color: #fbbf24;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        /* DP ARRAY DISPLAY */
+        .dp-array-container {
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .dp-array-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .dp-array {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+            min-height: 50px;
+            align-items: center;
+        }
+
+        .dp-cell {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            border-radius: 6px;
+            background: #0f172a;
+            border: 2px solid #334155;
+            transition: all 0.3s;
+            color: #94a3b8;
+        }
+
+        .dp-cell.active {
+            border-color: #fbbf24;
+            color: #fbbf24;
+            box-shadow: 0 0 8px rgba(251, 191, 36, 0.3);
+        }
+
+        .dp-cell.updated {
+            border-color: #10b981;
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .dp-cell.best {
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.15);
+        }
+
+        .dp-cell.referenced {
+            border-color: #60a5fa;
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.1);
+        }
+
+        /* Case indicator */
+        .case-indicator {
+            text-align: center;
+            margin-bottom: 16px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            font-size: 0.9rem;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .case-1 { border-color: #10b981; color: #10b981; }
+        .case-2 { border-color: #a78bfa; color: #a78bfa; }
+        .case-skip { border-color: #475569; color: #64748b; }
+
+        /* LOG */
+        .log-area {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border: 1px solid #334155;
+        }
+
+        .log-entry { margin-bottom: 2px; }
+        .log-push { color: #60a5fa; }
+        .log-pop { color: #10b981; }
+        .log-error { color: #ef4444; }
+        .log-info { color: #94a3b8; }
+        .log-result { color: #fbbf24; font-weight: 600; }
+        .log-case1 { color: #10b981; }
+        .log-case2 { color: #a78bfa; }
+
+        /* RESULT */
+        .result-display {
+            text-align: center;
+            padding: 16px;
+            margin-top: 16px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .result-valid {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+
+        .result-zero {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        .result-pending {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid #334155;
+            color: #94a3b8;
+        }
+
+        /* TAB CONTENT */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* INFO BOX */
+        .info-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .info-box code {
+            background: #334155;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0032. Longest Valid Parentheses</h1>
+        <p>Interactive visualization of finding the longest valid parentheses substring</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="stack">Stack Approach</div>
+        <div class="tab" data-tab="dp">DP Approach</div>
+    </div>
+
+    <div class="container">
+        <!-- Input Section -->
+        <div class="input-section">
+            <label for="strInput">String:</label>
+            <input type="text" id="strInput" value=")()())" placeholder="Enter parentheses...">
+        </div>
+
+        <div class="presets">
+            <button class="preset-btn" data-val="(()">
+                (()
+                <span class="preset-label">ans: 2</span>
+            </button>
+            <button class="preset-btn" data-val=")()())">
+                )()())
+                <span class="preset-label">ans: 4</span>
+            </button>
+            <button class="preset-btn" data-val="">
+                empty
+                <span class="preset-label">ans: 0</span>
+            </button>
+            <button class="preset-btn" data-val="()">
+                ()
+                <span class="preset-label">ans: 2</span>
+            </button>
+            <button class="preset-btn" data-val="(())">
+                (())
+                <span class="preset-label">ans: 4</span>
+            </button>
+            <button class="preset-btn" data-val="()()">
+                ()()
+                <span class="preset-label">ans: 4</span>
+            </button>
+            <button class="preset-btn" data-val="()(())">
+                ()(())
+                <span class="preset-label">ans: 6</span>
+            </button>
+            <button class="preset-btn" data-val="(()()">
+                (()()
+                <span class="preset-label">ans: 4</span>
+            </button>
+            <button class="preset-btn" data-val="(()(((()">
+                (()(((()
+                <span class="preset-label">ans: 2</span>
+            </button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-step" id="btnStep">Step</button>
+            <button class="btn btn-play" id="btnPlay">Play</button>
+            <button class="btn btn-reset" id="btnReset">Reset</button>
+            <div class="speed-control">
+                <span>Speed:</span>
+                <input type="range" id="speedRange" min="1" max="10" value="5">
+                <span id="speedLabel">5</span>
+            </div>
+        </div>
+
+        <!-- Stack Tab -->
+        <div class="tab-content active" id="tab-stack">
+            <div class="info-box">
+                <strong>Stack Approach:</strong> Push indices onto the stack. Initialize with <code>-1</code> as base. For each <code>)</code>, pop the top. If stack is empty, push current index as new base. Otherwise, <code>maxLen = i - stack.top</code>. Time: <code>O(n)</code>, Space: <code>O(n)</code>
+            </div>
+
+            <div class="string-display" id="stackStringDisplay"></div>
+
+            <div class="max-len-display" id="stackMaxLen">
+                maxLen = <span>0</span>
+            </div>
+
+            <div class="stack-area">
+                <div class="stack-container">
+                    <div class="stack-label">Stack (indices)</div>
+                    <div class="stack-visual" id="stackVisual">
+                        <span class="stack-empty-label">empty</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="log-area" id="stackLog">
+                <div class="log-entry log-info">Click "Step" or "Play" to begin...</div>
+            </div>
+
+            <div class="result-display result-pending" id="stackResult">
+                Waiting to start...
+            </div>
+        </div>
+
+        <!-- DP Tab -->
+        <div class="tab-content" id="tab-dp">
+            <div class="info-box">
+                <strong>DP Approach:</strong> <code>dp[i]</code> = length of longest valid substring ending at index <code>i</code>.
+                Case 1: <code>s[i-1]=='('</code> then <code>dp[i] = dp[i-2] + 2</code>.
+                Case 2: <code>s[i-1]==')'</code> and <code>s[i-dp[i-1]-1]=='('</code> then <code>dp[i] = dp[i-1] + 2 + dp[i-dp[i-1]-2]</code>.
+                Time: <code>O(n)</code>, Space: <code>O(n)</code>
+            </div>
+
+            <div class="string-display" id="dpStringDisplay"></div>
+
+            <div class="max-len-display" id="dpMaxLen">
+                maxLen = <span>0</span>
+            </div>
+
+            <div class="case-indicator" id="dpCaseIndicator">
+                Waiting to start...
+            </div>
+
+            <div class="dp-array-container">
+                <div class="dp-array-label">dp[] array</div>
+                <div class="dp-array" id="dpArray"></div>
+            </div>
+
+            <div class="log-area" id="dpLog">
+                <div class="log-entry log-info">Click "Step" or "Play" to begin...</div>
+            </div>
+
+            <div class="result-display result-pending" id="dpResult">
+                Waiting to start...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // STATE
+        // ============================================================
+        let currentTab = 'stack';
+        let isPlaying = false;
+        let playTimer = null;
+
+        // Stack approach state
+        let stackState = {
+            input: '',
+            index: 0,
+            stack: [],
+            done: false,
+            maxLen: 0,
+            charStates: [],
+            bestStart: -1,
+            bestEnd: -1
+        };
+
+        // DP approach state
+        let dpState = {
+            input: '',
+            index: 1,
+            dp: [],
+            done: false,
+            maxLen: 0,
+            charStates: [],
+            bestStart: -1,
+            bestEnd: -1
+        };
+
+        // ============================================================
+        // TABS
+        // ============================================================
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = tab.dataset.tab;
+                document.getElementById('tab-' + currentTab).classList.add('active');
+                resetAll();
+            });
+        });
+
+        // ============================================================
+        // PRESETS
+        // ============================================================
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById('strInput').value = btn.dataset.val;
+                resetAll();
+            });
+        });
+
+        // ============================================================
+        // CONTROLS
+        // ============================================================
+        document.getElementById('btnStep').addEventListener('click', step);
+        document.getElementById('btnPlay').addEventListener('click', togglePlay);
+        document.getElementById('btnReset').addEventListener('click', resetAll);
+
+        document.getElementById('speedRange').addEventListener('input', (e) => {
+            document.getElementById('speedLabel').textContent = e.target.value;
+        });
+
+        document.getElementById('strInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') resetAll();
+        });
+
+        function getSpeed() {
+            return 1100 - document.getElementById('speedRange').value * 100;
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                stopPlay();
+            } else {
+                isPlaying = true;
+                document.getElementById('btnPlay').textContent = 'Pause';
+                document.getElementById('btnPlay').style.background = '#f59e0b';
+                playLoop();
+            }
+        }
+
+        function stopPlay() {
+            isPlaying = false;
+            clearTimeout(playTimer);
+            document.getElementById('btnPlay').textContent = 'Play';
+            document.getElementById('btnPlay').style.background = '#10b981';
+        }
+
+        function playLoop() {
+            if (!isPlaying) return;
+            const done = step();
+            if (done) {
+                stopPlay();
+                return;
+            }
+            playTimer = setTimeout(playLoop, getSpeed());
+        }
+
+        // ============================================================
+        // STEP (dispatches to correct tab)
+        // ============================================================
+        function step() {
+            if (currentTab === 'stack') return stepStack();
+            else return stepDP();
+        }
+
+        // ============================================================
+        // BRACKET HELPERS
+        // ============================================================
+        function getBracketClass(ch) {
+            if (ch === '(') return 'bracket-open';
+            if (ch === ')') return 'bracket-close';
+            return '';
+        }
+
+        // ============================================================
+        // STACK APPROACH
+        // ============================================================
+        function initStack() {
+            const input = document.getElementById('strInput').value;
+            stackState = {
+                input: input,
+                index: 0,
+                stack: [-1],
+                done: false,
+                maxLen: 0,
+                charStates: Array(input.length).fill('pending'),
+                bestStart: -1,
+                bestEnd: -1
+            };
+            renderStackString();
+            renderStack();
+            document.getElementById('stackMaxLen').innerHTML = 'maxLen = <span>0</span>';
+            document.getElementById('stackLog').innerHTML = '<div class="log-entry log-info">Click "Step" or "Play" to begin...</div>';
+            document.getElementById('stackResult').className = 'result-display result-pending';
+            document.getElementById('stackResult').textContent = 'Waiting to start...';
+        }
+
+        function stepStack() {
+            if (stackState.done) return true;
+
+            const s = stackState.input;
+            const logArea = document.getElementById('stackLog');
+
+            // First step: clear initial message
+            if (stackState.index === 0) {
+                logArea.innerHTML = '';
+                if (s.length === 0) {
+                    stackState.done = true;
+                    addLog('stackLog', 'Empty string -- result is 0', 'log-result');
+                    showStackResult();
+                    return true;
+                }
+                addLog('stackLog', 'Initialize stack with [-1] as base', 'log-info');
+            }
+
+            // If we've processed all characters
+            if (stackState.index >= s.length) {
+                stackState.done = true;
+                showStackResult();
+                return true;
+            }
+
+            const i = stackState.index;
+            const ch = s[i];
+
+            // Reset char states
+            for (let j = 0; j < s.length; j++) {
+                if (stackState.charStates[j] === 'current') {
+                    stackState.charStates[j] = 'processed';
+                }
+            }
+            stackState.charStates[i] = 'current';
+
+            if (ch === '(') {
+                stackState.stack.push(i);
+                addLog('stackLog', `i=${i}: '(' -- push index ${i}. Stack: [${stackState.stack.join(', ')}]`, 'log-push');
+            } else {
+                // ')'
+                stackState.stack.pop();
+                if (stackState.stack.length === 0) {
+                    stackState.stack.push(i);
+                    addLog('stackLog', `i=${i}: ')' -- pop, stack empty, push ${i} as new base. Stack: [${stackState.stack.join(', ')}]`, 'log-error');
+                } else {
+                    const top = stackState.stack[stackState.stack.length - 1];
+                    const length = i - top;
+                    if (length > stackState.maxLen) {
+                        stackState.maxLen = length;
+                        stackState.bestStart = top + 1;
+                        stackState.bestEnd = i;
+                    }
+                    addLog('stackLog', `i=${i}: ')' -- pop, len = ${i} - ${top} = ${length}, maxLen = ${stackState.maxLen}. Stack: [${stackState.stack.join(', ')}]`, 'log-pop');
+                }
+            }
+
+            // Highlight best match
+            highlightBestMatch('stack');
+
+            stackState.index++;
+            document.getElementById('stackMaxLen').innerHTML = `maxLen = <span>${stackState.maxLen}</span>`;
+            renderStackString();
+            renderStack();
+
+            // Check if this was the last character
+            if (stackState.index >= s.length) {
+                stackState.done = true;
+                showStackResult();
+                return true;
+            }
+
+            return false;
+        }
+
+        function highlightBestMatch(approach) {
+            const state = approach === 'stack' ? stackState : dpState;
+            if (state.bestStart >= 0 && state.bestEnd >= 0) {
+                for (let j = state.bestStart; j <= state.bestEnd; j++) {
+                    if (state.charStates[j] !== 'current') {
+                        state.charStates[j] = 'best-match';
+                    }
+                }
+            }
+        }
+
+        function showStackResult() {
+            const maxLen = stackState.maxLen;
+            const resultEl = document.getElementById('stackResult');
+            if (maxLen > 0) {
+                const substr = stackState.input.substring(stackState.bestStart, stackState.bestEnd + 1);
+                addLog('stackLog', `Result: Longest valid parentheses = ${maxLen} ("${substr}" at indices ${stackState.bestStart}-${stackState.bestEnd})`, 'log-result');
+                resultEl.className = 'result-display result-valid';
+                resultEl.textContent = `Longest Valid Parentheses = ${maxLen}  ("${substr}")`;
+            } else {
+                addLog('stackLog', 'Result: No valid parentheses found, answer = 0', 'log-result');
+                resultEl.className = 'result-display result-zero';
+                resultEl.textContent = 'No valid parentheses found -- answer = 0';
+            }
+            highlightBestMatch('stack');
+            renderStackString();
+        }
+
+        function renderStackString() {
+            const container = document.getElementById('stackStringDisplay');
+            container.innerHTML = '';
+            const s = stackState.input;
+
+            if (s.length === 0) {
+                container.innerHTML = '<span style="color: #475569; font-style: italic;">empty string</span>';
+                return;
+            }
+
+            for (let i = 0; i < s.length; i++) {
+                const box = document.createElement('div');
+                box.className = 'char-box ' + getBracketClass(s[i]);
+                if (stackState.charStates[i]) {
+                    box.classList.add(stackState.charStates[i]);
+                }
+                box.innerHTML = s[i] + '<span class="char-index">' + i + '</span>';
+                container.appendChild(box);
+            }
+        }
+
+        function renderStack() {
+            const container = document.getElementById('stackVisual');
+            container.innerHTML = '';
+
+            if (stackState.stack.length === 0) {
+                container.innerHTML = '<span class="stack-empty-label">empty</span>';
+                return;
+            }
+
+            for (let i = 0; i < stackState.stack.length; i++) {
+                const item = document.createElement('div');
+                const val = stackState.stack[i];
+                if (val === -1) {
+                    item.className = 'stack-item base';
+                    item.textContent = '-1';
+                } else if (stackState.input[val] === '(') {
+                    item.className = 'stack-item index-item';
+                    item.textContent = val;
+                } else {
+                    item.className = 'stack-item new-base';
+                    item.textContent = val;
+                }
+                container.appendChild(item);
+            }
+        }
+
+        // ============================================================
+        // DP APPROACH
+        // ============================================================
+        function initDP() {
+            const input = document.getElementById('strInput').value;
+            const n = input.length;
+            dpState = {
+                input: input,
+                index: 1,
+                dp: Array(n).fill(0),
+                done: false,
+                maxLen: 0,
+                charStates: Array(n).fill('pending'),
+                bestStart: -1,
+                bestEnd: -1,
+                started: false
+            };
+            renderDPString();
+            renderDPArray();
+            document.getElementById('dpMaxLen').innerHTML = 'maxLen = <span>0</span>';
+            document.getElementById('dpCaseIndicator').textContent = 'Waiting to start...';
+            document.getElementById('dpCaseIndicator').className = 'case-indicator';
+            document.getElementById('dpLog').innerHTML = '<div class="log-entry log-info">Click "Step" or "Play" to begin...</div>';
+            document.getElementById('dpResult').className = 'result-display result-pending';
+            document.getElementById('dpResult').textContent = 'Waiting to start...';
+        }
+
+        function stepDP() {
+            if (dpState.done) return true;
+
+            const s = dpState.input;
+            const n = s.length;
+            const logArea = document.getElementById('dpLog');
+            const caseEl = document.getElementById('dpCaseIndicator');
+
+            if (!dpState.started) {
+                dpState.started = true;
+                logArea.innerHTML = '';
+
+                if (n < 2) {
+                    dpState.done = true;
+                    addLog('dpLog', n === 0 ? 'Empty string -- result is 0' : 'Single character -- result is 0', 'log-result');
+                    showDPResult();
+                    return true;
+                }
+                addLog('dpLog', `Initialize dp[0..${n-1}] = all zeros`, 'log-info');
+            }
+
+            if (dpState.index >= n) {
+                dpState.done = true;
+                showDPResult();
+                return true;
+            }
+
+            const i = dpState.index;
+
+            // Reset char states
+            for (let j = 0; j < n; j++) {
+                if (dpState.charStates[j] === 'current') {
+                    dpState.charStates[j] = 'processed';
+                }
+            }
+            dpState.charStates[i] = 'current';
+
+            // Reset dp cell highlighting
+            renderDPArray(i);
+
+            if (s[i] === '(') {
+                // dp[i] = 0, skip
+                addLog('dpLog', `i=${i}: s[${i}]='(' -- dp[${i}] = 0 (skip, can't end with '(')`, 'log-info');
+                caseEl.textContent = `i=${i}: s[i]='(' -- skip (valid substring cannot end with '(')`;
+                caseEl.className = 'case-indicator case-skip';
+            } else {
+                // s[i] == ')'
+                if (s[i - 1] === '(') {
+                    // Case 1: ...()
+                    const prev = i >= 2 ? dpState.dp[i - 2] : 0;
+                    dpState.dp[i] = prev + 2;
+                    addLog('dpLog', `i=${i}: s[${i-1}]='(' -- Case 1: dp[${i}] = ${prev > 0 ? 'dp[' + (i-2) + '](' + prev + ')' : '0'} + 2 = ${dpState.dp[i]}`, 'log-case1');
+                    caseEl.innerHTML = `i=${i}: Case 1 &mdash; <code>...()</code> pattern &rarr; dp[${i}] = ${dpState.dp[i]}`;
+                    caseEl.className = 'case-indicator case-1';
+                } else if (i - dpState.dp[i - 1] - 1 >= 0 && s[i - dpState.dp[i - 1] - 1] === '(') {
+                    // Case 2: ...))
+                    const innerLen = dpState.dp[i - 1];
+                    const matchIdx = i - innerLen - 1;
+                    const beforeLen = (matchIdx - 1 >= 0) ? dpState.dp[matchIdx - 1] : 0;
+                    dpState.dp[i] = innerLen + 2 + beforeLen;
+                    addLog('dpLog', `i=${i}: s[${i-1}]=')' -- Case 2: matching '(' at index ${matchIdx}. dp[${i}] = dp[${i-1}](${innerLen}) + 2 + ${beforeLen > 0 ? 'dp[' + (matchIdx-1) + '](' + beforeLen + ')' : '0'} = ${dpState.dp[i]}`, 'log-case2');
+                    caseEl.innerHTML = `i=${i}: Case 2 &mdash; <code>...))</code> pattern, matching '(' at index ${matchIdx} &rarr; dp[${i}] = ${dpState.dp[i]}`;
+                    caseEl.className = 'case-indicator case-2';
+                } else {
+                    // No match
+                    addLog('dpLog', `i=${i}: s[${i}]=')' -- no matching '(' found. dp[${i}] = 0`, 'log-error');
+                    caseEl.textContent = `i=${i}: ')' has no matching '(' -- dp[${i}] = 0`;
+                    caseEl.className = 'case-indicator case-skip';
+                }
+
+                if (dpState.dp[i] > dpState.maxLen) {
+                    dpState.maxLen = dpState.dp[i];
+                    dpState.bestEnd = i;
+                    dpState.bestStart = i - dpState.dp[i] + 1;
+                }
+            }
+
+            highlightBestMatch('dp');
+
+            dpState.index++;
+            document.getElementById('dpMaxLen').innerHTML = `maxLen = <span>${dpState.maxLen}</span>`;
+            renderDPString();
+            renderDPArray(i);
+
+            if (dpState.index >= n) {
+                dpState.done = true;
+                showDPResult();
+                return true;
+            }
+
+            return false;
+        }
+
+        function showDPResult() {
+            const maxLen = dpState.maxLen;
+            const resultEl = document.getElementById('dpResult');
+            if (maxLen > 0) {
+                const substr = dpState.input.substring(dpState.bestStart, dpState.bestEnd + 1);
+                addLog('dpLog', `Result: Longest valid parentheses = ${maxLen} ("${substr}" at indices ${dpState.bestStart}-${dpState.bestEnd})`, 'log-result');
+                resultEl.className = 'result-display result-valid';
+                resultEl.textContent = `Longest Valid Parentheses = ${maxLen}  ("${substr}")`;
+            } else {
+                addLog('dpLog', 'Result: No valid parentheses found, answer = 0', 'log-result');
+                resultEl.className = 'result-display result-zero';
+                resultEl.textContent = 'No valid parentheses found -- answer = 0';
+            }
+            highlightBestMatch('dp');
+            renderDPString();
+            renderDPArray();
+        }
+
+        function renderDPString() {
+            const container = document.getElementById('dpStringDisplay');
+            container.innerHTML = '';
+            const s = dpState.input;
+
+            if (s.length === 0) {
+                container.innerHTML = '<span style="color: #475569; font-style: italic;">empty string</span>';
+                return;
+            }
+
+            for (let i = 0; i < s.length; i++) {
+                const box = document.createElement('div');
+                box.className = 'char-box ' + getBracketClass(s[i]);
+                if (dpState.charStates[i]) {
+                    box.classList.add(dpState.charStates[i]);
+                }
+                box.innerHTML = s[i] + '<span class="char-index">' + i + '</span>';
+                container.appendChild(box);
+            }
+        }
+
+        function renderDPArray(activeIndex) {
+            const container = document.getElementById('dpArray');
+            container.innerHTML = '';
+
+            if (dpState.dp.length === 0) {
+                container.innerHTML = '<span style="color: #475569; font-style: italic;">empty</span>';
+                return;
+            }
+
+            for (let i = 0; i < dpState.dp.length; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'dp-cell';
+
+                if (i === activeIndex) {
+                    cell.classList.add('active');
+                } else if (dpState.dp[i] > 0 && dpState.dp[i] === dpState.maxLen) {
+                    cell.classList.add('best');
+                } else if (dpState.dp[i] > 0) {
+                    cell.classList.add('updated');
+                }
+
+                cell.textContent = dpState.dp[i];
+                container.appendChild(cell);
+            }
+        }
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+        function addLog(logId, message, cls) {
+            const logArea = document.getElementById(logId);
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + (cls || 'log-info');
+            entry.textContent = message;
+            logArea.appendChild(entry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        function resetAll() {
+            stopPlay();
+            if (currentTab === 'stack') {
+                initStack();
+            } else {
+                initDP();
+            }
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        initStack();
+        initDP();
+    </script>
+</body>
+</html>

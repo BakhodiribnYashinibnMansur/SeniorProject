@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0036. Valid Sudoku — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        .main-layout {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Controls */
+        .controls {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #334155;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .controls-row:last-child { margin-bottom: 0; }
+
+        .controls label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-right: 4px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-primary:disabled { background: #1e40af; opacity: 0.5; cursor: not-allowed; }
+
+        .btn-secondary { background: #475569; color: white; }
+        .btn-secondary:hover { background: #64748b; }
+
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+
+        .btn-success { background: #22c55e; color: white; }
+        .btn-success:hover { background: #16a34a; }
+
+        .btn-preset {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+        .btn-preset:hover { background: #334155; color: #e2e8f0; }
+        .btn-preset.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .speed-control input[type="range"] {
+            width: 120px;
+            accent-color: #3b82f6;
+        }
+
+        .speed-value {
+            color: #60a5fa;
+            font-size: 0.85rem;
+            font-weight: 600;
+            min-width: 40px;
+        }
+
+        /* Sudoku Grid */
+        .grid-container {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #334155;
+            display: flex;
+            justify-content: center;
+        }
+
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 1px;
+            border: 3px solid #60a5fa;
+            border-radius: 4px;
+            overflow: hidden;
+            width: 100%;
+            max-width: 450px;
+            aspect-ratio: 1;
+        }
+
+        .cell {
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            transition: all 0.3s;
+            position: relative;
+            aspect-ratio: 1;
+        }
+
+        /* Box borders */
+        .cell:nth-child(3n) { border-right: 2px solid #60a5fa; }
+        .cell:nth-child(9n) { border-right: none; }
+        .cell:nth-child(n+19):nth-child(-n+27) { border-bottom: 2px solid #60a5fa; }
+        .cell:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid #60a5fa; }
+
+        .cell.empty { color: #334155; }
+        .cell.checking {
+            background: #1e40af;
+            color: white;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+            z-index: 2;
+        }
+        .cell.valid {
+            background: #064e3b;
+            color: #34d399;
+        }
+        .cell.conflict {
+            background: #7f1d1d;
+            color: #fca5a5;
+            animation: shake 0.4s ease;
+        }
+        .cell.highlight-row { background: #1e293b; }
+        .cell.highlight-col { background: #1e293b; }
+        .cell.highlight-box { background: #1e293b; }
+        .cell.highlight-conflict {
+            background: #991b1b;
+            color: #fecaca;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-3px); }
+            40% { transform: translateX(3px); }
+            60% { transform: translateX(-3px); }
+            80% { transform: translateX(3px); }
+        }
+
+        /* Info bar */
+        .info-bar {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 14px 16px;
+            border: 1px solid #334155;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .info-label { color: #94a3b8; }
+        .info-value { color: #e2e8f0; font-weight: 600; }
+        .info-value.valid-result { color: #34d399; }
+        .info-value.invalid-result { color: #f87171; }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+
+        /* Right panel — Log */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .log-panel {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #334155;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 400px;
+        }
+
+        .log-panel h3 {
+            font-size: 0.95rem;
+            color: #60a5fa;
+            margin-bottom: 10px;
+        }
+
+        .log-entries {
+            flex: 1;
+            overflow-y: auto;
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 0.78rem;
+            line-height: 1.6;
+            max-height: 500px;
+        }
+
+        .log-entries::-webkit-scrollbar { width: 6px; }
+        .log-entries::-webkit-scrollbar-track { background: #0f172a; border-radius: 3px; }
+        .log-entries::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+        .log-entry { padding: 2px 0; }
+        .log-entry.check { color: #60a5fa; }
+        .log-entry.skip { color: #64748b; }
+        .log-entry.ok { color: #34d399; }
+        .log-entry.conflict { color: #f87171; font-weight: 600; }
+        .log-entry.result { color: #fbbf24; font-weight: 700; font-size: 0.85rem; margin-top: 6px; }
+
+        /* Result overlay */
+        .result-banner {
+            display: none;
+            text-align: center;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .result-banner.show { display: block; }
+        .result-banner.valid-banner {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid #22c55e;
+            color: #34d399;
+        }
+        .result-banner.invalid-banner {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #f87171;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>0036. Valid Sudoku</h1>
+    <p>Cell-by-cell validation: rows, columns, and 3x3 boxes</p>
+</div>
+
+<div class="main-layout">
+    <div class="left-panel">
+        <!-- Controls -->
+        <div class="controls">
+            <div class="controls-row">
+                <button id="btnStep" class="btn-primary" onclick="step()">Step</button>
+                <button id="btnPlay" class="btn-success" onclick="play()">Play</button>
+                <button id="btnPause" class="btn-secondary" onclick="pause()" disabled>Pause</button>
+                <button id="btnReset" class="btn-danger" onclick="reset()">Reset</button>
+
+                <div class="speed-control">
+                    <label>Speed:</label>
+                    <input type="range" id="speedSlider" min="1" max="20" value="8" oninput="updateSpeed()">
+                    <span class="speed-value" id="speedLabel">8x</span>
+                </div>
+            </div>
+            <div class="controls-row">
+                <label>Presets:</label>
+                <button class="btn-preset active" data-preset="valid" onclick="loadPreset('valid')">Valid Board</button>
+                <button class="btn-preset" data-preset="invalid-box" onclick="loadPreset('invalid-box')">Invalid (Box)</button>
+                <button class="btn-preset" data-preset="invalid-row" onclick="loadPreset('invalid-row')">Invalid (Row)</button>
+                <button class="btn-preset" data-preset="invalid-col" onclick="loadPreset('invalid-col')">Invalid (Col)</button>
+                <button class="btn-preset" data-preset="sparse" onclick="loadPreset('sparse')">Sparse</button>
+            </div>
+        </div>
+
+        <!-- Sudoku Grid -->
+        <div class="grid-container">
+            <div class="sudoku-grid" id="grid"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="info-bar">
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #1e40af;"></div>
+                    <span>Checking</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #064e3b;"></div>
+                    <span>Valid</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #7f1d1d;"></div>
+                    <span>Conflict</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #1e293b;"></div>
+                    <span>Highlighted Region</span>
+                </div>
+            </div>
+            <div style="margin-left: auto; display: flex; gap: 16px;">
+                <div class="info-item">
+                    <span class="info-label">Step:</span>
+                    <span class="info-value" id="stepCount">0</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Cell:</span>
+                    <span class="info-value" id="cellInfo">—</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Result:</span>
+                    <span class="info-value" id="resultInfo">—</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Banner -->
+        <div class="result-banner" id="resultBanner"></div>
+    </div>
+
+    <!-- Log Panel -->
+    <div class="right-panel">
+        <div class="log-panel">
+            <h3>Validation Log</h3>
+            <div class="log-entries" id="logEntries"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== PRESET BOARDS ==========
+    const PRESETS = {
+        'valid': [
+            "53..7....",
+            "6..195...",
+            ".98....6.",
+            "8...6...3",
+            "4..8.3..1",
+            "7...2...6",
+            ".6....28.",
+            "...419..5",
+            "....8..79"
+        ],
+        'invalid-box': [
+            "83..7....",
+            "6..195...",
+            ".98....6.",
+            "8...6...3",
+            "4..8.3..1",
+            "7...2...6",
+            ".6....28.",
+            "...419..5",
+            "....8..79"
+        ],
+        'invalid-row': [
+            "53..7...5",
+            "6..195...",
+            ".98....6.",
+            "8...6...3",
+            "4..8.3..1",
+            "7...2...6",
+            ".6....28.",
+            "...419..5",
+            "....8..79"
+        ],
+        'invalid-col': [
+            "53..7....",
+            "6..195...",
+            ".98....6.",
+            "8...6...3",
+            "4..8.3..1",
+            "7...2...6",
+            ".6....28.",
+            "...419..5",
+            "5...8..79"
+        ],
+        'sparse': [
+            "1........",
+            ".........",
+            ".........",
+            "...2.....",
+            ".........",
+            ".........",
+            ".......3.",
+            ".........",
+            "........4"
+        ]
+    };
+
+    // ========== STATE ==========
+    let board = [];
+    let cells = [];
+    let stepIndex = 0;
+    let steps = [];
+    let animationTimer = null;
+    let isPlaying = false;
+    let speed = 8;
+    let currentPreset = 'valid';
+
+    // ========== INIT ==========
+    function init() {
+        buildGrid();
+        loadPreset('valid');
+    }
+
+    function buildGrid() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+        cells = [];
+        for (let r = 0; r < 9; r++) {
+            for (let c = 0; c < 9; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.id = `cell-${r}-${c}`;
+                grid.appendChild(cell);
+                cells.push(cell);
+            }
+        }
+    }
+
+    function loadPreset(name) {
+        currentPreset = name;
+        document.querySelectorAll('.btn-preset').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.preset === name);
+        });
+        const data = PRESETS[name];
+        board = data.map(row => row.split(''));
+        reset();
+    }
+
+    // ========== PRECOMPUTE STEPS ==========
+    function computeSteps() {
+        steps = [];
+        const rows = Array.from({length: 9}, () => new Set());
+        const cols = Array.from({length: 9}, () => new Set());
+        const boxes = Array.from({length: 9}, () => new Set());
+
+        for (let r = 0; r < 9; r++) {
+            for (let c = 0; c < 9; c++) {
+                const val = board[r][c];
+                if (val === '.') {
+                    steps.push({ type: 'skip', r, c });
+                    continue;
+                }
+
+                const box = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+
+                // Check for conflicts
+                let conflictType = null;
+                let conflictCell = null;
+
+                if (rows[r].has(val)) {
+                    conflictType = 'row';
+                    // Find the conflicting cell
+                    for (let cc = 0; cc < c; cc++) {
+                        if (board[r][cc] === val) { conflictCell = { r, c: cc }; break; }
+                    }
+                } else if (cols[c].has(val)) {
+                    conflictType = 'column';
+                    for (let rr = 0; rr < r; rr++) {
+                        if (board[rr][c] === val) { conflictCell = { r: rr, c }; break; }
+                    }
+                } else if (boxes[box].has(val)) {
+                    conflictType = 'box';
+                    const br = Math.floor(r / 3) * 3;
+                    const bc = Math.floor(c / 3) * 3;
+                    outer: for (let rr = br; rr < br + 3; rr++) {
+                        for (let cc = bc; cc < bc + 3; cc++) {
+                            if ((rr !== r || cc !== c) && board[rr][cc] === val) {
+                                conflictCell = { r: rr, c: cc };
+                                break outer;
+                            }
+                        }
+                    }
+                }
+
+                if (conflictType) {
+                    steps.push({
+                        type: 'conflict',
+                        r, c, val, box,
+                        conflictType,
+                        conflictCell
+                    });
+                    return; // Stop at first conflict
+                }
+
+                rows[r].add(val);
+                cols[c].add(val);
+                boxes[box].add(val);
+
+                steps.push({ type: 'valid', r, c, val, box });
+            }
+        }
+
+        steps.push({ type: 'done' });
+    }
+
+    // ========== RENDERING ==========
+    function renderBoard() {
+        for (let r = 0; r < 9; r++) {
+            for (let c = 0; c < 9; c++) {
+                const cell = cells[r * 9 + c];
+                const val = board[r][c];
+                cell.textContent = val === '.' ? '' : val;
+                cell.className = 'cell' + (val === '.' ? ' empty' : '');
+            }
+        }
+    }
+
+    function clearHighlights() {
+        cells.forEach(cell => {
+            cell.className = cell.className.replace(/ (checking|valid|conflict|highlight-row|highlight-col|highlight-box|highlight-conflict)/g, '');
+        });
+    }
+
+    function highlightRegions(r, c) {
+        const box = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+        const br = Math.floor(r / 3) * 3;
+        const bc = Math.floor(c / 3) * 3;
+
+        // Highlight row
+        for (let cc = 0; cc < 9; cc++) {
+            if (cc !== c) cells[r * 9 + cc].classList.add('highlight-row');
+        }
+        // Highlight column
+        for (let rr = 0; rr < 9; rr++) {
+            if (rr !== r) cells[rr * 9 + c].classList.add('highlight-col');
+        }
+        // Highlight box
+        for (let rr = br; rr < br + 3; rr++) {
+            for (let cc = bc; cc < bc + 3; cc++) {
+                if (rr !== r || cc !== c) cells[rr * 9 + cc].classList.add('highlight-box');
+            }
+        }
+    }
+
+    function applyStep(idx) {
+        if (idx >= steps.length) return;
+
+        const s = steps[idx];
+
+        // Clear previous checking highlight but keep valid/conflict states
+        cells.forEach(cell => {
+            cell.classList.remove('checking', 'highlight-row', 'highlight-col', 'highlight-box', 'highlight-conflict');
+        });
+
+        if (s.type === 'skip') {
+            // Mark previously valid cells
+            for (let i = 0; i < idx; i++) {
+                if (steps[i].type === 'valid') {
+                    cells[steps[i].r * 9 + steps[i].c].classList.add('valid');
+                }
+            }
+            document.getElementById('stepCount').textContent = idx + 1;
+            document.getElementById('cellInfo').textContent = `(${s.r},${s.c}) = "."`;
+            addLog(`(${s.r},${s.c}): empty cell — skip`, 'skip');
+            return;
+        }
+
+        if (s.type === 'valid') {
+            // Mark all previously validated cells
+            for (let i = 0; i < idx; i++) {
+                if (steps[i].type === 'valid') {
+                    cells[steps[i].r * 9 + steps[i].c].classList.add('valid');
+                }
+            }
+
+            // Highlight current cell and regions
+            const cell = cells[s.r * 9 + s.c];
+            cell.classList.add('checking');
+            highlightRegions(s.r, s.c);
+
+            document.getElementById('stepCount').textContent = idx + 1;
+            document.getElementById('cellInfo').textContent = `(${s.r},${s.c}) = "${s.val}"`;
+            addLog(`(${s.r},${s.c}): "${s.val}" — check row ${s.r}, col ${s.c}, box ${s.box} — OK`, 'ok');
+
+            // After a brief moment, mark as valid
+            setTimeout(() => {
+                cell.classList.remove('checking');
+                cell.classList.add('valid');
+            }, getDelay() * 0.7);
+            return;
+        }
+
+        if (s.type === 'conflict') {
+            // Mark all previously validated cells
+            for (let i = 0; i < idx; i++) {
+                if (steps[i].type === 'valid') {
+                    cells[steps[i].r * 9 + steps[i].c].classList.add('valid');
+                }
+            }
+
+            const cell = cells[s.r * 9 + s.c];
+            cell.classList.add('conflict');
+            highlightRegions(s.r, s.c);
+
+            // Highlight the conflicting cell
+            if (s.conflictCell) {
+                cells[s.conflictCell.r * 9 + s.conflictCell.c].classList.add('highlight-conflict');
+            }
+
+            document.getElementById('stepCount').textContent = idx + 1;
+            document.getElementById('cellInfo').textContent = `(${s.r},${s.c}) = "${s.val}"`;
+            document.getElementById('resultInfo').textContent = 'INVALID';
+            document.getElementById('resultInfo').className = 'info-value invalid-result';
+            addLog(`(${s.r},${s.c}): "${s.val}" — CONFLICT in ${s.conflictType}!`, 'conflict');
+            addLog(`Board is INVALID`, 'result');
+
+            const banner = document.getElementById('resultBanner');
+            banner.className = 'result-banner show invalid-banner';
+            banner.textContent = `INVALID — Duplicate "${s.val}" found in ${s.conflictType} (row ${s.r}, col ${s.c})`;
+
+            pause();
+            return;
+        }
+
+        if (s.type === 'done') {
+            // Mark all validated cells
+            for (let i = 0; i < idx; i++) {
+                if (steps[i].type === 'valid') {
+                    cells[steps[i].r * 9 + steps[i].c].classList.add('valid');
+                }
+            }
+
+            document.getElementById('resultInfo').textContent = 'VALID';
+            document.getElementById('resultInfo').className = 'info-value valid-result';
+            addLog(`All cells checked — Board is VALID`, 'result');
+
+            const banner = document.getElementById('resultBanner');
+            banner.className = 'result-banner show valid-banner';
+            banner.textContent = 'VALID — No conflicts found in any row, column, or box';
+
+            pause();
+            return;
+        }
+    }
+
+    // ========== LOG ==========
+    function addLog(text, type) {
+        const logEntries = document.getElementById('logEntries');
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${type}`;
+        entry.textContent = text;
+        logEntries.appendChild(entry);
+        logEntries.scrollTop = logEntries.scrollHeight;
+    }
+
+    function clearLog() {
+        document.getElementById('logEntries').innerHTML = '';
+    }
+
+    // ========== CONTROLS ==========
+    function getDelay() {
+        return Math.max(50, 1000 / speed);
+    }
+
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speedSlider').value);
+        document.getElementById('speedLabel').textContent = speed + 'x';
+        if (isPlaying) {
+            clearInterval(animationTimer);
+            animationTimer = setInterval(stepForward, getDelay());
+        }
+    }
+
+    function step() {
+        if (stepIndex >= steps.length) return;
+        applyStep(stepIndex);
+        stepIndex++;
+    }
+
+    function stepForward() {
+        if (stepIndex >= steps.length) {
+            pause();
+            return;
+        }
+        step();
+    }
+
+    function play() {
+        if (stepIndex >= steps.length) return;
+        isPlaying = true;
+        document.getElementById('btnPlay').disabled = true;
+        document.getElementById('btnPause').disabled = false;
+        document.getElementById('btnStep').disabled = true;
+        animationTimer = setInterval(stepForward, getDelay());
+    }
+
+    function pause() {
+        isPlaying = false;
+        if (animationTimer) {
+            clearInterval(animationTimer);
+            animationTimer = null;
+        }
+        document.getElementById('btnPlay').disabled = false;
+        document.getElementById('btnPause').disabled = true;
+        document.getElementById('btnStep').disabled = false;
+    }
+
+    function reset() {
+        pause();
+        stepIndex = 0;
+        computeSteps();
+        renderBoard();
+        clearLog();
+        document.getElementById('stepCount').textContent = '0';
+        document.getElementById('cellInfo').textContent = '—';
+        document.getElementById('resultInfo').textContent = '—';
+        document.getElementById('resultInfo').className = 'info-value';
+        document.getElementById('resultBanner').className = 'result-banner';
+        addLog('Board loaded. Click Step or Play to begin validation.', 'check');
+    }
+
+    // ========== START ==========
+    init();
+</script>
+
+</body>
+</html>

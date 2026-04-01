@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0041. First Missing Positive — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #f87171, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT SECTION */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .input-section input {
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            width: 250px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .input-section input:focus {
+            outline: none;
+            border-color: #f87171;
+        }
+
+        /* PRESETS */
+        .presets {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            padding: 6px 12px;
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+            font-family: 'Courier New', monospace;
+        }
+
+        .preset-btn:hover {
+            background: #475569;
+            border-color: #f87171;
+            color: white;
+        }
+
+        .preset-btn.active {
+            background: #f87171;
+            border-color: #f87171;
+            color: white;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            font-weight: 500;
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .btn:hover { background: #475569; }
+
+        .btn-primary { background: #3b82f6; border-color: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+
+        .btn-success { background: #10b981; border-color: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+
+        .btn-warning { background: #f59e0b; border-color: #f59e0b; color: #1e293b; }
+        .btn-warning:hover { background: #d97706; }
+
+        .btn-danger { background: #ef4444; border-color: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            accent-color: #a78bfa;
+        }
+
+        /* PHASE INDICATOR */
+        .phase-indicator {
+            text-align: center;
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 10px;
+            border-radius: 8px;
+            background: #334155;
+        }
+
+        .phase-indicator.phase-sort { color: #f87171; border-left: 4px solid #f87171; }
+        .phase-indicator.phase-scan { color: #60a5fa; border-left: 4px solid #60a5fa; }
+        .phase-indicator.phase-done { color: #10b981; border-left: 4px solid #10b981; }
+        .phase-indicator.phase-init { color: #94a3b8; border-left: 4px solid #94a3b8; }
+
+        /* ARRAY VISUALIZATION */
+        .array-section {
+            margin-bottom: 20px;
+        }
+
+        .array-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .index-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .index-cell {
+            width: 60px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #64748b;
+            font-family: 'Courier New', monospace;
+        }
+
+        .target-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .target-cell {
+            width: 60px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #475569;
+            font-family: 'Courier New', monospace;
+        }
+
+        .array-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .cell {
+            width: 60px;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+            border: 2px solid #475569;
+            background: #1e293b;
+            position: relative;
+        }
+
+        .cell.highlight-i {
+            border-color: #f87171;
+            background: rgba(248, 113, 113, 0.15);
+            box-shadow: 0 0 12px rgba(248, 113, 113, 0.3);
+        }
+
+        .cell.highlight-swap {
+            border-color: #fbbf24;
+            background: rgba(251, 191, 36, 0.15);
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
+        }
+
+        .cell.correct {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.15);
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+        }
+
+        .cell.wrong {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.15);
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
+        }
+
+        .cell.scanning {
+            border-color: #60a5fa;
+            background: rgba(96, 165, 250, 0.15);
+            box-shadow: 0 0 12px rgba(96, 165, 250, 0.3);
+        }
+
+        .cell.found-missing {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.25);
+            box-shadow: 0 0 16px rgba(245, 158, 11, 0.4);
+            animation: pulse 0.8s ease-in-out infinite;
+        }
+
+        .cell.irrelevant {
+            opacity: 0.4;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        /* SWAP ARROW */
+        .swap-indicator {
+            text-align: center;
+            height: 30px;
+            line-height: 30px;
+            font-size: 1.2rem;
+            color: #fbbf24;
+            margin-bottom: 6px;
+        }
+
+        /* LOG */
+        .log-section {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            border: 1px solid #334155;
+            margin-bottom: 16px;
+        }
+
+        .log-entry {
+            padding: 3px 0;
+            border-bottom: 1px solid #1e293b;
+            line-height: 1.5;
+        }
+
+        .log-entry:last-child { border-bottom: none; }
+
+        .log-swap { color: #fbbf24; }
+        .log-skip { color: #64748b; }
+        .log-correct { color: #10b981; }
+        .log-found { color: #f87171; font-weight: bold; }
+        .log-scan { color: #60a5fa; }
+        .log-info { color: #94a3b8; }
+
+        /* RESULT */
+        .result-section {
+            text-align: center;
+            padding: 16px;
+            border-radius: 8px;
+            background: #334155;
+            font-size: 1.1rem;
+        }
+
+        .result-section.found {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #334155;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            border: 2px solid;
+        }
+
+        /* STEP COUNTER */
+        .step-counter {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>0041. First Missing Positive</h1>
+        <p>Cyclic Sort / Index Mapping — O(n) time, O(1) space</p>
+    </div>
+
+    <div class="container">
+        <!-- Input -->
+        <div class="input-section">
+            <label>nums =</label>
+            <input type="text" id="inputArray" value="3, 4, -1, 1" placeholder="e.g. 3, 4, -1, 1">
+            <button class="btn btn-primary" onclick="initialize()">Load</button>
+        </div>
+
+        <!-- Presets -->
+        <div class="presets">
+            <button class="preset-btn" onclick="loadPreset(this, '1, 2, 0')">[1,2,0]</button>
+            <button class="preset-btn active" onclick="loadPreset(this, '3, 4, -1, 1')">[3,4,-1,1]</button>
+            <button class="preset-btn" onclick="loadPreset(this, '7, 8, 9, 11, 12')">[7,8,9,11,12]</button>
+            <button class="preset-btn" onclick="loadPreset(this, '1, 2, 3, 4, 5')">[1,2,3,4,5]</button>
+            <button class="preset-btn" onclick="loadPreset(this, '2, 1')">[2,1]</button>
+            <button class="preset-btn" onclick="loadPreset(this, '1, 1, 1')">[1,1,1]</button>
+            <button class="preset-btn" onclick="loadPreset(this, '-1, 4, 2, 1, 9, 10')">[-1,4,2,1,9,10]</button>
+            <button class="preset-btn" onclick="loadPreset(this, '5, 3, 1, 4, 2')">[5,3,1,4,2]</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn" id="btnStep" onclick="step()">Step</button>
+            <button class="btn btn-success" id="btnPlay" onclick="togglePlay()">Play</button>
+            <button class="btn btn-danger" onclick="resetAnimation()">Reset</button>
+            <div class="speed-control">
+                <span>Speed:</span>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <span id="speedLabel">5x</span>
+            </div>
+        </div>
+
+        <!-- Step Counter -->
+        <div class="step-counter" id="stepCounter">Step 0</div>
+
+        <!-- Phase Indicator -->
+        <div class="phase-indicator phase-init" id="phaseIndicator">
+            Press Step or Play to begin
+        </div>
+
+        <!-- Array Visualization -->
+        <div class="array-section">
+            <div class="array-label">Array State</div>
+            <div class="index-row" id="indexRow"></div>
+            <div class="array-row" id="arrayRow"></div>
+            <div class="target-row" id="targetRow"></div>
+            <div class="swap-indicator" id="swapIndicator"></div>
+        </div>
+
+        <!-- Log -->
+        <div class="log-section" id="logSection">
+            <div class="log-entry log-info">Ready. Load an array and press Step or Play.</div>
+        </div>
+
+        <!-- Result -->
+        <div class="result-section" id="resultSection">
+            Result will appear here after the algorithm finishes.
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="border-color: #f87171; background: rgba(248,113,113,0.15);"></div>
+                <span>Current (i)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="border-color: #fbbf24; background: rgba(251,191,36,0.15);"></div>
+                <span>Swap target</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="border-color: #10b981; background: rgba(16,185,129,0.15);"></div>
+                <span>Correct position</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="border-color: #60a5fa; background: rgba(96,165,250,0.15);"></div>
+                <span>Scanning</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="border-color: #f59e0b; background: rgba(245,158,11,0.25);"></div>
+                <span>Missing found</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // State
+        // ============================================================
+        let nums = [];
+        let n = 0;
+        let steps = [];
+        let currentStep = 0;
+        let isPlaying = false;
+        let playInterval = null;
+
+        // ============================================================
+        // Generate all steps for the algorithm
+        // ============================================================
+        function generateSteps(arr) {
+            const a = [...arr];
+            const n = a.length;
+            const allSteps = [];
+
+            // Initial state
+            allSteps.push({
+                type: 'init',
+                array: [...a],
+                phase: 'sort',
+                msg: `Starting Cyclic Sort. n=${n}, answer is in [1, ${n+1}]`,
+                logClass: 'log-info'
+            });
+
+            // Phase 1: Cyclic Sort
+            for (let i = 0; i < n; i++) {
+                // Show current i
+                allSteps.push({
+                    type: 'check-i',
+                    array: [...a],
+                    i: i,
+                    phase: 'sort',
+                    msg: `i=${i}: nums[${i}]=${a[i]}`,
+                    logClass: 'log-info'
+                });
+
+                // Check if swap is needed
+                while (a[i] >= 1 && a[i] <= n && a[a[i] - 1] !== a[i]) {
+                    const correctIdx = a[i] - 1;
+                    const val = a[i];
+                    const swapVal = a[correctIdx];
+
+                    allSteps.push({
+                        type: 'pre-swap',
+                        array: [...a],
+                        i: i,
+                        swapIdx: correctIdx,
+                        phase: 'sort',
+                        msg: `  ${val} should be at index ${correctIdx}. Swap nums[${i}]=${val} <-> nums[${correctIdx}]=${swapVal}`,
+                        logClass: 'log-swap'
+                    });
+
+                    // Perform swap
+                    [a[i], a[correctIdx]] = [a[correctIdx], a[i]];
+
+                    allSteps.push({
+                        type: 'post-swap',
+                        array: [...a],
+                        i: i,
+                        swapIdx: correctIdx,
+                        phase: 'sort',
+                        msg: `  After swap: [${a.join(', ')}]`,
+                        logClass: 'log-swap'
+                    });
+                }
+
+                // Why did we stop?
+                if (a[i] < 1 || a[i] > n) {
+                    allSteps.push({
+                        type: 'skip',
+                        array: [...a],
+                        i: i,
+                        phase: 'sort',
+                        msg: `  ${a[i]} is out of range [1,${n}] — skip`,
+                        logClass: 'log-skip'
+                    });
+                } else if (a[a[i] - 1] === a[i]) {
+                    allSteps.push({
+                        type: 'already-correct',
+                        array: [...a],
+                        i: i,
+                        correctIdx: a[i] - 1,
+                        phase: 'sort',
+                        msg: `  ${a[i]} is already at correct index ${a[i]-1}` + (a[i]-1 !== i ? ' (duplicate)' : ''),
+                        logClass: 'log-correct'
+                    });
+                }
+            }
+
+            // Phase 2: Scan
+            allSteps.push({
+                type: 'start-scan',
+                array: [...a],
+                phase: 'scan',
+                msg: `Phase 2: Scanning for first missing positive...`,
+                logClass: 'log-scan'
+            });
+
+            let answer = n + 1;
+            for (let i = 0; i < n; i++) {
+                if (a[i] !== i + 1) {
+                    allSteps.push({
+                        type: 'found-missing',
+                        array: [...a],
+                        i: i,
+                        answer: i + 1,
+                        phase: 'done',
+                        msg: `nums[${i}]=${a[i]} != ${i+1} — First missing positive is ${i+1}!`,
+                        logClass: 'log-found'
+                    });
+                    answer = i + 1;
+                    break;
+                } else {
+                    allSteps.push({
+                        type: 'scan-ok',
+                        array: [...a],
+                        i: i,
+                        phase: 'scan',
+                        msg: `  nums[${i}]=${a[i]} == ${i+1} ✓`,
+                        logClass: 'log-correct'
+                    });
+                }
+            }
+
+            if (answer === n + 1) {
+                allSteps.push({
+                    type: 'all-present',
+                    array: [...a],
+                    answer: n + 1,
+                    phase: 'done',
+                    msg: `All 1..${n} present! First missing positive is ${n+1}!`,
+                    logClass: 'log-found'
+                });
+            }
+
+            return allSteps;
+        }
+
+        // ============================================================
+        // Rendering
+        // ============================================================
+        function renderArray(state) {
+            const indexRow = document.getElementById('indexRow');
+            const arrayRow = document.getElementById('arrayRow');
+            const targetRow = document.getElementById('targetRow');
+            const swapIndicator = document.getElementById('swapIndicator');
+
+            indexRow.innerHTML = '';
+            arrayRow.innerHTML = '';
+            targetRow.innerHTML = '';
+            swapIndicator.innerHTML = '';
+
+            const arr = state.array;
+
+            for (let idx = 0; idx < arr.length; idx++) {
+                // Index label
+                const idxCell = document.createElement('div');
+                idxCell.className = 'index-cell';
+                idxCell.textContent = `[${idx}]`;
+                indexRow.appendChild(idxCell);
+
+                // Value cell
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.textContent = arr[idx];
+
+                // Apply styling based on step type
+                if (state.type === 'check-i' && idx === state.i) {
+                    cell.classList.add('highlight-i');
+                } else if (state.type === 'pre-swap') {
+                    if (idx === state.i) cell.classList.add('highlight-i');
+                    if (idx === state.swapIdx) cell.classList.add('highlight-swap');
+                } else if (state.type === 'post-swap') {
+                    if (idx === state.i) cell.classList.add('highlight-i');
+                    if (idx === state.swapIdx) cell.classList.add('highlight-swap');
+                } else if (state.type === 'skip' && idx === state.i) {
+                    cell.classList.add('irrelevant');
+                } else if (state.type === 'already-correct') {
+                    if (idx === state.correctIdx) cell.classList.add('correct');
+                    if (idx === state.i) cell.classList.add('highlight-i');
+                } else if (state.type === 'scan-ok') {
+                    if (idx === state.i) cell.classList.add('scanning');
+                    if (idx < state.i) cell.classList.add('correct');
+                } else if (state.type === 'found-missing') {
+                    if (idx === state.i) cell.classList.add('found-missing');
+                    if (idx < state.i) cell.classList.add('correct');
+                } else if (state.type === 'all-present') {
+                    cell.classList.add('correct');
+                }
+
+                // Mark correctly placed elements in sort phase
+                if (state.phase === 'sort' && state.type !== 'init') {
+                    if (arr[idx] === idx + 1 && state.type !== 'pre-swap' && state.type !== 'post-swap') {
+                        if (!cell.classList.contains('highlight-i') && !cell.classList.contains('highlight-swap')) {
+                            cell.classList.add('correct');
+                        }
+                    }
+                }
+
+                arrayRow.appendChild(cell);
+
+                // Target label (what should be here)
+                const tgtCell = document.createElement('div');
+                tgtCell.className = 'target-cell';
+                tgtCell.textContent = `(${idx + 1})`;
+                targetRow.appendChild(tgtCell);
+            }
+
+            // Swap indicator
+            if (state.type === 'pre-swap') {
+                swapIndicator.textContent = `⟵ swap ⟶`;
+            }
+        }
+
+        function renderPhase(state) {
+            const el = document.getElementById('phaseIndicator');
+            el.className = 'phase-indicator';
+
+            if (state.phase === 'sort') {
+                el.classList.add('phase-sort');
+                el.textContent = 'Phase 1: Cyclic Sort — placing elements at correct positions';
+            } else if (state.phase === 'scan') {
+                el.classList.add('phase-scan');
+                el.textContent = 'Phase 2: Scan — finding first missing positive';
+            } else if (state.phase === 'done') {
+                el.classList.add('phase-done');
+                el.textContent = `Done! Answer: ${state.answer}`;
+            }
+        }
+
+        function addLog(msg, className) {
+            const log = document.getElementById('logSection');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${className}`;
+            entry.textContent = msg;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function renderResult(state) {
+            const el = document.getElementById('resultSection');
+            if (state.type === 'found-missing' || state.type === 'all-present') {
+                el.className = 'result-section found';
+                el.innerHTML = `<strong>First Missing Positive: ${state.answer}</strong>`;
+            }
+        }
+
+        // ============================================================
+        // Controls
+        // ============================================================
+        function initialize() {
+            stopPlay();
+            const input = document.getElementById('inputArray').value;
+            nums = input.split(',').map(s => parseInt(s.trim())).filter(x => !isNaN(x));
+            n = nums.length;
+
+            if (n === 0) {
+                alert('Please enter a valid array.');
+                return;
+            }
+
+            steps = generateSteps(nums);
+            currentStep = 0;
+
+            // Reset UI
+            document.getElementById('logSection').innerHTML = '';
+            document.getElementById('resultSection').className = 'result-section';
+            document.getElementById('resultSection').textContent = 'Result will appear here after the algorithm finishes.';
+            document.getElementById('stepCounter').textContent = `Step 0 / ${steps.length}`;
+
+            // Render initial state
+            const initState = { type: 'init', array: [...nums], phase: 'sort' };
+            renderArray(initState);
+            document.getElementById('phaseIndicator').className = 'phase-indicator phase-init';
+            document.getElementById('phaseIndicator').textContent = `Array loaded: [${nums.join(', ')}]. Press Step or Play.`;
+
+            addLog(`Loaded: nums = [${nums.join(', ')}], n = ${n}`, 'log-info');
+
+            document.getElementById('btnStep').disabled = false;
+            document.getElementById('btnPlay').disabled = false;
+        }
+
+        function step() {
+            if (currentStep >= steps.length) {
+                stopPlay();
+                return;
+            }
+
+            const s = steps[currentStep];
+            renderArray(s);
+            renderPhase(s);
+            addLog(s.msg, s.logClass);
+            renderResult(s);
+
+            currentStep++;
+            document.getElementById('stepCounter').textContent = `Step ${currentStep} / ${steps.length}`;
+
+            if (currentStep >= steps.length) {
+                stopPlay();
+                document.getElementById('btnStep').disabled = true;
+                document.getElementById('btnPlay').disabled = true;
+            }
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                stopPlay();
+            } else {
+                startPlay();
+            }
+        }
+
+        function startPlay() {
+            if (currentStep >= steps.length) return;
+            isPlaying = true;
+            document.getElementById('btnPlay').textContent = 'Pause';
+            document.getElementById('btnPlay').className = 'btn btn-warning';
+
+            const speed = document.getElementById('speedSlider').value;
+            const delay = 1100 - speed * 100;
+
+            playInterval = setInterval(() => {
+                step();
+                if (currentStep >= steps.length) {
+                    stopPlay();
+                }
+            }, delay);
+        }
+
+        function stopPlay() {
+            isPlaying = false;
+            document.getElementById('btnPlay').textContent = 'Play';
+            document.getElementById('btnPlay').className = 'btn btn-success';
+            if (playInterval) {
+                clearInterval(playInterval);
+                playInterval = null;
+            }
+        }
+
+        function resetAnimation() {
+            stopPlay();
+            initialize();
+        }
+
+        function loadPreset(btn, value) {
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('inputArray').value = value;
+            initialize();
+        }
+
+        // Speed slider label
+        document.getElementById('speedSlider').addEventListener('input', function() {
+            document.getElementById('speedLabel').textContent = this.value + 'x';
+            if (isPlaying) {
+                stopPlay();
+                startPlay();
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('load', initialize);
+    </script>
+</body>
+</html>
