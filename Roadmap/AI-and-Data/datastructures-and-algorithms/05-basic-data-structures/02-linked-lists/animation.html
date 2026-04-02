@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linked List Interactive Animation</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+  h1 { color: #e94560; margin-bottom: 10px; font-size: 1.6em; }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 15px 0; }
+  .controls input { background: #16213e; color: #e0e0e0; border: 1px solid #0f3460; padding: 8px 12px; border-radius: 6px; width: 80px; font-size: 14px; text-align: center; }
+  .controls button { background: #0f3460; color: #e0e0e0; border: none; padding: 8px 18px; border-radius: 6px; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+  .controls button:hover { background: #e94560; }
+  .controls button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .canvas-area { width: 100%; max-width: 900px; min-height: 200px; background: #16213e; border-radius: 12px; border: 1px solid #0f3460; position: relative; overflow-x: auto; overflow-y: hidden; padding: 30px 20px; margin: 10px 0; }
+  .node-container { display: flex; align-items: center; min-height: 120px; padding: 10px 0; transition: all 0.4s ease; }
+  .node { display: flex; align-items: center; position: relative; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: scale(1); } }
+  @keyframes highlight { 0% { box-shadow: 0 0 0 rgba(233,69,96,0); } 50% { box-shadow: 0 0 20px rgba(233,69,96,0.8); } 100% { box-shadow: 0 0 0 rgba(233,69,96,0); } }
+  @keyframes deleteAnim { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0) translateY(40px); } }
+  .node-box { display: flex; border-radius: 8px; overflow: hidden; border: 2px solid #0f3460; transition: border-color 0.3s, box-shadow 0.3s; }
+  .node-box.searching { border-color: #e94560; animation: highlight 0.6s ease; }
+  .node-box.found { border-color: #4ecca3; box-shadow: 0 0 15px rgba(78,204,163,0.6); }
+  .node-box.deleting { animation: deleteAnim 0.4s ease forwards; }
+  .node-data { background: #1a1a2e; padding: 12px 16px; font-weight: bold; font-size: 18px; min-width: 45px; text-align: center; }
+  .node-ptr { background: #0f3460; padding: 12px 8px; font-size: 11px; color: #aaa; display: flex; align-items: center; }
+  .arrow { color: #e94560; font-size: 20px; margin: 0 6px; font-weight: bold; }
+  .nil-label { color: #666; font-style: italic; font-size: 14px; margin-left: 6px; }
+  .pointer-label { position: absolute; font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 4px; top: -22px; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+  .head-label { background: #0f3460; color: #4fc3f7; }
+  .tail-label { background: #0f3460; color: #ff9800; }
+  .stats-bar { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin: 10px 0; }
+  .stat { background: #16213e; padding: 8px 16px; border-radius: 8px; border: 1px solid #0f3460; font-size: 13px; }
+  .stat span { color: #4ecca3; font-weight: bold; }
+  .bigo-table { margin: 15px 0; border-collapse: collapse; font-size: 13px; }
+  .bigo-table th { background: #0f3460; padding: 8px 14px; text-align: left; }
+  .bigo-table td { background: #16213e; padding: 6px 14px; border: 1px solid #0f3460; }
+  .bigo-table td.fast { color: #4ecca3; }
+  .bigo-table td.slow { color: #e94560; }
+  .log-area { width: 100%; max-width: 900px; margin-top: 10px; }
+  .log-area h3 { color: #4fc3f7; margin-bottom: 5px; font-size: 14px; }
+  .log { background: #16213e; border: 1px solid #0f3460; border-radius: 8px; padding: 10px; max-height: 150px; overflow-y: auto; font-family: monospace; font-size: 12px; line-height: 1.6; }
+  .log div { border-bottom: 1px solid #0f346033; padding: 2px 0; }
+  .log .time { color: #666; }
+  .log .op { color: #4fc3f7; }
+  .log .val { color: #4ecca3; }
+  .log .err { color: #e94560; }
+  .empty-msg { color: #666; font-style: italic; text-align: center; padding: 40px; }
+</style>
+</head>
+<body>
+<h1>Singly Linked List</h1>
+
+<div class="controls">
+  <input type="number" id="valueInput" placeholder="Value" />
+  <button onclick="insertHead()" id="btnInsHead">Insert Head</button>
+  <button onclick="insertTail()" id="btnInsTail">Insert Tail</button>
+  <button onclick="deleteValue()" id="btnDel">Delete</button>
+  <button onclick="searchValue()" id="btnSearch">Search</button>
+  <button onclick="clearList()" id="btnClear">Clear</button>
+</div>
+
+<div class="stats-bar">
+  <div class="stat">Size: <span id="sizeDisplay">0</span></div>
+  <div class="stat">Head: <span id="headDisplay">nil</span></div>
+  <div class="stat">Tail: <span id="tailDisplay">nil</span></div>
+  <div class="stat">Last Op: <span id="lastOpDisplay">--</span></div>
+</div>
+
+<div class="canvas-area" id="canvas">
+  <div class="node-container" id="nodeContainer">
+    <div class="empty-msg" id="emptyMsg">List is empty. Insert a value to begin.</div>
+  </div>
+</div>
+
+<table class="bigo-table">
+  <tr><th>Operation</th><th>Time</th><th>Description</th></tr>
+  <tr><td>Insert Head</td><td class="fast">O(1)</td><td>Create node, point to old head</td></tr>
+  <tr><td>Insert Tail</td><td class="fast">O(1)</td><td>Append via tail pointer</td></tr>
+  <tr><td>Search</td><td class="slow">O(n)</td><td>Traverse from head</td></tr>
+  <tr><td>Delete</td><td class="slow">O(n)</td><td>Find predecessor, re-link</td></tr>
+  <tr><td>Access [i]</td><td class="slow">O(n)</td><td>No random access</td></tr>
+</table>
+
+<div class="log-area">
+  <h3>Operation Log</h3>
+  <div class="log" id="logArea"></div>
+</div>
+
+<script>
+let list = [];
+let animating = false;
+
+function getInput() {
+  const v = document.getElementById('valueInput').value.trim();
+  if (v === '') return null;
+  return parseInt(v, 10);
+}
+
+function log(msg, type = '') {
+  const el = document.getElementById('logArea');
+  const t = new Date().toLocaleTimeString();
+  const cls = type === 'err' ? 'err' : type === 'op' ? 'op' : 'val';
+  el.innerHTML = `<div><span class="time">[${t}]</span> <span class="${cls}">${msg}</span></div>` + el.innerHTML;
+}
+
+function updateStats() {
+  document.getElementById('sizeDisplay').textContent = list.length;
+  document.getElementById('headDisplay').textContent = list.length > 0 ? list[0] : 'nil';
+  document.getElementById('tailDisplay').textContent = list.length > 0 ? list[list.length - 1] : 'nil';
+}
+
+function setButtons(disabled) {
+  animating = disabled;
+  document.querySelectorAll('.controls button').forEach(b => b.disabled = disabled);
+}
+
+function render(highlightIdx = -1, highlightClass = '') {
+  const container = document.getElementById('nodeContainer');
+  if (list.length === 0) {
+    container.innerHTML = '<div class="empty-msg">List is empty. Insert a value to begin.</div>';
+    updateStats();
+    return;
+  }
+  let html = '';
+  list.forEach((val, i) => {
+    const isHead = i === 0;
+    const isTail = i === list.length - 1;
+    const boxClass = i === highlightIdx ? highlightClass : '';
+    let labels = '';
+    if (isHead && isTail) {
+      labels = '<span class="pointer-label head-label">head</span><span class="pointer-label tail-label" style="top:-22px;left:calc(50% + 30px)">tail</span>';
+    } else if (isHead) {
+      labels = '<span class="pointer-label head-label">head</span>';
+    } else if (isTail) {
+      labels = '<span class="pointer-label tail-label">tail</span>';
+    }
+    html += `<div class="node" id="node-${i}">
+      <div class="node-box ${boxClass}" id="box-${i}" style="position:relative">
+        ${labels}
+        <div class="node-data">${val}</div>
+        <div class="node-ptr">next</div>
+      </div>
+      ${isTail ? '<span class="arrow">&rarr;</span><span class="nil-label">nil</span>' : '<span class="arrow">&rarr;</span>'}
+    </div>`;
+  });
+  container.innerHTML = html;
+  updateStats();
+}
+
+async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function animateSearch(target) {
+  for (let i = 0; i < list.length; i++) {
+    render(i, 'searching');
+    await sleep(400);
+    if (list[i] === target) {
+      render(i, 'found');
+      return i;
+    }
+  }
+  render();
+  return -1;
+}
+
+async function insertHead() {
+  const v = getInput();
+  if (v === null || isNaN(v)) { log('Enter a valid number', 'err'); return; }
+  setButtons(true);
+  list.unshift(v);
+  render(0, 'found');
+  log(`insertHead(${v}) — O(1)`, 'op');
+  document.getElementById('lastOpDisplay').textContent = `insertHead(${v})`;
+  document.getElementById('valueInput').value = '';
+  await sleep(600);
+  render();
+  setButtons(false);
+}
+
+async function insertTail() {
+  const v = getInput();
+  if (v === null || isNaN(v)) { log('Enter a valid number', 'err'); return; }
+  setButtons(true);
+  list.push(v);
+  render(list.length - 1, 'found');
+  log(`insertTail(${v}) — O(1)`, 'op');
+  document.getElementById('lastOpDisplay').textContent = `insertTail(${v})`;
+  document.getElementById('valueInput').value = '';
+  await sleep(600);
+  render();
+  setButtons(false);
+}
+
+async function deleteValue() {
+  const v = getInput();
+  if (v === null || isNaN(v)) { log('Enter a valid number', 'err'); return; }
+  setButtons(true);
+  document.getElementById('lastOpDisplay').textContent = `delete(${v})`;
+  const idx = await animateSearch(v);
+  if (idx === -1) {
+    log(`delete(${v}) — not found`, 'err');
+    setButtons(false);
+    return;
+  }
+  const box = document.getElementById(`box-${idx}`);
+  if (box) { box.classList.add('deleting'); await sleep(400); }
+  list.splice(idx, 1);
+  render();
+  log(`delete(${v}) — O(n), removed at index ${idx}`, 'op');
+  document.getElementById('valueInput').value = '';
+  setButtons(false);
+}
+
+async function searchValue() {
+  const v = getInput();
+  if (v === null || isNaN(v)) { log('Enter a valid number', 'err'); return; }
+  setButtons(true);
+  document.getElementById('lastOpDisplay').textContent = `search(${v})`;
+  const idx = await animateSearch(v);
+  if (idx === -1) {
+    log(`search(${v}) — not found, visited ${list.length} nodes`, 'err');
+  } else {
+    log(`search(${v}) — found at index ${idx}, visited ${idx + 1} node(s)`, 'op');
+  }
+  document.getElementById('valueInput').value = '';
+  await sleep(800);
+  render();
+  setButtons(false);
+}
+
+function clearList() {
+  list = [];
+  render();
+  log('clear() — list emptied', 'op');
+  document.getElementById('lastOpDisplay').textContent = 'clear()';
+}
+
+document.getElementById('valueInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !animating) insertTail();
+});
+
+render();
+</script>
+</body>
+</html>

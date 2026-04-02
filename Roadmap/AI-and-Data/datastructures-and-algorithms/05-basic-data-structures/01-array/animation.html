@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Array Visualization</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --purple: #bc8cff;
+    --cell-size: 56px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 { text-align: center; margin-bottom: 6px; font-size: 1.5rem; }
+  .subtitle { text-align: center; color: var(--text-dim); margin-bottom: 20px; font-size: 0.9rem; }
+  .container { max-width: 900px; margin: 0 auto; }
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    margin-bottom: 20px; padding: 16px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px;
+  }
+  .controls input[type="number"], .controls input[type="text"] {
+    width: 70px; padding: 8px; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); border-radius: 4px; font-size: 0.9rem; text-align: center;
+  }
+  .controls input[type="text"] { width: 100px; }
+  .controls label { color: var(--text-dim); font-size: 0.8rem; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  button {
+    padding: 8px 16px; border: 1px solid var(--border); border-radius: 4px;
+    cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+  }
+  .btn-insert { background: #1a7f37; color: #fff; border-color: #238636; }
+  .btn-insert:hover { background: #238636; }
+  .btn-delete { background: #8b1a1a; color: #fff; border-color: #f85149; }
+  .btn-delete:hover { background: #b32d2d; }
+  .btn-access { background: #1a3a6b; color: #fff; border-color: var(--accent); }
+  .btn-access:hover { background: #264d8a; }
+  .btn-search { background: #5a3d00; color: #fff; border-color: var(--yellow); }
+  .btn-search:hover { background: #7a5200; }
+  .btn-reset { background: var(--surface); color: var(--text); }
+  .btn-reset:hover { background: var(--border); }
+  .array-area {
+    min-height: 140px; padding: 30px 20px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: center;
+    overflow-x: auto;
+  }
+  .array-container { display: flex; gap: 4px; align-items: flex-end; }
+  .cell-wrapper { display: flex; flex-direction: column; align-items: center; }
+  .cell {
+    width: var(--cell-size); height: var(--cell-size);
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--border); border-radius: 6px;
+    font-size: 1.1rem; font-weight: 700; background: var(--bg);
+    transition: all 0.35s ease; position: relative;
+  }
+  .cell.highlight-access { border-color: var(--accent); background: #1a3a6b; box-shadow: 0 0 12px rgba(88,166,255,0.4); }
+  .cell.highlight-insert { border-color: var(--green); background: #1a3d1a; box-shadow: 0 0 12px rgba(63,185,80,0.4); }
+  .cell.highlight-delete { border-color: var(--red); background: #3d1a1a; box-shadow: 0 0 12px rgba(248,81,73,0.4); }
+  .cell.highlight-search { border-color: var(--yellow); background: #3d2e00; box-shadow: 0 0 12px rgba(210,153,34,0.4); }
+  .cell.highlight-found { border-color: var(--green); background: #1a3d1a; box-shadow: 0 0 16px rgba(63,185,80,0.5); }
+  .cell.highlight-shift { border-color: var(--purple); background: #2d1a4a; }
+  .cell.slide-right { transform: translateX(60px); opacity: 0.7; }
+  .cell.slide-left { transform: translateX(-60px); opacity: 0.7; }
+  .cell.pop-in { animation: popIn 0.35s ease; }
+  .cell.fade-out { opacity: 0; transform: scale(0.5); }
+  @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+  .index-label { font-size: 0.7rem; color: var(--text-dim); margin-top: 4px; }
+  .stats-bar {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px; margin-bottom: 16px;
+  }
+  .stat {
+    padding: 10px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; text-align: center;
+  }
+  .stat-value { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 0.7rem; color: var(--text-dim); margin-top: 2px; }
+  .bigo-table {
+    width: 100%; border-collapse: collapse; margin-bottom: 16px;
+    font-size: 0.85rem;
+  }
+  .bigo-table th, .bigo-table td {
+    padding: 8px 12px; border: 1px solid var(--border); text-align: center;
+  }
+  .bigo-table th { background: var(--surface); color: var(--accent); font-weight: 600; }
+  .bigo-table td { background: var(--bg); }
+  .log-area {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px; max-height: 180px; overflow-y: auto; font-family: monospace;
+    font-size: 0.8rem;
+  }
+  .log-entry { padding: 3px 0; border-bottom: 1px solid #21262d; }
+  .log-entry:last-child { border-bottom: none; }
+  .log-time { color: var(--text-dim); }
+  .log-op { font-weight: 600; }
+  .log-op.insert { color: var(--green); }
+  .log-op.delete { color: var(--red); }
+  .log-op.access { color: var(--accent); }
+  .log-op.search { color: var(--yellow); }
+  .section-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Array Visualization</h1>
+  <p class="subtitle">Interactive visualization of array operations with animations</p>
+
+  <div class="controls">
+    <label>Value <input type="number" id="inputValue" value="42" min="-99" max="999"></label>
+    <label>Index <input type="number" id="inputIndex" value="0" min="0" max="20"></label>
+    <label>Search <input type="text" id="searchValue" value="30"></label>
+    <button class="btn-insert" onclick="doInsert()">Insert</button>
+    <button class="btn-delete" onclick="doDelete()">Delete</button>
+    <button class="btn-access" onclick="doAccess()">Access</button>
+    <button class="btn-search" onclick="doSearch()">Search</button>
+    <button class="btn-insert" onclick="doAppend()">Append</button>
+    <button class="btn-reset" onclick="doReset()">Reset</button>
+  </div>
+
+  <div class="array-area"><div class="array-container" id="arrayContainer"></div></div>
+
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-value" id="statLen">0</div><div class="stat-label">Length</div></div>
+    <div class="stat"><div class="stat-value" id="statCap">0</div><div class="stat-label">Capacity</div></div>
+    <div class="stat"><div class="stat-value" id="statOps">0</div><div class="stat-label">Operations</div></div>
+    <div class="stat"><div class="stat-value" id="statShifts">0</div><div class="stat-label">Element Shifts</div></div>
+  </div>
+
+  <p class="section-title">Big-O Complexity</p>
+  <table class="bigo-table">
+    <tr><th>Operation</th><th>Best</th><th>Average</th><th>Worst</th></tr>
+    <tr><td>Access by Index</td><td>O(1)</td><td>O(1)</td><td>O(1)</td></tr>
+    <tr><td>Search</td><td>O(1)</td><td>O(n)</td><td>O(n)</td></tr>
+    <tr><td>Insert at End</td><td>O(1)</td><td>O(1)*</td><td>O(n)</td></tr>
+    <tr><td>Insert at Index</td><td>O(1)</td><td>O(n)</td><td>O(n)</td></tr>
+    <tr><td>Delete at End</td><td>O(1)</td><td>O(1)</td><td>O(1)</td></tr>
+    <tr><td>Delete at Index</td><td>O(1)</td><td>O(n)</td><td>O(n)</td></tr>
+  </table>
+
+  <p class="section-title">Operation Log</p>
+  <div class="log-area" id="logArea"><div class="log-entry" style="color:var(--text-dim);">Ready. Use controls above to perform operations.</div></div>
+</div>
+
+<script>
+let arr = [10, 20, 30, 40, 50];
+let capacity = 8;
+let opCount = 0;
+let shiftCount = 0;
+let animating = false;
+
+function render(highlightIndex, highlightClass) {
+  const c = document.getElementById('arrayContainer');
+  c.innerHTML = '';
+  for (let i = 0; i < capacity; i++) {
+    const w = document.createElement('div');
+    w.className = 'cell-wrapper';
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    if (i < arr.length) {
+      cell.textContent = arr[i];
+      if (i === highlightIndex && highlightClass) cell.classList.add(highlightClass);
+    } else {
+      cell.textContent = '';
+      cell.style.borderStyle = 'dashed';
+      cell.style.opacity = '0.3';
+    }
+    w.appendChild(cell);
+    const lbl = document.createElement('div');
+    lbl.className = 'index-label';
+    lbl.textContent = i < arr.length ? i : '';
+    w.appendChild(lbl);
+    c.appendChild(w);
+  }
+  document.getElementById('statLen').textContent = arr.length;
+  document.getElementById('statCap').textContent = capacity;
+  document.getElementById('statOps').textContent = opCount;
+  document.getElementById('statShifts').textContent = shiftCount;
+}
+
+function log(op, msg) {
+  const area = document.getElementById('logArea');
+  const t = new Date().toLocaleTimeString();
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerHTML = `<span class="log-time">[${t}]</span> <span class="log-op ${op}">${op.toUpperCase()}</span> ${msg}`;
+  area.prepend(entry);
+  if (area.children.length > 50) area.removeChild(area.lastChild);
+}
+
+function growIfNeeded() {
+  if (arr.length >= capacity) {
+    capacity *= 2;
+    log('insert', `Capacity doubled to ${capacity}`);
+  }
+}
+
+async function highlightCells(indices, cls, duration) {
+  const cells = document.querySelectorAll('.cell');
+  indices.forEach(i => { if (cells[i]) cells[i].classList.add(cls); });
+  await new Promise(r => setTimeout(r, duration));
+  indices.forEach(i => { if (cells[i]) cells[i].classList.remove(cls); });
+}
+
+async function doInsert() {
+  if (animating) return;
+  animating = true;
+  const val = parseInt(document.getElementById('inputValue').value) || 0;
+  const idx = parseInt(document.getElementById('inputIndex').value) || 0;
+  if (idx < 0 || idx > arr.length) { log('insert', `Invalid index ${idx}`); animating = false; return; }
+  growIfNeeded();
+  const shifts = arr.length - idx;
+  shiftCount += shifts;
+  opCount++;
+  // Highlight elements that will shift
+  if (shifts > 0) {
+    const shiftIndices = [];
+    for (let i = idx; i < arr.length; i++) shiftIndices.push(i);
+    render(null, null);
+    await highlightCells(shiftIndices, 'highlight-shift', 400);
+  }
+  arr.splice(idx, 0, val);
+  render(idx, 'highlight-insert');
+  const cell = document.querySelectorAll('.cell')[idx];
+  if (cell) cell.classList.add('pop-in');
+  log('insert', `Inserted ${val} at index ${idx} (${shifts} shifts)`);
+  await new Promise(r => setTimeout(r, 500));
+  render();
+  animating = false;
+}
+
+async function doAppend() {
+  if (animating) return;
+  animating = true;
+  const val = parseInt(document.getElementById('inputValue').value) || 0;
+  growIfNeeded();
+  opCount++;
+  arr.push(val);
+  render(arr.length - 1, 'highlight-insert');
+  const cell = document.querySelectorAll('.cell')[arr.length - 1];
+  if (cell) cell.classList.add('pop-in');
+  log('insert', `Appended ${val} at index ${arr.length - 1} (0 shifts)`);
+  await new Promise(r => setTimeout(r, 500));
+  render();
+  animating = false;
+}
+
+async function doDelete() {
+  if (animating) return;
+  animating = true;
+  const idx = parseInt(document.getElementById('inputIndex').value) || 0;
+  if (idx < 0 || idx >= arr.length) { log('delete', `Invalid index ${idx}`); animating = false; return; }
+  const val = arr[idx];
+  const shifts = arr.length - 1 - idx;
+  shiftCount += shifts;
+  opCount++;
+  render(idx, 'highlight-delete');
+  await new Promise(r => setTimeout(r, 400));
+  const cell = document.querySelectorAll('.cell')[idx];
+  if (cell) cell.classList.add('fade-out');
+  await new Promise(r => setTimeout(r, 350));
+  arr.splice(idx, 1);
+  render();
+  log('delete', `Deleted ${val} from index ${idx} (${shifts} shifts)`);
+  animating = false;
+}
+
+async function doAccess() {
+  if (animating) return;
+  animating = true;
+  const idx = parseInt(document.getElementById('inputIndex').value) || 0;
+  if (idx < 0 || idx >= arr.length) { log('access', `Invalid index ${idx}`); animating = false; return; }
+  opCount++;
+  render(idx, 'highlight-access');
+  log('access', `arr[${idx}] = ${arr[idx]}  (O(1))`);
+  await new Promise(r => setTimeout(r, 800));
+  render();
+  animating = false;
+}
+
+async function doSearch() {
+  if (animating) return;
+  animating = true;
+  const val = parseInt(document.getElementById('searchValue').value) || 0;
+  opCount++;
+  let found = -1;
+  const cells = () => document.querySelectorAll('.cell');
+  for (let i = 0; i < arr.length; i++) {
+    render(i, 'highlight-search');
+    await new Promise(r => setTimeout(r, 250));
+    if (arr[i] === val) { found = i; break; }
+  }
+  if (found >= 0) {
+    render(found, 'highlight-found');
+    log('search', `Found ${val} at index ${found} (checked ${found + 1} elements)`);
+    await new Promise(r => setTimeout(r, 800));
+  } else {
+    log('search', `${val} not found (checked ${arr.length} elements)`);
+    await new Promise(r => setTimeout(r, 300));
+  }
+  render();
+  animating = false;
+}
+
+function doReset() {
+  arr = [10, 20, 30, 40, 50];
+  capacity = 8;
+  opCount = 0;
+  shiftCount = 0;
+  animating = false;
+  render();
+  document.getElementById('logArea').innerHTML = '<div class="log-entry" style="color:var(--text-dim);">Array reset to [10, 20, 30, 40, 50].</div>';
+}
+
+render();
+</script>
+</body>
+</html>
