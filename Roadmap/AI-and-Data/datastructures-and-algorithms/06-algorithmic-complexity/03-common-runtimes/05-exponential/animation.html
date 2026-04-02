@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exponential Time O(2^n) — Recursive Tree Visualization</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0d1117;
+    color: #c9d1d9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 {
+    font-size: 1.6em;
+    margin-bottom: 6px;
+    color: #58a6ff;
+  }
+  .subtitle {
+    font-size: 0.95em;
+    color: #8b949e;
+    margin-bottom: 18px;
+  }
+  .controls {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  label {
+    font-size: 0.9em;
+    color: #8b949e;
+  }
+  input[type="range"] {
+    width: 180px;
+    accent-color: #58a6ff;
+  }
+  .n-display {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #f0883e;
+    min-width: 30px;
+    text-align: center;
+  }
+  .stats {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .stat-box {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 10px 18px;
+    text-align: center;
+    min-width: 140px;
+  }
+  .stat-label {
+    font-size: 0.75em;
+    color: #8b949e;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .stat-value {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #58a6ff;
+    margin-top: 3px;
+  }
+  .stat-value.warn { color: #f0883e; }
+  .stat-value.danger { color: #f85149; }
+  canvas {
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    background: #0d1117;
+  }
+  .buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  button {
+    background: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 8px 18px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.2s;
+  }
+  button:hover { background: #30363d; }
+  button.active { background: #1f6feb; border-color: #58a6ff; }
+  .level-table {
+    margin-top: 16px;
+    border-collapse: collapse;
+    font-size: 0.85em;
+  }
+  .level-table th, .level-table td {
+    padding: 5px 14px;
+    border: 1px solid #30363d;
+    text-align: center;
+  }
+  .level-table th {
+    background: #161b22;
+    color: #58a6ff;
+  }
+  .level-table td { color: #c9d1d9; }
+  .legend {
+    margin-top: 12px;
+    font-size: 0.8em;
+    color: #8b949e;
+    text-align: center;
+    max-width: 700px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Exponential Time O(2^n)</h1>
+<p class="subtitle">Recursive Fibonacci Call Tree Visualization</p>
+
+<div class="controls">
+  <div class="control-group">
+    <label for="nSlider">n =</label>
+    <input type="range" id="nSlider" min="1" max="8" value="4">
+    <span class="n-display" id="nValue">4</span>
+  </div>
+  <div class="control-group">
+    <label for="speedSlider">Speed:</label>
+    <input type="range" id="speedSlider" min="1" max="10" value="5">
+  </div>
+</div>
+
+<div class="buttons">
+  <button id="animateBtn" onclick="startAnimation()">Animate</button>
+  <button id="showAllBtn" onclick="showAll()">Show All</button>
+  <button onclick="resetVis()">Reset</button>
+</div>
+
+<div class="stats">
+  <div class="stat-box">
+    <div class="stat-label">Total Calls</div>
+    <div class="stat-value" id="totalCalls">0</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-label">Fib(n) Result</div>
+    <div class="stat-value" id="fibResult">0</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-label">Tree Depth</div>
+    <div class="stat-value" id="treeDepth">0</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-label">Redundant Calls</div>
+    <div class="stat-value warn" id="redundantCalls">0</div>
+  </div>
+</div>
+
+<canvas id="treeCanvas" width="900" height="420"></canvas>
+
+<table class="level-table" id="levelTable">
+  <thead><tr><th>Level</th><th>Nodes</th><th>Cumulative</th></tr></thead>
+  <tbody id="levelBody"></tbody>
+</table>
+
+<div class="legend">
+  Each node represents a function call to fib(k). Green nodes are base cases (fib(0) or fib(1)).
+  Orange nodes are redundant — they compute a value already computed elsewhere. Notice how the
+  number of nodes roughly doubles at each level, demonstrating O(2^n) growth.
+</div>
+
+<script>
+const canvas = document.getElementById('treeCanvas');
+const ctx = canvas.getContext('2d');
+const nSlider = document.getElementById('nSlider');
+const speedSlider = document.getElementById('speedSlider');
+const nValueEl = document.getElementById('nValue');
+
+let nodes = [];
+let edges = [];
+let animIdx = 0;
+let animTimer = null;
+let currentN = 4;
+
+class TreeNode {
+  constructor(val, x, y, depth, parent) {
+    this.val = val;
+    this.x = x;
+    this.y = y;
+    this.depth = depth;
+    this.parent = parent;
+    this.visible = false;
+    this.isBase = val <= 1;
+    this.id = nodes.length;
+  }
+}
+
+function buildTree(n, x, y, depth, parent, hSpan) {
+  const node = new TreeNode(n, x, y, depth, parent);
+  nodes.push(node);
+  if (parent !== null) {
+    edges.push({ from: parent, to: node });
+  }
+  if (n <= 1) return node;
+  const childY = y + 55;
+  const childSpan = hSpan / 2;
+  buildTree(n - 1, x - childSpan, childY, depth + 1, node, childSpan);
+  buildTree(n - 2, x + childSpan, childY, depth + 1, node, childSpan);
+  return node;
+}
+
+function rebuild() {
+  currentN = parseInt(nSlider.value);
+  nValueEl.textContent = currentN;
+  nodes = [];
+  edges = [];
+  animIdx = 0;
+  if (animTimer) { clearInterval(animTimer); animTimer = null; }
+
+  const hSpan = Math.min(420, 30 * Math.pow(2, currentN - 1));
+  buildTree(currentN, canvas.width / 2, 30, 0, null, hSpan);
+
+  // Compute stats
+  const totalCallsEl = document.getElementById('totalCalls');
+  const fibResultEl = document.getElementById('fibResult');
+  const treeDepthEl = document.getElementById('treeDepth');
+  const redundantEl = document.getElementById('redundantCalls');
+
+  totalCallsEl.textContent = nodes.length;
+  if (nodes.length > 100) {
+    totalCallsEl.className = 'stat-value danger';
+  } else if (nodes.length > 30) {
+    totalCallsEl.className = 'stat-value warn';
+  } else {
+    totalCallsEl.className = 'stat-value';
+  }
+
+  const fibVals = [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
+  fibResultEl.textContent = fibVals[currentN] || '?';
+
+  const maxDepth = Math.max(...nodes.map(n => n.depth));
+  treeDepthEl.textContent = maxDepth;
+
+  // Count redundant: for each fib(k), all calls after the first are redundant
+  const valCounts = {};
+  nodes.forEach(n => { valCounts[n.val] = (valCounts[n.val] || 0) + 1; });
+  let redundant = 0;
+  for (const k in valCounts) {
+    if (valCounts[k] > 1) redundant += valCounts[k] - 1;
+  }
+  redundantEl.textContent = redundant;
+
+  // Build level table
+  const levelCounts = {};
+  nodes.forEach(n => { levelCounts[n.depth] = (levelCounts[n.depth] || 0) + 1; });
+  const tbody = document.getElementById('levelBody');
+  tbody.innerHTML = '';
+  let cumulative = 0;
+  for (let d = 0; d <= maxDepth; d++) {
+    const count = levelCounts[d] || 0;
+    cumulative += count;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${d}</td><td>${count}</td><td>${cumulative}</td>`;
+    tbody.appendChild(tr);
+  }
+
+  drawTree();
+}
+
+function drawTree() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw edges
+  edges.forEach(e => {
+    if (!e.from.visible || !e.to.visible) return;
+    ctx.beginPath();
+    ctx.moveTo(e.from.x, e.from.y);
+    ctx.lineTo(e.to.x, e.to.y);
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  });
+
+  // Track seen values for redundancy coloring
+  const seen = new Set();
+
+  // Draw nodes
+  nodes.forEach(node => {
+    if (!node.visible) return;
+    const r = 16;
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
+
+    let fillColor, textColor;
+    if (node.isBase) {
+      fillColor = '#238636';
+      textColor = '#ffffff';
+    } else if (seen.has(node.val)) {
+      fillColor = '#9e6a03';
+      textColor = '#ffffff';
+    } else {
+      fillColor = '#1f6feb';
+      textColor = '#ffffff';
+    }
+    seen.add(node.val);
+
+    ctx.fillStyle = fillColor;
+    ctx.fill();
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = textColor;
+    ctx.font = 'bold 11px monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(`f(${node.val})`, node.x, node.y);
+  });
+}
+
+function startAnimation() {
+  if (animTimer) { clearInterval(animTimer); animTimer = null; }
+  nodes.forEach(n => n.visible = false);
+  animIdx = 0;
+  const speed = parseInt(speedSlider.value);
+  const delay = Math.max(30, 500 - speed * 45);
+
+  animTimer = setInterval(() => {
+    if (animIdx >= nodes.length) {
+      clearInterval(animTimer);
+      animTimer = null;
+      return;
+    }
+    nodes[animIdx].visible = true;
+    animIdx++;
+    drawTree();
+  }, delay);
+}
+
+function showAll() {
+  if (animTimer) { clearInterval(animTimer); animTimer = null; }
+  nodes.forEach(n => n.visible = true);
+  drawTree();
+}
+
+function resetVis() {
+  if (animTimer) { clearInterval(animTimer); animTimer = null; }
+  nodes.forEach(n => n.visible = false);
+  drawTree();
+}
+
+nSlider.addEventListener('input', rebuild);
+
+rebuild();
+showAll();
+</script>
+</body>
+</html>

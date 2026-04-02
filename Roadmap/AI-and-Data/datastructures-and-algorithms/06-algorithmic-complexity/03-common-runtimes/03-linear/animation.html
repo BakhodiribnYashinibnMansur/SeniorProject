@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linear Time O(n) — Interactive Visualization</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 {
+    color: #00d4ff;
+    margin-bottom: 6px;
+    font-size: 1.6em;
+  }
+  .subtitle {
+    color: #888;
+    margin-bottom: 20px;
+    font-size: 0.95em;
+  }
+  .controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+  button {
+    background: #16213e;
+    color: #00d4ff;
+    border: 1px solid #00d4ff;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: all 0.2s;
+  }
+  button:hover { background: #00d4ff; color: #1a1a2e; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.active { background: #00d4ff; color: #1a1a2e; font-weight: bold; }
+  select, input[type="range"] {
+    background: #16213e;
+    color: #e0e0e0;
+    border: 1px solid #444;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.9em;
+  }
+  .canvas-container {
+    background: #16213e;
+    border-radius: 12px;
+    padding: 24px;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 16px;
+  }
+  canvas {
+    width: 100%;
+    height: 320px;
+    display: block;
+  }
+  .stats {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .stat-box {
+    background: #16213e;
+    border-radius: 8px;
+    padding: 12px 20px;
+    text-align: center;
+    min-width: 120px;
+  }
+  .stat-box .label { color: #888; font-size: 0.8em; text-transform: uppercase; }
+  .stat-box .value { color: #00d4ff; font-size: 1.5em; font-weight: bold; margin-top: 4px; }
+  .info {
+    background: #16213e;
+    border-radius: 8px;
+    padding: 14px 20px;
+    max-width: 800px;
+    width: 100%;
+    font-size: 0.9em;
+    line-height: 1.5;
+    color: #aaa;
+  }
+  .info strong { color: #00d4ff; }
+  .speed-label { color: #aaa; font-size: 0.85em; }
+</style>
+</head>
+<body>
+
+<h1>Linear Time O(n) Visualization</h1>
+<p class="subtitle">Watch how a pointer scans an array element by element</p>
+
+<div class="controls">
+  <button id="btnSearch" class="active" onclick="setMode('search')">Linear Search</button>
+  <button id="btnMax" onclick="setMode('max')">Find Max</button>
+  <button id="btnCount" onclick="setMode('count')">Count Even</button>
+  <span style="color:#444">|</span>
+  <button id="btnStart" onclick="startAnimation()">Start</button>
+  <button id="btnPause" onclick="togglePause()">Pause</button>
+  <button id="btnReset" onclick="resetAnimation()">Reset</button>
+  <span style="color:#444">|</span>
+  <label>
+    <span class="speed-label">Size:</span>
+    <select id="sizeSelect" onchange="resetAnimation()">
+      <option value="10">10</option>
+      <option value="16" selected>16</option>
+      <option value="24">24</option>
+      <option value="32">32</option>
+    </select>
+  </label>
+  <label>
+    <span class="speed-label">Speed:</span>
+    <input type="range" id="speedSlider" min="1" max="10" value="5" style="width:100px">
+  </label>
+</div>
+
+<div class="stats">
+  <div class="stat-box">
+    <div class="label">Current Index</div>
+    <div class="value" id="statIndex">-</div>
+  </div>
+  <div class="stat-box">
+    <div class="label">Operations</div>
+    <div class="value" id="statOps">0</div>
+  </div>
+  <div class="stat-box">
+    <div class="label">Result</div>
+    <div class="value" id="statResult">-</div>
+  </div>
+  <div class="stat-box">
+    <div class="label">Status</div>
+    <div class="value" id="statStatus" style="font-size:1em;">Ready</div>
+  </div>
+</div>
+
+<div class="canvas-container">
+  <canvas id="canvas"></canvas>
+</div>
+
+<div class="info" id="infoBox">
+  <strong>Linear Search:</strong> Scans the array left-to-right looking for a target value.
+  Every element must be checked in the worst case. Operations grow linearly with array size: O(n).
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+let arr = [];
+let mode = 'search';
+let searchTarget = 0;
+let currentIndex = -1;
+let operations = 0;
+let result = null;
+let running = false;
+let paused = false;
+let done = false;
+let animTimer = null;
+let currentMax = -Infinity;
+let currentMaxIdx = -1;
+let evenCount = 0;
+let foundIndex = -1;
+
+function resizeCanvas() {
+  const container = canvas.parentElement;
+  canvas.width = container.clientWidth - 48;
+  canvas.height = 320;
+}
+
+function generateArray() {
+  const size = parseInt(document.getElementById('sizeSelect').value);
+  arr = [];
+  for (let i = 0; i < size; i++) {
+    arr.push(Math.floor(Math.random() * 90) + 10);
+  }
+  // Pick a search target that exists
+  searchTarget = arr[Math.floor(Math.random() * arr.length)];
+}
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('btnSearch').classList.toggle('active', m === 'search');
+  document.getElementById('btnMax').classList.toggle('active', m === 'max');
+  document.getElementById('btnCount').classList.toggle('active', m === 'count');
+  updateInfo();
+  resetAnimation();
+}
+
+function updateInfo() {
+  const box = document.getElementById('infoBox');
+  if (mode === 'search') {
+    box.innerHTML = `<strong>Linear Search:</strong> Scanning for target value <strong>${searchTarget}</strong>. Each element is compared once. Worst case: O(n) when the target is at the end or absent.`;
+  } else if (mode === 'max') {
+    box.innerHTML = `<strong>Find Maximum:</strong> Scanning all elements to find the largest value. Must check every element because any could be the maximum. Always O(n).`;
+  } else {
+    box.innerHTML = `<strong>Count Even Numbers:</strong> Scanning all elements and counting those divisible by 2. Every element must be checked. Always O(n).`;
+  }
+}
+
+function resetAnimation() {
+  if (animTimer) clearTimeout(animTimer);
+  running = false;
+  paused = false;
+  done = false;
+  currentIndex = -1;
+  operations = 0;
+  result = null;
+  currentMax = -Infinity;
+  currentMaxIdx = -1;
+  evenCount = 0;
+  foundIndex = -1;
+  generateArray();
+  updateInfo();
+  updateStats();
+  document.getElementById('statStatus').textContent = 'Ready';
+  document.getElementById('statStatus').style.color = '#e0e0e0';
+  document.getElementById('btnStart').disabled = false;
+  draw();
+}
+
+function getDelay() {
+  const speed = parseInt(document.getElementById('speedSlider').value);
+  return Math.max(50, 600 - speed * 55);
+}
+
+function startAnimation() {
+  if (done) resetAnimation();
+  if (running && !paused) return;
+  running = true;
+  paused = false;
+  document.getElementById('btnStart').disabled = true;
+  document.getElementById('statStatus').textContent = 'Running';
+  document.getElementById('statStatus').style.color = '#ffd700';
+  step();
+}
+
+function togglePause() {
+  if (!running) return;
+  paused = !paused;
+  if (!paused) {
+    document.getElementById('statStatus').textContent = 'Running';
+    document.getElementById('statStatus').style.color = '#ffd700';
+    step();
+  } else {
+    document.getElementById('statStatus').textContent = 'Paused';
+    document.getElementById('statStatus').style.color = '#ff8c00';
+  }
+}
+
+function step() {
+  if (!running || paused) return;
+
+  currentIndex++;
+  operations++;
+
+  if (currentIndex >= arr.length) {
+    finish();
+    return;
+  }
+
+  // Mode-specific logic
+  if (mode === 'search') {
+    if (arr[currentIndex] === searchTarget) {
+      foundIndex = currentIndex;
+      result = currentIndex;
+      finish();
+      return;
+    }
+  } else if (mode === 'max') {
+    if (arr[currentIndex] > currentMax) {
+      currentMax = arr[currentIndex];
+      currentMaxIdx = currentIndex;
+    }
+    result = currentMax;
+  } else if (mode === 'count') {
+    if (arr[currentIndex] % 2 === 0) {
+      evenCount++;
+    }
+    result = evenCount;
+  }
+
+  updateStats();
+  draw();
+  animTimer = setTimeout(step, getDelay());
+}
+
+function finish() {
+  running = false;
+  done = true;
+
+  if (mode === 'search' && foundIndex === -1) {
+    result = 'Not found';
+  } else if (mode === 'max') {
+    result = currentMax;
+  } else if (mode === 'count') {
+    result = evenCount;
+  }
+
+  updateStats();
+  draw();
+
+  document.getElementById('statStatus').textContent = 'Done';
+  document.getElementById('statStatus').style.color = '#00ff88';
+  document.getElementById('btnStart').disabled = false;
+}
+
+function updateStats() {
+  document.getElementById('statIndex').textContent = currentIndex >= 0 ? currentIndex : '-';
+  document.getElementById('statOps').textContent = operations;
+  document.getElementById('statResult').textContent = result !== null ? result : '-';
+}
+
+function draw() {
+  resizeCanvas();
+  const w = canvas.width;
+  const h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  if (arr.length === 0) return;
+
+  const n = arr.length;
+  const maxVal = Math.max(...arr);
+  const padding = 20;
+  const barAreaWidth = w - padding * 2;
+  const gap = 2;
+  const barWidth = Math.max(4, (barAreaWidth - (n - 1) * gap) / n);
+  const barAreaHeight = h - 80;
+  const baseY = h - 30;
+
+  for (let i = 0; i < n; i++) {
+    const x = padding + i * (barWidth + gap);
+    const barH = (arr[i] / maxVal) * barAreaHeight;
+    const y = baseY - barH;
+
+    // Determine color
+    let color = '#334466';  // default: unvisited
+
+    if (i < currentIndex) {
+      color = '#2a5a7a';  // visited
+    }
+
+    if (mode === 'search') {
+      if (i === foundIndex) {
+        color = '#00ff88';  // found target
+      } else if (i === currentIndex && !done) {
+        color = '#ffd700';  // current
+      }
+    } else if (mode === 'max') {
+      if (i === currentMaxIdx && i <= currentIndex) {
+        color = '#ff6b6b';  // current max
+      }
+      if (i === currentIndex && !done) {
+        color = '#ffd700';  // current scanning
+      }
+    } else if (mode === 'count') {
+      if (i <= currentIndex && arr[i] % 2 === 0) {
+        color = '#00ff88';  // even, counted
+      }
+      if (i === currentIndex && !done) {
+        color = '#ffd700';  // current
+      }
+    }
+
+    // Draw bar
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.roundRect(x, y, barWidth, barH, [3, 3, 0, 0]);
+    ctx.fill();
+
+    // Draw value on top
+    if (barWidth >= 16) {
+      ctx.fillStyle = '#ccc';
+      ctx.font = `${Math.min(11, barWidth - 2)}px monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText(arr[i], x + barWidth / 2, y - 5);
+    }
+
+    // Draw index below
+    if (barWidth >= 12) {
+      ctx.fillStyle = '#666';
+      ctx.font = '10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(i, x + barWidth / 2, baseY + 14);
+    }
+  }
+
+  // Draw pointer arrow
+  if (currentIndex >= 0 && currentIndex < n && !done) {
+    const px = padding + currentIndex * (barWidth + gap) + barWidth / 2;
+    ctx.fillStyle = '#ffd700';
+    ctx.beginPath();
+    ctx.moveTo(px, baseY + 20);
+    ctx.lineTo(px - 6, baseY + 28);
+    ctx.lineTo(px + 6, baseY + 28);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Draw operation count graph (small, bottom-right)
+  if (operations > 0) {
+    const graphX = w - 140;
+    const graphY = 10;
+    const graphW = 120;
+    const graphH = 60;
+
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.fillRect(graphX, graphY, graphW, graphH);
+
+    ctx.strokeStyle = '#444';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(graphX, graphY, graphW, graphH);
+
+    // Draw expected linear line
+    ctx.strokeStyle = '#00d4ff44';
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(graphX, graphY + graphH);
+    ctx.lineTo(graphX + graphW, graphY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw actual progress
+    const progress = Math.min(1, operations / n);
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(graphX, graphY + graphH);
+    ctx.lineTo(graphX + progress * graphW, graphY + graphH - progress * graphH);
+    ctx.stroke();
+
+    ctx.fillStyle = '#888';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('ops vs n', graphX + graphW / 2, graphY + graphH + 12);
+  }
+}
+
+// Polyfill roundRect
+if (!ctx.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, radii) {
+    const r = radii[0] || 0;
+    this.moveTo(x + r, y);
+    this.lineTo(x + w - r, y);
+    this.quadraticCurveTo(x + w, y, x + w, y + r);
+    this.lineTo(x + w, y + h);
+    this.lineTo(x, y + h);
+    this.lineTo(x, y + r);
+    this.quadraticCurveTo(x, y, x + r, y);
+  };
+}
+
+window.addEventListener('resize', draw);
+resetAnimation();
+</script>
+</body>
+</html>

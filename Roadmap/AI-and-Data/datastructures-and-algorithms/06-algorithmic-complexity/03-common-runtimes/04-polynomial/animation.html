@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polynomial Time O(n^2) — Nested Loop Visualization</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        h1 {
+            color: #58a6ff;
+            margin-bottom: 8px;
+            font-size: 1.6em;
+        }
+        .subtitle {
+            color: #8b949e;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+        button {
+            background: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            padding: 8px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        button:hover { background: #30363d; }
+        button.active { background: #1f6feb; border-color: #58a6ff; color: #fff; }
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
+        select, input[type=range] {
+            background: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .stats {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #58a6ff;
+        }
+        .stat-label {
+            font-size: 0.85em;
+            color: #8b949e;
+        }
+        .stat-value.warn { color: #f0883e; }
+        .stat-value.crit { color: #f85149; }
+        canvas {
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            background: #161b22;
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+            color: #8b949e;
+        }
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+        .info {
+            margin-top: 16px;
+            padding: 12px 20px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            max-width: 700px;
+            font-size: 0.9em;
+            color: #8b949e;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <h1>Polynomial Time O(n&sup2;) Visualization</h1>
+    <p class="subtitle">Watch nested loops and comparisons grow quadratically</p>
+
+    <div class="controls">
+        <label>Algorithm:
+            <select id="algoSelect">
+                <option value="bubble">Bubble Sort</option>
+                <option value="selection">Selection Sort</option>
+            </select>
+        </label>
+        <label>Size:
+            <select id="sizeSelect">
+                <option value="10">n = 10</option>
+                <option value="15" selected>n = 15</option>
+                <option value="20">n = 20</option>
+                <option value="30">n = 30</option>
+            </select>
+        </label>
+        <label>Speed:
+            <input type="range" id="speedSlider" min="1" max="100" value="50">
+        </label>
+        <button id="startBtn" onclick="startAnimation()">Start</button>
+        <button id="pauseBtn" onclick="togglePause()" disabled>Pause</button>
+        <button id="resetBtn" onclick="resetAnimation()">Reset</button>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-value" id="compCount">0</div>
+            <div class="stat-label">Comparisons</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="swapCount">0</div>
+            <div class="stat-label">Swaps</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="outerIdx">-</div>
+            <div class="stat-label">i (outer)</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="innerIdx">-</div>
+            <div class="stat-label">j (inner)</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="maxComps">-</div>
+            <div class="stat-label">Max n(n-1)/2</div>
+        </div>
+    </div>
+
+    <canvas id="canvas" width="700" height="400"></canvas>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#8b949e"></div> Unsorted</div>
+        <div class="legend-item"><div class="legend-color" style="background:#f0883e"></div> Comparing (i)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#f85149"></div> Comparing (j)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#3fb950"></div> Sorted</div>
+        <div class="legend-item"><div class="legend-color" style="background:#bc8cff"></div> Minimum (selection)</div>
+    </div>
+
+    <div class="info">
+        <strong>How it works:</strong> Both bubble sort and selection sort use two nested loops,
+        producing O(n&sup2;) comparisons. The outer loop (i) runs n times, and for each iteration
+        the inner loop (j) scans remaining elements. Watch the comparison counter grow
+        quadratically as the animation proceeds. For n=15, the maximum comparisons are
+        15&times;14/2 = 105.
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let arr = [];
+        let n = 15;
+        let algo = 'bubble';
+        let comparisons = 0;
+        let swaps = 0;
+        let animating = false;
+        let paused = false;
+        let animationId = null;
+        let steps = [];
+        let stepIdx = 0;
+        let currentI = -1;
+        let currentJ = -1;
+        let currentMin = -1;
+        let sortedFrom = -1;
+
+        function generateArray(size) {
+            const a = [];
+            for (let i = 0; i < size; i++) {
+                a.push(Math.floor(Math.random() * 90) + 10);
+            }
+            return a;
+        }
+
+        function generateBubbleSteps(a) {
+            const steps = [];
+            const arr = [...a];
+            const n = arr.length;
+            for (let i = 0; i < n - 1; i++) {
+                let swapped = false;
+                for (let j = 0; j < n - 1 - i; j++) {
+                    steps.push({ type: 'compare', i: j, j: j + 1, sortedFrom: n - i });
+                    if (arr[j] > arr[j + 1]) {
+                        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                        steps.push({ type: 'swap', a: j, b: j + 1, sortedFrom: n - i, arr: [...arr] });
+                        swapped = true;
+                    }
+                }
+                steps.push({ type: 'sorted', sortedFrom: n - 1 - i });
+                if (!swapped) break;
+            }
+            steps.push({ type: 'done' });
+            return steps;
+        }
+
+        function generateSelectionSteps(a) {
+            const steps = [];
+            const arr = [...a];
+            const n = arr.length;
+            for (let i = 0; i < n - 1; i++) {
+                let minIdx = i;
+                steps.push({ type: 'setMin', min: i, outer: i, sortedBefore: i });
+                for (let j = i + 1; j < n; j++) {
+                    steps.push({ type: 'compare', i: i, j: j, min: minIdx, sortedBefore: i });
+                    if (arr[j] < arr[minIdx]) {
+                        minIdx = j;
+                        steps.push({ type: 'setMin', min: minIdx, outer: i, sortedBefore: i });
+                    }
+                }
+                if (minIdx !== i) {
+                    [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
+                    steps.push({ type: 'swap', a: i, b: minIdx, sortedBefore: i + 1, arr: [...arr] });
+                }
+                steps.push({ type: 'sorted', sortedBefore: i + 1 });
+            }
+            steps.push({ type: 'done' });
+            return steps;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const barWidth = Math.max(2, (canvas.width - 40) / n - 2);
+            const gap = 2;
+            const totalWidth = n * (barWidth + gap) - gap;
+            const startX = (canvas.width - totalWidth) / 2;
+            const maxVal = Math.max(...arr);
+            const maxBarHeight = canvas.height - 60;
+
+            for (let k = 0; k < n; k++) {
+                const barHeight = (arr[k] / maxVal) * maxBarHeight;
+                const x = startX + k * (barWidth + gap);
+                const y = canvas.height - 30 - barHeight;
+
+                let color = '#8b949e';
+
+                if (algo === 'bubble') {
+                    if (sortedFrom >= 0 && k >= sortedFrom) {
+                        color = '#3fb950';
+                    }
+                    if (k === currentI) color = '#f0883e';
+                    if (k === currentJ) color = '#f85149';
+                } else {
+                    if (sortedFrom >= 0 && k < sortedFrom) {
+                        color = '#3fb950';
+                    }
+                    if (k === currentMin) color = '#bc8cff';
+                    if (k === currentI) color = '#f0883e';
+                    if (k === currentJ) color = '#f85149';
+                }
+
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, barWidth, barHeight);
+
+                if (n <= 20) {
+                    ctx.fillStyle = '#c9d1d9';
+                    ctx.font = '11px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(arr[k], x + barWidth / 2, canvas.height - 12);
+                }
+            }
+
+            // Progress bar
+            const progress = steps.length > 0 ? stepIdx / steps.length : 0;
+            ctx.fillStyle = '#21262d';
+            ctx.fillRect(20, 8, canvas.width - 40, 6);
+            ctx.fillStyle = '#1f6feb';
+            ctx.fillRect(20, 8, (canvas.width - 40) * progress, 6);
+        }
+
+        function updateStats() {
+            const compEl = document.getElementById('compCount');
+            compEl.textContent = comparisons;
+            const maxC = n * (n - 1) / 2;
+            if (comparisons > maxC * 0.7) compEl.className = 'stat-value crit';
+            else if (comparisons > maxC * 0.3) compEl.className = 'stat-value warn';
+            else compEl.className = 'stat-value';
+
+            document.getElementById('swapCount').textContent = swaps;
+            document.getElementById('outerIdx').textContent = currentI >= 0 ? currentI : '-';
+            document.getElementById('innerIdx').textContent = currentJ >= 0 ? currentJ : '-';
+            document.getElementById('maxComps').textContent = n * (n - 1) / 2;
+        }
+
+        function getDelay() {
+            const speed = parseInt(document.getElementById('speedSlider').value);
+            return Math.max(5, 500 - speed * 4.8);
+        }
+
+        function processStep() {
+            if (!animating || paused) return;
+            if (stepIdx >= steps.length) {
+                animating = false;
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('pauseBtn').disabled = true;
+                currentI = currentJ = currentMin = -1;
+                sortedFrom = algo === 'bubble' ? 0 : n;
+                draw();
+                return;
+            }
+
+            const step = steps[stepIdx];
+            stepIdx++;
+
+            if (step.type === 'compare') {
+                comparisons++;
+                currentI = step.i;
+                currentJ = step.j;
+                if (step.min !== undefined) currentMin = step.min;
+                if (step.sortedFrom !== undefined && algo === 'bubble') sortedFrom = step.sortedFrom;
+                if (step.sortedBefore !== undefined && algo === 'selection') sortedFrom = step.sortedBefore;
+            } else if (step.type === 'swap') {
+                swaps++;
+                arr = [...step.arr];
+                if (step.sortedFrom !== undefined && algo === 'bubble') sortedFrom = step.sortedFrom;
+                if (step.sortedBefore !== undefined && algo === 'selection') sortedFrom = step.sortedBefore;
+            } else if (step.type === 'setMin') {
+                currentMin = step.min;
+                currentI = step.outer;
+                if (step.sortedBefore !== undefined) sortedFrom = step.sortedBefore;
+            } else if (step.type === 'sorted') {
+                if (step.sortedFrom !== undefined) sortedFrom = step.sortedFrom;
+                if (step.sortedBefore !== undefined) sortedFrom = step.sortedBefore;
+                currentI = currentJ = currentMin = -1;
+            } else if (step.type === 'done') {
+                animating = false;
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('pauseBtn').disabled = true;
+                currentI = currentJ = currentMin = -1;
+                if (algo === 'bubble') sortedFrom = 0;
+                else sortedFrom = n;
+            }
+
+            draw();
+            updateStats();
+            animationId = setTimeout(processStep, getDelay());
+        }
+
+        function startAnimation() {
+            if (animating) return;
+            n = parseInt(document.getElementById('sizeSelect').value);
+            algo = document.getElementById('algoSelect').value;
+            arr = generateArray(n);
+            comparisons = 0;
+            swaps = 0;
+            stepIdx = 0;
+            currentI = currentJ = currentMin = -1;
+            sortedFrom = algo === 'bubble' ? n : 0;
+            paused = false;
+
+            if (algo === 'bubble') {
+                steps = generateBubbleSteps(arr);
+            } else {
+                steps = generateSelectionSteps(arr);
+            }
+
+            animating = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('pauseBtn').disabled = false;
+            document.getElementById('pauseBtn').textContent = 'Pause';
+
+            draw();
+            updateStats();
+            processStep();
+        }
+
+        function togglePause() {
+            if (!animating) return;
+            paused = !paused;
+            document.getElementById('pauseBtn').textContent = paused ? 'Resume' : 'Pause';
+            if (!paused) processStep();
+        }
+
+        function resetAnimation() {
+            animating = false;
+            paused = false;
+            if (animationId) clearTimeout(animationId);
+            n = parseInt(document.getElementById('sizeSelect').value);
+            algo = document.getElementById('algoSelect').value;
+            arr = generateArray(n);
+            comparisons = 0;
+            swaps = 0;
+            stepIdx = 0;
+            currentI = currentJ = currentMin = -1;
+            sortedFrom = algo === 'bubble' ? n : 0;
+            steps = [];
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+            document.getElementById('pauseBtn').textContent = 'Pause';
+            draw();
+            updateStats();
+        }
+
+        // Initial draw
+        resetAnimation();
+    </script>
+</body>
+</html>

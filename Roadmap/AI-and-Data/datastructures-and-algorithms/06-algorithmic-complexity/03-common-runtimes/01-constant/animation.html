@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O(1) Constant Time - Interactive Visualization</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, sans-serif;
+    min-height: 100vh; padding: 20px;
+  }
+  h1 { text-align: center; color: #00d4ff; margin-bottom: 10px; font-size: 1.8em; }
+  .subtitle { text-align: center; color: #888; margin-bottom: 20px; font-size: 0.95em; }
+
+  .controls {
+    display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;
+    margin-bottom: 20px; align-items: center;
+  }
+  .controls label { color: #aaa; font-size: 0.9em; }
+  .controls select, .controls input[type=range] { background: #16213e; color: #e0e0e0; border: 1px solid #0f3460; border-radius: 4px; padding: 5px 10px; }
+  .controls input[type=range] { width: 120px; }
+  button {
+    background: #0f3460; color: #00d4ff; border: 1px solid #00d4ff; border-radius: 6px;
+    padding: 8px 18px; cursor: pointer; font-size: 0.95em; transition: all 0.2s;
+  }
+  button:hover { background: #00d4ff; color: #1a1a2e; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .tabs {
+    display: flex; justify-content: center; gap: 5px; margin-bottom: 20px;
+  }
+  .tab-btn {
+    background: #16213e; color: #888; border: 1px solid #0f3460; border-radius: 6px 6px 0 0;
+    padding: 8px 20px; cursor: pointer; font-size: 0.95em; transition: all 0.2s;
+  }
+  .tab-btn.active { background: #0f3460; color: #00d4ff; border-bottom-color: #0f3460; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .stats {
+    display: flex; justify-content: center; gap: 30px; margin: 15px 0;
+    flex-wrap: wrap;
+  }
+  .stat-box {
+    background: #16213e; border: 1px solid #0f3460; border-radius: 8px;
+    padding: 12px 20px; text-align: center; min-width: 140px;
+  }
+  .stat-box .label { font-size: 0.8em; color: #888; margin-bottom: 4px; }
+  .stat-box .value { font-size: 1.5em; font-weight: bold; color: #00d4ff; }
+  .stat-box .value.highlight { color: #ff6b6b; }
+
+  /* Array visualization */
+  .array-container {
+    display: flex; justify-content: center; flex-wrap: wrap; gap: 4px;
+    margin: 20px auto; max-width: 900px;
+  }
+  .cell {
+    width: 52px; height: 52px; background: #16213e; border: 2px solid #0f3460;
+    border-radius: 6px; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; cursor: pointer; transition: all 0.3s; font-size: 0.85em;
+    position: relative;
+  }
+  .cell:hover { border-color: #00d4ff; transform: scale(1.1); }
+  .cell.accessed { background: #00d4ff; color: #1a1a2e; border-color: #00d4ff; animation: pulse 0.5s; }
+  .cell .idx { font-size: 0.65em; color: #666; position: absolute; top: 2px; left: 4px; }
+  .cell .val { font-weight: bold; }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  /* Hash table */
+  .hash-container { max-width: 700px; margin: 20px auto; }
+  .hash-input { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+  .hash-input input {
+    background: #16213e; color: #e0e0e0; border: 1px solid #0f3460;
+    border-radius: 4px; padding: 8px 12px; width: 200px;
+  }
+  .bucket-row {
+    display: flex; align-items: center; margin: 4px 0; gap: 8px;
+  }
+  .bucket-label {
+    width: 30px; text-align: right; color: #888; font-size: 0.8em;
+  }
+  .bucket {
+    flex: 1; min-height: 36px; background: #16213e; border: 1px solid #0f3460;
+    border-radius: 4px; display: flex; align-items: center; padding: 4px 8px;
+    gap: 6px; flex-wrap: wrap; transition: all 0.3s;
+  }
+  .bucket.active { border-color: #00d4ff; background: #1a2940; }
+  .hash-entry {
+    background: #0f3460; color: #00d4ff; padding: 3px 8px; border-radius: 3px;
+    font-size: 0.85em; animation: fadeIn 0.3s;
+  }
+  .hash-entry.new { background: #00d4ff; color: #1a1a2e; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Stack */
+  .stack-area { display: flex; justify-content: center; gap: 40px; align-items: flex-end; margin: 20px 0; }
+  .stack-visual {
+    width: 120px; min-height: 300px; border: 2px solid #0f3460; border-top: none;
+    border-radius: 0 0 8px 8px; display: flex; flex-direction: column-reverse;
+    padding: 4px; gap: 4px; position: relative;
+  }
+  .stack-item {
+    background: #0f3460; color: #00d4ff; text-align: center; padding: 8px;
+    border-radius: 4px; font-weight: bold; animation: slideIn 0.3s;
+  }
+  .stack-item:last-child { background: #00d4ff; color: #1a1a2e; }
+  .stack-controls { display: flex; flex-direction: column; gap: 10px; }
+
+  @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .formula {
+    text-align: center; margin: 15px 0; padding: 12px; background: #16213e;
+    border-radius: 8px; font-family: monospace; font-size: 1.1em; color: #ffd93d;
+  }
+
+  .log-area {
+    max-width: 700px; margin: 15px auto; background: #0d1117; border: 1px solid #0f3460;
+    border-radius: 6px; padding: 10px; max-height: 120px; overflow-y: auto;
+    font-family: monospace; font-size: 0.85em; color: #7ee787;
+  }
+  .log-area .log-entry { margin: 2px 0; }
+  .log-area .log-entry .ops { color: #ffd93d; }
+</style>
+</head>
+<body>
+
+<h1>O(1) Constant Time Visualization</h1>
+<p class="subtitle">Operations take the same time regardless of data size. Click, insert, push -- the operation count stays constant.</p>
+
+<div class="controls">
+  <label>Array Size:
+    <select id="arraySizeSelect">
+      <option value="8">8</option>
+      <option value="16" selected>16</option>
+      <option value="32">32</option>
+      <option value="64">64</option>
+    </select>
+  </label>
+  <label>Speed:
+    <input type="range" id="speedSlider" min="100" max="1500" value="500" step="100">
+  </label>
+  <button id="resetBtn">Reset All</button>
+</div>
+
+<div class="tabs">
+  <div class="tab-btn active" data-tab="array">Array Access</div>
+  <div class="tab-btn" data-tab="hash">Hash Table</div>
+  <div class="tab-btn" data-tab="stack">Stack</div>
+</div>
+
+<!-- Array Panel -->
+<div id="array-panel" class="panel active">
+  <div class="formula">address = base + index &times; element_size &nbsp;&rarr;&nbsp; <strong>Always 1 computation = O(1)</strong></div>
+  <div class="stats">
+    <div class="stat-box"><div class="label">Array Size</div><div class="value" id="arrSizeStat">16</div></div>
+    <div class="stat-box"><div class="label">Steps Taken</div><div class="value highlight" id="arrStepsStat">0</div></div>
+    <div class="stat-box"><div class="label">Last Index</div><div class="value" id="arrIdxStat">-</div></div>
+    <div class="stat-box"><div class="label">Value Found</div><div class="value" id="arrValStat">-</div></div>
+  </div>
+  <p style="text-align:center;color:#888;margin-bottom:10px;">Click any cell to access it in O(1). Notice that steps are always 1, regardless of array size or index.</p>
+  <div class="array-container" id="arrayContainer"></div>
+  <div class="controls" style="margin-top:15px;">
+    <button id="randomAccessBtn">Random Access</button>
+    <button id="burstAccessBtn">Burst 10 Random</button>
+  </div>
+  <div class="log-area" id="arrayLog"></div>
+</div>
+
+<!-- Hash Table Panel -->
+<div id="hash-panel" class="panel">
+  <div class="formula">bucket = hash(key) % table_size &nbsp;&rarr;&nbsp; <strong>O(1) computation per insert/lookup</strong></div>
+  <div class="stats">
+    <div class="stat-box"><div class="label">Entries</div><div class="value" id="hashEntriesStat">0</div></div>
+    <div class="stat-box"><div class="label">Steps (Insert)</div><div class="value highlight" id="hashInsertSteps">0</div></div>
+    <div class="stat-box"><div class="label">Steps (Lookup)</div><div class="value highlight" id="hashLookupSteps">0</div></div>
+    <div class="stat-box"><div class="label">Buckets Used</div><div class="value" id="hashBucketsStat">0</div></div>
+  </div>
+  <div class="hash-input">
+    <input type="text" id="hashKeyInput" placeholder="Enter key (e.g., Alice)">
+    <button id="hashInsertBtn">Insert</button>
+    <button id="hashLookupBtn">Lookup</button>
+  </div>
+  <div class="hash-container" id="hashContainer"></div>
+  <div class="log-area" id="hashLog"></div>
+</div>
+
+<!-- Stack Panel -->
+<div id="stack-panel" class="panel">
+  <div class="formula">push: top++ then store &nbsp;|&nbsp; pop: read then top-- &nbsp;&rarr;&nbsp; <strong>Always O(1)</strong></div>
+  <div class="stats">
+    <div class="stat-box"><div class="label">Stack Size</div><div class="value" id="stackSizeStat">0</div></div>
+    <div class="stat-box"><div class="label">Steps (Push)</div><div class="value highlight" id="stackPushSteps">1</div></div>
+    <div class="stat-box"><div class="label">Steps (Pop)</div><div class="value highlight" id="stackPopSteps">1</div></div>
+    <div class="stat-box"><div class="label">Top Value</div><div class="value" id="stackTopStat">-</div></div>
+  </div>
+  <div class="stack-area">
+    <div class="stack-visual" id="stackVisual"></div>
+    <div class="stack-controls">
+      <button id="stackPushBtn">Push Random</button>
+      <button id="stackPopBtn">Pop</button>
+      <button id="stackPeekBtn">Peek</button>
+      <button id="stackBurstBtn">Push 5</button>
+    </div>
+  </div>
+  <div class="log-area" id="stackLog"></div>
+</div>
+
+<script>
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab + '-panel').classList.add('active');
+  });
+});
+
+const speed = () => parseInt(document.getElementById('speedSlider').value);
+
+// --- ARRAY ---
+let arrayData = [];
+function buildArray(size) {
+  arrayData = Array.from({length: size}, () => Math.floor(Math.random() * 99) + 1);
+  const container = document.getElementById('arrayContainer');
+  container.innerHTML = '';
+  arrayData.forEach((val, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.innerHTML = `<span class="idx">${i}</span><span class="val">${val}</span>`;
+    cell.addEventListener('click', () => accessArray(i));
+    container.appendChild(cell);
+  });
+  document.getElementById('arrSizeStat').textContent = size;
+  document.getElementById('arrStepsStat').textContent = '0';
+  document.getElementById('arrIdxStat').textContent = '-';
+  document.getElementById('arrValStat').textContent = '-';
+  document.getElementById('arrayLog').innerHTML = '';
+}
+
+function accessArray(idx) {
+  const cells = document.querySelectorAll('#arrayContainer .cell');
+  cells.forEach(c => c.classList.remove('accessed'));
+  cells[idx].classList.add('accessed');
+  document.getElementById('arrStepsStat').textContent = '1';
+  document.getElementById('arrIdxStat').textContent = idx;
+  document.getElementById('arrValStat').textContent = arrayData[idx];
+  addLog('arrayLog', `arr[${idx}] = ${arrayData[idx]} | steps: <span class="ops">1</span> (size=${arrayData.length})`);
+  setTimeout(() => cells[idx].classList.remove('accessed'), speed());
+}
+
+document.getElementById('arraySizeSelect').addEventListener('change', e => buildArray(+e.target.value));
+document.getElementById('randomAccessBtn').addEventListener('click', () => {
+  accessArray(Math.floor(Math.random() * arrayData.length));
+});
+document.getElementById('burstAccessBtn').addEventListener('click', () => {
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i >= 10) { clearInterval(interval); return; }
+    accessArray(Math.floor(Math.random() * arrayData.length));
+    i++;
+  }, Math.max(speed() / 3, 80));
+});
+
+// --- HASH TABLE ---
+const HASH_BUCKETS = 8;
+let hashTable = Array.from({length: HASH_BUCKETS}, () => []);
+let hashEntryCount = 0;
+
+function simpleHash(key) {
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) & 0x7fffffff;
+  return h % HASH_BUCKETS;
+}
+
+function renderHashTable(activeBucket, newKey) {
+  const container = document.getElementById('hashContainer');
+  container.innerHTML = '';
+  let used = 0;
+  hashTable.forEach((bucket, i) => {
+    if (bucket.length > 0) used++;
+    const row = document.createElement('div');
+    row.className = 'bucket-row';
+    row.innerHTML = `<div class="bucket-label">[${i}]</div>`;
+    const bDiv = document.createElement('div');
+    bDiv.className = 'bucket' + (i === activeBucket ? ' active' : '');
+    bucket.forEach(key => {
+      const entry = document.createElement('span');
+      entry.className = 'hash-entry' + (key === newKey && i === activeBucket ? ' new' : '');
+      entry.textContent = key;
+      bDiv.appendChild(entry);
+    });
+    row.appendChild(bDiv);
+    container.appendChild(row);
+  });
+  document.getElementById('hashBucketsStat').textContent = used;
+}
+
+function hashInsert(key) {
+  if (!key) return;
+  const bucket = simpleHash(key);
+  if (!hashTable[bucket].includes(key)) {
+    hashTable[bucket].push(key);
+    hashEntryCount++;
+  }
+  document.getElementById('hashEntriesStat').textContent = hashEntryCount;
+  document.getElementById('hashInsertSteps').textContent = '1';
+  renderHashTable(bucket, key);
+  addLog('hashLog', `INSERT "${key}" -> bucket ${bucket} | steps: <span class="ops">1</span> (entries=${hashEntryCount})`);
+  setTimeout(() => renderHashTable(-1, null), speed());
+}
+
+function hashLookup(key) {
+  if (!key) return;
+  const bucket = simpleHash(key);
+  const found = hashTable[bucket].includes(key);
+  document.getElementById('hashLookupSteps').textContent = '1';
+  renderHashTable(bucket, null);
+  addLog('hashLog', `LOOKUP "${key}" -> bucket ${bucket}, found=${found} | steps: <span class="ops">1</span>`);
+  setTimeout(() => renderHashTable(-1, null), speed());
+}
+
+document.getElementById('hashInsertBtn').addEventListener('click', () => {
+  hashInsert(document.getElementById('hashKeyInput').value.trim());
+  document.getElementById('hashKeyInput').value = '';
+});
+document.getElementById('hashLookupBtn').addEventListener('click', () => {
+  hashLookup(document.getElementById('hashKeyInput').value.trim());
+});
+document.getElementById('hashKeyInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { hashInsert(e.target.value.trim()); e.target.value = ''; }
+});
+
+renderHashTable(-1, null);
+
+// Pre-fill some entries
+['Alice', 'Bob', 'Charlie', 'Diana', 'Eve'].forEach(n => {
+  hashTable[simpleHash(n)].push(n);
+  hashEntryCount++;
+});
+document.getElementById('hashEntriesStat').textContent = hashEntryCount;
+renderHashTable(-1, null);
+
+// --- STACK ---
+let stackData = [];
+
+function renderStack() {
+  const vis = document.getElementById('stackVisual');
+  vis.innerHTML = '';
+  stackData.forEach(val => {
+    const item = document.createElement('div');
+    item.className = 'stack-item';
+    item.textContent = val;
+    vis.appendChild(item);
+  });
+  document.getElementById('stackSizeStat').textContent = stackData.length;
+  document.getElementById('stackTopStat').textContent = stackData.length > 0 ? stackData[stackData.length - 1] : '-';
+}
+
+document.getElementById('stackPushBtn').addEventListener('click', () => {
+  const val = Math.floor(Math.random() * 99) + 1;
+  stackData.push(val);
+  document.getElementById('stackPushSteps').textContent = '1';
+  renderStack();
+  addLog('stackLog', `PUSH ${val} | steps: <span class="ops">1</span> (size=${stackData.length})`);
+});
+
+document.getElementById('stackPopBtn').addEventListener('click', () => {
+  if (stackData.length === 0) { addLog('stackLog', 'POP failed: stack empty'); return; }
+  const val = stackData.pop();
+  document.getElementById('stackPopSteps').textContent = '1';
+  renderStack();
+  addLog('stackLog', `POP -> ${val} | steps: <span class="ops">1</span> (size=${stackData.length})`);
+});
+
+document.getElementById('stackPeekBtn').addEventListener('click', () => {
+  if (stackData.length === 0) { addLog('stackLog', 'PEEK failed: stack empty'); return; }
+  const val = stackData[stackData.length - 1];
+  addLog('stackLog', `PEEK -> ${val} | steps: <span class="ops">1</span> (size=${stackData.length})`);
+});
+
+document.getElementById('stackBurstBtn').addEventListener('click', () => {
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i >= 5) { clearInterval(interval); return; }
+    const val = Math.floor(Math.random() * 99) + 1;
+    stackData.push(val);
+    renderStack();
+    addLog('stackLog', `PUSH ${val} | steps: <span class="ops">1</span> (size=${stackData.length})`);
+    i++;
+  }, Math.max(speed() / 3, 80));
+});
+
+renderStack();
+
+// --- UTILITY ---
+function addLog(logId, msg) {
+  const log = document.getElementById(logId);
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerHTML = msg;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+  if (log.children.length > 50) log.removeChild(log.firstChild);
+}
+
+// Reset
+document.getElementById('resetBtn').addEventListener('click', () => {
+  buildArray(+document.getElementById('arraySizeSelect').value);
+  hashTable = Array.from({length: HASH_BUCKETS}, () => []);
+  hashEntryCount = 0;
+  document.getElementById('hashEntriesStat').textContent = 0;
+  renderHashTable(-1, null);
+  document.getElementById('hashLog').innerHTML = '';
+  stackData = [];
+  renderStack();
+  document.getElementById('stackLog').innerHTML = '';
+});
+
+// Init
+buildArray(16);
+</script>
+</body>
+</html>
