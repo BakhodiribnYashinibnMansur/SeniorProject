@@ -7,16 +7,14 @@
 - 1.1 What is System Design?
 - 1.2 How to approach System Design?
 
-## 2. CAP Theorem
-- 2.1 AP - Availability + Partition Tolerance
-- 2.2 CP - Consistency + Partition Tolerance
+
 
 ### 2.3 Performance vs Scalability
 
 ### 2.4 Latency vs Throughput
 
 ### 2.5 Availability vs Consistency
-## 2.5.1 CAP Theorem
+- 2.5.1 CAP Theorem
 - 2.5.1.1 AP - Availability + Partition Tolerance
 - 2.5.1.2 CP - Consistency + Partition Tolerance
   
