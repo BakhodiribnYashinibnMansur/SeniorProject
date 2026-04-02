@@ -16,7 +16,10 @@
 ### 2.4 Latency vs Throughput
 
 ### 2.5 Availability vs Consistency
-
+## 2.5.1 CAP Theorem
+- 2.5.1.1 AP - Availability + Partition Tolerance
+- 2.5.1.2 CP - Consistency + Partition Tolerance
+  
 ### 2.6 Consistency Patterns
 - 2.6.1 Weak Consistency
 - 2.6.2 Eventual Consistency
