@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time vs Space Complexity — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --muted: #8b949e;
+            --green: #3fb950;
+            --yellow: #d29922;
+            --red: #f85149;
+            --blue: #58a6ff;
+            --purple: #bc8cff;
+            --orange: #ffa657;
+        }
+        h1 { font-size: 2rem; color: var(--blue); margin-bottom: 8px; text-align: center; }
+        .subtitle { color: var(--muted); margin-bottom: 20px; text-align: center; }
+
+        .complexity {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px 25px;
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .complexity-item { text-align: center; }
+        .complexity-label { color: var(--muted); font-size: 0.8rem; }
+        .complexity-value { color: var(--blue); font-size: 1.1rem; font-weight: bold; }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        button {
+            padding: 8px 20px;
+            border: 2px solid var(--blue);
+            background: transparent;
+            color: var(--blue);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+        button:hover { background: var(--blue); color: var(--bg); }
+        button.active { background: var(--blue); color: var(--bg); }
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .input-control {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        select, input[type="range"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        label { color: var(--muted); font-size: 0.9rem; }
+
+        .canvas-container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 900px;
+            min-height: 400px;
+            position: relative;
+        }
+        canvas { width: 100%; height: 360px; display: block; }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
+        .legend-color { width: 30px; height: 4px; border-radius: 2px; }
+
+        .info-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 20px;
+        }
+        .info-panel h3 { color: var(--blue); margin-bottom: 10px; }
+        .step-info { font-family: 'Courier New', monospace; font-size: 0.9rem; line-height: 1.8; }
+        .highlight { color: var(--yellow); }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .stat { text-align: center; }
+        .stat-label { color: var(--muted); font-size: 0.75rem; }
+        .stat-value { color: var(--text); font-size: 1.1rem; font-weight: bold; }
+
+        .op-log {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        .op-log div { padding: 2px 0; border-bottom: 1px solid #1c2128; }
+    </style>
+</head>
+<body>
+    <h1>Time vs Space Complexity</h1>
+    <p class="subtitle">Interactive Visualization — Compare Growth Rates</p>
+
+    <div class="complexity">
+        <div class="complexity-item">
+            <div class="complexity-label">O(1)</div>
+            <div class="complexity-value" style="color: var(--green);">Constant</div>
+        </div>
+        <div class="complexity-item">
+            <div class="complexity-label">O(log n)</div>
+            <div class="complexity-value" style="color: var(--blue);">Logarithmic</div>
+        </div>
+        <div class="complexity-item">
+            <div class="complexity-label">O(n)</div>
+            <div class="complexity-value" style="color: var(--yellow);">Linear</div>
+        </div>
+        <div class="complexity-item">
+            <div class="complexity-label">O(n log n)</div>
+            <div class="complexity-value" style="color: var(--orange);">Linearithmic</div>
+        </div>
+        <div class="complexity-item">
+            <div class="complexity-label">O(n²)</div>
+            <div class="complexity-value" style="color: var(--red);">Quadratic</div>
+        </div>
+        <div class="complexity-item">
+            <div class="complexity-label">O(2ⁿ)</div>
+            <div class="complexity-value" style="color: var(--purple);">Exponential</div>
+        </div>
+    </div>
+
+    <div class="input-control">
+        <label>Algorithm:</label>
+        <select id="algoSelect">
+            <option value="all">All Growth Curves</option>
+            <option value="tradeoff">Time-Space Trade-off Demo</option>
+            <option value="compare">O(n) vs O(n²) Live Race</option>
+        </select>
+        <label>Max n:</label>
+        <input type="range" id="nSlider" min="10" max="200" value="50">
+        <span id="nValue">50</span>
+    </div>
+
+    <div class="controls">
+        <button id="startBtn" onclick="startAnimation()">Animate</button>
+        <button id="resetBtn" onclick="resetAnimation()">Reset</button>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background: #3fb950;"></div><span>O(1)</span></div>
+        <div class="legend-item"><div class="legend-color" style="background: #58a6ff;"></div><span>O(log n)</span></div>
+        <div class="legend-item"><div class="legend-color" style="background: #d29922;"></div><span>O(n)</span></div>
+        <div class="legend-item"><div class="legend-color" style="background: #ffa657;"></div><span>O(n log n)</span></div>
+        <div class="legend-item"><div class="legend-color" style="background: #f85149;"></div><span>O(n²)</span></div>
+        <div class="legend-item"><div class="legend-color" style="background: #bc8cff;"></div><span>O(2ⁿ)</span></div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat"><div class="stat-label">Current n</div><div class="stat-value" id="statN">0</div></div>
+        <div class="stat"><div class="stat-label">O(1) ops</div><div class="stat-value" id="statO1">0</div></div>
+        <div class="stat"><div class="stat-label">O(n) ops</div><div class="stat-value" id="statOn">0</div></div>
+        <div class="stat"><div class="stat-label">O(n²) ops</div><div class="stat-value" id="statOn2">0</div></div>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="info-panel">
+        <h3>Explanation</h3>
+        <div class="step-info" id="stepInfo">
+            Press <span class="highlight">Animate</span> to see how different complexity classes grow as input size increases.
+            Use the <span class="highlight">Max n</span> slider to control the range.
+        </div>
+    </div>
+
+    <div class="op-log" id="opLog">
+        <div>Ready. Select a visualization mode and press Animate.</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let animationId = null;
+        let currentN = 0;
+        let maxN = 50;
+        let busy = false;
+
+        const colors = {
+            'O(1)': '#3fb950',
+            'O(log n)': '#58a6ff',
+            'O(n)': '#d29922',
+            'O(n log n)': '#ffa657',
+            'O(n²)': '#f85149',
+            'O(2ⁿ)': '#bc8cff'
+        };
+
+        const funcs = {
+            'O(1)': n => 1,
+            'O(log n)': n => n > 0 ? Math.log2(n) : 0,
+            'O(n)': n => n,
+            'O(n log n)': n => n > 0 ? n * Math.log2(n) : 0,
+            'O(n²)': n => n * n,
+            'O(2ⁿ)': n => Math.pow(2, Math.min(n, 20))
+        };
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth - 40;
+            canvas.height = 360;
+        }
+
+        function drawAxes() {
+            ctx.strokeStyle = '#30363d';
+            ctx.lineWidth = 1;
+            const pad = 50;
+            ctx.beginPath();
+            ctx.moveTo(pad, 10);
+            ctx.lineTo(pad, canvas.height - 30);
+            ctx.lineTo(canvas.width - 10, canvas.height - 30);
+            ctx.stroke();
+
+            ctx.fillStyle = '#8b949e';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('Operations', 5, 20);
+            ctx.fillText('Input size (n)', canvas.width - 100, canvas.height - 10);
+        }
+
+        function drawGrid() {
+            ctx.strokeStyle = '#1c2128';
+            ctx.lineWidth = 0.5;
+            const pad = 50;
+            const plotW = canvas.width - pad - 10;
+            const plotH = canvas.height - 40;
+
+            for (let i = 1; i <= 4; i++) {
+                const y = 10 + plotH * (1 - i / 4);
+                ctx.beginPath();
+                ctx.moveTo(pad, y);
+                ctx.lineTo(pad + plotW, y);
+                ctx.stroke();
+            }
+            for (let i = 1; i <= 4; i++) {
+                const x = pad + plotW * i / 4;
+                ctx.beginPath();
+                ctx.moveTo(x, 10);
+                ctx.lineTo(x, canvas.height - 30);
+                ctx.stroke();
+            }
+        }
+
+        function drawCurves(upToN) {
+            const pad = 50;
+            const plotW = canvas.width - pad - 10;
+            const plotH = canvas.height - 40;
+            const mode = document.getElementById('algoSelect').value;
+
+            let maxVal = 1;
+            const curvesToDraw = mode === 'compare'
+                ? ['O(n)', 'O(n²)']
+                : mode === 'tradeoff'
+                ? ['O(1)', 'O(n)', 'O(n²)']
+                : Object.keys(funcs);
+
+            for (const name of curvesToDraw) {
+                for (let i = 1; i <= upToN; i++) {
+                    const v = funcs[name](i);
+                    if (v > maxVal && v < 1e8) maxVal = v;
+                }
+            }
+
+            const scaleX = plotW / maxN;
+            const scaleY = plotH / maxVal;
+
+            for (const name of curvesToDraw) {
+                ctx.strokeStyle = colors[name];
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                let started = false;
+                for (let i = 1; i <= upToN; i++) {
+                    const v = Math.min(funcs[name](i), maxVal);
+                    const x = pad + i * scaleX;
+                    const y = canvas.height - 30 - v * scaleY;
+                    if (!started) { ctx.moveTo(x, y); started = true; }
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+
+                if (upToN > 5) {
+                    const lastV = Math.min(funcs[name](upToN), maxVal);
+                    const lx = pad + upToN * scaleX + 5;
+                    const ly = canvas.height - 30 - lastV * scaleY;
+                    ctx.fillStyle = colors[name];
+                    ctx.font = 'bold 11px Segoe UI';
+                    ctx.fillText(name, lx, Math.max(15, Math.min(ly, canvas.height - 35)));
+                }
+            }
+
+            ctx.fillStyle = '#8b949e';
+            ctx.font = '11px Segoe UI';
+            for (let i = 0; i <= 4; i++) {
+                const n = Math.round(maxN * i / 4);
+                ctx.fillText(n, pad + plotW * i / 4 - 5, canvas.height - 15);
+            }
+            for (let i = 0; i <= 4; i++) {
+                const v = Math.round(maxVal * i / 4);
+                const label = v >= 1000000 ? (v/1000000).toFixed(1) + 'M'
+                            : v >= 1000 ? (v/1000).toFixed(1) + 'K'
+                            : v.toString();
+                const y = canvas.height - 30 - plotH * i / 4;
+                ctx.fillText(label, 5, y + 4);
+            }
+        }
+
+        function render(n) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+            drawAxes();
+            drawCurves(n);
+
+            document.getElementById('statN').textContent = n;
+            document.getElementById('statO1').textContent = '1';
+            document.getElementById('statOn').textContent = n;
+            document.getElementById('statOn2').textContent = (n * n).toLocaleString();
+        }
+
+        async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        async function startAnimation() {
+            if (busy) return;
+            busy = true;
+            maxN = parseInt(document.getElementById('nSlider').value);
+            document.getElementById('startBtn').disabled = true;
+            const log = document.getElementById('opLog');
+
+            currentN = 0;
+            for (let i = 1; i <= maxN; i++) {
+                currentN = i;
+                resizeCanvas();
+                render(i);
+
+                if (i % 10 === 0 || i === maxN) {
+                    const info = `n=${i}: O(1)=1, O(log n)=${Math.log2(i).toFixed(1)}, O(n)=${i}, O(n²)=${(i*i).toLocaleString()}`;
+                    document.getElementById('stepInfo').innerHTML =
+                        `<span class="highlight">n = ${i}</span>: ` +
+                        `O(1) = 1 | O(log n) = ${Math.log2(i).toFixed(1)} | ` +
+                        `O(n) = ${i} | O(n²) = ${(i*i).toLocaleString()}`;
+                    const div = document.createElement('div');
+                    div.textContent = info;
+                    log.prepend(div);
+                }
+                await sleep(Math.max(10, 500 / maxN));
+            }
+            busy = false;
+            document.getElementById('startBtn').disabled = false;
+        }
+
+        function resetAnimation() {
+            busy = false;
+            currentN = 0;
+            document.getElementById('startBtn').disabled = false;
+            resizeCanvas();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+            drawAxes();
+            document.getElementById('statN').textContent = '0';
+            document.getElementById('statO1').textContent = '0';
+            document.getElementById('statOn').textContent = '0';
+            document.getElementById('statOn2').textContent = '0';
+            document.getElementById('stepInfo').innerHTML =
+                'Press <span class="highlight">Animate</span> to see growth curves.';
+            document.getElementById('opLog').innerHTML = '<div>Reset. Ready.</div>';
+        }
+
+        document.getElementById('nSlider').addEventListener('input', function() {
+            document.getElementById('nValue').textContent = this.value;
+        });
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            if (currentN > 0) render(currentN);
+            else { drawGrid(); drawAxes(); }
+        });
+
+        resizeCanvas();
+        drawGrid();
+        drawAxes();
+    </script>
+</body>
+</html>

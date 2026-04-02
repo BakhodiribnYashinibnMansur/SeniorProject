@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Queue Visualization</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --blue: #58a6ff;
+    --orange: #d29922;
+    --green: #3fb950;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --cell-size: 56px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 { text-align: center; margin-bottom: 6px; font-size: 1.5rem; }
+  .subtitle { text-align: center; color: var(--text-dim); margin-bottom: 20px; font-size: 0.9rem; }
+  .container { max-width: 900px; margin: 0 auto; }
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    margin-bottom: 20px; padding: 16px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px;
+  }
+  .controls input[type="number"] {
+    width: 70px; padding: 8px; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); border-radius: 4px; font-size: 0.9rem; text-align: center;
+  }
+  .controls label { color: var(--text-dim); font-size: 0.8rem; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  button {
+    padding: 8px 16px; border: 1px solid var(--border); border-radius: 4px;
+    cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+  }
+  .btn-enqueue { background: #1a7f37; color: #fff; border-color: #238636; }
+  .btn-enqueue:hover { background: #238636; }
+  .btn-dequeue { background: #8b1a1a; color: #fff; border-color: #f85149; }
+  .btn-dequeue:hover { background: #b32d2d; }
+  .btn-peek { background: #1a3a6b; color: #fff; border-color: var(--blue); }
+  .btn-peek:hover { background: #264d8a; }
+  .btn-reset { background: var(--surface); color: var(--text); }
+  .btn-reset:hover { background: var(--border); }
+  .queue-area {
+    min-height: 140px; padding: 30px 20px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: center;
+    overflow-x: auto; position: relative;
+  }
+  .queue-container {
+    display: flex; align-items: center; gap: 0; min-height: var(--cell-size);
+  }
+  .queue-cell {
+    width: var(--cell-size); height: var(--cell-size);
+    border: 2px solid var(--border); display: flex; align-items: center;
+    justify-content: center; font-weight: 700; font-size: 1.1rem;
+    position: relative; transition: all 0.3s ease;
+    background: var(--surface);
+  }
+  .queue-cell:first-child { border-radius: 6px 0 0 6px; }
+  .queue-cell:last-child { border-radius: 0 6px 6px 0; }
+  .queue-cell:only-child { border-radius: 6px; }
+  .queue-cell.front { border-color: var(--blue); box-shadow: 0 0 10px rgba(88,166,255,0.3); }
+  .queue-cell.rear { border-color: var(--orange); box-shadow: 0 0 10px rgba(210,153,34,0.3); }
+  .queue-cell.front.rear { border-color: var(--purple); box-shadow: 0 0 10px rgba(188,140,255,0.3); }
+  .queue-cell.highlight-enqueue { animation: enqueueAnim 0.5s ease; }
+  .queue-cell.highlight-dequeue { animation: dequeueAnim 0.5s ease; }
+  .queue-cell.highlight-peek { animation: peekAnim 0.6s ease; }
+  @keyframes enqueueAnim {
+    0% { transform: translateY(-30px); opacity: 0; background: rgba(58,166,55,0.3); }
+    50% { background: rgba(58,166,55,0.3); }
+    100% { transform: translateY(0); opacity: 1; background: var(--surface); }
+  }
+  @keyframes dequeueAnim {
+    0% { background: rgba(248,81,73,0.3); }
+    50% { transform: translateY(-20px); opacity: 0.5; background: rgba(248,81,73,0.3); }
+    100% { transform: translateY(-40px); opacity: 0; }
+  }
+  @keyframes peekAnim {
+    0%, 100% { background: var(--surface); }
+    30%, 70% { background: rgba(88,166,255,0.25); }
+  }
+  .pointer-label {
+    position: absolute; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px;
+  }
+  .pointer-front { bottom: -22px; left: 50%; transform: translateX(-50%); color: var(--blue); }
+  .pointer-rear { top: -22px; left: 50%; transform: translateX(-50%); color: var(--orange); }
+  .empty-msg { color: var(--text-dim); font-style: italic; font-size: 1rem; }
+  .arrow { font-size: 1.5rem; color: var(--text-dim); margin: 0 8px; }
+  .info-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;
+  }
+  .stats, .complexity {
+    padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  }
+  .stats h3, .complexity h3 { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 10px; }
+  .stat-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.85rem; }
+  .stat-val { color: var(--blue); font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { color: var(--text-dim); font-weight: 600; }
+  td:last-child { color: var(--green); font-weight: 600; }
+  .log-panel {
+    padding: 16px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; max-height: 200px; overflow-y: auto;
+  }
+  .log-panel h3 { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 10px; }
+  .log-entry { font-size: 0.8rem; padding: 3px 0; font-family: 'Cascadia Code', 'Fira Code', monospace; }
+  .log-entry .time { color: var(--text-dim); }
+  .log-entry .action { font-weight: 600; }
+  .log-entry .enq { color: var(--green); }
+  .log-entry .deq { color: var(--red); }
+  .log-entry .pk { color: var(--blue); }
+  .log-entry .err { color: var(--red); }
+  .legend {
+    display: flex; gap: 20px; justify-content: center; margin-bottom: 16px; font-size: 0.8rem;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-box { width: 14px; height: 14px; border-radius: 3px; border: 2px solid; }
+  .legend-box.front { border-color: var(--blue); }
+  .legend-box.rear { border-color: var(--orange); }
+  .legend-box.both { border-color: var(--purple); }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Queue Visualization</h1>
+  <p class="subtitle">FIFO (First-In, First-Out) &mdash; Enqueue at rear, Dequeue from front</p>
+
+  <div class="controls">
+    <label>Value<input type="number" id="inputVal" value="1" min="-99" max="999"></label>
+    <button class="btn-enqueue" onclick="enqueue()">Enqueue</button>
+    <button class="btn-dequeue" onclick="dequeueOp()">Dequeue</button>
+    <button class="btn-peek" onclick="peekOp()">Peek</button>
+    <button class="btn-reset" onclick="resetQueue()">Reset</button>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-box front"></div> Front (dequeue end)</div>
+    <div class="legend-item"><div class="legend-box rear"></div> Rear (enqueue end)</div>
+    <div class="legend-item"><div class="legend-box both"></div> Both (single element)</div>
+  </div>
+
+  <div class="queue-area" id="queueArea">
+    <span class="arrow" id="arrowLeft" style="display:none">&larr; FRONT</span>
+    <div class="queue-container" id="queueContainer">
+      <span class="empty-msg">Queue is empty</span>
+    </div>
+    <span class="arrow" id="arrowRight" style="display:none">REAR &rarr;</span>
+  </div>
+
+  <div class="info-grid">
+    <div class="stats">
+      <h3>Statistics</h3>
+      <div class="stat-row"><span>Size</span><span class="stat-val" id="statSize">0</span></div>
+      <div class="stat-row"><span>Front value</span><span class="stat-val" id="statFront">--</span></div>
+      <div class="stat-row"><span>Rear value</span><span class="stat-val" id="statRear">--</span></div>
+      <div class="stat-row"><span>Total enqueued</span><span class="stat-val" id="statEnq">0</span></div>
+      <div class="stat-row"><span>Total dequeued</span><span class="stat-val" id="statDeq">0</span></div>
+    </div>
+    <div class="complexity">
+      <h3>Time Complexity</h3>
+      <table>
+        <tr><th>Operation</th><th>Complexity</th></tr>
+        <tr><td>Enqueue</td><td>O(1)</td></tr>
+        <tr><td>Dequeue</td><td>O(1)</td></tr>
+        <tr><td>Peek</td><td>O(1)</td></tr>
+        <tr><td>isEmpty</td><td>O(1)</td></tr>
+        <tr><td>Size</td><td>O(1)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="log-panel" id="logPanel">
+    <h3>Operation Log</h3>
+    <div id="logEntries"></div>
+  </div>
+</div>
+
+<script>
+let queue = [];
+let totalEnq = 0;
+let totalDeq = 0;
+let nextVal = 1;
+
+function render() {
+  const container = document.getElementById('queueContainer');
+  const arrowL = document.getElementById('arrowLeft');
+  const arrowR = document.getElementById('arrowRight');
+  container.innerHTML = '';
+
+  if (queue.length === 0) {
+    container.innerHTML = '<span class="empty-msg">Queue is empty</span>';
+    arrowL.style.display = 'none';
+    arrowR.style.display = 'none';
+  } else {
+    arrowL.style.display = 'inline';
+    arrowR.style.display = 'inline';
+    queue.forEach((val, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'queue-cell';
+      cell.textContent = val;
+      cell.id = 'cell-' + i;
+      if (i === 0 && i === queue.length - 1) {
+        cell.classList.add('front', 'rear');
+      } else if (i === 0) {
+        cell.classList.add('front');
+      } else if (i === queue.length - 1) {
+        cell.classList.add('rear');
+      }
+      // Pointer labels
+      if (i === 0) {
+        const lbl = document.createElement('span');
+        lbl.className = 'pointer-label pointer-front';
+        lbl.textContent = 'FRONT';
+        cell.appendChild(lbl);
+      }
+      if (i === queue.length - 1) {
+        const lbl = document.createElement('span');
+        lbl.className = 'pointer-label pointer-rear';
+        lbl.textContent = 'REAR';
+        cell.appendChild(lbl);
+      }
+      container.appendChild(cell);
+    });
+  }
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById('statSize').textContent = queue.length;
+  document.getElementById('statFront').textContent = queue.length > 0 ? queue[0] : '--';
+  document.getElementById('statRear').textContent = queue.length > 0 ? queue[queue.length - 1] : '--';
+  document.getElementById('statEnq').textContent = totalEnq;
+  document.getElementById('statDeq').textContent = totalDeq;
+}
+
+function addLog(action, cls, detail) {
+  const entries = document.getElementById('logEntries');
+  const now = new Date().toLocaleTimeString();
+  const div = document.createElement('div');
+  div.className = 'log-entry';
+  div.innerHTML = '<span class="time">[' + now + ']</span> <span class="action ' + cls + '">' + action + '</span> ' + detail;
+  entries.insertBefore(div, entries.firstChild);
+  if (entries.children.length > 50) entries.removeChild(entries.lastChild);
+}
+
+function enqueue() {
+  const input = document.getElementById('inputVal');
+  const val = parseInt(input.value) || 0;
+  queue.push(val);
+  totalEnq++;
+  render();
+  // Animate the new cell
+  const lastCell = document.getElementById('cell-' + (queue.length - 1));
+  if (lastCell) {
+    lastCell.classList.add('highlight-enqueue');
+    setTimeout(() => lastCell.classList.remove('highlight-enqueue'), 500);
+  }
+  addLog('ENQUEUE', 'enq', val + ' &rarr; rear | size=' + queue.length);
+  input.value = val + 1;
+}
+
+function dequeueOp() {
+  if (queue.length === 0) {
+    addLog('ERROR', 'err', 'Cannot dequeue from empty queue');
+    return;
+  }
+  const val = queue[0];
+  // Animate removal
+  const firstCell = document.getElementById('cell-0');
+  if (firstCell) {
+    firstCell.classList.add('highlight-dequeue');
+    setTimeout(() => {
+      queue.shift();
+      totalDeq++;
+      render();
+      addLog('DEQUEUE', 'deq', val + ' &larr; front | size=' + queue.length);
+    }, 400);
+  } else {
+    queue.shift();
+    totalDeq++;
+    render();
+    addLog('DEQUEUE', 'deq', val + ' &larr; front | size=' + queue.length);
+  }
+}
+
+function peekOp() {
+  if (queue.length === 0) {
+    addLog('ERROR', 'err', 'Cannot peek empty queue');
+    return;
+  }
+  const val = queue[0];
+  const firstCell = document.getElementById('cell-0');
+  if (firstCell) {
+    firstCell.classList.add('highlight-peek');
+    setTimeout(() => firstCell.classList.remove('highlight-peek'), 600);
+  }
+  addLog('PEEK', 'pk', 'front = ' + val);
+}
+
+function resetQueue() {
+  queue = [];
+  totalEnq = 0;
+  totalDeq = 0;
+  document.getElementById('logEntries').innerHTML = '';
+  document.getElementById('inputVal').value = 1;
+  render();
+  addLog('RESET', 'pk', 'Queue cleared');
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT') {
+    if (e.key === 'Enter') { enqueue(); e.preventDefault(); }
+    return;
+  }
+  if (e.key === 'e' || e.key === 'E') enqueue();
+  if (e.key === 'd' || e.key === 'D') dequeueOp();
+  if (e.key === 'p' || e.key === 'P') peekOp();
+  if (e.key === 'r' || e.key === 'R') resetQueue();
+});
+
+render();
+</script>
+</body>
+</html>

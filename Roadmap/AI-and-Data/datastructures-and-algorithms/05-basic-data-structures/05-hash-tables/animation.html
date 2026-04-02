@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hash Table Visualization</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Courier New', monospace; background: #0d1117; color: #c9d1d9; min-height: 100vh; padding: 20px; }
+  h1 { text-align: center; color: #58a6ff; margin-bottom: 8px; font-size: 1.5rem; }
+  .subtitle { text-align: center; color: #8b949e; margin-bottom: 20px; font-size: 0.85rem; }
+
+  .container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+  .main-area { display: flex; flex-direction: column; gap: 16px; }
+  .side-panel { display: flex; flex-direction: column; gap: 16px; }
+
+  .panel { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px; }
+  .panel h3 { color: #58a6ff; margin-bottom: 10px; font-size: 0.95rem; }
+
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .controls input[type="text"] { background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; padding: 6px 10px; border-radius: 4px; width: 120px; font-family: inherit; }
+  .controls input[type="number"] { background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; padding: 6px 10px; border-radius: 4px; width: 70px; font-family: inherit; }
+  .controls label { color: #8b949e; font-size: 0.85rem; }
+  button { background: #238636; color: #fff; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-family: inherit; font-size: 0.85rem; transition: background 0.2s; }
+  button:hover { background: #2ea043; }
+  button.danger { background: #da3633; }
+  button.danger:hover { background: #f85149; }
+  button.secondary { background: #30363d; color: #c9d1d9; }
+  button.secondary:hover { background: #484f58; }
+
+  .hash-display { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 12px; margin-top: 8px; min-height: 40px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 0.85rem; }
+  .hash-arrow { color: #f0883e; font-weight: bold; }
+  .hash-step { color: #7ee787; }
+  .hash-result { color: #ff7b72; font-weight: bold; }
+
+  .buckets-container { display: flex; flex-direction: column; gap: 4px; max-height: 360px; overflow-y: auto; }
+  .bucket-row { display: flex; align-items: center; gap: 6px; min-height: 36px; }
+  .bucket-index { width: 30px; text-align: right; color: #8b949e; font-size: 0.8rem; flex-shrink: 0; }
+  .bucket-slot { background: #21262d; border: 1px solid #30363d; border-radius: 4px; min-width: 40px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0; }
+  .chain-entries { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+  .chain-entry { background: #1f3a2e; border: 1px solid #2ea043; border-radius: 4px; padding: 3px 8px; font-size: 0.78rem; color: #7ee787; white-space: nowrap; position: relative; }
+  .chain-entry.highlight { background: #3a1f1f; border-color: #f0883e; color: #f0883e; animation: pulse 0.6s ease-in-out 3; }
+  .chain-arrow { color: #484f58; font-size: 0.75rem; }
+  .bucket-row.active .bucket-slot { border-color: #f0883e; background: #2d1a00; }
+
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat { background: #0d1117; border: 1px solid #30363d; border-radius: 4px; padding: 8px; text-align: center; }
+  .stat .val { font-size: 1.2rem; color: #58a6ff; font-weight: bold; }
+  .stat .lbl { font-size: 0.7rem; color: #8b949e; margin-top: 2px; }
+
+  .complexity-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  .complexity-table th, .complexity-table td { padding: 5px 8px; border: 1px solid #30363d; text-align: center; }
+  .complexity-table th { background: #21262d; color: #58a6ff; }
+  .complexity-table td { color: #c9d1d9; }
+  .complexity-table .best { color: #7ee787; }
+  .complexity-table .worst { color: #ff7b72; }
+
+  .log-area { background: #0d1117; border: 1px solid #30363d; border-radius: 4px; padding: 8px; max-height: 160px; overflow-y: auto; font-size: 0.78rem; line-height: 1.5; }
+  .log-area .log-entry { border-bottom: 1px solid #21262d; padding: 2px 0; }
+  .log-entry .op-insert { color: #7ee787; }
+  .log-entry .op-search { color: #58a6ff; }
+  .log-entry .op-delete { color: #ff7b72; }
+  .log-entry .op-info { color: #f0883e; }
+</style>
+</head>
+<body>
+
+<h1>Hash Table Visualization</h1>
+<p class="subtitle">Separate Chaining | Interactive Insert / Search / Delete</p>
+
+<div class="container">
+  <div class="main-area">
+    <div class="panel">
+      <h3>Controls</h3>
+      <div class="controls">
+        <label>Key:</label>
+        <input type="text" id="keyInput" placeholder="e.g. alice" maxlength="20">
+        <label>Val:</label>
+        <input type="number" id="valInput" placeholder="42" style="width:60px">
+        <button onclick="doInsert()">Insert</button>
+        <button class="secondary" onclick="doSearch()">Search</button>
+        <button class="danger" onclick="doDelete()">Delete</button>
+        <button class="secondary" onclick="doReset()">Reset</button>
+      </div>
+      <div class="hash-display" id="hashDisplay">Enter a key and click an operation.</div>
+    </div>
+
+    <div class="panel">
+      <h3>Bucket Array (Capacity: <span id="capDisplay">8</span>)</h3>
+      <div class="buckets-container" id="bucketsContainer"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Operation Log</h3>
+      <div class="log-area" id="logArea"></div>
+    </div>
+  </div>
+
+  <div class="side-panel">
+    <div class="panel">
+      <h3>Statistics</h3>
+      <div class="stats-grid">
+        <div class="stat"><div class="val" id="statSize">0</div><div class="lbl">Size</div></div>
+        <div class="stat"><div class="val" id="statCap">8</div><div class="lbl">Capacity</div></div>
+        <div class="stat"><div class="val" id="statLoad">0.00</div><div class="lbl">Load Factor</div></div>
+        <div class="stat"><div class="val" id="statMaxChain">0</div><div class="lbl">Max Chain</div></div>
+        <div class="stat"><div class="val" id="statCollisions">0</div><div class="lbl">Collisions</div></div>
+        <div class="stat"><div class="val" id="statResizes">0</div><div class="lbl">Resizes</div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Big-O Complexity</h3>
+      <table class="complexity-table">
+        <tr><th>Operation</th><th>Avg</th><th>Worst</th></tr>
+        <tr><td>Insert</td><td class="best">O(1)</td><td class="worst">O(n)</td></tr>
+        <tr><td>Search</td><td class="best">O(1)</td><td class="worst">O(n)</td></tr>
+        <tr><td>Delete</td><td class="best">O(1)</td><td class="worst">O(n)</td></tr>
+        <tr><td>Resize</td><td colspan="2" class="worst">O(n)</td></tr>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h3>Quick Fill</h3>
+      <button class="secondary" onclick="fillSample()" style="width:100%;margin-bottom:6px">Load Sample Data</button>
+      <button class="secondary" onclick="fillRandom()" style="width:100%">Insert 10 Random</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const LOAD_THRESHOLD = 0.75;
+let capacity = 8;
+let buckets = [];
+let size = 0;
+let totalCollisions = 0;
+let resizeCount = 0;
+
+function initBuckets(cap) {
+  capacity = cap;
+  buckets = Array.from({length: capacity}, () => []);
+  size = 0;
+}
+initBuckets(8);
+
+function hashFn(key) {
+  let h = 0;
+  for (let i = 0; i < key.length; i++) {
+    h = (h * 31 + key.charCodeAt(i)) | 0;
+  }
+  if (h < 0) h = -h;
+  return h;
+}
+
+function getBucketIndex(key) {
+  return hashFn(key) % capacity;
+}
+
+function renderBuckets(highlightBucket, highlightKey) {
+  const container = document.getElementById('bucketsContainer');
+  container.innerHTML = '';
+  let maxChain = 0;
+
+  for (let i = 0; i < capacity; i++) {
+    const row = document.createElement('div');
+    row.className = 'bucket-row' + (i === highlightBucket ? ' active' : '');
+
+    const idx = document.createElement('div');
+    idx.className = 'bucket-index';
+    idx.textContent = i;
+    row.appendChild(idx);
+
+    const slot = document.createElement('div');
+    slot.className = 'bucket-slot';
+    slot.textContent = buckets[i].length > 0 ? '\u2B95' : '\u2205';
+    row.appendChild(slot);
+
+    const chain = document.createElement('div');
+    chain.className = 'chain-entries';
+
+    buckets[i].forEach((entry, j) => {
+      if (j > 0) {
+        const arrow = document.createElement('span');
+        arrow.className = 'chain-arrow';
+        arrow.textContent = '\u2192';
+        chain.appendChild(arrow);
+      }
+      const el = document.createElement('span');
+      el.className = 'chain-entry' + (i === highlightBucket && entry.key === highlightKey ? ' highlight' : '');
+      el.textContent = entry.key + ':' + entry.value;
+      chain.appendChild(el);
+    });
+
+    row.appendChild(chain);
+    container.appendChild(row);
+    if (buckets[i].length > maxChain) maxChain = buckets[i].length;
+  }
+
+  document.getElementById('statSize').textContent = size;
+  document.getElementById('statCap').textContent = capacity;
+  document.getElementById('capDisplay').textContent = capacity;
+  document.getElementById('statLoad').textContent = (size / capacity).toFixed(2);
+  document.getElementById('statMaxChain').textContent = maxChain;
+  document.getElementById('statCollisions').textContent = totalCollisions;
+  document.getElementById('statResizes').textContent = resizeCount;
+}
+
+function showHash(key, op) {
+  const h = hashFn(key);
+  const idx = h % capacity;
+  const display = document.getElementById('hashDisplay');
+  display.innerHTML =
+    '<span class="hash-step">hash("' + key + '")</span> ' +
+    '<span class="hash-arrow">\u2192</span> ' +
+    '<span class="hash-step">' + h + '</span> ' +
+    '<span class="hash-arrow">%</span> ' +
+    '<span class="hash-step">' + capacity + '</span> ' +
+    '<span class="hash-arrow">=</span> ' +
+    '<span class="hash-result">bucket ' + idx + '</span>';
+}
+
+function addLog(msg, cls) {
+  const area = document.getElementById('logArea');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerHTML = '<span class="' + cls + '">' + msg + '</span>';
+  area.prepend(entry);
+  if (area.children.length > 50) area.removeChild(area.lastChild);
+}
+
+function resize() {
+  const oldBuckets = buckets;
+  const oldCap = capacity;
+  capacity *= 2;
+  buckets = Array.from({length: capacity}, () => []);
+  size = 0;
+  resizeCount++;
+
+  for (const bucket of oldBuckets) {
+    for (const entry of bucket) {
+      const idx = hashFn(entry.key) % capacity;
+      buckets[idx].push({key: entry.key, value: entry.value});
+      size++;
+    }
+  }
+  addLog('\u26A1 Resize: ' + oldCap + ' \u2192 ' + capacity + ' (rehashed ' + size + ' entries)', 'op-info');
+}
+
+function insertEntry(key, value, silent) {
+  if ((size + 1) / capacity > LOAD_THRESHOLD) {
+    resize();
+  }
+
+  const idx = getBucketIndex(key);
+  const bucket = buckets[idx];
+
+  for (let i = 0; i < bucket.length; i++) {
+    if (bucket[i].key === key) {
+      const old = bucket[i].value;
+      bucket[i].value = value;
+      if (!silent) addLog('UPDATE "' + key + '": ' + old + ' \u2192 ' + value + ' at bucket ' + idx, 'op-insert');
+      return;
+    }
+  }
+
+  if (bucket.length > 0) totalCollisions++;
+  bucket.push({key, value});
+  size++;
+  if (!silent) addLog('INSERT "' + key + '": ' + value + ' \u2192 bucket ' + idx + (bucket.length > 1 ? ' (collision, chain=' + bucket.length + ')' : ''), 'op-insert');
+}
+
+function doInsert() {
+  const key = document.getElementById('keyInput').value.trim();
+  const val = parseInt(document.getElementById('valInput').value) || 0;
+  if (!key) return;
+  showHash(key, 'insert');
+  insertEntry(key, val);
+  const idx = getBucketIndex(key);
+  renderBuckets(idx, key);
+}
+
+function doSearch() {
+  const key = document.getElementById('keyInput').value.trim();
+  if (!key) return;
+  showHash(key, 'search');
+  const idx = getBucketIndex(key);
+  const bucket = buckets[idx];
+  let found = false;
+  for (const entry of bucket) {
+    if (entry.key === key) {
+      addLog('SEARCH "' + key + '" \u2192 found: ' + entry.value + ' at bucket ' + idx, 'op-search');
+      found = true;
+      break;
+    }
+  }
+  if (!found) addLog('SEARCH "' + key + '" \u2192 NOT FOUND (bucket ' + idx + ', chain length ' + bucket.length + ')', 'op-search');
+  renderBuckets(idx, found ? key : null);
+}
+
+function doDelete() {
+  const key = document.getElementById('keyInput').value.trim();
+  if (!key) return;
+  showHash(key, 'delete');
+  const idx = getBucketIndex(key);
+  const bucket = buckets[idx];
+  for (let i = 0; i < bucket.length; i++) {
+    if (bucket[i].key === key) {
+      const val = bucket[i].value;
+      bucket.splice(i, 1);
+      size--;
+      addLog('DELETE "' + key + '" (was ' + val + ') from bucket ' + idx, 'op-delete');
+      renderBuckets(idx, null);
+      return;
+    }
+  }
+  addLog('DELETE "' + key + '" \u2192 NOT FOUND', 'op-delete');
+  renderBuckets(idx, null);
+}
+
+function doReset() {
+  initBuckets(8);
+  totalCollisions = 0;
+  resizeCount = 0;
+  document.getElementById('logArea').innerHTML = '';
+  document.getElementById('hashDisplay').textContent = 'Enter a key and click an operation.';
+  renderBuckets(-1, null);
+  addLog('Table reset to capacity 8.', 'op-info');
+}
+
+function fillSample() {
+  const data = [
+    ['alice', 95], ['bob', 82], ['carol', 91], ['dave', 78],
+    ['eve', 88], ['frank', 73], ['grace', 97], ['heidi', 65]
+  ];
+  for (const [k, v] of data) insertEntry(k, v);
+  addLog('Loaded 8 sample entries.', 'op-info');
+  renderBuckets(-1, null);
+}
+
+function fillRandom() {
+  const names = ['alpha','bravo','charlie','delta','echo','foxtrot','golf','hotel','india','juliet',
+                 'kilo','lima','mike','november','oscar','papa','quebec','romeo','sierra','tango'];
+  for (let i = 0; i < 10; i++) {
+    const name = names[Math.floor(Math.random() * names.length)] + Math.floor(Math.random() * 100);
+    const val = Math.floor(Math.random() * 100);
+    insertEntry(name, val);
+  }
+  addLog('Inserted 10 random entries.', 'op-info');
+  renderBuckets(-1, null);
+}
+
+renderBuckets(-1, null);
+</script>
+</body>
+</html>

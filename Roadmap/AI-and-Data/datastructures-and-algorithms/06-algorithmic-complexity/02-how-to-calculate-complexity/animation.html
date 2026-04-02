@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complexity Calculator - Step-by-Step Visualization</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #21262d;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text2: #8b949e;
+    --blue: #58a6ff;
+    --green: #3fb950;
+    --orange: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    color: var(--blue);
+    font-size: 1.6em;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--text2);
+    font-size: 0.9em;
+    margin-bottom: 20px;
+  }
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .panel h2 {
+    color: var(--blue);
+    font-size: 1em;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+  .pattern-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .pattern-btn {
+    background: var(--bg3);
+    border: 2px solid var(--border);
+    color: var(--text);
+    padding: 10px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .pattern-btn:hover { border-color: var(--blue); }
+  .pattern-btn.active {
+    border-color: var(--blue);
+    background: rgba(88,166,255,0.1);
+    color: var(--blue);
+  }
+  .pattern-btn .label { font-weight: bold; display: block; }
+  .pattern-btn .complexity { color: var(--green); font-size: 0.85em; }
+  .code-display {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 0.82em;
+    line-height: 1.7;
+    overflow-x: auto;
+    min-height: 200px;
+    white-space: pre;
+  }
+  .code-line {
+    padding: 1px 6px;
+    border-radius: 3px;
+    transition: background 0.3s;
+  }
+  .code-line.active {
+    background: rgba(88,166,255,0.15);
+    border-left: 3px solid var(--blue);
+    padding-left: 3px;
+  }
+  .code-line.done {
+    background: rgba(63,185,80,0.08);
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.2s;
+  }
+  .btn:hover { border-color: var(--blue); color: var(--blue); }
+  .btn.primary { background: rgba(88,166,255,0.15); border-color: var(--blue); color: var(--blue); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .speed-control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    font-size: 0.82em;
+    color: var(--text2);
+  }
+  .speed-control input { width: 80px; accent-color: var(--blue); }
+  .n-control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85em;
+    margin-bottom: 12px;
+  }
+  .n-control label { color: var(--text2); }
+  .n-control input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 4px 8px;
+    border-radius: 4px;
+    width: 60px;
+    font-size: 0.9em;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px;
+    text-align: center;
+  }
+  .stat-box .value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--blue);
+  }
+  .stat-box .label {
+    font-size: 0.75em;
+    color: var(--text2);
+    margin-top: 2px;
+  }
+  .chart-area {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    min-height: 180px;
+    position: relative;
+  }
+  canvas { width: 100%; height: 160px; display: block; }
+  .full-width { grid-column: 1 / -1; }
+  .var-display {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 0.85em;
+    margin-top: 8px;
+    min-height: 40px;
+  }
+  .var-display span { margin-right: 16px; }
+  .var-name { color: var(--purple); }
+  .var-val { color: var(--orange); }
+  .log-area {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 0.78em;
+    max-height: 120px;
+    overflow-y: auto;
+    margin-top: 8px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+  .log-area .op { color: var(--green); }
+</style>
+</head>
+<body>
+<h1>Complexity Calculator Visualization</h1>
+<p class="subtitle">Watch how operations grow step-by-step for different code patterns</p>
+
+<div class="container">
+  <div class="panel">
+    <h2>Select Pattern</h2>
+    <div class="pattern-btns">
+      <button class="pattern-btn active" onclick="selectPattern('single')" id="btn-single">
+        <span class="label">Single Loop</span>
+        <span class="complexity">O(n)</span>
+      </button>
+      <button class="pattern-btn" onclick="selectPattern('nested')" id="btn-nested">
+        <span class="label">Nested Loop</span>
+        <span class="complexity">O(n^2)</span>
+      </button>
+      <button class="pattern-btn" onclick="selectPattern('halving')" id="btn-halving">
+        <span class="label">Halving Loop</span>
+        <span class="complexity">O(log n)</span>
+      </button>
+      <button class="pattern-btn" onclick="selectPattern('recursive')" id="btn-recursive">
+        <span class="label">Recursive (Merge)</span>
+        <span class="complexity">O(n log n)</span>
+      </button>
+    </div>
+    <div class="n-control">
+      <label>n =</label>
+      <input type="number" id="nInput" value="8" min="2" max="64">
+      <button class="btn" onclick="resetAnimation()">Apply</button>
+    </div>
+    <div class="code-display" id="codeDisplay"></div>
+    <div class="var-display" id="varDisplay"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Execution</h2>
+    <div class="controls">
+      <button class="btn primary" id="btnStart" onclick="startAnimation()">Start</button>
+      <button class="btn" id="btnStep" onclick="stepAnimation()">Step</button>
+      <button class="btn" id="btnReset" onclick="resetAnimation()">Reset</button>
+      <div class="speed-control">
+        <label>Speed</label>
+        <input type="range" id="speedSlider" min="1" max="10" value="5">
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat-box">
+        <div class="value" id="opCount">0</div>
+        <div class="label">Operations</div>
+      </div>
+      <div class="stat-box">
+        <div class="value" id="stepCount">0</div>
+        <div class="label">Steps</div>
+      </div>
+      <div class="stat-box">
+        <div class="value" id="expectedOps">-</div>
+        <div class="label">Expected O(f(n))</div>
+      </div>
+      <div class="stat-box">
+        <div class="value" id="statusText">Ready</div>
+        <div class="label">Status</div>
+      </div>
+    </div>
+    <div class="chart-area">
+      <canvas id="chartCanvas"></canvas>
+    </div>
+    <div class="log-area" id="logArea"></div>
+  </div>
+</div>
+
+<script>
+const patterns = {
+  single: {
+    code: [
+      'count = 0',
+      'for i = 0 to n-1:',
+      '    count += 1    // operation',
+      'return count'
+    ],
+    expected: n => n,
+    label: 'n'
+  },
+  nested: {
+    code: [
+      'count = 0',
+      'for i = 0 to n-1:',
+      '    for j = 0 to n-1:',
+      '        count += 1  // operation',
+      'return count'
+    ],
+    expected: n => n * n,
+    label: 'n^2'
+  },
+  halving: {
+    code: [
+      'count = 0',
+      'i = n',
+      'while i > 1:',
+      '    i = floor(i / 2) // halve',
+      '    count += 1       // operation',
+      'return count'
+    ],
+    expected: n => Math.floor(Math.log2(n)),
+    label: 'log n'
+  },
+  recursive: {
+    code: [
+      'function mergeCount(arr):',
+      '    if len(arr) <= 1: return 0',
+      '    mid = len(arr) / 2',
+      '    left  = mergeCount(arr[:mid])',
+      '    right = mergeCount(arr[mid:])',
+      '    // merge step: n comparisons',
+      '    ops = len(arr)  // operation',
+      '    return left + right + ops'
+    ],
+    expected: n => n <= 1 ? 0 : Math.round(n * Math.log2(n)),
+    label: 'n log n'
+  }
+};
+
+let currentPattern = 'single';
+let n = 8;
+let running = false;
+let timer = null;
+let ops = 0;
+let steps = 0;
+let opsHistory = [];
+let execState = null;
+let execGen = null;
+
+function selectPattern(name) {
+  document.querySelectorAll('.pattern-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + name).classList.add('active');
+  currentPattern = name;
+  resetAnimation();
+}
+
+function renderCode(activeLine) {
+  const el = document.getElementById('codeDisplay');
+  const p = patterns[currentPattern];
+  el.innerHTML = p.code.map((line, i) => {
+    let cls = '';
+    if (i === activeLine) cls = 'active';
+    else if (activeLine !== null && i < activeLine) cls = 'done';
+    return `<div class="code-line ${cls}">${line}</div>`;
+  }).join('');
+}
+
+function updateVars(vars) {
+  const el = document.getElementById('varDisplay');
+  if (!vars || Object.keys(vars).length === 0) {
+    el.innerHTML = '<span style="color:var(--text2)">Variables will appear here</span>';
+    return;
+  }
+  el.innerHTML = Object.entries(vars).map(
+    ([k, v]) => `<span><span class="var-name">${k}</span> = <span class="var-val">${v}</span></span>`
+  ).join('');
+}
+
+function addLog(msg) {
+  const el = document.getElementById('logArea');
+  el.innerHTML += msg + '\n';
+  el.scrollTop = el.scrollHeight;
+}
+
+function updateStats() {
+  document.getElementById('opCount').textContent = ops;
+  document.getElementById('stepCount').textContent = steps;
+  const p = patterns[currentPattern];
+  document.getElementById('expectedOps').textContent = `${p.expected(n)} (${p.label})`;
+}
+
+function drawChart() {
+  const canvas = document.getElementById('chartCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * 2;
+  canvas.height = 320;
+  ctx.scale(2, 2);
+  const w = canvas.offsetWidth;
+  const h = 160;
+
+  ctx.clearRect(0, 0, w, h);
+
+  if (opsHistory.length < 2) return;
+
+  const maxOp = Math.max(...opsHistory, 1);
+  const padL = 35, padR = 10, padT = 10, padB = 20;
+  const cw = w - padL - padR;
+  const ch = h - padT - padB;
+
+  // Grid
+  ctx.strokeStyle = '#21262d';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 4; i++) {
+    const y = padT + (ch / 4) * i;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
+  }
+
+  // Axis labels
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '9px sans-serif';
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= 4; i++) {
+    const val = Math.round(maxOp * (4 - i) / 4);
+    ctx.fillText(val, padL - 4, padT + (ch / 4) * i + 3);
+  }
+  ctx.textAlign = 'center';
+  ctx.fillText('Step', w / 2, h - 2);
+
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = '#58a6ff';
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  opsHistory.forEach((v, i) => {
+    const x = padL + (i / (opsHistory.length - 1)) * cw;
+    const y = padT + ch - (v / maxOp) * ch;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Fill under
+  const lastX = padL + cw;
+  const lastY = padT + ch - (opsHistory[opsHistory.length - 1] / maxOp) * ch;
+  ctx.lineTo(lastX, padT + ch);
+  ctx.lineTo(padL, padT + ch);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(88,166,255,0.08)';
+  ctx.fill();
+
+  // Dot on last point
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, 3, 0, Math.PI * 2);
+  ctx.fillStyle = '#58a6ff';
+  ctx.fill();
+}
+
+// Generators for each pattern
+function* singleLoopGen(n) {
+  yield { line: 0, vars: { count: 0 }, log: 'Initialize count = 0' };
+  let count = 0;
+  for (let i = 0; i < n; i++) {
+    yield { line: 1, vars: { count, i, n }, log: `Loop: i = ${i}` };
+    count++;
+    ops++;
+    opsHistory.push(ops);
+    yield { line: 2, vars: { count, i, n }, log: `<span class="op">+1 op</span> count = ${count}`, op: true };
+  }
+  yield { line: 3, vars: { count }, log: `Done. Total operations = ${count}` };
+}
+
+function* nestedLoopGen(n) {
+  yield { line: 0, vars: { count: 0 }, log: 'Initialize count = 0' };
+  let count = 0;
+  for (let i = 0; i < n; i++) {
+    yield { line: 1, vars: { count, i, n }, log: `Outer: i = ${i}` };
+    for (let j = 0; j < n; j++) {
+      yield { line: 2, vars: { count, i, j, n }, log: `  Inner: j = ${j}` };
+      count++;
+      ops++;
+      opsHistory.push(ops);
+      yield { line: 3, vars: { count, i, j, n }, log: `  <span class="op">+1 op</span> count = ${count}`, op: true };
+    }
+  }
+  yield { line: 4, vars: { count }, log: `Done. Total = ${count} = ${n}*${n}` };
+}
+
+function* halvingLoopGen(n) {
+  yield { line: 0, vars: { count: 0 }, log: 'Initialize count = 0' };
+  yield { line: 1, vars: { count: 0, i: n }, log: `Set i = ${n}` };
+  let count = 0;
+  let i = n;
+  while (i > 1) {
+    yield { line: 2, vars: { count, i }, log: `Check: i = ${i} > 1? Yes` };
+    i = Math.floor(i / 2);
+    yield { line: 3, vars: { count, i }, log: `Halve: i = ${i}` };
+    count++;
+    ops++;
+    opsHistory.push(ops);
+    yield { line: 4, vars: { count, i }, log: `<span class="op">+1 op</span> count = ${count}`, op: true };
+  }
+  yield { line: 2, vars: { count, i }, log: `Check: i = ${i} > 1? No. Exit.` };
+  yield { line: 5, vars: { count }, log: `Done. Total = ${count} = floor(log2(${n}))` };
+}
+
+function* recursiveGen(n) {
+  ops = 0;
+  function* recurse(size, depth) {
+    const indent = '  '.repeat(depth);
+    if (size <= 1) {
+      yield { line: 1, vars: { size, depth }, log: `${indent}Base case: size=${size}, return 0` };
+      return 0;
+    }
+    const mid = Math.floor(size / 2);
+    yield { line: 2, vars: { size, mid, depth }, log: `${indent}Split size=${size} into ${mid} + ${size - mid}` };
+
+    yield { line: 3, vars: { size, depth }, log: `${indent}Recurse LEFT (size=${mid})` };
+    let left = 0;
+    for (const s of recurse(mid, depth + 1)) { yield s; if (typeof s === 'number') left = s; }
+
+    yield { line: 4, vars: { size, depth }, log: `${indent}Recurse RIGHT (size=${size - mid})` };
+    let right = 0;
+    for (const s of recurse(size - mid, depth + 1)) { yield s; if (typeof s === 'number') right = s; }
+
+    const mergeOps = size;
+    ops += mergeOps;
+    opsHistory.push(ops);
+    yield { line: 6, vars: { size, mergeOps, totalOps: ops, depth }, log: `${indent}<span class="op">+${mergeOps} ops</span> (merge ${size} elements). Total = ${ops}`, op: true };
+
+    return left + right + mergeOps;
+  }
+
+  yield { line: 0, vars: { n }, log: `Call mergeCount(arr of size ${n})` };
+  for (const s of recurse(n, 0)) { yield s; }
+  yield { line: 7, vars: { totalOps: ops }, log: `Done. Total = ${ops}` };
+}
+
+function getGenerator(pattern, n) {
+  switch (pattern) {
+    case 'single': return singleLoopGen(n);
+    case 'nested': return nestedLoopGen(n);
+    case 'halving': return halvingLoopGen(n);
+    case 'recursive': return recursiveGen(n);
+  }
+}
+
+function resetAnimation() {
+  if (timer) { clearTimeout(timer); timer = null; }
+  running = false;
+  n = parseInt(document.getElementById('nInput').value) || 8;
+  if (n < 2) n = 2;
+  if (n > 64) n = 64;
+  document.getElementById('nInput').value = n;
+  ops = 0;
+  steps = 0;
+  opsHistory = [0];
+  execGen = getGenerator(currentPattern, n);
+  renderCode(null);
+  updateVars({});
+  updateStats();
+  drawChart();
+  document.getElementById('logArea').innerHTML = '';
+  document.getElementById('statusText').textContent = 'Ready';
+  document.getElementById('btnStart').textContent = 'Start';
+  document.getElementById('btnStart').disabled = false;
+  document.getElementById('btnStep').disabled = false;
+}
+
+function doStep() {
+  if (!execGen) return false;
+  const result = execGen.next();
+  if (result.done) {
+    document.getElementById('statusText').textContent = 'Done';
+    document.getElementById('btnStart').disabled = true;
+    document.getElementById('btnStep').disabled = true;
+    renderCode(null);
+    return false;
+  }
+  const s = result.value;
+  if (typeof s === 'number') return true; // internal return value
+  steps++;
+  if (s.line !== undefined) renderCode(s.line);
+  if (s.vars) updateVars(s.vars);
+  if (s.log) addLog(s.log);
+  updateStats();
+  drawChart();
+  document.getElementById('statusText').textContent = 'Running';
+  return true;
+}
+
+function stepAnimation() {
+  if (running) {
+    running = false;
+    if (timer) { clearTimeout(timer); timer = null; }
+    document.getElementById('btnStart').textContent = 'Start';
+  }
+  doStep();
+}
+
+function startAnimation() {
+  if (running) {
+    running = false;
+    if (timer) { clearTimeout(timer); timer = null; }
+    document.getElementById('btnStart').textContent = 'Start';
+    return;
+  }
+  running = true;
+  document.getElementById('btnStart').textContent = 'Pause';
+
+  function tick() {
+    if (!running) return;
+    const cont = doStep();
+    if (cont) {
+      const speed = parseInt(document.getElementById('speedSlider').value);
+      const delay = Math.max(20, 600 - speed * 55);
+      timer = setTimeout(tick, delay);
+    } else {
+      running = false;
+      document.getElementById('btnStart').textContent = 'Start';
+    }
+  }
+  tick();
+}
+
+// Initialize
+resetAnimation();
+window.addEventListener('resize', drawChart);
+</script>
+</body>
+</html>

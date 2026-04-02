@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stack Visualization</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #e0e0e0; display: flex; justify-content: center; padding: 20px; min-height: 100vh; }
+  .container { max-width: 900px; width: 100%; }
+  h1 { text-align: center; color: #00d4ff; margin-bottom: 20px; font-size: 1.6em; }
+  .controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+  .controls input { padding: 8px 12px; border: 1px solid #3a3a5c; border-radius: 6px; background: #16213e; color: #e0e0e0; font-size: 14px; width: 100px; text-align: center; }
+  .controls button { padding: 8px 18px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+  .btn-push { background: #00b894; color: #fff; }
+  .btn-push:hover { background: #00a381; }
+  .btn-pop { background: #e17055; color: #fff; }
+  .btn-pop:hover { background: #c0553a; }
+  .btn-peek { background: #0984e3; color: #fff; }
+  .btn-peek:hover { background: #0770c2; }
+  .btn-clear { background: #636e72; color: #fff; }
+  .btn-clear:hover { background: #4a5458; }
+  .main-area { display: flex; gap: 24px; }
+  .stack-panel { flex: 1; min-width: 200px; }
+  .info-panel { flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 16px; }
+  .stack-container { background: #16213e; border: 2px solid #3a3a5c; border-radius: 10px; padding: 16px; min-height: 380px; display: flex; flex-direction: column; align-items: center; position: relative; }
+  .stack-label { font-size: 12px; color: #888; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  .stack-visual { display: flex; flex-direction: column; align-items: center; width: 100%; flex: 1; justify-content: flex-end; gap: 4px; }
+  .stack-cell { width: 120px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 16px; font-weight: 600; position: relative; transition: all 0.3s ease; }
+  .stack-cell.normal { background: #2d3a5c; border: 1px solid #4a5a8a; }
+  .stack-cell.highlight-push { background: #00b894; border: 1px solid #00d4aa; animation: slideDown 0.3s ease; }
+  .stack-cell.highlight-pop { background: #e17055; border: 1px solid #f0816a; animation: slideUp 0.3s ease; }
+  .stack-cell.highlight-peek { background: #0984e3; border: 1px solid #3da5f0; }
+  .top-arrow { position: absolute; left: -50px; display: flex; align-items: center; gap: 4px; color: #00d4ff; font-weight: 700; font-size: 13px; transition: top 0.3s ease; }
+  .top-arrow::after { content: '\2192'; font-size: 18px; }
+  .empty-label { color: #555; font-style: italic; margin: auto; }
+  .stats-box, .bigO-box, .log-box { background: #16213e; border: 1px solid #3a3a5c; border-radius: 10px; padding: 14px; }
+  .stats-box h3, .bigO-box h3, .log-box h3 { color: #00d4ff; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .stat-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
+  .stat-val { color: #00d4ff; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 6px 8px; text-align: center; border-bottom: 1px solid #2a2a4a; }
+  th { color: #00d4ff; font-weight: 600; }
+  td:first-child { text-align: left; }
+  .log-entries { max-height: 140px; overflow-y: auto; font-size: 13px; font-family: monospace; }
+  .log-entry { padding: 3px 0; border-bottom: 1px solid #1a1a3e; }
+  .log-entry.push-log { color: #00b894; }
+  .log-entry.pop-log { color: #e17055; }
+  .log-entry.peek-log { color: #0984e3; }
+  .log-entry.error-log { color: #ff6b6b; }
+  @keyframes slideDown { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @keyframes slideUp { from { opacity: 1; } to { transform: translateY(-30px); opacity: 0; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Stack (LIFO) Visualization</h1>
+  <div class="controls">
+    <input type="number" id="inputVal" placeholder="Value" value="">
+    <button class="btn-push" onclick="pushVal()">Push</button>
+    <button class="btn-pop" onclick="popVal()">Pop</button>
+    <button class="btn-peek" onclick="peekVal()">Peek</button>
+    <button class="btn-clear" onclick="clearStack()">Clear</button>
+  </div>
+  <div class="main-area">
+    <div class="stack-panel">
+      <div class="stack-container">
+        <div class="stack-label">Stack (top at top)</div>
+        <div class="stack-visual" id="stackVisual">
+          <div class="empty-label">Stack is empty</div>
+        </div>
+      </div>
+    </div>
+    <div class="info-panel">
+      <div class="stats-box">
+        <h3>Statistics</h3>
+        <div class="stat-row"><span>Size</span><span class="stat-val" id="statSize">0</span></div>
+        <div class="stat-row"><span>Top</span><span class="stat-val" id="statTop">--</span></div>
+        <div class="stat-row"><span>Pushes</span><span class="stat-val" id="statPushes">0</span></div>
+        <div class="stat-row"><span>Pops</span><span class="stat-val" id="statPops">0</span></div>
+        <div class="stat-row"><span>Is Empty</span><span class="stat-val" id="statEmpty">true</span></div>
+      </div>
+      <div class="bigO-box">
+        <h3>Time Complexity</h3>
+        <table>
+          <tr><th>Operation</th><th>Average</th><th>Worst</th></tr>
+          <tr><td>Push</td><td>O(1)</td><td>O(n)*</td></tr>
+          <tr><td>Pop</td><td>O(1)</td><td>O(1)</td></tr>
+          <tr><td>Peek</td><td>O(1)</td><td>O(1)</td></tr>
+          <tr><td>isEmpty</td><td>O(1)</td><td>O(1)</td></tr>
+          <tr><td>Search</td><td>O(n)</td><td>O(n)</td></tr>
+        </table>
+        <div style="font-size:11px;color:#666;margin-top:6px;">*Amortized O(1) for dynamic array</div>
+      </div>
+      <div class="log-box">
+        <h3>Operation Log</h3>
+        <div class="log-entries" id="logEntries"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  const MAX_VISIBLE = 8;
+  let stack = [];
+  let pushCount = 0;
+  let popCount = 0;
+  let nextVal = 1;
+
+  const inputEl = document.getElementById('inputVal');
+  const visualEl = document.getElementById('stackVisual');
+  const logEl = document.getElementById('logEntries');
+
+  function getVal() {
+    let v = inputEl.value.trim();
+    if (v === '') { v = nextVal++; } else { v = parseInt(v) || 0; nextVal = v + 1; }
+    inputEl.value = '';
+    return v;
+  }
+
+  function addLog(msg, cls) {
+    const div = document.createElement('div');
+    div.className = 'log-entry ' + cls;
+    div.textContent = msg;
+    logEl.prepend(div);
+    if (logEl.children.length > 50) logEl.removeChild(logEl.lastChild);
+  }
+
+  function updateStats() {
+    document.getElementById('statSize').textContent = stack.length;
+    document.getElementById('statTop').textContent = stack.length > 0 ? stack[stack.length - 1] : '--';
+    document.getElementById('statPushes').textContent = pushCount;
+    document.getElementById('statPops').textContent = popCount;
+    document.getElementById('statEmpty').textContent = stack.length === 0 ? 'true' : 'false';
+  }
+
+  function render(highlightIndex, highlightClass) {
+    visualEl.innerHTML = '';
+    if (stack.length === 0) {
+      visualEl.innerHTML = '<div class="empty-label">Stack is empty</div>';
+      updateStats();
+      return;
+    }
+    const start = Math.max(0, stack.length - MAX_VISIBLE);
+    const containerRect = visualEl.getBoundingClientRect();
+
+    for (let i = stack.length - 1; i >= start; i--) {
+      const cell = document.createElement('div');
+      cell.className = 'stack-cell ' + (i === highlightIndex ? highlightClass : 'normal');
+      cell.textContent = stack[i];
+
+      if (i === stack.length - 1) {
+        const arrow = document.createElement('div');
+        arrow.className = 'top-arrow';
+        arrow.textContent = 'TOP ';
+        cell.appendChild(arrow);
+      }
+      visualEl.appendChild(cell);
+    }
+    if (start > 0) {
+      const more = document.createElement('div');
+      more.style.cssText = 'color:#666;font-size:12px;margin-top:4px;';
+      more.textContent = '... ' + start + ' more below';
+      visualEl.appendChild(more);
+    }
+    updateStats();
+  }
+
+  function pushVal() {
+    const val = getVal();
+    stack.push(val);
+    pushCount++;
+    addLog('push(' + val + ') -> size=' + stack.length, 'push-log');
+    render(stack.length - 1, 'highlight-push');
+    setTimeout(() => render(-1, ''), 500);
+  }
+
+  function popVal() {
+    if (stack.length === 0) {
+      addLog('pop() -> ERROR: stack is empty', 'error-log');
+      return;
+    }
+    const idx = stack.length - 1;
+    render(idx, 'highlight-pop');
+    const val = stack[idx];
+    setTimeout(() => {
+      stack.pop();
+      popCount++;
+      addLog('pop() -> ' + val + ', size=' + stack.length, 'pop-log');
+      render(-1, '');
+    }, 300);
+  }
+
+  function peekVal() {
+    if (stack.length === 0) {
+      addLog('peek() -> ERROR: stack is empty', 'error-log');
+      return;
+    }
+    const val = stack[stack.length - 1];
+    addLog('peek() -> ' + val, 'peek-log');
+    render(stack.length - 1, 'highlight-peek');
+    setTimeout(() => render(-1, ''), 800);
+  }
+
+  function clearStack() {
+    stack = [];
+    pushCount = 0;
+    popCount = 0;
+    logEl.innerHTML = '';
+    addLog('clear() -> stack reset', 'pop-log');
+    render(-1, '');
+  }
+
+  inputEl.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') pushVal();
+  });
+
+  render(-1, '');
+</script>
+</body>
+</html>

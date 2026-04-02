@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big-Omega Notation — Interactive Visualization</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #58a6ff;
+            font-size: 1.6em;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #8b949e;
+            font-size: 0.95em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        canvas {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            width: 100%;
+            display: block;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .control-group label {
+            color: #58a6ff;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .control-group .value {
+            color: #f0883e;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #30363d;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #58a6ff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #58a6ff;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        select {
+            background: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            padding: 6px 10px;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+        }
+
+        .legend-color {
+            width: 24px;
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        .info-box {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .info-box .definition {
+            color: #f0883e;
+            font-weight: bold;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 1em;
+            font-weight: bold;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        .status.valid {
+            background: #0d2818;
+            color: #3fb950;
+            border: 1px solid #238636;
+        }
+
+        .status.invalid {
+            background: #2d1215;
+            color: #f85149;
+            border: 1px solid #da3633;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Big-Omega Notation Visualization</h1>
+        <p class="subtitle">f(n) = &Omega;(g(n)) means f(n) &ge; c &middot; g(n) for all n &ge; n&#8320;</p>
+
+        <canvas id="graph" width="880" height="450"></canvas>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #58a6ff;"></div>
+                <span>f(n) — actual function</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f85149;"></div>
+                <span>c &middot; g(n) — lower bound</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgba(63,185,80,0.15); border: 1px solid #3fb950;"></div>
+                <span>Region where f(n) &ge; c &middot; g(n)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f0883e; width: 4px; height: 16px;"></div>
+                <span>n&#8320; threshold</span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Constant c: <span class="value" id="cValue">1.0</span></label>
+                <input type="range" id="cSlider" min="0.1" max="5.0" step="0.1" value="1.0">
+            </div>
+            <div class="control-group">
+                <label>Threshold n&#8320;: <span class="value" id="n0Value">5</span></label>
+                <input type="range" id="n0Slider" min="1" max="50" step="1" value="5">
+            </div>
+            <div class="control-group">
+                <label>f(n) — Function:</label>
+                <select id="fnSelect">
+                    <option value="nlogn" selected>n &middot; log(n) + 3n</option>
+                    <option value="n2">2n&sup2; + 5n</option>
+                    <option value="n3">n&sup3; - 10n&sup2;</option>
+                    <option value="3n">3n + 10</option>
+                    <option value="2pow">2&#8319;</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>g(n) — Lower Bound Class:</label>
+                <select id="gnSelect">
+                    <option value="nlogn" selected>n &middot; log(n)</option>
+                    <option value="n">n</option>
+                    <option value="n2">n&sup2;</option>
+                    <option value="logn">log(n)</option>
+                    <option value="n3">n&sup3;</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="status" id="status">Checking...</div>
+
+        <div class="info-box">
+            <p><span class="definition">Definition:</span>
+            f(n) = &Omega;(g(n)) if there exist constants c &gt; 0 and n&#8320; &ge; 0
+            such that f(n) &ge; c &middot; g(n) for all n &ge; n&#8320;.</p>
+            <p style="margin-top:8px;">Use the sliders to adjust c and n&#8320;. The visualization shows whether
+            f(n) stays <strong>above</strong> c &middot; g(n) for all n &ge; n&#8320;.
+            If it does, the &Omega; relationship holds with those constants.</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('graph');
+        const ctx = canvas.getContext('2d');
+        const cSlider = document.getElementById('cSlider');
+        const n0Slider = document.getElementById('n0Slider');
+        const cValueEl = document.getElementById('cValue');
+        const n0ValueEl = document.getElementById('n0Value');
+        const fnSelect = document.getElementById('fnSelect');
+        const gnSelect = document.getElementById('gnSelect');
+        const statusEl = document.getElementById('status');
+
+        const W = canvas.width;
+        const H = canvas.height;
+        const PAD_LEFT = 60;
+        const PAD_BOTTOM = 40;
+        const PAD_TOP = 20;
+        const PAD_RIGHT = 20;
+
+        function log2(n) { return n > 0 ? Math.log2(n) : 0; }
+
+        const functions = {
+            'nlogn': n => n * log2(n) + 3 * n,
+            'n2': n => 2 * n * n + 5 * n,
+            'n3': n => n * n * n - 10 * n * n,
+            '3n': n => 3 * n + 10,
+            '2pow': n => Math.pow(2, n),
+        };
+
+        const gFunctions = {
+            'nlogn': n => n * log2(n),
+            'n': n => n,
+            'n2': n => n * n,
+            'logn': n => log2(n),
+            'n3': n => n * n * n,
+        };
+
+        function draw() {
+            const c = parseFloat(cSlider.value);
+            const n0 = parseInt(n0Slider.value);
+            const f = functions[fnSelect.value];
+            const g = gFunctions[gnSelect.value];
+
+            cValueEl.textContent = c.toFixed(1);
+            n0ValueEl.textContent = n0;
+
+            ctx.fillStyle = '#161b22';
+            ctx.fillRect(0, 0, W, H);
+
+            // Determine plot range
+            const maxN = 60;
+            const plotW = W - PAD_LEFT - PAD_RIGHT;
+            const plotH = H - PAD_TOP - PAD_BOTTOM;
+
+            // Compute max Y for scaling
+            let maxY = 1;
+            for (let n = 1; n <= maxN; n++) {
+                const fv = f(n);
+                const gv = c * g(n);
+                maxY = Math.max(maxY, fv, gv);
+            }
+            maxY *= 1.1;
+
+            // Clamp maxY for exponential functions
+            if (maxY > 1e12) maxY = 1e12;
+
+            function toX(n) { return PAD_LEFT + (n / maxN) * plotW; }
+            function toY(v) {
+                const clamped = Math.min(v, maxY);
+                return H - PAD_BOTTOM - (clamped / maxY) * plotH;
+            }
+
+            // Draw axes
+            ctx.strokeStyle = '#30363d';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(PAD_LEFT, PAD_TOP);
+            ctx.lineTo(PAD_LEFT, H - PAD_BOTTOM);
+            ctx.lineTo(W - PAD_RIGHT, H - PAD_BOTTOM);
+            ctx.stroke();
+
+            // Axis labels
+            ctx.fillStyle = '#8b949e';
+            ctx.font = '12px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('n', W / 2, H - 8);
+            ctx.save();
+            ctx.translate(15, H / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('value', 0, 0);
+            ctx.restore();
+
+            // Tick marks on x-axis
+            for (let n = 10; n <= maxN; n += 10) {
+                const x = toX(n);
+                ctx.fillStyle = '#8b949e';
+                ctx.fillText(n.toString(), x, H - PAD_BOTTOM + 16);
+                ctx.strokeStyle = '#21262d';
+                ctx.beginPath();
+                ctx.moveTo(x, PAD_TOP);
+                ctx.lineTo(x, H - PAD_BOTTOM);
+                ctx.stroke();
+            }
+
+            // Draw n0 vertical line
+            const n0x = toX(n0);
+            ctx.strokeStyle = '#f0883e';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 4]);
+            ctx.beginPath();
+            ctx.moveTo(n0x, PAD_TOP);
+            ctx.lineTo(n0x, H - PAD_BOTTOM);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#f0883e';
+            ctx.font = 'bold 12px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('n\u2080=' + n0, n0x, PAD_TOP + 14);
+
+            // Fill the region where f(n) >= c*g(n) for n >= n0
+            ctx.fillStyle = 'rgba(63, 185, 80, 0.12)';
+            ctx.beginPath();
+            let started = false;
+            for (let n = n0; n <= maxN; n++) {
+                const fv = f(n);
+                const gv = c * g(n);
+                if (fv >= gv && gv >= 0) {
+                    const x = toX(n);
+                    const fy = toY(fv);
+                    const gy = toY(gv);
+                    if (!started) {
+                        ctx.moveTo(x, fy);
+                        started = true;
+                    } else {
+                        ctx.lineTo(x, fy);
+                    }
+                }
+            }
+            // Close back along g(n)
+            for (let n = maxN; n >= n0; n--) {
+                const fv = f(n);
+                const gv = c * g(n);
+                if (fv >= gv && gv >= 0) {
+                    ctx.lineTo(toX(n), toY(gv));
+                }
+            }
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw c*g(n) curve
+            ctx.strokeStyle = '#f85149';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            let gStarted = false;
+            for (let n = 1; n <= maxN; n++) {
+                const v = c * g(n);
+                if (v < 0) continue;
+                const x = toX(n);
+                const y = toY(v);
+                if (!gStarted) { ctx.moveTo(x, y); gStarted = true; }
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Draw f(n) curve
+            ctx.strokeStyle = '#58a6ff';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            let fStarted = false;
+            for (let n = 1; n <= maxN; n++) {
+                const v = f(n);
+                if (v < 0) continue;
+                const x = toX(n);
+                const y = toY(v);
+                if (!fStarted) { ctx.moveTo(x, y); fStarted = true; }
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Labels on curves
+            const labelN = Math.min(maxN - 5, 45);
+            const fLabel = f(labelN);
+            const gLabel = c * g(labelN);
+
+            ctx.font = 'bold 13px monospace';
+            if (fLabel >= 0 && fLabel <= maxY) {
+                ctx.fillStyle = '#58a6ff';
+                ctx.textAlign = 'left';
+                ctx.fillText('f(n)', toX(labelN) + 5, toY(fLabel) - 8);
+            }
+            if (gLabel >= 0 && gLabel <= maxY) {
+                ctx.fillStyle = '#f85149';
+                ctx.textAlign = 'left';
+                ctx.fillText('c\u00B7g(n)', toX(labelN) + 5, toY(gLabel) + 18);
+            }
+
+            // Check if Omega holds
+            let holds = true;
+            let violationN = -1;
+            for (let n = n0; n <= maxN; n++) {
+                const fv = f(n);
+                const gv = c * g(n);
+                if (fv < gv) {
+                    holds = false;
+                    violationN = n;
+                    break;
+                }
+            }
+
+            if (holds) {
+                statusEl.className = 'status valid';
+                statusEl.innerHTML = '\u2713 \u03A9 holds: f(n) \u2265 ' + c.toFixed(1) +
+                    ' \u00B7 g(n) for all n \u2265 ' + n0 +
+                    ' &mdash; f(n) = \u03A9(g(n)) confirmed';
+            } else {
+                statusEl.className = 'status invalid';
+                statusEl.innerHTML = '\u2717 Violation at n=' + violationN +
+                    ': f(' + violationN + ') < ' + c.toFixed(1) +
+                    ' \u00B7 g(' + violationN + ') &mdash; try different c or n\u2080';
+
+                // Mark violation point
+                const vx = toX(violationN);
+                const vy = toY(f(violationN));
+                ctx.beginPath();
+                ctx.arc(vx, vy, 6, 0, Math.PI * 2);
+                ctx.fillStyle = '#f85149';
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+
+        cSlider.addEventListener('input', draw);
+        n0Slider.addEventListener('input', draw);
+        fnSelect.addEventListener('change', draw);
+        gnSelect.addEventListener('change', draw);
+
+        draw();
+    </script>
+</body>
+</html>

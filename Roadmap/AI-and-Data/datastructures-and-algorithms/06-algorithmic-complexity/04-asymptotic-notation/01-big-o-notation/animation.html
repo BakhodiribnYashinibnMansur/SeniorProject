@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big-O Notation — Interactive Visualization</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 1.6rem;
+            color: #58a6ff;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #8b949e;
+            font-size: 0.9rem;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .controls {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .control-group.full-width {
+            grid-column: 1 / -1;
+        }
+        label {
+            font-size: 0.85rem;
+            color: #8b949e;
+            font-weight: 500;
+        }
+        label span.value {
+            color: #58a6ff;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+        select, input[type=range] {
+            background: #0d1117;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        select:focus, input[type=range]:focus {
+            border-color: #58a6ff;
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #21262d;
+            cursor: pointer;
+            padding: 0;
+            margin-top: 4px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #58a6ff;
+            cursor: pointer;
+        }
+        .canvas-wrapper {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 12px;
+            position: relative;
+        }
+        canvas {
+            width: 100%;
+            border-radius: 4px;
+            display: block;
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+        }
+        .legend-color {
+            width: 20px;
+            height: 4px;
+            border-radius: 2px;
+        }
+        .info-panel {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 14px 18px;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        .info-panel .status {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+        .status.valid { color: #3fb950; }
+        .status.invalid { color: #f85149; }
+        .math { font-family: 'Courier New', monospace; color: #d2a8ff; }
+        .n0-line { color: #f0883e; }
+    </style>
+</head>
+<body>
+    <h1>Big-O Notation &mdash; Interactive Visualization</h1>
+    <p class="subtitle">Adjust c and n&#x2080; to show f(n) &le; c &middot; g(n) for all n &ge; n&#x2080;</p>
+    <div class="container">
+        <div class="controls">
+            <div class="control-group">
+                <label>f(n) = <span class="value" id="fnLabel">2n&sup2; + 3n + 5</span></label>
+                <select id="fnSelect">
+                    <option value="quad1" selected>2n&sup2; + 3n + 5</option>
+                    <option value="linear1">5n + 10</option>
+                    <option value="nlogn1">n &middot; log(n) + 2n</option>
+                    <option value="log1">3 &middot; log(n) + 7</option>
+                    <option value="cubic1">0.5n&sup3;</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>g(n) = <span class="value" id="gnLabel">n&sup2;</span></label>
+                <select id="gnSelect">
+                    <option value="n2" selected>n&sup2;</option>
+                    <option value="n">n</option>
+                    <option value="nlogn">n &middot; log(n)</option>
+                    <option value="logn">log(n)</option>
+                    <option value="n3">n&sup3;</option>
+                    <option value="one">1</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>c = <span class="value" id="cValue">3</span></label>
+                <input type="range" id="cSlider" min="0.5" max="20" step="0.5" value="3">
+            </div>
+            <div class="control-group">
+                <label>n&#x2080; = <span class="value" id="n0Value">5</span></label>
+                <input type="range" id="n0Slider" min="1" max="50" step="1" value="5">
+            </div>
+            <div class="control-group full-width">
+                <label>x-axis range: n = 1 to <span class="value" id="rangeValue">60</span></label>
+                <input type="range" id="rangeSlider" min="20" max="200" step="10" value="60">
+            </div>
+        </div>
+        <div class="canvas-wrapper">
+            <canvas id="chart" height="420"></canvas>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background:#58a6ff"></div> f(n)</div>
+                <div class="legend-item"><div class="legend-color" style="background:#f85149"></div> c &middot; g(n)</div>
+                <div class="legend-item"><div class="legend-color" style="background:#f0883e; height:2px; border-top:2px dashed #f0883e"></div> n&#x2080; threshold</div>
+                <div class="legend-item"><div class="legend-color" style="background:rgba(63,185,80,0.15); border:1px solid #3fb950; height:12px; width:20px; border-radius:2px"></div> Valid region (f &le; c&middot;g)</div>
+            </div>
+        </div>
+        <div class="info-panel" id="infoPanel">
+            <div class="status valid" id="statusText">Condition HOLDS</div>
+            <div id="infoText"></div>
+        </div>
+    </div>
+    <script>
+        const canvas = document.getElementById('chart');
+        const ctx = canvas.getContext('2d');
+        const cSlider = document.getElementById('cSlider');
+        const n0Slider = document.getElementById('n0Slider');
+        const rangeSlider = document.getElementById('rangeSlider');
+        const fnSelect = document.getElementById('fnSelect');
+        const gnSelect = document.getElementById('gnSelect');
+
+        const fnDefs = {
+            quad1:   { fn: n => 2*n*n + 3*n + 5, label: '2n\u00B2 + 3n + 5' },
+            linear1: { fn: n => 5*n + 10,         label: '5n + 10' },
+            nlogn1:  { fn: n => n*Math.log2(Math.max(n,1)) + 2*n, label: 'n\u00B7log(n) + 2n' },
+            log1:    { fn: n => 3*Math.log2(Math.max(n,1)) + 7,   label: '3\u00B7log(n) + 7' },
+            cubic1:  { fn: n => 0.5*n*n*n,         label: '0.5n\u00B3' }
+        };
+        const gnDefs = {
+            n2:   { fn: n => n*n,                           label: 'n\u00B2' },
+            n:    { fn: n => n,                             label: 'n' },
+            nlogn:{ fn: n => n*Math.log2(Math.max(n,1)),    label: 'n\u00B7log(n)' },
+            logn: { fn: n => Math.log2(Math.max(n,1)),      label: 'log(n)' },
+            n3:   { fn: n => n*n*n,                         label: 'n\u00B3' },
+            one:  { fn: n => 1,                             label: '1' }
+        };
+
+        function draw() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = 420 * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            const W = rect.width, H = 420;
+
+            const c = parseFloat(cSlider.value);
+            const n0 = parseInt(n0Slider.value);
+            const maxN = parseInt(rangeSlider.value);
+            const fDef = fnDefs[fnSelect.value];
+            const gDef = gnDefs[gnSelect.value];
+            const f = fDef.fn, g = gDef.fn;
+
+            document.getElementById('cValue').textContent = c;
+            document.getElementById('n0Value').textContent = n0;
+            document.getElementById('rangeValue').textContent = maxN;
+            document.getElementById('fnLabel').textContent = fDef.label;
+            document.getElementById('gnLabel').textContent = gDef.label;
+
+            const pad = { top: 20, right: 20, bottom: 40, left: 60 };
+            const plotW = W - pad.left - pad.right;
+            const plotH = H - pad.top - pad.bottom;
+
+            // Compute max Y
+            let maxY = 0;
+            for (let n = 1; n <= maxN; n++) {
+                maxY = Math.max(maxY, f(n), c * g(n));
+            }
+            maxY *= 1.1;
+            if (maxY === 0) maxY = 10;
+
+            const xScale = n => pad.left + (n / maxN) * plotW;
+            const yScale = y => pad.top + plotH - (y / maxY) * plotH;
+
+            // Clear
+            ctx.fillStyle = '#0d1117';
+            ctx.fillRect(0, 0, W, H);
+
+            // Grid
+            ctx.strokeStyle = '#21262d';
+            ctx.lineWidth = 0.5;
+            const yTicks = 5;
+            for (let i = 0; i <= yTicks; i++) {
+                const y = pad.top + (plotH / yTicks) * i;
+                ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+                ctx.fillStyle = '#484f58';
+                ctx.font = '11px monospace';
+                ctx.textAlign = 'right';
+                const val = maxY * (1 - i / yTicks);
+                ctx.fillText(val >= 1000 ? (val/1000).toFixed(1)+'k' : val.toFixed(0), pad.left - 6, y + 4);
+            }
+            const xTicks = Math.min(10, maxN);
+            const xStep = Math.ceil(maxN / xTicks);
+            for (let n = xStep; n <= maxN; n += xStep) {
+                const x = xScale(n);
+                ctx.beginPath(); ctx.moveTo(x, pad.top); ctx.lineTo(x, pad.top + plotH); ctx.stroke();
+                ctx.fillStyle = '#484f58';
+                ctx.font = '11px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(n, x, H - pad.bottom + 16);
+            }
+
+            // Axes labels
+            ctx.fillStyle = '#8b949e';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('n', W / 2, H - 4);
+            ctx.save();
+            ctx.translate(14, H / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('operations', 0, 0);
+            ctx.restore();
+
+            // Shaded valid region (where f(n) <= c*g(n) for n >= n0)
+            ctx.fillStyle = 'rgba(63,185,80,0.08)';
+            ctx.beginPath();
+            let started = false;
+            for (let n = n0; n <= maxN; n++) {
+                const fv = f(n), cg = c * g(n);
+                if (fv <= cg) {
+                    const x = xScale(n);
+                    const yTop = yScale(Math.min(cg, maxY));
+                    const yBot = yScale(0);
+                    if (!started) { ctx.moveTo(x, yBot); started = true; }
+                    ctx.lineTo(x, yTop);
+                }
+            }
+            if (started) {
+                for (let n = maxN; n >= n0; n--) {
+                    const fv = f(n), cg = c * g(n);
+                    if (fv <= cg) ctx.lineTo(xScale(n), yScale(0));
+                }
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // n0 vertical line
+            if (n0 <= maxN) {
+                const x0 = xScale(n0);
+                ctx.strokeStyle = '#f0883e';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([6, 4]);
+                ctx.beginPath(); ctx.moveTo(x0, pad.top); ctx.lineTo(x0, pad.top + plotH); ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#f0883e';
+                ctx.font = '11px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('n\u2080=' + n0, x0, pad.top - 4);
+            }
+
+            // Draw c*g(n) curve
+            ctx.strokeStyle = '#f85149';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let n = 1; n <= maxN; n++) {
+                const x = xScale(n), y = yScale(Math.min(c * g(n), maxY));
+                n === 1 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Draw f(n) curve
+            ctx.strokeStyle = '#58a6ff';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for (let n = 1; n <= maxN; n++) {
+                const x = xScale(n), y = yScale(Math.min(f(n), maxY));
+                n === 1 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Check condition
+            let holds = true;
+            let firstViolation = -1;
+            for (let n = n0; n <= maxN; n++) {
+                if (f(n) > c * g(n)) {
+                    holds = false;
+                    if (firstViolation === -1) firstViolation = n;
+                }
+            }
+
+            // Mark violations
+            if (!holds) {
+                ctx.fillStyle = 'rgba(248,81,73,0.6)';
+                for (let n = n0; n <= maxN; n++) {
+                    if (f(n) > c * g(n)) {
+                        const x = xScale(n);
+                        const y = yScale(Math.min(f(n), maxY));
+                        ctx.beginPath();
+                        ctx.arc(x, y, 3, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+
+            // Update info panel
+            const statusEl = document.getElementById('statusText');
+            const infoEl = document.getElementById('infoText');
+            if (holds) {
+                statusEl.className = 'status valid';
+                statusEl.textContent = '\u2713 Condition HOLDS for all visible n \u2265 n\u2080';
+                infoEl.innerHTML =
+                    '<span class="math">f(n) = ' + fDef.label + '</span> is <strong>O(' + gDef.label + ')</strong> ' +
+                    'with <span class="math">c = ' + c + '</span> and <span class="math">n\u2080 = ' + n0 + '</span>.<br>' +
+                    'The blue curve (f) stays below the red curve (c\u00B7g) for all n \u2265 ' + n0 + '.';
+            } else {
+                statusEl.className = 'status invalid';
+                statusEl.textContent = '\u2717 Condition FAILS';
+                infoEl.innerHTML =
+                    'With <span class="math">c = ' + c + '</span> and <span class="math">n\u2080 = ' + n0 + '</span>, ' +
+                    'the condition <span class="math">f(n) \u2264 c\u00B7g(n)</span> is <strong>violated</strong> at ' +
+                    '<span class="math">n = ' + firstViolation + '</span>.<br>' +
+                    'Try increasing <span class="math">c</span> or <span class="math">n\u2080</span> to make the bound hold, ' +
+                    'or choose a faster-growing g(n).';
+            }
+        }
+
+        cSlider.addEventListener('input', draw);
+        n0Slider.addEventListener('input', draw);
+        rangeSlider.addEventListener('input', draw);
+        fnSelect.addEventListener('change', draw);
+        gnSelect.addEventListener('change', draw);
+        window.addEventListener('resize', draw);
+        draw();
+    </script>
+</body>
+</html>
