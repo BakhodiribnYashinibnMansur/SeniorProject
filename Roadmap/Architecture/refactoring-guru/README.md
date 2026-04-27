@@ -126,7 +126,8 @@ Comparing the same pattern across all three is a powerful learning device: it sh
 
 - ✅ **Singleton** — complete (8/8 files)
 - ✅ **Factory Method** — complete (8/8 files)
-- ⏳ Other 20 patterns: pending future phases
+- ✅ **Abstract Factory** — complete (8/8 files)
+- ⏳ Other 19 patterns: pending future phases
 
 ---
 
