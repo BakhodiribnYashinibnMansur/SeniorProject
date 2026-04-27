@@ -124,10 +124,16 @@ Comparing the same pattern across all three is a powerful learning device: it sh
 
 ## Status
 
-- ✅ **Singleton** — complete (8/8 files)
-- ✅ **Factory Method** — complete (8/8 files)
-- ✅ **Abstract Factory** — complete (8/8 files)
-- ⏳ Other 19 patterns: pending future phases
+### ✅ Creational Patterns — COMPLETE (5/5)
+- ✅ **Factory Method** — 8/8 files
+- ✅ **Abstract Factory** — 8/8 files
+- ✅ **Builder** — 8/8 files
+- ✅ **Prototype** — 8/8 files
+- ✅ **Singleton** — 8/8 files
+
+### ⏳ Pending
+- Structural Patterns (7 patterns × 8 files = 56 files)
+- Behavioral Patterns (10 patterns × 8 files = 80 files)
 
 ---
 
