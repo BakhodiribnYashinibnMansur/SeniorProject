@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>79. Word Search — Animation</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:30px}
+.header h1{font-size:1.8rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.95rem}
+.container{max-width:900px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155}
+.controls{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:500;transition:all .2s}
+.btn-play{background:#22c55e;color:#fff}.btn-pause{background:#ef4444;color:#fff}.btn-step{background:#3b82f6;color:#fff}.btn-reset{background:#6b7280;color:#fff}
+.speed-control{display:flex;align-items:center;gap:8px}
+.speed-control label{color:#94a3b8;font-size:.85rem}
+.speed-control select{padding:6px 10px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px}
+.input-section{display:flex;gap:10px;margin-bottom:20px;align-items:center;justify-content:center;flex-wrap:wrap}
+.input-section input{padding:8px 12px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:6px;font-size:.9rem;font-family:'SF Mono',Consolas,monospace}
+.viz-area{min-height:280px;background:#0f172a;border-radius:8px;padding:20px;margin-bottom:20px;display:flex;flex-direction:column;gap:16px;align-items:center}
+.grid{display:grid;gap:4px}
+.cell{width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:#475569;color:#fff;font-weight:700;border-radius:6px;font-size:1.1rem;transition:all .3s}
+.cell.in-path{background:#22c55e;color:#fff}
+.cell.cursor{background:#fbbf24;color:#0f172a;box-shadow:0 0 0 3px #f59e0b}
+.cell.failed{background:#ef4444;color:#fff}
+.word-display{display:flex;gap:4px;font-family:'SF Mono',Consolas,monospace}
+.wch{padding:4px 8px;background:#334155;border-radius:4px;font-size:.95rem}
+.wch.matched{background:#22c55e;color:#fff}
+.wch.cursor{background:#fbbf24;color:#0f172a}
+.info-panel{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.info-box{background:#0f172a;border-radius:8px;padding:14px;border:1px solid #334155;text-align:center}
+.info-box h3{font-size:.75rem;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.info-box .value{font-size:1rem;font-weight:600}
+.step-description{background:#0f172a;border-left:3px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem;line-height:1.55;min-height:50px}
+@media(max-width:768px){body{padding:10px}.info-panel{grid-template-columns:repeat(2,1fr)}.container{padding:14px}.cell{width:36px;height:36px;font-size:.9rem}}
+</style></head>
+<body>
+<div class="header"><h1>79. Word Search</h1><p>Medium — DFS + Backtracking</p></div>
+<div class="container">
+<div class="input-section">
+<input type="text" id="wordInput" value="ABCCED" style="min-width:140px">
+<button class="btn btn-step" onclick="applyInput()">Search</button>
+</div>
+<div class="controls">
+<button class="btn btn-play" onclick="play()">Play</button>
+<button class="btn btn-pause" onclick="pause()">Pause</button>
+<button class="btn btn-step" onclick="stepForward()">Step</button>
+<button class="btn btn-reset" onclick="reset()">Reset</button>
+<div class="speed-control"><label>Speed:</label><select id="speed" onchange="updateSpeed()">
+<option value="1500">Slow</option><option value="500" selected>Normal</option>
+<option value="200">Fast</option><option value="80">Very Fast</option></select></div>
+</div>
+<div class="step-description" id="stepDesc">Press Play to search.</div>
+<div class="viz-area" id="vizArea"></div>
+<div class="info-panel">
+<div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0/0</div></div>
+<div class="info-box"><h3>Cell</h3><div class="value" id="cellVal">--</div></div>
+<div class="info-box"><h3>Index</h3><div class="value" id="idxVal">--</div></div>
+<div class="info-box"><h3>Result</h3><div class="value" id="resVal">...</div></div>
+</div>
+</div>
+<script>
+const KEY='word-search_state';
+function save(){try{localStorage.setItem(KEY,JSON.stringify({currentStep,speed,word}))}catch(e){}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+const board=[['A','B','C','E'],['S','F','C','S'],['A','D','E','E']];
+const m=board.length,n=board[0].length;
+const saved=load();
+let word=saved?saved.word:'ABCCED',currentStep=saved?saved.currentStep:0,speed=saved?saved.speed:500;
+let isPlaying=false,playInterval=null,steps=[];
+document.getElementById('wordInput').value=word;
+document.getElementById('speed').value=speed;
+function generateSteps(){
+    steps=[];
+    const visited=Array.from({length:m},()=>new Array(n).fill(false));
+    let found=false,foundPath=null;
+    function dfs(r,c,i,path){
+        if(found)return true;
+        if(i===word.length){
+            steps.push({r:-1,c:-1,i,path:path.slice(),visited:visited.map(rw=>rw.slice()),found:true,
+                msg:`Reached end of word → MATCH! path=${path.map(p=>`(${p[0]},${p[1]})`).join('→')}`});
+            foundPath=path.slice();return true;
+        }
+        if(r<0||r>=m||c<0||c>=n||visited[r][c]||board[r][c]!==word[i]){
+            steps.push({r,c,i,path:path.slice(),visited:visited.map(rw=>rw.slice()),found:null,failed:true,
+                msg:r<0||r>=m||c<0||c>=n?`Out of bounds at (${r},${c}). Backtrack.`:
+                    visited[r][c]?`(${r},${c}) already visited. Backtrack.`:
+                    `board[${r}][${c}]='${board[r][c]}' != word[${i}]='${word[i]}'. Backtrack.`});
+            return false;
+        }
+        visited[r][c]=true;
+        path.push([r,c]);
+        steps.push({r,c,i,path:path.slice(),visited:visited.map(rw=>rw.slice()),found:null,
+            msg:`Match word[${i}]='${word[i]}' at (${r},${c}). Recurse.`});
+        const ok=dfs(r+1,c,i+1,path)||dfs(r-1,c,i+1,path)||dfs(r,c+1,i+1,path)||dfs(r,c-1,i+1,path);
+        if(!ok){
+            path.pop();
+            visited[r][c]=false;
+            steps.push({r,c,i,path:path.slice(),visited:visited.map(rw=>rw.slice()),found:null,
+                msg:`No path forward. Unmark (${r},${c}).`});
+        }
+        return ok;
+    }
+    outer:
+    for(let r=0;r<m&&!found;r++){
+        for(let c=0;c<n&&!found;c++){
+            if(dfs(r,c,0,[])){found=true;break outer}
+        }
+    }
+    steps.push({r:-1,c:-1,i:-1,path:foundPath||[],visited:Array.from({length:m},()=>new Array(n).fill(false)),
+        found:found,
+        msg:found?`Word found! Result = true.`:`Word not found. Result = false.`});
+}
+function renderStep(){
+    if(steps.length===0)return;save();
+    const step=steps[Math.min(currentStep,steps.length-1)];
+    document.getElementById('stepCounter').textContent=`${Math.min(currentStep+1,steps.length)} / ${steps.length}`;
+    document.getElementById('cellVal').textContent=step.r>=0?`(${step.r},${step.c})`:'--';
+    document.getElementById('idxVal').textContent=step.i>=0?step.i:'--';
+    document.getElementById('resVal').textContent=step.found===true?'true ✓':(step.found===false?'false ✗':'...');
+    document.getElementById('stepDesc').textContent=step.msg;
+    const viz=document.getElementById('vizArea');viz.innerHTML='';
+    const grid=document.createElement('div');grid.className='grid';
+    grid.style.gridTemplateColumns=`repeat(${n}, 1fr)`;
+    const inPath=new Set(step.path.map(p=>`${p[0]},${p[1]}`));
+    for(let r=0;r<m;r++){
+        for(let c=0;c<n;c++){
+            const cell=document.createElement('div');cell.className='cell';
+            if(inPath.has(`${r},${c}`))cell.classList.add('in-path');
+            if(step.r===r&&step.c===c){
+                cell.classList.add(step.failed?'failed':'cursor');
+            }
+            cell.textContent=board[r][c];
+            grid.appendChild(cell);
+        }
+    }
+    viz.appendChild(grid);
+    const wd=document.createElement('div');wd.className='word-display';
+    for(let k=0;k<word.length;k++){
+        const wc=document.createElement('div');wc.className='wch';
+        if(k<step.path.length)wc.classList.add('matched');
+        if(k===step.i&&step.found===null&&!step.failed)wc.classList.add('cursor');
+        wc.textContent=word[k];wd.appendChild(wc);
+    }
+    viz.appendChild(wd);
+}
+function play(){if(isPlaying)return;isPlaying=true;playInterval=setInterval(()=>{if(currentStep<steps.length-1){currentStep++;renderStep()}else pause()},speed)}
+function pause(){isPlaying=false;clearInterval(playInterval)}
+function stepForward(){pause();if(currentStep<steps.length-1){currentStep++;renderStep()}}
+function reset(){pause();currentStep=0;renderStep()}
+function updateSpeed(){speed=parseInt(document.getElementById('speed').value);if(isPlaying){pause();play()}save()}
+function applyInput(){
+    const w=document.getElementById('wordInput').value.toUpperCase();
+    if(!w||w.length>10){document.getElementById('stepDesc').textContent='Word 1..10 chars.';return}
+    word=w;reset();generateSteps();renderStep();save();
+}
+generateSteps();if(currentStep>=steps.length)currentStep=0;renderStep();
+</script></body></html>

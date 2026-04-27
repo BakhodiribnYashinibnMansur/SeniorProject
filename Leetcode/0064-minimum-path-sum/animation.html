@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>64. Minimum Path Sum — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .container { max-width: 1000px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-generate { background: #8b5cf6; color: white; }
+        .speed-control, .gen-options { display: flex; align-items: center; gap: 8px; }
+        .speed-control label, .gen-options label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select, .gen-options select {
+            padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .viz-area { min-height: 360px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            align-items: center; gap: 12px; }
+        .twin {
+            display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; align-items: flex-start;
+        }
+        .pane { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .pane h4 { color: #94a3b8; font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .grid { display: grid; gap: 4px; }
+        .cell {
+            min-width: 56px; height: 56px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #1e293b; color: #e2e8f0; font-weight: 700;
+            border-radius: 6px; font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: 1px solid #334155;
+        }
+        .cell .small { font-size: 0.65rem; color: #64748b; }
+        .cell.filled { background: #475569; color: white; border-color: #475569; }
+        .cell.contrib-up   { background: #6366f1; color: white; }
+        .cell.contrib-left { background: #8b5cf6; color: white; }
+        .cell.current { background: #fbbf24 !important; color: #0f172a !important;
+            box-shadow: 0 0 0 3px #f59e0b; transform: scale(1.05); }
+        .cell.path { background: #22c55e !important; color: white !important;
+            box-shadow: 0 0 0 2px #4ade80; }
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1.05rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        .legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #94a3b8; }
+        .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px;
+            padding: 20px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.85rem; color: #64748b;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 14px; }
+        .chart-row { display: flex; align-items: center; gap: 12px; }
+        .chart-label { min-width: 160px; font-size: 0.82rem; color: #94a3b8;
+            text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 6px; height: 26px;
+            overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 6px;
+            display: flex; align-items: center; padding-left: 10px;
+            font-size: 0.78rem; font-weight: 600; color: white;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.opt-tc   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.optimal  { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 130px; font-size: 0.8rem; font-weight: 600;
+            color: #e2e8f0; flex-shrink: 0; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+            .cell { min-width: 38px; height: 38px; font-size: 0.78rem; }
+            .cell .small { font-size: 0.55rem; }
+            .chart-label { min-width: 100px; font-size: 0.72rem; }
+            .chart-complexity { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>64. Minimum Path Sum</h1>
+    <p>Medium — Dynamic Programming on Grid</p>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <div class="gen-options">
+            <label>Rows:</label>
+            <select id="mSel">
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <label>Cols:</label>
+            <select id="nSel">
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+        <button class="btn btn-generate" onclick="generateRandom()">Random grid</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="600" selected>Normal</option>
+                <option value="250">Fast</option>
+                <option value="100">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to fill the DP table.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>Cell</h3><div class="value" id="cellVal">--</div></div>
+        <div class="info-box"><h3>Formula</h3><div class="value" id="formulaVal" style="font-size:0.85rem">--</div></div>
+        <div class="info-box"><h3>Min Sum</h3><div class="value" id="resVal">--</div></div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div><span>Current cell</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#6366f1"></div><span>Above</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#8b5cf6"></div><span>Left</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span>Optimal path</span></div>
+    </div>
+
+    <div class="complexity-chart">
+        <div class="chart-title">Algorithm Complexity</div>
+        <div class="chart-bars">
+            <div class="chart-row">
+                <div class="chart-label">2D DP</div>
+                <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="40" style="width:0">O(mn) / O(mn)</div></div>
+                <div class="chart-complexity">Time / Space: O(mn) / O(mn)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">1D DP</div>
+                <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="22" style="width:0">O(mn) / O(n)</div></div>
+                <div class="chart-complexity">Time / Space: O(mn) / O(n)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'minimum-path-sum_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentStep, speed, m, n, grid })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+    const saved = loadState();
+    let m = saved ? saved.m : 3;
+    let n = saved ? saved.n : 3;
+    let grid = saved ? saved.grid : [[1,3,1],[1,5,1],[4,2,1]];
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 600;
+    let isPlaying = false, playInterval = null;
+    let steps = [];
+
+    document.getElementById('mSel').value = m;
+    document.getElementById('nSel').value = n;
+    document.getElementById('speed').value = speed;
+
+    function generateSteps() {
+        steps = [];
+        const dp = [];
+        for (let r = 0; r < m; r++) dp.push(new Array(n).fill(-1));
+        steps.push({
+            dp: dp.map(r => r.slice()), current: null,
+            contribUp: null, contribLeft: null,
+            formula: '--', result: '--',
+            msg: 'DP table empty. Begin filling.'
+        });
+        dp[0][0] = grid[0][0];
+        steps.push({
+            dp: dp.map(r => r.slice()), current: [0, 0],
+            contribUp: null, contribLeft: null,
+            formula: `dp[0][0] = grid[0][0] = ${grid[0][0]}`,
+            result: dp[0][0],
+            msg: `Base: dp[0][0] = ${grid[0][0]}.`
+        });
+        for (let c = 1; c < n; c++) {
+            dp[0][c] = dp[0][c-1] + grid[0][c];
+            steps.push({
+                dp: dp.map(r => r.slice()), current: [0, c],
+                contribUp: null, contribLeft: [0, c-1],
+                formula: `dp[0][${c}] = ${dp[0][c-1]} + ${grid[0][c]} = ${dp[0][c]}`,
+                result: dp[0][c],
+                msg: `First row: dp[0][${c}] = ${dp[0][c]}.`
+            });
+        }
+        for (let r = 1; r < m; r++) {
+            dp[r][0] = dp[r-1][0] + grid[r][0];
+            steps.push({
+                dp: dp.map(rr => rr.slice()), current: [r, 0],
+                contribUp: [r-1, 0], contribLeft: null,
+                formula: `dp[${r}][0] = ${dp[r-1][0]} + ${grid[r][0]} = ${dp[r][0]}`,
+                result: dp[r][0],
+                msg: `First col: dp[${r}][0] = ${dp[r][0]}.`
+            });
+            for (let c = 1; c < n; c++) {
+                const up = dp[r-1][c], left = dp[r][c-1];
+                dp[r][c] = grid[r][c] + Math.min(up, left);
+                steps.push({
+                    dp: dp.map(rr => rr.slice()), current: [r, c],
+                    contribUp: [r-1, c], contribLeft: [r, c-1],
+                    formula: `dp[${r}][${c}] = ${grid[r][c]} + min(${up}, ${left}) = ${dp[r][c]}`,
+                    result: dp[r][c],
+                    msg: `Cell (${r},${c}): pick min(${up}, ${left}) → dp = ${dp[r][c]}.`
+                });
+            }
+        }
+        // Trace optimal path
+        const path = new Set();
+        let r = m - 1, c = n - 1;
+        path.add(`${r},${c}`);
+        while (r > 0 || c > 0) {
+            if (r === 0) c--;
+            else if (c === 0) r--;
+            else if (dp[r-1][c] <= dp[r][c-1]) r--;
+            else c--;
+            path.add(`${r},${c}`);
+        }
+        steps.push({
+            dp: dp.map(rr => rr.slice()), current: null,
+            contribUp: null, contribLeft: null,
+            formula: `result = dp[${m-1}][${n-1}]`,
+            result: dp[m-1][n-1],
+            msg: `Done. Min path sum = ${dp[m-1][n-1]}. Optimal path traced in green.`,
+            path
+        });
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('cellVal').textContent =
+            step.current ? `(${step.current[0]},${step.current[1]})` : '--';
+        document.getElementById('formulaVal').textContent = step.formula;
+        document.getElementById('resVal').textContent = step.result;
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+        const twin = document.createElement('div');
+        twin.className = 'twin';
+
+        const left = document.createElement('div');
+        left.className = 'pane';
+        const lh = document.createElement('h4');
+        lh.textContent = 'grid (input)';
+        left.appendChild(lh);
+        const lg = document.createElement('div');
+        lg.className = 'grid';
+        lg.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+        for (let r = 0; r < m; r++) {
+            for (let c = 0; c < n; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell filled';
+                if (step.path && step.path.has(`${r},${c}`)) cell.classList.add('path');
+                cell.textContent = grid[r][c];
+                lg.appendChild(cell);
+            }
+        }
+        left.appendChild(lg);
+        twin.appendChild(left);
+
+        const right = document.createElement('div');
+        right.className = 'pane';
+        const rh = document.createElement('h4');
+        rh.textContent = 'dp (min sum)';
+        right.appendChild(rh);
+        const rg = document.createElement('div');
+        rg.className = 'grid';
+        rg.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+        for (let r = 0; r < m; r++) {
+            for (let c = 0; c < n; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                if (step.dp[r][c] >= 0) cell.classList.add('filled');
+                if (step.contribUp && step.contribUp[0] === r && step.contribUp[1] === c)
+                    cell.classList.add('contrib-up');
+                if (step.contribLeft && step.contribLeft[0] === r && step.contribLeft[1] === c)
+                    cell.classList.add('contrib-left');
+                if (step.current && step.current[0] === r && step.current[1] === c)
+                    cell.classList.add('current');
+                if (step.path && step.path.has(`${r},${c}`)) cell.classList.add('path');
+                cell.textContent = step.dp[r][c] >= 0 ? step.dp[r][c] : '·';
+                rg.appendChild(cell);
+            }
+        }
+        right.appendChild(rg);
+        twin.appendChild(right);
+
+        viz.appendChild(twin);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        m = parseInt(document.getElementById('mSel').value);
+        n = parseInt(document.getElementById('nSel').value);
+        grid = [];
+        for (let i = 0; i < m; i++) {
+            const row = [];
+            for (let j = 0; j < n; j++) row.push(Math.floor(Math.random() * 9) + 1);
+            grid.push(row);
+        }
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+    function generateRandom() { applyInput(); }
+
+    setTimeout(() => {
+        document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+            bar.style.width = bar.dataset.w + '%';
+        });
+    }, 400);
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>62. Unique Paths — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .tab { padding: 10px 20px; background: #1e293b; border: 1px solid #334155;
+            border-radius: 8px 8px 0 0; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; }
+        .tab:hover { background: #334155; }
+        .tab.active { background: #3b82f6; border-color: #3b82f6; color: white; font-weight: 600; }
+        .container { max-width: 1000px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .speed-control, .gen-options { display: flex; align-items: center; gap: 8px; }
+        .speed-control label, .gen-options label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select, .gen-options select {
+            padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .viz-area { min-height: 360px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            align-items: center; gap: 16px; }
+        .grid { display: grid; gap: 4px; }
+        .cell {
+            min-width: 56px; height: 56px;
+            display: flex; align-items: center; justify-content: center;
+            background: #1e293b; color: #475569; font-weight: 700;
+            border-radius: 6px; font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid #334155;
+        }
+        .cell.filled { background: #475569; color: white; border-color: #475569; }
+        .cell.contrib-up   { background: #6366f1; color: white; }
+        .cell.contrib-left { background: #8b5cf6; color: white; }
+        .cell.current { background: #fbbf24 !important; color: #0f172a !important;
+            box-shadow: 0 0 0 3px #f59e0b; transform: scale(1.05); }
+        .cell.start { box-shadow: inset 0 0 0 3px #22c55e; }
+        .cell.end   { box-shadow: inset 0 0 0 3px #22c55e; }
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1.05rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        .legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #94a3b8; }
+        .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px;
+            padding: 20px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.85rem; color: #64748b;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 14px; }
+        .chart-row { display: flex; align-items: center; gap: 12px; }
+        .chart-label { min-width: 160px; font-size: 0.82rem; color: #94a3b8;
+            text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 6px; height: 26px;
+            overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 6px;
+            display: flex; align-items: center; padding-left: 10px;
+            font-size: 0.78rem; font-weight: 600; color: white;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute    { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.opt-sc   { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .chart-bar.optimal  { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 130px; font-size: 0.8rem; font-weight: 600;
+            color: #e2e8f0; flex-shrink: 0; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+            .cell { min-width: 38px; height: 38px; font-size: 0.85rem; }
+            .chart-label { min-width: 100px; font-size: 0.72rem; }
+            .chart-complexity { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>62. Unique Paths</h1>
+    <p>Medium — Dynamic Programming</p>
+</div>
+
+<div class="tabs" id="tabs">
+    <div class="tab active" data-tab="dp2d">2D DP</div>
+    <div class="tab" data-tab="dp1d">1D Rolling</div>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <div class="gen-options">
+            <label>m:</label>
+            <select id="mSel">
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+            </select>
+            <label>n:</label>
+            <select id="nSel">
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7" selected>7</option>
+                <option value="8">8</option>
+            </select>
+        </div>
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="500" selected>Normal</option>
+                <option value="200">Fast</option>
+                <option value="80">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to fill the DP table.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>Cell</h3><div class="value" id="cellVal">(0,0)</div></div>
+        <div class="info-box"><h3>Formula</h3><div class="value" id="formulaVal" style="font-size:0.9rem">--</div></div>
+        <div class="info-box"><h3>Result</h3><div class="value" id="resultVal">--</div></div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div><span>Current cell</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#6366f1"></div><span>Above (from up)</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#8b5cf6"></div><span>Left (from left)</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#475569"></div><span>Filled</span></div>
+    </div>
+
+    <div class="complexity-chart">
+        <div class="chart-title">Algorithm Complexity</div>
+        <div class="chart-bars">
+            <div class="chart-row">
+                <div class="chart-label">Recursion</div>
+                <div class="chart-bar-wrap"><div class="chart-bar brute" data-w="95" style="width:0">O(2^(m+n))</div></div>
+                <div class="chart-complexity">Time / Space: O(2^(m+n)) / O(m+n)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">DP 2D</div>
+                <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="40" style="width:0">O(mn) / O(mn)</div></div>
+                <div class="chart-complexity">Time / Space: O(mn) / O(mn)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">DP 1D</div>
+                <div class="chart-bar-wrap"><div class="chart-bar opt-sc" data-w="35" style="width:0">O(mn) / O(n)</div></div>
+                <div class="chart-complexity">Time / Space: O(mn) / O(n)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Combinatorics</div>
+                <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="10" style="width:0">O(min(m,n))</div></div>
+                <div class="chart-complexity">Time / Space: O(min(m,n)) / O(1)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'unique-paths_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentTab, currentStep, speed, m, n })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+    const saved = loadState();
+    let currentTab = saved ? saved.currentTab : 'dp2d';
+    let m = saved ? saved.m : 3;
+    let n = saved ? saved.n : 7;
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 500;
+    let isPlaying = false, playInterval = null;
+    let steps = [];
+
+    document.getElementById('mSel').value = m;
+    document.getElementById('nSel').value = n;
+    document.getElementById('speed').value = speed;
+    document.querySelectorAll('.tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === currentTab);
+        t.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            currentTab = t.dataset.tab;
+            reset(); generateSteps(); renderStep(); saveState();
+        });
+    });
+
+    function generate2DSteps() {
+        steps = [];
+        const dp = [];
+        for (let r = 0; r < m; r++) dp.push(new Array(n).fill(1));
+        steps.push({
+            grid: dp.map(row => row.slice()),
+            current: null, contribUp: null, contribLeft: null,
+            formula: '--', result: dp[m-1][n-1],
+            msg: `Initialize border cells to 1 (only one path along edges).`
+        });
+        for (let r = 1; r < m; r++) {
+            for (let c = 1; c < n; c++) {
+                dp[r][c] = dp[r-1][c] + dp[r][c-1];
+                steps.push({
+                    grid: dp.map(row => row.slice()),
+                    current: [r, c],
+                    contribUp: [r-1, c],
+                    contribLeft: [r, c-1],
+                    formula: `dp[${r}][${c}] = ${dp[r-1][c]} + ${dp[r][c-1]} = ${dp[r][c]}`,
+                    result: dp[r][c],
+                    msg: `Cell (${r},${c}): take ${dp[r-1][c]} from above + ${dp[r][c-1]} from left = ${dp[r][c]}.`
+                });
+            }
+        }
+        steps.push({
+            grid: dp.map(row => row.slice()),
+            current: [m-1, n-1],
+            contribUp: null, contribLeft: null,
+            formula: `result = dp[${m-1}][${n-1}]`,
+            result: dp[m-1][n-1],
+            msg: `Done. Number of unique paths = ${dp[m-1][n-1]}.`
+        });
+    }
+
+    function generate1DSteps() {
+        steps = [];
+        const dp = new Array(n).fill(1);
+        // Visualize as a matrix where the current row is highlighted
+        const matrix = [];
+        for (let r = 0; r < m; r++) matrix.push(dp.slice());
+        steps.push({
+            grid: matrix.map(row => row.slice()),
+            current: null, contribUp: null, contribLeft: null,
+            formula: '--', result: dp[n-1],
+            msg: `Initialize dp = [${dp.join(',')}].`
+        });
+        for (let r = 1; r < m; r++) {
+            for (let c = 1; c < n; c++) {
+                const before = dp[c];
+                dp[c] = dp[c] + dp[c-1];
+                matrix[r] = dp.slice();
+                steps.push({
+                    grid: matrix.map(row => row.slice()),
+                    current: [r, c],
+                    contribUp: [r-1, c],
+                    contribLeft: [r, c-1],
+                    formula: `dp[${c}] = ${before} (prev) + ${dp[c-1]} (left) = ${dp[c]}`,
+                    result: dp[c],
+                    msg: `Row ${r}, col ${c}: dp[${c}] becomes ${dp[c]}.`
+                });
+            }
+        }
+        steps.push({
+            grid: matrix.map(row => row.slice()),
+            current: [m-1, n-1],
+            contribUp: null, contribLeft: null,
+            formula: `result = dp[${n-1}]`,
+            result: dp[n-1],
+            msg: `Done. dp[n-1] = ${dp[n-1]}.`
+        });
+    }
+
+    function generateSteps() {
+        if (currentTab === 'dp1d') generate1DSteps();
+        else generate2DSteps();
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('cellVal').textContent =
+            step.current ? `(${step.current[0]},${step.current[1]})` : '--';
+        document.getElementById('formulaVal').textContent = step.formula;
+        document.getElementById('resultVal').textContent = step.result;
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+        for (let r = 0; r < m; r++) {
+            for (let c = 0; c < n; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell filled';
+                if (step.contribUp && step.contribUp[0] === r && step.contribUp[1] === c)
+                    cell.classList.add('contrib-up');
+                if (step.contribLeft && step.contribLeft[0] === r && step.contribLeft[1] === c)
+                    cell.classList.add('contrib-left');
+                if (step.current && step.current[0] === r && step.current[1] === c)
+                    cell.classList.add('current');
+                if (r === 0 && c === 0) cell.classList.add('start');
+                if (r === m - 1 && c === n - 1) cell.classList.add('end');
+                cell.textContent = step.grid[r][c];
+                grid.appendChild(cell);
+            }
+        }
+        viz.appendChild(grid);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        m = parseInt(document.getElementById('mSel').value);
+        n = parseInt(document.getElementById('nSel').value);
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+
+    setTimeout(() => {
+        document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+            bar.style.width = bar.dataset.w + '%';
+        });
+    }, 400);
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

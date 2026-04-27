@@ -1,0 +1,59 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>87. Scramble String — Animation</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:30px}.header h1{font-size:1.8rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.95rem}.container{max-width:900px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155}
+.input-section{display:flex;gap:10px;margin-bottom:20px;align-items:center;justify-content:center;flex-wrap:wrap}
+.input-section input{padding:8px 12px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:6px;min-width:140px;font-family:'SF Mono',monospace}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:500}
+.btn-step{background:#3b82f6;color:#fff}
+.viz-area{background:#0f172a;border-radius:8px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:24px;min-height:280px}
+.pair{display:flex;flex-direction:column;align-items:center;gap:6px}
+.lbl{font-size:.7rem;color:#94a3b8;text-transform:uppercase}
+.str{font-family:'SF Mono',monospace;font-size:1.1rem;letter-spacing:2px;background:#1e293b;padding:8px 16px;border-radius:6px}
+.str.match{color:#22c55e}.str.no-match{color:#ef4444}
+.verdict{font-size:1.3rem;font-weight:800;padding:12px 24px;border-radius:8px;margin-top:8px}
+.verdict.true{background:#22c55e;color:#fff}.verdict.false{background:#ef4444;color:#fff}
+.tree{padding:16px;background:#1e293b;border-radius:8px;font-family:'SF Mono',monospace;font-size:.8rem;color:#cbd5e1;max-height:300px;overflow:auto;white-space:pre-wrap;width:100%}
+</style></head>
+<body><div class="header"><h1>87. Scramble String</h1><p>Hard — Recursive DP</p></div>
+<div class="container">
+<div class="input-section">
+<input type="text" id="s1Input" value="great">
+<input type="text" id="s2Input" value="rgeat">
+<button class="btn btn-step" onclick="solve()">Check</button>
+</div>
+<div class="viz-area" id="vizArea"></div>
+</div>
+<script>
+function isScramble(a,b,memo){
+    if(a===b)return true;
+    const key=a+'#'+b;if(memo.has(key))return memo.get(key);
+    if([...a].sort().join('')!==[...b].sort().join('')){memo.set(key,false);return false}
+    const n=a.length;
+    for(let i=1;i<n;i++){
+        if((isScramble(a.slice(0,i),b.slice(0,i),memo)&&isScramble(a.slice(i),b.slice(i),memo))||
+           (isScramble(a.slice(0,i),b.slice(n-i),memo)&&isScramble(a.slice(i),b.slice(0,n-i),memo))){
+            memo.set(key,true);return true;
+        }
+    }memo.set(key,false);return false;
+}
+function solve(){
+    const s1=document.getElementById('s1Input').value;
+    const s2=document.getElementById('s2Input').value;
+    const viz=document.getElementById('vizArea');viz.innerHTML='';
+    if(s1.length!==s2.length){viz.innerHTML='<div style="color:#ef4444">Strings must be the same length.</div>';return}
+    const memo=new Map();const result=isScramble(s1,s2,memo);
+    const p1=document.createElement('div');p1.className='pair';
+    p1.innerHTML=`<div class="lbl">s1</div><div class="str">${s1}</div>`;viz.appendChild(p1);
+    const p2=document.createElement('div');p2.className='pair';
+    p2.innerHTML=`<div class="lbl">s2</div><div class="str">${s2}</div>`;viz.appendChild(p2);
+    const v=document.createElement('div');v.className='verdict '+result;v.textContent=result?'TRUE — s2 is a scramble of s1':'FALSE — not a scramble';
+    viz.appendChild(v);
+    const tree=document.createElement('div');tree.className='tree';
+    let body='Memoization cache (sample of explored pairs):\n\n';
+    let i=0;for(const[k,v]of memo){if(i>=20)break;const[a,b]=k.split('#');body+=`solve("${a}", "${b}") → ${v}\n`;i++}
+    if(memo.size>20)body+=`...and ${memo.size-20} more.`;
+    tree.textContent=body;viz.appendChild(tree);
+}
+solve();
+</script></body></html>

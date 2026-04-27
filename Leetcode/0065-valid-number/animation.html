@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>65. Valid Number — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .container { max-width: 900px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select { padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .input-section input { padding: 8px 12px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 6px;
+            font-size: 0.9rem; min-width: 220px; }
+        .preset-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+            margin-bottom: 12px; }
+        .preset {
+            padding: 4px 10px; background: #0f172a; border: 1px solid #334155;
+            border-radius: 4px; cursor: pointer; font-size: 0.8rem; color: #cbd5e1;
+            font-family: 'SF Mono', Consolas, monospace;
+        }
+        .preset:hover { background: #334155; color: white; }
+        .viz-area { min-height: 200px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            gap: 16px; align-items: center; }
+        .char-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+        .char {
+            width: 38px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            background: #334155; color: #e2e8f0;
+            font-family: 'SF Mono', Consolas, monospace; font-weight: 700;
+            border-radius: 6px; font-size: 1rem;
+            transition: all 0.3s ease; position: relative;
+        }
+        .char.processed { background: #475569; }
+        .char.cursor { box-shadow: 0 0 0 3px #fbbf24; transform: scale(1.1); }
+        .char.invalid { background: #ef4444; }
+        .flag-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+            max-width: 480px; }
+        .flag {
+            background: #1e293b; padding: 10px; border-radius: 6px;
+            border: 1px solid #334155; display: flex; justify-content: space-between;
+            font-size: 0.85rem;
+        }
+        .flag .name { color: #94a3b8; }
+        .flag.true .val { color: #4ade80; font-weight: 700; }
+        .flag.false .val { color: #ef4444; font-weight: 700; }
+
+        .verdict {
+            padding: 12px 24px; border-radius: 8px; font-size: 1.4rem; font-weight: 800;
+            margin-top: 8px;
+        }
+        .verdict.valid { background: #22c55e; color: white; }
+        .verdict.invalid { background: #ef4444; color: white; }
+        .verdict.pending { background: #475569; color: #cbd5e1; }
+
+        .info-panel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1.05rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(3, 1fr); }
+            .container { padding: 14px; }
+            .char { width: 28px; height: 36px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>65. Valid Number</h1>
+    <p>Hard — String parsing</p>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <input type="text" id="customInput" placeholder='-123.456e789' value="-123.456e789">
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+    </div>
+
+    <div class="preset-row" id="presets"></div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="700" selected>Normal</option>
+                <option value="300">Fast</option>
+                <option value="100">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to validate the input.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>Index</h3><div class="value" id="iVal">--</div></div>
+        <div class="info-box"><h3>Char</h3><div class="value" id="cVal">--</div></div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'valid-number_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentStep, speed, s })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+    const saved = loadState();
+    let s = saved ? saved.s : '-123.456e789';
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 700;
+    let isPlaying = false, playInterval = null;
+    let steps = [];
+
+    const PRESETS = [
+        '0', '0089', '-0.1', '+3.14', '4.', '-.9', '2e10', '-90E3',
+        '+6e-1', '53.5e93', '.', 'e', '99e2.5', '--6', '-+3', '1e', 'abc'
+    ];
+
+    document.getElementById('customInput').value = s;
+    document.getElementById('speed').value = speed;
+    const presetRow = document.getElementById('presets');
+    PRESETS.forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'preset';
+        el.textContent = p;
+        el.onclick = () => {
+            s = p;
+            document.getElementById('customInput').value = s;
+            reset(); generateSteps(); renderStep(); saveState();
+        };
+        presetRow.appendChild(el);
+    });
+
+    function generateSteps() {
+        steps = [];
+        let sawDigit = false, sawDot = false, sawE = false, digitAfterE = true;
+        steps.push({
+            i: -1, c: '--', sawDigit, sawDot, sawE, digitAfterE,
+            verdict: 'pending', invalid: -1,
+            msg: 'Initial: all flags false (digitAfterE=true so empty exp not yet required).'
+        });
+        let invalidIdx = -1;
+        for (let i = 0; i < s.length; i++) {
+            const c = s[i];
+            let msg = '';
+            let bad = false;
+            if (c >= '0' && c <= '9') {
+                sawDigit = true;
+                if (sawE) digitAfterE = true;
+                msg = `Digit '${c}': sawDigit=true${sawE ? ', digitAfterE=true' : ''}.`;
+            } else if (c === '+' || c === '-') {
+                if (i !== 0 && s[i-1] !== 'e' && s[i-1] !== 'E') {
+                    msg = `Sign '${c}' at index ${i} not at start nor after e/E → INVALID.`;
+                    bad = true;
+                } else {
+                    msg = `Sign '${c}' allowed at index ${i}.`;
+                }
+            } else if (c === '.') {
+                if (sawDot || sawE) {
+                    msg = `Dot '.' but already saw ${sawDot ? 'dot' : 'exponent'} → INVALID.`;
+                    bad = true;
+                } else {
+                    sawDot = true;
+                    msg = `Dot '.': sawDot=true.`;
+                }
+            } else if (c === 'e' || c === 'E') {
+                if (sawE || !sawDigit) {
+                    msg = `'${c}' but ${sawE ? 'already saw exponent' : 'no digit yet'} → INVALID.`;
+                    bad = true;
+                } else {
+                    sawE = true; digitAfterE = false;
+                    msg = `Exp '${c}': sawE=true, digitAfterE=false (need digit after).`;
+                }
+            } else {
+                msg = `Invalid char '${c}'.`;
+                bad = true;
+            }
+            steps.push({
+                i, c, sawDigit, sawDot, sawE, digitAfterE,
+                verdict: bad ? 'invalid' : 'pending',
+                invalid: bad ? i : -1, msg
+            });
+            if (bad) { invalidIdx = i; break; }
+        }
+        if (invalidIdx === -1) {
+            const ok = sawDigit && digitAfterE;
+            steps.push({
+                i: -1, c: '--', sawDigit, sawDot, sawE, digitAfterE,
+                verdict: ok ? 'valid' : 'invalid', invalid: -1,
+                msg: ok ? `Final check passes (sawDigit=true && digitAfterE=true). VALID.`
+                       : `Final check fails (sawDigit=${sawDigit}, digitAfterE=${digitAfterE}). INVALID.`
+            });
+        }
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('iVal').textContent = step.i >= 0 ? step.i : '--';
+        document.getElementById('cVal').textContent = step.c;
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        const charRow = document.createElement('div');
+        charRow.className = 'char-row';
+        for (let k = 0; k < s.length; k++) {
+            const ch = document.createElement('div');
+            ch.className = 'char';
+            if (step.i >= 0 && k < step.i) ch.classList.add('processed');
+            if (k === step.i) ch.classList.add('cursor');
+            if (k === step.invalid) ch.classList.add('invalid');
+            ch.textContent = s[k];
+            charRow.appendChild(ch);
+        }
+        viz.appendChild(charRow);
+
+        const flagGrid = document.createElement('div');
+        flagGrid.className = 'flag-grid';
+        const flags = [
+            ['sawDigit', step.sawDigit],
+            ['sawDot', step.sawDot],
+            ['sawE', step.sawE],
+            ['digitAfterE', step.digitAfterE],
+        ];
+        for (const [k, v] of flags) {
+            const fl = document.createElement('div');
+            fl.className = 'flag ' + (v ? 'true' : 'false');
+            fl.innerHTML = `<span class="name">${k}</span><span class="val">${v ? 'true' : 'false'}</span>`;
+            flagGrid.appendChild(fl);
+        }
+        viz.appendChild(flagGrid);
+
+        const verdict = document.createElement('div');
+        verdict.className = 'verdict ' + step.verdict;
+        verdict.textContent = step.verdict === 'valid' ? '✓ VALID NUMBER'
+            : (step.verdict === 'invalid' ? '✗ NOT A NUMBER' : '... walking');
+        viz.appendChild(verdict);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const val = document.getElementById('customInput').value.trim();
+        if (val.length === 0 || val.length > 30) {
+            document.getElementById('stepDesc').textContent = 'Provide 1..30 characters.';
+            return;
+        }
+        s = val;
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

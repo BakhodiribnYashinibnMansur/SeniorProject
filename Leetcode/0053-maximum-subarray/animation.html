@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>53. Maximum Subarray — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .tab { padding: 10px 20px; background: #1e293b; border: 1px solid #334155;
+            border-radius: 8px 8px 0 0; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; }
+        .tab:hover { background: #334155; }
+        .tab.active { background: #3b82f6; border-color: #3b82f6; color: white; font-weight: 600; }
+
+        .container { max-width: 1000px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-generate { background: #8b5cf6; color: white; }
+
+        .speed-control, .gen-options { display: flex; align-items: center; gap: 8px; }
+        .speed-control label, .gen-options label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select, .gen-options select {
+            padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px;
+        }
+
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .input-section input {
+            padding: 8px 12px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 6px;
+            font-size: 0.9rem; min-width: 280px;
+        }
+
+        .viz-area { min-height: 300px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; }
+
+        .bar-row {
+            display: flex; gap: 6px; align-items: flex-end;
+            justify-content: center; margin-bottom: 16px; min-height: 220px;
+            flex-wrap: nowrap;
+        }
+        .bar-cell {
+            display: flex; flex-direction: column; align-items: center;
+            transition: all 0.3s ease; min-width: 38px;
+        }
+        .bar-index {
+            font-size: 0.65rem; color: #64748b; margin-bottom: 4px;
+        }
+        .bar {
+            width: 38px; border-radius: 4px 4px 0 0;
+            display: flex; align-items: flex-start; justify-content: center;
+            color: white; font-weight: 600; font-size: 0.85rem;
+            padding: 4px 0;
+            transition: all 0.3s ease;
+        }
+        .bar.positive { background: #475569; }
+        .bar.negative { background: #475569; }
+        .bar.in-window-pos { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.5); }
+        .bar.in-window-neg { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.5); }
+        .bar.best-pos { background: #fbbf24; color: #0f172a; }
+        .bar.best-neg { background: #f59e0b; color: #0f172a; }
+        .bar.current { box-shadow: 0 0 0 3px #60a5fa; }
+        .bar.restart { box-shadow: 0 0 0 3px #ec4899; }
+
+        .baseline { width: 100%; height: 1px; background: #334155; margin: 4px 0; }
+
+        .running-state {
+            display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .state-card {
+            background: #1e293b; padding: 10px 16px; border-radius: 8px;
+            border: 1px solid #334155; min-width: 100px; text-align: center;
+        }
+        .state-card .label {
+            font-size: 0.7rem; color: #94a3b8; text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .state-card .val {
+            font-size: 1.4rem; font-weight: 700; margin-top: 4px;
+        }
+        .val-cur { color: #60a5fa; }
+        .val-best { color: #4ade80; }
+
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1.1rem; font-weight: 600; }
+
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+
+        .legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+            margin-top: 16px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #94a3b8; }
+        .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px;
+            padding: 20px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.85rem; color: #64748b;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 14px; }
+        .chart-row { display: flex; align-items: center; gap: 12px; }
+        .chart-label { min-width: 160px; font-size: 0.82rem; color: #94a3b8;
+            text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 6px; height: 26px;
+            overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 6px;
+            display: flex; align-items: center; padding-left: 10px;
+            font-size: 0.78rem; font-weight: 600; color: white;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute    { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.opt-sc   { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .chart-bar.optimal  { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 130px; font-size: 0.8rem; font-weight: 600;
+            color: #e2e8f0; flex-shrink: 0; }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+            .bar { width: 26px; font-size: 0.7rem; }
+            .bar-cell { min-width: 26px; }
+            .chart-label { min-width: 100px; font-size: 0.72rem; }
+            .chart-complexity { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>53. Maximum Subarray</h1>
+    <p>Medium — Dynamic Programming, Divide and Conquer</p>
+</div>
+
+<div class="tabs" id="tabs">
+    <div class="tab active" data-tab="kadane">Kadane's</div>
+    <div class="tab" data-tab="brute">Brute Force</div>
+    <div class="tab" data-tab="prefix">Prefix Sum</div>
+</div>
+
+<div class="container">
+
+    <div class="input-section">
+        <input type="text" id="customInput" placeholder="Example: -2,1,-3,4,-1,2,1,-5,4">
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+        <button class="btn btn-generate" onclick="generateRandom()">Generate</button>
+        <div class="gen-options">
+            <label>Size:</label>
+            <select id="genSize">
+                <option value="6">6</option>
+                <option value="9" selected>9</option>
+                <option value="12">12</option>
+                <option value="15">15</option>
+            </select>
+            <label>Range:</label>
+            <select id="genRange">
+                <option value="5">±5</option>
+                <option value="10" selected>±10</option>
+                <option value="20">±20</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="700" selected>Normal</option>
+                <option value="300">Fast</option>
+                <option value="100">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to walk through the algorithm.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>Operations</h3><div class="value" id="opsCounter">0</div></div>
+        <div class="info-box"><h3>Best Sum</h3><div class="value" id="bestSum">--</div></div>
+        <div class="info-box"><h3>Best Range</h3><div class="value" id="bestRange">[ , ]</div></div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#60a5fa"></div><span>Current index</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span>In running window</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div><span>Best subarray</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ec4899"></div><span>Restart point</span></div>
+    </div>
+
+    <div class="complexity-chart">
+        <div class="chart-title">Algorithm Complexity (smaller bar = faster)</div>
+        <div class="chart-bars">
+            <div class="chart-row">
+                <div class="chart-label">Brute Force</div>
+                <div class="chart-bar-wrap"><div class="chart-bar brute" data-w="90" style="width:0">O(n²)</div></div>
+                <div class="chart-complexity">Time / Space: O(n²) / O(1)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Divide & Conquer</div>
+                <div class="chart-bar-wrap"><div class="chart-bar opt-sc" data-w="50" style="width:0">O(n log n)</div></div>
+                <div class="chart-complexity">Time / Space: O(n log n) / O(log n)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Kadane's</div>
+                <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="20" style="width:0">O(n)</div></div>
+                <div class="chart-complexity">Time / Space: O(n) / O(1)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Prefix Sum</div>
+                <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="22" style="width:0">O(n)</div></div>
+                <div class="chart-complexity">Time / Space: O(n) / O(1)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'maximum-subarray_animation_state';
+
+    function saveState() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentTab, currentStep, speed, nums }));
+        } catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); }
+        catch(e) { return null; }
+    }
+
+    const saved = loadState();
+    let currentTab = saved ? saved.currentTab : 'kadane';
+    let nums = saved ? saved.nums : [-2, 1, -3, 4, -1, 2, 1, -5, 4];
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 700;
+    let isPlaying = false;
+    let playInterval = null;
+    let steps = [];
+
+    document.getElementById('customInput').value = nums.join(',');
+    document.getElementById('speed').value = speed;
+    document.querySelectorAll('.tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === currentTab);
+        t.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            currentTab = t.dataset.tab;
+            reset(); generateSteps(); renderStep(); saveState();
+        });
+    });
+
+    // --- Step generators ----------------------------------------
+
+    function generateKadaneSteps() {
+        steps = [];
+        if (nums.length === 0) {
+            steps.push({nums:[],msg:'Empty input',i:-1,curStart:-1,best:0,bestL:-1,bestR:-1,cur:0,ops:0,kind:'info',restart:false});
+            return;
+        }
+        let cur = nums[0], best = nums[0];
+        let curStart = 0, bestL = 0, bestR = 0;
+        let ops = 1;
+
+        steps.push({
+            nums: nums.slice(), i: 0, curStart, cur, best, bestL, bestR, ops,
+            msg: `Initialize cur = best = nums[0] = ${nums[0]}.`,
+            kind: 'init', restart: false
+        });
+
+        for (let i = 1; i < nums.length; i++) {
+            ops++;
+            const extend = cur + nums[i];
+            const restart = nums[i] > extend;
+            if (restart) {
+                cur = nums[i];
+                curStart = i;
+                steps.push({
+                    nums: nums.slice(), i, curStart, cur, best, bestL, bestR, ops,
+                    msg: `i=${i}: nums[i]=${nums[i]} > cur+nums[i]=${extend}. Restart from index ${i}, cur=${cur}.`,
+                    kind: 'restart', restart: true
+                });
+            } else {
+                cur = extend;
+                steps.push({
+                    nums: nums.slice(), i, curStart, cur, best, bestL, bestR, ops,
+                    msg: `i=${i}: extend window. cur = ${cur - nums[i]} + ${nums[i]} = ${cur}.`,
+                    kind: 'extend', restart: false
+                });
+            }
+            if (cur > best) {
+                best = cur;
+                bestL = curStart;
+                bestR = i;
+                steps.push({
+                    nums: nums.slice(), i, curStart, cur, best, bestL, bestR, ops,
+                    msg: `cur=${cur} > previous best. Update best=${best}, range=[${bestL},${bestR}].`,
+                    kind: 'newbest', restart: false
+                });
+            }
+        }
+        steps.push({
+            nums: nums.slice(), i: -1, curStart: -1, cur, best, bestL, bestR, ops,
+            msg: `Final answer: ${best} (subarray nums[${bestL}..${bestR}]).`,
+            kind: 'done', restart: false
+        });
+    }
+
+    function generateBruteSteps() {
+        steps = [];
+        if (nums.length === 0) return;
+        let best = nums[0], bestL = 0, bestR = 0, ops = 0;
+
+        steps.push({
+            nums: nums.slice(), i: 0, j: 0, sum: 0, best, bestL, bestR, ops,
+            msg: `Brute force: try every subarray (i, j).`,
+            kind: 'init'
+        });
+        for (let i = 0; i < nums.length; i++) {
+            let s = 0;
+            for (let j = i; j < nums.length; j++) {
+                s += nums[j];
+                ops++;
+                let kind = 'check';
+                let msg = `i=${i}, j=${j}: sum of nums[${i}..${j}] = ${s}.`;
+                if (s > best) {
+                    best = s;
+                    bestL = i;
+                    bestR = j;
+                    kind = 'newbest';
+                    msg += ` New best!`;
+                }
+                steps.push({
+                    nums: nums.slice(), i, j, sum: s, best, bestL, bestR, ops,
+                    msg, kind
+                });
+            }
+        }
+        steps.push({
+            nums: nums.slice(), i: -1, j: -1, sum: best, best, bestL, bestR, ops,
+            msg: `Done. Best=${best} on nums[${bestL}..${bestR}]. Total ops: ${ops}.`,
+            kind: 'done'
+        });
+    }
+
+    function generatePrefixSteps() {
+        steps = [];
+        if (nums.length === 0) return;
+        let running = 0, minPrefix = 0, best = nums[0];
+        let minIdx = -1, bestL = 0, bestR = 0, ops = 0;
+
+        steps.push({
+            nums: nums.slice(), i: -1, running, minPrefix, best, bestL, bestR, ops,
+            msg: `Initialize running=0, minPrefix=0, best=nums[0]=${nums[0]}.`,
+            kind: 'init'
+        });
+        for (let i = 0; i < nums.length; i++) {
+            running += nums[i];
+            ops++;
+            const candidate = running - minPrefix;
+            let msg = `i=${i}: running=${running}. candidate = running − minPrefix = ${running}−${minPrefix} = ${candidate}.`;
+            let kind = 'check';
+            if (candidate > best) {
+                best = candidate;
+                bestL = minIdx + 1;
+                bestR = i;
+                kind = 'newbest';
+                msg += ` New best=${best} on nums[${bestL}..${bestR}].`;
+            }
+            steps.push({
+                nums: nums.slice(), i, running, minPrefix, best, bestL, bestR, ops,
+                msg, kind
+            });
+            if (running < minPrefix) {
+                minPrefix = running;
+                minIdx = i;
+                steps.push({
+                    nums: nums.slice(), i, running, minPrefix, best, bestL, bestR, ops,
+                    msg: `running=${running} < minPrefix. Update minPrefix=${minPrefix}.`,
+                    kind: 'minupd'
+                });
+            }
+        }
+        steps.push({
+            nums: nums.slice(), i: -1, running, minPrefix, best, bestL, bestR, ops,
+            msg: `Done. Best=${best} on nums[${bestL}..${bestR}].`,
+            kind: 'done'
+        });
+    }
+
+    function generateSteps() {
+        if (currentTab === 'kadane') generateKadaneSteps();
+        else if (currentTab === 'brute') generateBruteSteps();
+        else if (currentTab === 'prefix') generatePrefixSteps();
+    }
+
+    // --- Rendering ----------------------------------------------
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('opsCounter').textContent = step.ops;
+        document.getElementById('bestSum').textContent = step.best != null ? step.best : '--';
+        if (step.bestL >= 0 && step.bestR >= 0) {
+            document.getElementById('bestRange').textContent = `[${step.bestL}, ${step.bestR}]`;
+        } else {
+            document.getElementById('bestRange').textContent = '[ , ]';
+        }
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        // Bar chart
+        const row = document.createElement('div');
+        row.className = 'bar-row';
+        const arr = step.nums || nums;
+        const maxAbs = Math.max(1, ...arr.map(Math.abs));
+
+        for (let k = 0; k < arr.length; k++) {
+            const cell = document.createElement('div');
+            cell.className = 'bar-cell';
+            const idxLbl = document.createElement('div');
+            idxLbl.className = 'bar-index';
+            idxLbl.textContent = k;
+            cell.appendChild(idxLbl);
+
+            const v = arr[k];
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            const inWindow = currentTab === 'kadane'
+                ? (step.curStart >= 0 && step.i >= 0 && k >= step.curStart && k <= step.i)
+                : (currentTab === 'brute'
+                    ? (step.i >= 0 && step.j >= 0 && k >= step.i && k <= step.j)
+                    : false);
+            const inBest = (step.bestL >= 0 && step.bestR >= 0 && k >= step.bestL && k <= step.bestR);
+
+            if (step.kind === 'done' || step.kind === 'newbest') {
+                bar.classList.add(v >= 0 ? 'best-pos' : 'best-neg');
+            } else if (inBest && step.kind !== 'init') {
+                bar.classList.add(v >= 0 ? 'best-pos' : 'best-neg');
+            } else if (inWindow) {
+                bar.classList.add(v >= 0 ? 'in-window-pos' : 'in-window-neg');
+            } else {
+                bar.classList.add(v >= 0 ? 'positive' : 'negative');
+            }
+
+            if (k === step.i) bar.classList.add('current');
+            if (currentTab === 'kadane' && step.restart && k === step.i) bar.classList.add('restart');
+
+            const height = Math.max(20, Math.abs(v) / maxAbs * 160);
+            bar.style.height = `${height}px`;
+            bar.textContent = v;
+            cell.appendChild(bar);
+            row.appendChild(cell);
+        }
+        viz.appendChild(row);
+
+        // Running state cards
+        const stateRow = document.createElement('div');
+        stateRow.className = 'running-state';
+        if (currentTab === 'kadane') {
+            stateRow.innerHTML = `
+                <div class="state-card"><div class="label">cur</div><div class="val val-cur">${step.cur}</div></div>
+                <div class="state-card"><div class="label">best</div><div class="val val-best">${step.best}</div></div>
+                <div class="state-card"><div class="label">window</div><div class="val">[${step.curStart >= 0 ? step.curStart : '-'}, ${step.i >= 0 ? step.i : '-'}]</div></div>
+            `;
+        } else if (currentTab === 'brute') {
+            stateRow.innerHTML = `
+                <div class="state-card"><div class="label">i</div><div class="val val-cur">${step.i >= 0 ? step.i : '-'}</div></div>
+                <div class="state-card"><div class="label">j</div><div class="val val-cur">${step.j >= 0 ? step.j : '-'}</div></div>
+                <div class="state-card"><div class="label">sum</div><div class="val">${step.sum}</div></div>
+                <div class="state-card"><div class="label">best</div><div class="val val-best">${step.best}</div></div>
+            `;
+        } else {
+            stateRow.innerHTML = `
+                <div class="state-card"><div class="label">running</div><div class="val val-cur">${step.running}</div></div>
+                <div class="state-card"><div class="label">minPrefix</div><div class="val">${step.minPrefix}</div></div>
+                <div class="state-card"><div class="label">best</div><div class="val val-best">${step.best}</div></div>
+            `;
+        }
+        viz.appendChild(stateRow);
+    }
+
+    // --- Controls -----------------------------------------------
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const raw = document.getElementById('customInput').value.trim();
+        try {
+            const cleaned = raw.replace(/[\[\]\s]/g, '');
+            if (!cleaned) return;
+            const arr = cleaned.split(',').map(s => parseInt(s));
+            if (arr.some(isNaN)) throw new Error('NaN');
+            if (arr.length === 0 || arr.length > 30) throw new Error('size');
+            nums = arr;
+            reset(); generateSteps(); renderStep(); saveState();
+        } catch(e) {
+            document.getElementById('stepDesc').textContent =
+                'Invalid format. Provide a comma-separated list of integers (max 30 elements).';
+        }
+    }
+    function generateRandom() {
+        const size = parseInt(document.getElementById('genSize').value);
+        const range = parseInt(document.getElementById('genRange').value);
+        const arr = [];
+        for (let i = 0; i < size; i++) {
+            arr.push(Math.floor(Math.random() * (2 * range + 1)) - range);
+        }
+        nums = arr;
+        document.getElementById('customInput').value = nums.join(',');
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+
+    setTimeout(() => {
+        document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+            bar.style.width = bar.dataset.w + '%';
+        });
+    }, 400);
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

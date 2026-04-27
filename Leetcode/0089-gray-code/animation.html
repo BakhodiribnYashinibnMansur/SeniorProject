@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>89. Gray Code — Animation</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:30px}.header h1{font-size:1.8rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.95rem}.container{max-width:900px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155}
+.input-section{display:flex;gap:10px;margin-bottom:20px;align-items:center;justify-content:center}
+.input-section select{padding:6px 10px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:500;background:#3b82f6;color:#fff}
+.viz-area{background:#0f172a;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px;min-height:300px}
+.row{display:flex;gap:8px;align-items:center;font-family:'SF Mono',monospace}
+.idx{min-width:40px;color:#94a3b8;font-size:.85rem;text-align:right}
+.bits{display:flex;gap:2px}
+.bit{width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:#334155;color:#cbd5e1;border-radius:3px;font-size:.85rem;font-weight:700}
+.bit.set{background:#22c55e;color:#fff}
+.bit.changed{background:#fbbf24;color:#0f172a;box-shadow:0 0 0 2px #f59e0b}
+.val{min-width:60px;color:#fbbf24;font-weight:700}
+</style></head>
+<body><div class="header"><h1>89. Gray Code</h1><p>Medium — i ⊕ (i >> 1)</p></div>
+<div class="container">
+<div class="input-section"><label style="color:#94a3b8;font-size:.85rem">n:</label>
+<select id="nSel"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option></select>
+<button class="btn" onclick="render()">Generate</button></div>
+<div class="viz-area" id="vizArea"></div></div>
+<script>
+function render(){const n=parseInt(document.getElementById('nSel').value);const viz=document.getElementById('vizArea');viz.innerHTML='';
+let prev=-1;
+for(let i=0;i<(1<<n);i++){const v=i^(i>>1);
+const row=document.createElement('div');row.className='row';
+const idx=document.createElement('div');idx.className='idx';idx.textContent=`i=${i}:`;row.appendChild(idx);
+const bits=document.createElement('div');bits.className='bits';
+for(let b=n-1;b>=0;b--){const cell=document.createElement('div');cell.className='bit';
+const set=(v>>b)&1;if(set)cell.classList.add('set');
+if(prev>=0){const changed=((v^prev)>>b)&1;if(changed)cell.classList.add('changed')}
+cell.textContent=set;bits.appendChild(cell)}
+row.appendChild(bits);
+const val=document.createElement('div');val.className='val';val.textContent=`= ${v}`;row.appendChild(val);
+viz.appendChild(row);prev=v}}
+render();
+</script></body></html>

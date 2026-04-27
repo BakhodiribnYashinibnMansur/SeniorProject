@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>98. Validate BST</title>
+<style>body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:20px}.header h1{font-size:1.6rem;color:#60a5fa}
+.container{max-width:800px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px}
+.viz{background:#0f172a;border-radius:8px;padding:24px;font-family:'SF Mono',monospace}
+.tree{position:relative;height:300px}
+.node{position:absolute;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#475569;color:#fff;font-weight:700;border-radius:50%}
+.node.invalid{background:#ef4444}.node.valid{background:#22c55e}
+.bounds{position:absolute;font-size:.6rem;color:#94a3b8;top:42px;left:50%;transform:translateX(-50%);white-space:nowrap}
+.verdict{font-size:1.4rem;font-weight:800;text-align:center;padding:12px;border-radius:8px;margin-top:16px}
+.verdict.t{background:#22c55e}.verdict.f{background:#ef4444}
+.input-section{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.input-section input{padding:8px 12px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:6px;font-family:'SF Mono',monospace}
+button{padding:8px 16px;background:#3b82f6;color:#fff;border:none;border-radius:6px;cursor:pointer}
+</style></head>
+<body><div class="header"><h1>98. Validate Binary Search Tree</h1></div>
+<div class="container">
+<div class="input-section"><input type="text" id="inp" value="5,1,4,null,null,3,6"><button onclick="render()">Validate</button></div>
+<div class="viz" id="viz"></div></div>
+<script>
+function build(arr){if(!arr.length||arr[0]===null)return null;const root={val:arr[0]};const q=[root];let i=1;
+while(q.length&&i<arr.length){const n=q.shift();
+if(i<arr.length&&arr[i]!==null){n.l={val:arr[i]};q.push(n.l)}i++;
+if(i<arr.length&&arr[i]!==null){n.r={val:arr[i]};q.push(n.r)}i++}return root}
+function render(){const inp=document.getElementById('inp').value.split(',').map(s=>s.trim()).map(s=>s==='null'?null:parseInt(s));
+const root=build(inp);const viz=document.getElementById('viz');viz.innerHTML='';
+const positions=new Map();function pos(n,x,y,dx){if(!n)return;positions.set(n,{x,y});pos(n.l,x-dx,y+60,dx/2);pos(n.r,x+dx,y+60,dx/2)}
+pos(root,300,30,140);
+let valid=true;function check(n,lo,hi){if(!n)return;if(n.val<=lo||n.val>=hi){n.bad=true;valid=false;return}n.lo=lo;n.hi=hi;check(n.l,lo,n.val);check(n.r,n.val,hi)}
+check(root,-Infinity,Infinity);
+const tree=document.createElement('div');tree.className='tree';
+positions.forEach((p,n)=>{const d=document.createElement('div');d.className='node';if(n.bad)d.classList.add('invalid');else if(valid)d.classList.add('valid');
+d.style.left=p.x+'px';d.style.top=p.y+'px';d.textContent=n.val;
+const b=document.createElement('div');b.className='bounds';b.textContent=`(${n.lo===-Infinity?'-∞':n.lo}, ${n.hi===Infinity?'∞':n.hi})`;d.appendChild(b);
+tree.appendChild(d)});viz.appendChild(tree);
+const v=document.createElement('div');v.className='verdict '+(valid?'t':'f');v.textContent=valid?'TRUE — valid BST':'FALSE — not a BST';viz.appendChild(v);}
+render();
+</script></body></html>

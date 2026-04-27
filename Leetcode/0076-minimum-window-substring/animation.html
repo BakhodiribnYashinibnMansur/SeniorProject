@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>76. Minimum Window Substring — Animation</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+.header { text-align: center; margin-bottom: 30px; }
+.header h1 { font-size: 1.8rem;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px; }
+.header p { color: #94a3b8; font-size: 0.95rem; }
+.container { max-width: 900px; margin: 0 auto; background: #1e293b;
+    border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+.controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+    margin-bottom: 20px; flex-wrap: wrap; }
+.btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+    font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+.btn-play { background: #22c55e; color: white; }
+.btn-pause { background: #ef4444; color: white; }
+.btn-step { background: #3b82f6; color: white; }
+.btn-reset { background: #6b7280; color: white; }
+.speed-control { display: flex; align-items: center; gap: 8px; }
+.speed-control label { color: #94a3b8; font-size: 0.85rem; }
+.speed-control select { padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+    border: 1px solid #334155; border-radius: 4px; }
+.input-section { display: flex; gap: 10px; margin-bottom: 20px;
+    align-items: center; justify-content: center; flex-wrap: wrap; }
+.input-section input { padding: 8px 12px; background: #0f172a; color: #e2e8f0;
+    border: 1px solid #334155; border-radius: 6px; font-size: 0.9rem; min-width: 220px;
+    font-family: 'SF Mono', Consolas, monospace; }
+.viz-area { min-height: 280px; background: #0f172a; border-radius: 8px;
+    padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+    gap: 16px; }
+.row { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
+.char {
+    width: 32px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    background: #475569; color: white;
+    font-family: 'SF Mono', Consolas, monospace; font-weight: 700;
+    border-radius: 4px; font-size: 0.95rem; transition: all 0.3s ease;
+    position: relative;
+}
+.char.in-window { background: #3b82f6; }
+.char.lp { box-shadow: 0 0 0 3px #4ade80; }
+.char.rp { box-shadow: 0 0 0 3px #fbbf24; }
+.char.best { background: #22c55e !important; }
+.char .ptr {
+    position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+    color: #fbbf24; font-size: 0.65rem; font-weight: 700; white-space: nowrap;
+}
+.counts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+    background: #1e293b; padding: 10px; border-radius: 8px; }
+.count-cell {
+    background: #334155; padding: 4px 10px; border-radius: 4px;
+    font-family: 'SF Mono', Consolas, monospace; font-size: 0.8rem;
+}
+.count-cell.met { background: #22c55e; color: white; }
+.info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 20px; }
+.info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+    border: 1px solid #334155; text-align: center; }
+.info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+    text-transform: uppercase; letter-spacing: 1px; }
+.info-box .value { font-size: 1rem; font-weight: 600; }
+.step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+    padding: 12px 16px; border-radius: 0 8px 8px 0;
+    margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+@media (max-width: 768px) {
+    body { padding: 10px; }
+    .info-panel { grid-template-columns: repeat(2, 1fr); }
+    .container { padding: 14px; }
+    .char { width: 24px; height: 30px; font-size: 0.85rem; }
+}
+</style>
+</head>
+<body>
+<div class="header">
+    <h1>76. Minimum Window Substring</h1>
+    <p>Hard — Sliding Window</p>
+</div>
+<div class="container">
+    <div class="input-section">
+        <input type="text" id="sInput" placeholder="s" value="ADOBECODEBANC">
+        <input type="text" id="tInput" placeholder="t" value="ABC" style="min-width:120px">
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+    </div>
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="600" selected>Normal</option>
+                <option value="200">Fast</option>
+                <option value="80">Very Fast</option>
+            </select>
+        </div>
+    </div>
+    <div class="step-description" id="stepDesc">Press "Play" or "Step".</div>
+    <div class="viz-area" id="vizArea"></div>
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>l, r</h3><div class="value" id="lrVal">--</div></div>
+        <div class="info-box"><h3>have / req</h3><div class="value" id="haveVal">--</div></div>
+        <div class="info-box"><h3>Best</h3><div class="value" id="bestVal" style="font-size:0.85rem">--</div></div>
+    </div>
+</div>
+<script>
+const KEY = 'min-window_state';
+function save() { try { localStorage.setItem(KEY, JSON.stringify({ currentStep, speed, s, t })); } catch(e){} }
+function load() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e){ return null; } }
+const saved = load();
+let s = saved ? saved.s : 'ADOBECODEBANC';
+let t = saved ? saved.t : 'ABC';
+let currentStep = saved ? saved.currentStep : 0;
+let speed = saved ? saved.speed : 600;
+let isPlaying = false, playInterval = null;
+let steps = [];
+document.getElementById('sInput').value = s;
+document.getElementById('tInput').value = t;
+document.getElementById('speed').value = speed;
+
+function generateSteps() {
+    steps = [];
+    const need = {};
+    let distinct = 0;
+    for (const c of t) {
+        if (!need[c]) { need[c] = 0; distinct++; }
+        need[c]++;
+    }
+    const window = {};
+    let have = 0, l = 0, bestLen = -1, bestL = 0;
+    steps.push({ l: -1, r: -1, window: {...window}, have, distinct, need: {...need},
+        bestL, bestLen, msg: `need = ${JSON.stringify(need)}, distinct = ${distinct}.` });
+    for (let r = 0; r < s.length; r++) {
+        const c = s[r];
+        window[c] = (window[c] || 0) + 1;
+        if (need[c] && window[c] === need[c]) have++;
+        steps.push({ l, r, window: {...window}, have, distinct, need: {...need},
+            bestL, bestLen, msg: `Expand: r=${r}, char='${c}'. window[${c}]=${window[c]}.` });
+        while (have === distinct) {
+            if (bestLen === -1 || r - l + 1 < bestLen) {
+                bestLen = r - l + 1;
+                bestL = l;
+            }
+            steps.push({ l, r, window: {...window}, have, distinct, need: {...need},
+                bestL, bestLen, msg: `Window valid → record best="${s.slice(bestL, bestL + bestLen)}" (len ${bestLen}). Shrink.` });
+            const c2 = s[l];
+            window[c2]--;
+            if (need[c2] && window[c2] < need[c2]) have--;
+            l++;
+            steps.push({ l, r, window: {...window}, have, distinct, need: {...need},
+                bestL, bestLen, msg: `Shrink: drop '${c2}' at l=${l-1}. window[${c2}]=${window[c2]}.` });
+        }
+    }
+    steps.push({ l, r: s.length, window: {...window}, have, distinct, need: {...need},
+        bestL, bestLen,
+        msg: bestLen === -1 ? 'No valid window — return "".' :
+            `Done. Min window: "${s.slice(bestL, bestL + bestLen)}".` });
+}
+
+function renderStep() {
+    if (steps.length === 0) return;
+    save();
+    const step = steps[Math.min(currentStep, steps.length - 1)];
+    document.getElementById('stepCounter').textContent =
+        `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+    document.getElementById('lrVal').textContent =
+        `${step.l >= 0 ? step.l : '--'}, ${step.r >= 0 && step.r < s.length ? step.r : '--'}`;
+    document.getElementById('haveVal').textContent = `${step.have} / ${step.distinct}`;
+    document.getElementById('bestVal').textContent =
+        step.bestLen === -1 ? '--' : `"${s.slice(step.bestL, step.bestL + step.bestLen)}" (${step.bestLen})`;
+    document.getElementById('stepDesc').textContent = step.msg;
+
+    const viz = document.getElementById('vizArea');
+    viz.innerHTML = '';
+    const row = document.createElement('div');
+    row.className = 'row';
+    for (let k = 0; k < s.length; k++) {
+        const ch = document.createElement('div');
+        ch.className = 'char';
+        if (step.l >= 0 && step.r >= 0 && k >= step.l && k <= step.r) ch.classList.add('in-window');
+        if (step.bestLen > 0 && k >= step.bestL && k < step.bestL + step.bestLen) ch.classList.add('best');
+        if (k === step.l) ch.classList.add('lp');
+        if (k === step.r) ch.classList.add('rp');
+        ch.textContent = s[k];
+        const ptrs = [];
+        if (k === step.l) ptrs.push('l');
+        if (k === step.r) ptrs.push('r');
+        if (ptrs.length) {
+            const p = document.createElement('div');
+            p.className = 'ptr';
+            p.textContent = ptrs.join('/');
+            ch.appendChild(p);
+        }
+        row.appendChild(ch);
+    }
+    viz.appendChild(row);
+
+    const counts = document.createElement('div');
+    counts.className = 'counts';
+    for (const ch of Object.keys(step.need)) {
+        const c = document.createElement('div');
+        c.className = 'count-cell';
+        const w = step.window[ch] || 0;
+        if (w >= step.need[ch]) c.classList.add('met');
+        c.textContent = `${ch}: ${w}/${step.need[ch]}`;
+        counts.appendChild(c);
+    }
+    viz.appendChild(counts);
+}
+
+function play() { if (isPlaying) return; isPlaying = true;
+    playInterval = setInterval(() => {
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+        else pause();
+    }, speed); }
+function pause() { isPlaying = false; clearInterval(playInterval); }
+function stepForward() { pause(); if (currentStep < steps.length - 1) { currentStep++; renderStep(); } }
+function reset() { pause(); currentStep = 0; renderStep(); }
+function updateSpeed() { speed = parseInt(document.getElementById('speed').value);
+    if (isPlaying) { pause(); play(); } save(); }
+function applyInput() {
+    const a = document.getElementById('sInput').value;
+    const b = document.getElementById('tInput').value;
+    if (!a || !b || a.length > 30 || b.length > 10) {
+        document.getElementById('stepDesc').textContent = 'Use s up to 30 chars and t up to 10.';
+        return;
+    }
+    s = a; t = b;
+    reset(); generateSteps(); renderStep(); save();
+}
+
+generateSteps();
+if (currentStep >= steps.length) currentStep = 0;
+renderStep();
+</script>
+</body>
+</html>

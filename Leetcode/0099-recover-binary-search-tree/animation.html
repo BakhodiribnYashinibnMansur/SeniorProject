@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>99. Recover BST</title>
+<style>body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;padding:20px}
+.header{text-align:center;margin-bottom:20px}.header h1{font-size:1.6rem;color:#60a5fa}
+.container{max-width:800px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px}
+.viz{background:#0f172a;border-radius:8px;padding:24px}
+.row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.lbl{color:#94a3b8;font-size:.85rem;min-width:80px}
+.cell{padding:6px 12px;background:#475569;color:#fff;border-radius:4px;font-family:'SF Mono',monospace;font-weight:700}
+.cell.bad{background:#ef4444}.cell.fixed{background:#22c55e}
+</style></head>
+<body><div class="header"><h1>99. Recover Binary Search Tree</h1></div>
+<div class="container"><div class="viz" id="viz"></div></div>
+<script>
+const inorderBefore=[1,3,2];const swapIdx=[1,2];
+const inorderAfter=[1,2,3];
+const viz=document.getElementById('viz');
+function row(label,arr,bad){const r=document.createElement('div');r.className='row';
+const l=document.createElement('div');l.className='lbl';l.textContent=label;r.appendChild(l);
+arr.forEach((v,i)=>{const c=document.createElement('div');c.className='cell';
+if(bad&&bad.includes(i))c.classList.add(label.includes('Fixed')?'fixed':'bad');c.textContent=v;r.appendChild(c)});return r}
+viz.appendChild(row('Inorder (broken):',inorderBefore,swapIdx));
+viz.appendChild(row('Detected swap:',['idx 1 ↔ idx 2'],null));
+viz.appendChild(row('Fixed:',inorderAfter,swapIdx));
+</script></body></html>

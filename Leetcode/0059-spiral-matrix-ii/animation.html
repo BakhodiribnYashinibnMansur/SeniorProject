@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>59. Spiral Matrix II — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .tab { padding: 10px 20px; background: #1e293b; border: 1px solid #334155;
+            border-radius: 8px 8px 0 0; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; }
+        .tab:hover { background: #334155; }
+        .tab.active { background: #3b82f6; border-color: #3b82f6; color: white; font-weight: 600; }
+        .container { max-width: 900px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .speed-control, .gen-options { display: flex; align-items: center; gap: 8px; }
+        .speed-control label, .gen-options label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select, .gen-options select {
+            padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .viz-area { min-height: 360px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            align-items: center; }
+        .matrix { display: grid; gap: 4px; }
+        .mcell {
+            width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            background: #1e293b; color: #475569; font-weight: 600;
+            border-radius: 6px; font-size: 1rem;
+            transition: all 0.3s ease; position: relative;
+            border: 1px solid #334155;
+        }
+        .mcell.filled { background: #6366f1; color: white; border-color: #4f46e5; }
+        .mcell.in-band { background: #3b82f6; color: white; box-shadow: 0 0 0 2px #60a5fa; }
+        .mcell.current { background: #fbbf24 !important; color: #0f172a !important;
+            transform: scale(1.1); box-shadow: 0 0 0 3px #f59e0b; }
+        .mcell .arrow { position: absolute; bottom: 2px; right: 4px; font-size: 0.85rem; color: #fff; }
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1.1rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        .legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #94a3b8; }
+        .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px;
+            padding: 20px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.85rem; color: #64748b;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 14px; }
+        .chart-row { display: flex; align-items: center; gap: 12px; }
+        .chart-label { min-width: 160px; font-size: 0.82rem; color: #94a3b8;
+            text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 6px; height: 26px;
+            overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 6px;
+            display: flex; align-items: center; padding-left: 10px;
+            font-size: 0.78rem; font-weight: 600; color: white;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.opt-tc   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.optimal  { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 130px; font-size: 0.8rem; font-weight: 600;
+            color: #e2e8f0; flex-shrink: 0; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+            .mcell { width: 36px; height: 36px; font-size: 0.85rem; }
+            .chart-label { min-width: 100px; font-size: 0.72rem; }
+            .chart-complexity { display: none; }
+        }
+        @media (max-width: 480px) {
+            .mcell { width: 28px; height: 28px; font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>59. Spiral Matrix II</h1>
+    <p>Medium — Matrix Simulation</p>
+</div>
+
+<div class="tabs" id="tabs">
+    <div class="tab active" data-tab="layer">Layer by Layer</div>
+    <div class="tab" data-tab="dirvec">Direction Vectors</div>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <div class="gen-options">
+            <label>Size n:</label>
+            <select id="sizeN">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+            </select>
+        </div>
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="500" selected>Normal</option>
+                <option value="200">Fast</option>
+                <option value="80">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to fill the matrix.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>Value</h3><div class="value" id="valVal">0</div></div>
+        <div class="info-box"><h3>Cells filled</h3><div class="value" id="filledVal">0</div></div>
+        <div class="info-box"><h3>Direction</h3><div class="value" id="dirVal">→</div></div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div><span>Current cell</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#3b82f6"></div><span>Active band</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#6366f1"></div><span>Filled</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#1e293b"></div><span>Empty</span></div>
+    </div>
+
+    <div class="complexity-chart">
+        <div class="chart-title">Algorithm Complexity</div>
+        <div class="chart-bars">
+            <div class="chart-row">
+                <div class="chart-label">Layer by Layer</div>
+                <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="20" style="width:0">O(n²) / O(1)</div></div>
+                <div class="chart-complexity">Time / Space: O(n²) / O(1) extra</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Direction Vectors</div>
+                <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="22" style="width:0">O(n²) / O(1)</div></div>
+                <div class="chart-complexity">Time / Space: O(n²) / O(1) extra</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'spiral-matrix-ii_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentTab, currentStep, speed, n })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+
+    const saved = loadState();
+    let currentTab = saved ? saved.currentTab : 'layer';
+    let n = saved ? saved.n : 3;
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 500;
+    let isPlaying = false;
+    let playInterval = null;
+    let steps = [];
+
+    document.getElementById('sizeN').value = n;
+    document.getElementById('speed').value = speed;
+    document.querySelectorAll('.tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === currentTab);
+        t.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            currentTab = t.dataset.tab;
+            reset(); generateSteps(); renderStep(); saveState();
+        });
+    });
+
+    const DIR_LABEL = ['→', '↓', '←', '↑'];
+
+    function freshMatrix(n) {
+        const m = [];
+        for (let i = 0; i < n; i++) m.push(new Array(n).fill(0));
+        return m;
+    }
+
+    function generateLayerSteps() {
+        steps = [];
+        const m = freshMatrix(n);
+        let top = 0, bottom = n - 1, left = 0, right = n - 1, val = 1, dir = 0;
+        steps.push({
+            matrix: m.map(r => r.slice()),
+            current: null, dir, val: 0,
+            top, bottom, left, right,
+            msg: `Initial: top=${top}, bottom=${bottom}, left=${left}, right=${right}.`
+        });
+        while (val <= n * n) {
+            dir = 0;
+            for (let c = left; c <= right; c++) {
+                m[top][c] = val;
+                steps.push({
+                    matrix: m.map(r => r.slice()),
+                    current: [top, c], dir, val,
+                    top, bottom, left, right,
+                    msg: `Right sweep row ${top}: write ${val} at (${top},${c}).`
+                });
+                val++;
+            }
+            top++;
+            if (val > n * n) break;
+            dir = 1;
+            for (let r = top; r <= bottom; r++) {
+                m[r][right] = val;
+                steps.push({
+                    matrix: m.map(rr => rr.slice()),
+                    current: [r, right], dir, val,
+                    top, bottom, left, right,
+                    msg: `Down sweep col ${right}: write ${val} at (${r},${right}).`
+                });
+                val++;
+            }
+            right--;
+            if (val > n * n) break;
+            if (top <= bottom) {
+                dir = 2;
+                for (let c = right; c >= left; c--) {
+                    m[bottom][c] = val;
+                    steps.push({
+                        matrix: m.map(rr => rr.slice()),
+                        current: [bottom, c], dir, val,
+                        top, bottom, left, right,
+                        msg: `Left sweep row ${bottom}: write ${val} at (${bottom},${c}).`
+                    });
+                    val++;
+                }
+                bottom--;
+            }
+            if (val > n * n) break;
+            if (left <= right) {
+                dir = 3;
+                for (let r = bottom; r >= top; r--) {
+                    m[r][left] = val;
+                    steps.push({
+                        matrix: m.map(rr => rr.slice()),
+                        current: [r, left], dir, val,
+                        top, bottom, left, right,
+                        msg: `Up sweep col ${left}: write ${val} at (${r},${left}).`
+                    });
+                    val++;
+                }
+                left++;
+            }
+        }
+        steps.push({
+            matrix: m.map(r => r.slice()),
+            current: null, dir, val: val - 1,
+            top, bottom, left, right,
+            msg: `Done. Filled with 1..${n * n}.`
+        });
+    }
+
+    function generateDirVecSteps() {
+        steps = [];
+        const m = freshMatrix(n);
+        const DR = [0, 1, 0, -1], DC = [1, 0, -1, 0];
+        let r = 0, c = 0, d = 0;
+        steps.push({
+            matrix: m.map(rr => rr.slice()),
+            current: null, dir: d, val: 0,
+            msg: `Start at (0, 0), direction → .`
+        });
+        for (let k = 1; k <= n * n; k++) {
+            m[r][c] = k;
+            const lastDir = d;
+            let nr = r + DR[d], nc = c + DC[d];
+            const need = (nr < 0 || nr >= n || nc < 0 || nc >= n || m[nr][nc] !== 0);
+            if (need) {
+                d = (d + 1) % 4;
+                nr = r + DR[d]; nc = c + DC[d];
+            }
+            steps.push({
+                matrix: m.map(rr => rr.slice()),
+                current: [r, c], dir: d, val: k,
+                msg: `Write ${k} at (${r},${c}).${need ? ` Boundary/filled hit → rotate to ${DIR_LABEL[d]}.` : ` Continue ${DIR_LABEL[lastDir]}.`}`
+            });
+            r = nr; c = nc;
+        }
+        steps.push({
+            matrix: m.map(rr => rr.slice()),
+            current: null, dir: d, val: n * n,
+            msg: `Done. Filled with 1..${n * n}.`
+        });
+    }
+
+    function generateSteps() {
+        if (currentTab === 'dirvec') generateDirVecSteps();
+        else generateLayerSteps();
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('valVal').textContent = step.val;
+        let filled = 0;
+        for (const row of step.matrix) for (const v of row) if (v !== 0) filled++;
+        document.getElementById('filledVal').textContent = filled;
+        document.getElementById('dirVal').textContent = DIR_LABEL[step.dir] || '→';
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+        const grid = document.createElement('div');
+        grid.className = 'matrix';
+        grid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+        for (let r = 0; r < n; r++) {
+            for (let c = 0; c < n; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'mcell';
+                if (step.matrix[r][c] !== 0) {
+                    cell.classList.add('filled');
+                    cell.textContent = step.matrix[r][c];
+                }
+                if (currentTab === 'layer' && step.top != null) {
+                    const onBand = (r === step.top && c >= step.left && c <= step.right) ||
+                                   (r === step.bottom && c >= step.left && c <= step.right) ||
+                                   (c === step.left && r >= step.top && r <= step.bottom) ||
+                                   (c === step.right && r >= step.top && r <= step.bottom);
+                    if (onBand && step.matrix[r][c] === 0) cell.classList.add('in-band');
+                }
+                if (step.current && step.current[0] === r && step.current[1] === c) {
+                    cell.classList.add('current');
+                    const arr = document.createElement('span');
+                    arr.className = 'arrow';
+                    arr.textContent = DIR_LABEL[step.dir];
+                    cell.appendChild(arr);
+                }
+                grid.appendChild(cell);
+            }
+        }
+        viz.appendChild(grid);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const val = parseInt(document.getElementById('sizeN').value);
+        if (val >= 1 && val <= 8) {
+            n = val;
+            reset(); generateSteps(); renderStep(); saveState();
+        }
+    }
+
+    setTimeout(() => {
+        document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+            bar.style.width = bar.dataset.w + '%';
+        });
+    }, 400);
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>92. Reverse LL II — Animation</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:30px}.header h1{font-size:1.8rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.95rem}.container{max-width:900px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155}
+.input-section{display:flex;gap:10px;margin-bottom:20px;align-items:center;justify-content:center;flex-wrap:wrap}
+.input-section input{padding:8px 12px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:6px;font-family:'SF Mono',monospace}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:500;background:#3b82f6;color:#fff}
+.viz-area{background:#0f172a;border-radius:8px;padding:30px 20px;display:flex;justify-content:center;align-items:center;min-height:200px}
+.row{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.box{min-width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:#475569;color:#fff;font-weight:700;border-radius:8px}
+.box.in-range{background:#fbbf24;color:#0f172a}
+.arrow{color:#94a3b8;font-size:1.2rem}
+</style></head>
+<body><div class="header"><h1>92. Reverse Linked List II</h1><p>Medium — Linked List</p></div>
+<div class="container">
+<div class="input-section">
+<input type="text" id="nums" value="1,2,3,4,5">
+<input type="number" id="leftI" value="2" style="width:80px">
+<input type="number" id="rightI" value="4" style="width:80px">
+<button class="btn" onclick="render()">Reverse</button>
+</div>
+<div class="viz-area" id="viz"></div>
+</div>
+<script>
+function render(){const a=document.getElementById('nums').value.replace(/\s/g,'').split(',').filter(Boolean).map(Number);
+const L=parseInt(document.getElementById('leftI').value),R=parseInt(document.getElementById('rightI').value);
+if(L<1||R>a.length||L>R)return;
+const result=a.slice(0,L-1).concat(a.slice(L-1,R).reverse()).concat(a.slice(R));
+const viz=document.getElementById('viz');viz.innerHTML='';
+const row=document.createElement('div');row.className='row';
+result.forEach((v,k)=>{const b=document.createElement('div');b.className='box';
+const orig=k>=L-1&&k<R;if(orig)b.classList.add('in-range');b.textContent=v;row.appendChild(b);
+if(k<result.length-1){const ar=document.createElement('span');ar.className='arrow';ar.textContent='→';row.appendChild(ar)}});
+viz.appendChild(row);}
+render();
+</script></body></html>

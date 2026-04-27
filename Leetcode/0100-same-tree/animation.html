@@ -1,0 +1,31 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>100. Same Tree</title>
+<style>body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;padding:20px}
+.header{text-align:center;margin-bottom:20px}.header h1{font-size:1.6rem;color:#60a5fa}
+.container{max-width:800px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px}
+.viz{background:#0f172a;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px;align-items:center}
+.trees{display:flex;gap:32px}
+.tree{position:relative;width:240px;height:200px}
+.node{position:absolute;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:#475569;color:#fff;font-weight:700;border-radius:50%}
+.node.match{background:#22c55e}.node.diff{background:#ef4444}
+.verdict{font-size:1.4rem;font-weight:800;padding:12px 24px;border-radius:8px}
+.verdict.t{background:#22c55e}.verdict.f{background:#ef4444}
+</style></head>
+<body><div class="header"><h1>100. Same Tree</h1></div>
+<div class="container"><div class="viz" id="viz"></div></div>
+<script>
+const p=[1,2,3];const q=[1,2,3];
+function build(arr){if(!arr.length)return null;const r={val:arr[0]};const Q=[r];let i=1;
+while(Q.length&&i<arr.length){const n=Q.shift();
+if(i<arr.length&&arr[i]!==null){n.l={val:arr[i]};Q.push(n.l)}i++;
+if(i<arr.length&&arr[i]!==null){n.r={val:arr[i]};Q.push(n.r)}i++}return r}
+function same(a,b){if(!a&&!b)return true;if(!a||!b)return false;if(a.val!==b.val)return false;return same(a.l,b.l)&&same(a.r,b.r)}
+const result=same(build(p),build(q));
+function draw(arr,w){const t=document.createElement('div');t.className='tree';t.style.width=w+'px';
+const positions={0:[w/2-18,20],1:[w/4-18,80],2:[3*w/4-18,80]};
+arr.forEach((v,i)=>{if(v!==null&&positions[i]){const n=document.createElement('div');n.className='node '+(result?'match':'diff');
+n.style.left=positions[i][0]+'px';n.style.top=positions[i][1]+'px';n.textContent=v;t.appendChild(n)}});return t}
+const trees=document.createElement('div');trees.className='trees';
+trees.appendChild(draw(p,200));trees.appendChild(draw(q,200));
+const viz=document.getElementById('viz');viz.appendChild(trees);
+const v=document.createElement('div');v.className='verdict '+(result?'t':'f');v.textContent=result?'TRUE — same':'FALSE';viz.appendChild(v);
+</script></body></html>

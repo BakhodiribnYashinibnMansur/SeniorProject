@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>55. Jump Game — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .tab { padding: 10px 20px; background: #1e293b; border: 1px solid #334155;
+            border-radius: 8px 8px 0 0; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; }
+        .tab:hover { background: #334155; }
+        .tab.active { background: #3b82f6; border-color: #3b82f6; color: white; font-weight: 600; }
+        .container { max-width: 1000px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-generate { background: #8b5cf6; color: white; }
+        .speed-control, .gen-options { display: flex; align-items: center; gap: 8px; }
+        .speed-control label, .gen-options label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select, .gen-options select {
+            padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px;
+        }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .input-section input {
+            padding: 8px 12px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 6px;
+            font-size: 0.9rem; min-width: 280px;
+        }
+        .viz-area { min-height: 320px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; }
+        .lane {
+            display: flex; gap: 6px; align-items: flex-end;
+            justify-content: center; min-height: 240px; flex-wrap: nowrap;
+            position: relative;
+        }
+        .jcell {
+            display: flex; flex-direction: column; align-items: center;
+            transition: all 0.3s ease; min-width: 38px; position: relative;
+        }
+        .jcell .idx {
+            font-size: 0.65rem; color: #64748b; margin-bottom: 4px;
+        }
+        .jcell .val {
+            width: 38px; height: 38px;
+            display: flex; align-items: center; justify-content: center;
+            background: #475569; border-radius: 6px;
+            color: #e2e8f0; font-weight: 600; font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+        .jcell.reachable .val { background: #6366f1; color: white; }
+        .jcell.current .val { background: #fbbf24; color: #0f172a;
+            box-shadow: 0 0 0 3px #f59e0b; transform: scale(1.1); }
+        .jcell.target .val { background: #22c55e; color: white;
+            box-shadow: 0 0 0 3px #16a34a; }
+        .jcell.unreached .val { background: #ef4444; color: white; }
+        .jcell .reach-mark {
+            position: absolute; bottom: -16px;
+            font-size: 0.65rem; color: #fbbf24; font-weight: 700;
+        }
+        .farthest-line {
+            position: absolute; top: 0; bottom: 0;
+            width: 2px; background: #fbbf24;
+            box-shadow: 0 0 8px rgba(251,191,36,0.6);
+            transition: left 0.5s ease;
+            pointer-events: none;
+        }
+        .farthest-label {
+            position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+            font-size: 0.7rem; color: #fbbf24; font-weight: 700; white-space: nowrap;
+        }
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1.1rem; font-weight: 600; }
+        .info-box .value.success { color: #22c55e; }
+        .info-box .value.fail { color: #ef4444; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        .legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+            margin-top: 28px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #94a3b8; }
+        .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px;
+            padding: 20px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.85rem; color: #64748b;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 14px; }
+        .chart-row { display: flex; align-items: center; gap: 12px; }
+        .chart-label { min-width: 160px; font-size: 0.82rem; color: #94a3b8;
+            text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 6px; height: 26px;
+            overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 6px;
+            display: flex; align-items: center; padding-left: 10px;
+            font-size: 0.78rem; font-weight: 600; color: white;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute    { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.opt-sc   { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .chart-bar.optimal  { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 130px; font-size: 0.8rem; font-weight: 600;
+            color: #e2e8f0; flex-shrink: 0; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+            .jcell .val { width: 28px; height: 28px; font-size: 0.8rem; }
+            .jcell { min-width: 28px; }
+            .chart-label { min-width: 100px; font-size: 0.72rem; }
+            .chart-complexity { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>55. Jump Game</h1>
+    <p>Medium — Greedy / Dynamic Programming</p>
+</div>
+
+<div class="tabs" id="tabs">
+    <div class="tab active" data-tab="greedy">Greedy (Optimal)</div>
+    <div class="tab" data-tab="dp">Bottom-Up DP</div>
+</div>
+
+<div class="container">
+
+    <div class="input-section">
+        <input type="text" id="customInput" placeholder="Example: 2,3,1,1,4">
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+        <button class="btn btn-generate" onclick="generateRandom()">Generate</button>
+        <div class="gen-options">
+            <label>Size:</label>
+            <select id="genSize">
+                <option value="5">5</option>
+                <option value="8" selected>8</option>
+                <option value="12">12</option>
+            </select>
+            <label>Bias:</label>
+            <select id="genBias">
+                <option value="reachable" selected>Reachable</option>
+                <option value="blocked">Blocked</option>
+                <option value="random">Random</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="700" selected>Normal</option>
+                <option value="300">Fast</option>
+                <option value="100">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to walk through the algorithm.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>Index i</h3><div class="value" id="iVal">--</div></div>
+        <div class="info-box"><h3>Farthest / lastGood</h3><div class="value" id="reachVal">--</div></div>
+        <div class="info-box"><h3>Result</h3><div class="value" id="resultVal">--</div></div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div><span>Current i</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#6366f1"></div><span>Already reachable</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span>Target / good</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ef4444"></div><span>Stuck / unreachable</span></div>
+    </div>
+
+    <div class="complexity-chart">
+        <div class="chart-title">Algorithm Complexity (smaller bar = faster)</div>
+        <div class="chart-bars">
+            <div class="chart-row">
+                <div class="chart-label">Backtracking</div>
+                <div class="chart-bar-wrap"><div class="chart-bar brute" data-w="95" style="width:0">O(2ⁿ)</div></div>
+                <div class="chart-complexity">Time / Space: O(2ⁿ) / O(n)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Top-Down DP</div>
+                <div class="chart-bar-wrap"><div class="chart-bar opt-sc" data-w="55" style="width:0">O(n²)</div></div>
+                <div class="chart-complexity">Time / Space: O(n²) / O(n)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Bottom-Up DP</div>
+                <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="22" style="width:0">O(n)</div></div>
+                <div class="chart-complexity">Time / Space: O(n) / O(1)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Greedy</div>
+                <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="20" style="width:0">O(n)</div></div>
+                <div class="chart-complexity">Time / Space: O(n) / O(1)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'jump-game_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentTab, currentStep, speed, nums })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+
+    const saved = loadState();
+    let currentTab = saved ? saved.currentTab : 'greedy';
+    let nums = saved ? saved.nums : [2, 3, 1, 1, 4];
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 700;
+    let isPlaying = false;
+    let playInterval = null;
+    let steps = [];
+
+    document.getElementById('customInput').value = nums.join(',');
+    document.getElementById('speed').value = speed;
+    document.querySelectorAll('.tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === currentTab);
+        t.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            currentTab = t.dataset.tab;
+            reset(); generateSteps(); renderStep(); saveState();
+        });
+    });
+
+    // --- Step generators ----------------------------------------
+
+    function generateGreedySteps() {
+        steps = [];
+        const n = nums.length;
+        if (n === 0) return;
+        let farthest = 0;
+
+        steps.push({
+            i: -1, farthest, n, result: null,
+            msg: `Initialize farthest = 0. Sweep left to right.`,
+            kind: 'init'
+        });
+        for (let i = 0; i < n; i++) {
+            if (i > farthest) {
+                steps.push({
+                    i, farthest, n, result: false,
+                    msg: `i = ${i} > farthest = ${farthest}. STUCK — return false.`,
+                    kind: 'stuck'
+                });
+                return;
+            }
+            const newFar = Math.max(farthest, i + nums[i]);
+            const updated = newFar > farthest;
+            farthest = newFar;
+            steps.push({
+                i, farthest, n, result: null,
+                msg: `i=${i}: nums[${i}]=${nums[i]}. ${updated ? `Extend farthest to ${farthest}.` : `farthest stays at ${farthest}.`}`,
+                kind: updated ? 'extend' : 'stay'
+            });
+            if (farthest >= n - 1) {
+                steps.push({
+                    i, farthest, n, result: true,
+                    msg: `farthest = ${farthest} reaches the last index ${n - 1}. SUCCESS — return true.`,
+                    kind: 'win'
+                });
+                return;
+            }
+        }
+        steps.push({
+            i: n - 1, farthest, n, result: true,
+            msg: `Loop finished without breaking — return true.`,
+            kind: 'win'
+        });
+    }
+
+    function generateDPSteps() {
+        steps = [];
+        const n = nums.length;
+        if (n === 0) return;
+        let lastGood = n - 1;
+        steps.push({
+            i: -1, lastGood, n, result: null,
+            msg: `Initialize lastGood = n-1 = ${n-1}. Sweep right to left.`,
+            kind: 'init'
+        });
+        for (let i = n - 2; i >= 0; i--) {
+            const reaches = i + nums[i] >= lastGood;
+            if (reaches) {
+                lastGood = i;
+                steps.push({
+                    i, lastGood, n, result: null,
+                    msg: `i=${i}: ${i}+${nums[i]} >= lastGood. Mark i as good. lastGood=${lastGood}.`,
+                    kind: 'good'
+                });
+            } else {
+                steps.push({
+                    i, lastGood, n, result: null,
+                    msg: `i=${i}: ${i}+${nums[i]}=${i + nums[i]} < lastGood=${lastGood}. NOT good.`,
+                    kind: 'bad'
+                });
+            }
+        }
+        const result = lastGood === 0;
+        steps.push({
+            i: -1, lastGood, n, result,
+            msg: `Done. lastGood=${lastGood}. ${result ? 'Reaches 0 → return true.' : 'Does not reach 0 → return false.'}`,
+            kind: result ? 'win' : 'stuck'
+        });
+    }
+
+    function generateSteps() {
+        if (currentTab === 'dp') generateDPSteps();
+        else generateGreedySteps();
+    }
+
+    // --- Rendering ----------------------------------------------
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('iVal').textContent = step.i >= 0 ? step.i : '--';
+        document.getElementById('reachVal').textContent =
+            currentTab === 'greedy' ? step.farthest : step.lastGood;
+        const resEl = document.getElementById('resultVal');
+        if (step.result === null) {
+            resEl.textContent = '...';
+            resEl.classList.remove('success', 'fail');
+        } else {
+            resEl.textContent = step.result ? 'true' : 'false';
+            resEl.classList.toggle('success', !!step.result);
+            resEl.classList.toggle('fail', !step.result);
+        }
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        const lane = document.createElement('div');
+        lane.className = 'lane';
+        for (let k = 0; k < nums.length; k++) {
+            const cell = document.createElement('div');
+            cell.className = 'jcell';
+            const idx = document.createElement('div');
+            idx.className = 'idx';
+            idx.textContent = k;
+            cell.appendChild(idx);
+
+            const val = document.createElement('div');
+            val.className = 'val';
+            val.textContent = nums[k];
+            cell.appendChild(val);
+
+            const isLast = k === nums.length - 1;
+            const isCurrent = k === step.i;
+
+            if (currentTab === 'greedy') {
+                if (k <= step.farthest) cell.classList.add('reachable');
+                if (step.kind === 'stuck' && k > step.farthest) cell.classList.add('unreached');
+            } else { // dp
+                if (k >= step.lastGood) cell.classList.add('reachable');
+                if (step.kind === 'stuck' && step.lastGood > 0) cell.classList.add('unreached');
+            }
+            if (isLast) cell.classList.add('target');
+            if (isCurrent) cell.classList.add('current');
+
+            // Reach marker — show i + nums[i] for the current step
+            if (isCurrent && currentTab === 'greedy') {
+                const mark = document.createElement('div');
+                mark.className = 'reach-mark';
+                mark.textContent = `→${k + nums[k]}`;
+                cell.appendChild(mark);
+            }
+            lane.appendChild(cell);
+        }
+        viz.appendChild(lane);
+    }
+
+    // --- Controls -----------------------------------------------
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const raw = document.getElementById('customInput').value.trim();
+        try {
+            const cleaned = raw.replace(/[\[\]\s]/g, '');
+            if (!cleaned) return;
+            const arr = cleaned.split(',').map(s => parseInt(s));
+            if (arr.some(x => isNaN(x) || x < 0)) throw new Error('invalid');
+            if (arr.length === 0 || arr.length > 30) throw new Error('size');
+            nums = arr;
+            reset(); generateSteps(); renderStep(); saveState();
+        } catch (e) {
+            document.getElementById('stepDesc').textContent =
+                'Invalid format. Provide a comma-separated list of non-negative integers (max 30).';
+        }
+    }
+    function generateRandom() {
+        const size = parseInt(document.getElementById('genSize').value);
+        const bias = document.getElementById('genBias').value;
+        const arr = [];
+        for (let i = 0; i < size; i++) {
+            if (bias === 'reachable') {
+                // Always at least 1 unless last index, so reachable
+                arr.push(i === size - 1 ? Math.floor(Math.random() * 4) : 1 + Math.floor(Math.random() * 4));
+            } else if (bias === 'blocked') {
+                if (i < size / 2) arr.push(1 + Math.floor(Math.random() * 2));
+                else arr.push(0);
+            } else {
+                arr.push(Math.floor(Math.random() * 5));
+            }
+        }
+        nums = arr;
+        document.getElementById('customInput').value = nums.join(',');
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+
+    setTimeout(() => {
+        document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+            bar.style.width = bar.dataset.w + '%';
+        });
+    }, 400);
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

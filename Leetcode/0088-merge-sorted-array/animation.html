@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>88. Merge Sorted Array — Animation</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:30px}.header h1{font-size:1.8rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.95rem}.container{max-width:900px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155}
+.controls{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:500}
+.btn-play{background:#22c55e;color:#fff}.btn-pause{background:#ef4444;color:#fff}.btn-step{background:#3b82f6;color:#fff}.btn-reset{background:#6b7280;color:#fff}
+.speed-control{display:flex;align-items:center;gap:8px}.speed-control label{color:#94a3b8;font-size:.85rem}
+.speed-control select{padding:6px 10px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px}
+.viz-area{min-height:280px;background:#0f172a;border-radius:8px;padding:24px;margin-bottom:20px;display:flex;flex-direction:column;gap:24px;align-items:center}
+.lane{display:flex;flex-direction:column;align-items:center;gap:6px}
+.lbl{font-size:.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:1px}
+.row{display:flex;gap:4px}
+.cell{width:42px;height:48px;display:flex;align-items:center;justify-content:center;background:#475569;color:#fff;font-weight:700;border-radius:6px;position:relative;transition:all .3s}
+.cell.zero{background:#1e293b;color:#475569}.cell.placed{background:#22c55e}
+.cell.i-ptr{box-shadow:0 0 0 3px #fbbf24}.cell.j-ptr{box-shadow:0 0 0 3px #ec4899}.cell.k-ptr{box-shadow:0 0 0 3px #60a5fa}
+.cell .ptr{position:absolute;top:-18px;left:50%;transform:translateX(-50%);color:#fbbf24;font-size:.65rem;font-weight:700}
+.info-panel{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.info-box{background:#0f172a;border-radius:8px;padding:14px;border:1px solid #334155;text-align:center}
+.info-box h3{font-size:.75rem;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.info-box .value{font-size:1rem;font-weight:600}
+.step-description{background:#0f172a;border-left:3px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem;line-height:1.55;min-height:50px}
+</style></head>
+<body><div class="header"><h1>88. Merge Sorted Array</h1><p>Easy — Two pointers from end</p></div>
+<div class="container">
+<div class="controls"><button class="btn btn-play" onclick="play()">Play</button>
+<button class="btn btn-pause" onclick="pause()">Pause</button>
+<button class="btn btn-step" onclick="stepForward()">Step</button>
+<button class="btn btn-reset" onclick="reset()">Reset</button>
+<div class="speed-control"><label>Speed:</label><select id="speed" onchange="updateSpeed()">
+<option value="1500">Slow</option><option value="700" selected>Normal</option>
+<option value="300">Fast</option></select></div></div>
+<div class="step-description" id="stepDesc">Press Play.</div>
+<div class="viz-area" id="vizArea"></div>
+<div class="info-panel">
+<div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0/0</div></div>
+<div class="info-box"><h3>i</h3><div class="value" id="iVal">--</div></div>
+<div class="info-box"><h3>j</h3><div class="value" id="jVal">--</div></div>
+<div class="info-box"><h3>k</h3><div class="value" id="kVal">--</div></div>
+</div></div>
+<script>
+const KEY='msa_state';function save(){try{localStorage.setItem(KEY,JSON.stringify({currentStep,speed}))}catch(e){}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+const saved=load();let currentStep=saved?saved.currentStep:0,speed=saved?saved.speed:700,isPlaying=false,playInterval=null,steps=[];
+document.getElementById('speed').value=speed;
+const M=3,N=3;const nums1Init=[1,2,3,0,0,0];const nums2=[2,5,6];
+function generateSteps(){steps=[];const a=nums1Init.slice();let i=M-1,j=N-1,k=M+N-1;
+const placed=new Set();
+steps.push({arr:a.slice(),i,j,k,placed:new Set(),msg:`Init: i=${i}, j=${j}, k=${k}.`});
+while(j>=0){
+    if(i>=0&&a[i]>nums2[j]){a[k]=a[i];placed.add(k);
+        steps.push({arr:a.slice(),i,j,k,placed:new Set(placed),msg:`a[${i}]=${a[i]} > nums2[${j}]=${nums2[j]} → write to k=${k}, i--.`});
+        i--;
+    }else{a[k]=nums2[j];placed.add(k);
+        steps.push({arr:a.slice(),i,j,k,placed:new Set(placed),msg:`Place nums2[${j}]=${nums2[j]} at k=${k}, j--.`});
+        j--;
+    }
+    k--;
+}
+steps.push({arr:a.slice(),i,j,k,placed:new Set(placed),msg:`Done.`});}
+function renderStep(){if(steps.length===0)return;save();const s=steps[Math.min(currentStep,steps.length-1)];
+document.getElementById('stepCounter').textContent=`${Math.min(currentStep+1,steps.length)} / ${steps.length}`;
+document.getElementById('iVal').textContent=s.i>=0?s.i:'--';
+document.getElementById('jVal').textContent=s.j>=0?s.j:'--';
+document.getElementById('kVal').textContent=s.k>=0?s.k:'--';
+document.getElementById('stepDesc').textContent=s.msg;
+const viz=document.getElementById('vizArea');viz.innerHTML='';
+function makeRow(arr,name,ptrName,ptrIdx){const lane=document.createElement('div');lane.className='lane';
+const lbl=document.createElement('div');lbl.className='lbl';lbl.textContent=name;lane.appendChild(lbl);
+const row=document.createElement('div');row.className='row';
+arr.forEach((v,k)=>{const c=document.createElement('div');c.className='cell';
+if(name==='nums1 (in-place)'){if(s.placed.has(k))c.classList.add('placed');else if(v===0&&k>=M&&!s.placed.has(k))c.classList.add('zero')}
+if(ptrName==='i'&&k===ptrIdx)c.classList.add('i-ptr');
+if(ptrName==='j'&&k===ptrIdx)c.classList.add('j-ptr');
+if(name==='nums1 (in-place)'&&k===s.k)c.classList.add('k-ptr');
+c.textContent=v;
+const ptrs=[];if(ptrName==='i'&&k===ptrIdx)ptrs.push('i');if(ptrName==='j'&&k===ptrIdx)ptrs.push('j');
+if(name==='nums1 (in-place)'&&k===s.k)ptrs.push('k');
+if(ptrs.length){const p=document.createElement('div');p.className='ptr';p.textContent=ptrs.join('/');c.appendChild(p)}
+row.appendChild(c);});lane.appendChild(row);return lane;}
+viz.appendChild(makeRow(s.arr,'nums1 (in-place)','i',s.i));
+viz.appendChild(makeRow(nums2,'nums2','j',s.j));}
+function play(){if(isPlaying)return;isPlaying=true;playInterval=setInterval(()=>{if(currentStep<steps.length-1){currentStep++;renderStep()}else pause()},speed)}
+function pause(){isPlaying=false;clearInterval(playInterval)}
+function stepForward(){pause();if(currentStep<steps.length-1){currentStep++;renderStep()}}
+function reset(){pause();currentStep=0;renderStep()}
+function updateSpeed(){speed=parseInt(document.getElementById('speed').value);if(isPlaying){pause();play()}save()}
+generateSteps();if(currentStep>=steps.length)currentStep=0;renderStep();
+</script></body></html>

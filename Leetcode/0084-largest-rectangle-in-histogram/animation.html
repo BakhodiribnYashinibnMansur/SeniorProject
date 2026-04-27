@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>84. Largest Rectangle — Animation</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:30px}.header h1{font-size:1.8rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.95rem}.container{max-width:900px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155}
+.controls{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:500}
+.btn-play{background:#22c55e;color:#fff}.btn-pause{background:#ef4444;color:#fff}.btn-step{background:#3b82f6;color:#fff}.btn-reset{background:#6b7280;color:#fff}
+.speed-control{display:flex;align-items:center;gap:8px}.speed-control label{color:#94a3b8;font-size:.85rem}
+.speed-control select{padding:6px 10px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px}
+.input-section{display:flex;gap:10px;margin-bottom:20px;align-items:center;justify-content:center}
+.input-section input{padding:8px 12px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:6px;min-width:240px;font-family:'SF Mono',monospace}
+.viz-area{min-height:300px;background:#0f172a;border-radius:8px;padding:30px 20px;margin-bottom:20px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.bars{display:flex;gap:4px;align-items:flex-end;justify-content:center;min-height:200px}
+.bar{display:flex;flex-direction:column;align-items:center;width:40px;transition:all .3s;position:relative}
+.bar .h{width:100%;background:#475569;border-radius:4px 4px 0 0;color:#fff;font-weight:700;display:flex;align-items:flex-start;justify-content:center;padding-top:4px;font-size:.8rem}
+.bar.in-stack .h{background:#3b82f6}
+.bar.popped .h{background:#ef4444}
+.bar.cur .h{background:#fbbf24;color:#0f172a}
+.bar.best .h{background:#22c55e}
+.bar .idx{font-size:.6rem;color:#94a3b8;margin-top:4px}
+.stack-display{display:flex;gap:6px;background:#1e293b;padding:8px 16px;border-radius:6px;font-family:'SF Mono',monospace;font-size:.85rem}
+.stack-display .pill{background:#3b82f6;color:#fff;padding:3px 8px;border-radius:3px}
+.info-panel{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.info-box{background:#0f172a;border-radius:8px;padding:14px;border:1px solid #334155;text-align:center}
+.info-box h3{font-size:.75rem;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.info-box .value{font-size:1rem;font-weight:600}
+.step-description{background:#0f172a;border-left:3px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem;line-height:1.55;min-height:50px}
+@media(max-width:768px){body{padding:10px}.bar{width:28px}.bar .h{font-size:.7rem}}</style></head>
+<body><div class="header"><h1>84. Largest Rectangle in Histogram</h1><p>Hard — Monotonic Stack</p></div>
+<div class="container">
+<div class="input-section"><input type="text" id="numsInput" value="2,1,5,6,2,3"><button class="btn btn-step" onclick="applyInput()">Apply</button></div>
+<div class="controls"><button class="btn btn-play" onclick="play()">Play</button>
+<button class="btn btn-pause" onclick="pause()">Pause</button>
+<button class="btn btn-step" onclick="stepForward()">Step</button>
+<button class="btn btn-reset" onclick="reset()">Reset</button>
+<div class="speed-control"><label>Speed:</label><select id="speed" onchange="updateSpeed()">
+<option value="1500">Slow</option><option value="700" selected>Normal</option>
+<option value="300">Fast</option><option value="100">Very Fast</option></select></div></div>
+<div class="step-description" id="stepDesc">Press Play.</div>
+<div class="viz-area" id="vizArea"></div>
+<div class="info-panel">
+<div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0/0</div></div>
+<div class="info-box"><h3>i</h3><div class="value" id="iVal">--</div></div>
+<div class="info-box"><h3>Stack</h3><div class="value" id="stkVal" style="font-size:.8rem">[]</div></div>
+<div class="info-box"><h3>Best</h3><div class="value" id="bestVal">0</div></div>
+</div></div>
+<script>
+const KEY='lrh_state';function save(){try{localStorage.setItem(KEY,JSON.stringify({currentStep,speed,heights}))}catch(e){}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+const saved=load();let heights=saved?saved.heights:[2,1,5,6,2,3];
+let currentStep=saved?saved.currentStep:0,speed=saved?saved.speed:700,isPlaying=false,playInterval=null,steps=[];
+document.getElementById('numsInput').value=heights.join(',');document.getElementById('speed').value=speed;
+function generateSteps(){steps=[];const n=heights.length;const stack=[];let best=0;
+let bestIdx=-1,bestWidth=0;
+steps.push({stack:[],i:-1,popped:-1,best,bestRange:null,msg:`Init.`});
+for(let i=0;i<=n;i++){
+    const h=i===n?0:heights[i];
+    while(stack.length>0&&heights[stack[stack.length-1]]>h){
+        const top=stack.pop();
+        const width=stack.length===0?i:i-stack[stack.length-1]-1;
+        const area=heights[top]*width;
+        const newBest=area>best;
+        if(newBest){best=area;bestIdx=top;bestWidth=width}
+        steps.push({stack:stack.slice(),i:i<n?i:-1,popped:top,best,
+            bestRange:newBest?[stack.length===0?0:stack[stack.length-1]+1,i-1]:null,
+            msg:`Pop ${top} (h=${heights[top]}). width=${width}. area=${area}.${newBest?' New best!':''}`});
+    }
+    stack.push(i);
+    if(i<n)steps.push({stack:stack.slice(),i,popped:-1,best,bestRange:null,msg:`Push ${i} (h=${heights[i]}).`});
+}
+steps.push({stack:[],i:-1,popped:-1,best,bestRange:bestIdx>=0?[bestIdx-bestWidth+1<0?0:bestIdx,bestIdx]:null,msg:`Done. Largest area = ${best}.`});}
+function renderStep(){if(steps.length===0)return;save();const s=steps[Math.min(currentStep,steps.length-1)];
+document.getElementById('stepCounter').textContent=`${Math.min(currentStep+1,steps.length)} / ${steps.length}`;
+document.getElementById('iVal').textContent=s.i>=0?s.i:'--';
+document.getElementById('stkVal').textContent=`[${s.stack.join(',')}]`;
+document.getElementById('bestVal').textContent=s.best;document.getElementById('stepDesc').textContent=s.msg;
+const viz=document.getElementById('vizArea');viz.innerHTML='';
+const bars=document.createElement('div');bars.className='bars';
+const maxH=Math.max(1,...heights);
+for(let k=0;k<heights.length;k++){const b=document.createElement('div');b.className='bar';
+    const h=document.createElement('div');h.className='h';h.style.height=`${30+heights[k]/maxH*150}px`;h.textContent=heights[k];
+    if(s.stack.includes(k))b.classList.add('in-stack');if(k===s.popped)b.classList.add('popped');if(k===s.i)b.classList.add('cur');
+    if(s.bestRange&&k>=s.bestRange[0]&&k<=s.bestRange[1])b.classList.add('best');
+    b.appendChild(h);const idx=document.createElement('div');idx.className='idx';idx.textContent=k;b.appendChild(idx);
+    bars.appendChild(b)}viz.appendChild(bars);
+const sd=document.createElement('div');sd.className='stack-display';sd.innerHTML='Stack: ';
+s.stack.forEach(i=>{const p=document.createElement('span');p.className='pill';p.textContent=`${i}(h=${heights[i]})`;sd.appendChild(p)});
+viz.appendChild(sd);}
+function play(){if(isPlaying)return;isPlaying=true;playInterval=setInterval(()=>{if(currentStep<steps.length-1){currentStep++;renderStep()}else pause()},speed)}
+function pause(){isPlaying=false;clearInterval(playInterval)}
+function stepForward(){pause();if(currentStep<steps.length-1){currentStep++;renderStep()}}
+function reset(){pause();currentStep=0;renderStep()}
+function updateSpeed(){speed=parseInt(document.getElementById('speed').value);if(isPlaying){pause();play()}save()}
+function applyInput(){try{const a=document.getElementById('numsInput').value.replace(/\s/g,'').split(',').map(Number);
+if(a.some(x=>isNaN(x)||x<0)||a.length>15)throw new Error();heights=a;reset();generateSteps();renderStep();save()}
+catch(e){document.getElementById('stepDesc').textContent='Invalid input.'}}
+generateSteps();if(currentStep>=steps.length)currentStep=0;renderStep();
+</script></body></html>

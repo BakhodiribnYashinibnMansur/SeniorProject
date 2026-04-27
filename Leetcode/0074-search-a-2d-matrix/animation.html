@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>74. Search a 2D Matrix — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .tab { padding: 10px 20px; background: #1e293b; border: 1px solid #334155;
+            border-radius: 8px 8px 0 0; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; }
+        .tab:hover { background: #334155; }
+        .tab.active { background: #3b82f6; border-color: #3b82f6; color: white; font-weight: 600; }
+        .container { max-width: 900px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select { padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .input-section input { padding: 8px 12px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 6px; font-size: 0.9rem; width: 80px; }
+        .viz-area { min-height: 300px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            align-items: center; gap: 12px; }
+        .grid { display: grid; gap: 4px; }
+        .cell {
+            min-width: 56px; height: 56px;
+            display: flex; align-items: center; justify-content: center;
+            background: #475569; color: white; font-weight: 700;
+            border-radius: 6px; font-size: 1rem;
+            transition: all 0.4s ease;
+            border: 1px solid #334155;
+        }
+        .cell.in-range { background: #6366f1; }
+        .cell.out-range { background: #1e293b; color: #475569; }
+        .cell.current { background: #fbbf24 !important; color: #0f172a !important;
+            box-shadow: 0 0 0 3px #f59e0b; transform: scale(1.05); }
+        .cell.found { background: #22c55e !important; color: white !important;
+            box-shadow: 0 0 0 3px #4ade80; }
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+            .cell { min-width: 36px; height: 36px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>74. Search a 2D Matrix</h1>
+    <p>Medium — Binary Search</p>
+</div>
+
+<div class="tabs" id="tabs">
+    <div class="tab active" data-tab="binary">Binary Search</div>
+    <div class="tab" data-tab="staircase">Staircase</div>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <label style="color:#94a3b8;font-size:0.85rem">target:</label>
+        <input type="number" id="targetInput" value="13">
+        <button class="btn btn-step" onclick="applyInput()">Search</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="700" selected>Normal</option>
+                <option value="300">Fast</option>
+                <option value="100">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to search.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>lo / hi</h3><div class="value" id="loHiVal">--</div></div>
+        <div class="info-box"><h3>mid</h3><div class="value" id="midVal">--</div></div>
+        <div class="info-box"><h3>Result</h3><div class="value" id="resVal">...</div></div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'search-matrix_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentTab, currentStep, speed, target })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+
+    const matrix = [[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]];
+    const m = matrix.length;
+    const n = matrix[0].length;
+
+    const saved = loadState();
+    let currentTab = saved ? saved.currentTab : 'binary';
+    let target = saved ? saved.target : 13;
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 700;
+    let isPlaying = false, playInterval = null;
+    let steps = [];
+
+    document.getElementById('targetInput').value = target;
+    document.getElementById('speed').value = speed;
+    document.querySelectorAll('.tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === currentTab);
+        t.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            currentTab = t.dataset.tab;
+            reset(); generateSteps(); renderStep(); saveState();
+        });
+    });
+
+    function generateBinarySteps() {
+        steps = [];
+        let lo = 0, hi = m * n - 1;
+        steps.push({lo, hi, mid: -1, found: null,
+            msg: `Initial: lo=0, hi=${m*n-1}. Treat matrix as flat sorted array.`});
+        let result = false;
+        while (lo <= hi) {
+            const mid = Math.floor((lo + hi) / 2);
+            const r = Math.floor(mid / n), c = mid % n;
+            const v = matrix[r][c];
+            if (v === target) {
+                result = true;
+                steps.push({lo, hi, mid, found: true, midR: r, midC: c,
+                    msg: `mid=${mid} at (${r},${c}) = ${v} → match! return true.`});
+                break;
+            }
+            if (v < target) {
+                steps.push({lo, hi, mid, found: null, midR: r, midC: c,
+                    msg: `mid=${mid} at (${r},${c}) = ${v} < ${target}. lo = ${mid + 1}.`});
+                lo = mid + 1;
+            } else {
+                steps.push({lo, hi, mid, found: null, midR: r, midC: c,
+                    msg: `mid=${mid} at (${r},${c}) = ${v} > ${target}. hi = ${mid - 1}.`});
+                hi = mid - 1;
+            }
+        }
+        if (!result) {
+            steps.push({lo, hi, mid: -1, found: false,
+                msg: `lo > hi. ${target} not found → return false.`});
+        }
+    }
+
+    function generateStaircaseSteps() {
+        steps = [];
+        let r = 0, c = n - 1;
+        steps.push({stairR: r, stairC: c, found: null,
+            msg: `Start at top-right (${r},${c}).`});
+        let result = false;
+        while (r < m && c >= 0) {
+            const v = matrix[r][c];
+            if (v === target) {
+                result = true;
+                steps.push({stairR: r, stairC: c, found: true,
+                    msg: `(${r},${c}) = ${v} → match!`});
+                break;
+            }
+            if (v < target) {
+                steps.push({stairR: r, stairC: c, found: null,
+                    msg: `(${r},${c}) = ${v} < ${target}. Move down.`});
+                r++;
+            } else {
+                steps.push({stairR: r, stairC: c, found: null,
+                    msg: `(${r},${c}) = ${v} > ${target}. Move left.`});
+                c--;
+            }
+        }
+        if (!result) {
+            steps.push({stairR: -1, stairC: -1, found: false,
+                msg: `${target} not found → return false.`});
+        }
+    }
+
+    function generateSteps() {
+        if (currentTab === 'staircase') generateStaircaseSteps();
+        else generateBinarySteps();
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        if (currentTab === 'binary') {
+            document.getElementById('loHiVal').textContent = `${step.lo}, ${step.hi}`;
+            document.getElementById('midVal').textContent = step.mid >= 0 ? step.mid : '--';
+        } else {
+            document.getElementById('loHiVal').textContent = '--';
+            document.getElementById('midVal').textContent = step.stairR >= 0 ? `(${step.stairR}, ${step.stairC})` : '--';
+        }
+        document.getElementById('resVal').textContent =
+            step.found === true ? 'true ✓' : (step.found === false ? 'false ✗' : '...');
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+        for (let r = 0; r < m; r++) {
+            for (let c = 0; c < n; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                if (currentTab === 'binary') {
+                    const flat = r * n + c;
+                    if (flat < step.lo || flat > step.hi) cell.classList.add('out-range');
+                    else cell.classList.add('in-range');
+                    if (step.midR === r && step.midC === c) cell.classList.add('current');
+                } else {
+                    if (step.stairR === r && step.stairC === c) cell.classList.add('current');
+                }
+                if (step.found && ((step.midR === r && step.midC === c) ||
+                    (step.stairR === r && step.stairC === c))) {
+                    cell.classList.remove('current');
+                    cell.classList.add('found');
+                }
+                cell.textContent = matrix[r][c];
+                grid.appendChild(cell);
+            }
+        }
+        viz.appendChild(grid);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const t = parseInt(document.getElementById('targetInput').value);
+        if (isNaN(t)) return;
+        target = t;
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

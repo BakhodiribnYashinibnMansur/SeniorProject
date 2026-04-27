@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>81. Search Rotated II — Animation</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:30px}.header h1{font-size:1.8rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.95rem}.container{max-width:900px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155}
+.controls{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:500}
+.btn-play{background:#22c55e;color:#fff}.btn-pause{background:#ef4444;color:#fff}.btn-step{background:#3b82f6;color:#fff}.btn-reset{background:#6b7280;color:#fff}
+.speed-control{display:flex;align-items:center;gap:8px}.speed-control label{color:#94a3b8;font-size:.85rem}
+.speed-control select{padding:6px 10px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px}
+.input-section{display:flex;gap:10px;margin-bottom:20px;align-items:center;justify-content:center;flex-wrap:wrap}
+.input-section input{padding:8px 12px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:6px;min-width:220px;font-family:'SF Mono',monospace}
+.viz-area{min-height:200px;background:#0f172a;border-radius:8px;padding:30px 20px;margin-bottom:20px;display:flex;flex-direction:column;gap:16px;align-items:center}
+.row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.cell{width:42px;height:48px;display:flex;align-items:center;justify-content:center;background:#475569;color:#fff;font-weight:700;border-radius:6px;transition:all .3s;position:relative}
+.cell.in-range{background:#3b82f6}.cell.out-range{background:#1e293b;color:#475569}
+.cell.lo{box-shadow:0 0 0 3px #4ade80}.cell.hi{box-shadow:0 0 0 3px #ef4444}.cell.mid{box-shadow:0 0 0 3px #fbbf24}
+.cell.found{background:#22c55e!important}.cell .ptr{position:absolute;top:-18px;left:50%;transform:translateX(-50%);color:#fbbf24;font-size:.65rem;font-weight:700}
+.info-panel{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.info-box{background:#0f172a;border-radius:8px;padding:14px;border:1px solid #334155;text-align:center}
+.info-box h3{font-size:.75rem;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.info-box .value{font-size:1rem;font-weight:600}
+.step-description{background:#0f172a;border-left:3px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem;line-height:1.55;min-height:50px}
+@media(max-width:768px){body{padding:10px}.info-panel{grid-template-columns:repeat(2,1fr)}.cell{width:30px;height:40px;font-size:.8rem}}</style></head>
+<body><div class="header"><h1>81. Search Rotated Sorted (with Duplicates)</h1><p>Medium — Modified Binary Search</p></div>
+<div class="container">
+<div class="input-section">
+<input type="text" id="numsInput" value="2,5,6,0,0,1,2">
+<input type="number" id="targetInput" value="0" style="padding:8px 12px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:6px;width:80px">
+<button class="btn btn-step" onclick="applyInput()">Search</button></div>
+<div class="controls"><button class="btn btn-play" onclick="play()">Play</button>
+<button class="btn btn-pause" onclick="pause()">Pause</button>
+<button class="btn btn-step" onclick="stepForward()">Step</button>
+<button class="btn btn-reset" onclick="reset()">Reset</button>
+<div class="speed-control"><label>Speed:</label><select id="speed" onchange="updateSpeed()">
+<option value="1500">Slow</option><option value="700" selected>Normal</option>
+<option value="300">Fast</option><option value="100">Very Fast</option></select></div></div>
+<div class="step-description" id="stepDesc">Press Play.</div>
+<div class="viz-area" id="vizArea"></div>
+<div class="info-panel">
+<div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0/0</div></div>
+<div class="info-box"><h3>lo / hi</h3><div class="value" id="loHi">--</div></div>
+<div class="info-box"><h3>mid</h3><div class="value" id="midVal">--</div></div>
+<div class="info-box"><h3>Result</h3><div class="value" id="resVal">...</div></div>
+</div></div>
+<script>
+const KEY='srs2_state';function save(){try{localStorage.setItem(KEY,JSON.stringify({currentStep,speed,nums,target}))}catch(e){}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+const saved=load();let nums=saved?saved.nums:[2,5,6,0,0,1,2],target=saved?saved.target:0;
+let currentStep=saved?saved.currentStep:0,speed=saved?saved.speed:700,isPlaying=false,playInterval=null,steps=[];
+document.getElementById('numsInput').value=nums.join(',');document.getElementById('targetInput').value=target;document.getElementById('speed').value=speed;
+function generateSteps(){steps=[];let lo=0,hi=nums.length-1;
+steps.push({lo,hi,mid:-1,found:null,msg:`Initial: lo=0, hi=${nums.length-1}.`});
+let res=false;while(lo<=hi){const mid=Math.floor((lo+hi)/2);
+if(nums[mid]===target){res=true;steps.push({lo,hi,mid,found:true,msg:`nums[mid=${mid}]=${nums[mid]} == ${target} → found.`});break}
+if(nums[lo]===nums[mid]&&nums[mid]===nums[hi]){steps.push({lo,hi,mid,found:null,msg:`nums[lo]=nums[mid]=nums[hi]=${nums[lo]} → can't tell, lo++, hi--.`});lo++;hi--}
+else if(nums[lo]<=nums[mid]){if(nums[lo]<=target&&target<nums[mid]){steps.push({lo,hi,mid,found:null,msg:`Left half sorted, target in [${nums[lo]},${nums[mid]}). hi=${mid-1}.`});hi=mid-1}
+else{steps.push({lo,hi,mid,found:null,msg:`Left half sorted, target outside. lo=${mid+1}.`});lo=mid+1}}
+else{if(nums[mid]<target&&target<=nums[hi]){steps.push({lo,hi,mid,found:null,msg:`Right half sorted, target in (${nums[mid]},${nums[hi]}]. lo=${mid+1}.`});lo=mid+1}
+else{steps.push({lo,hi,mid,found:null,msg:`Right half sorted, target outside. hi=${mid-1}.`});hi=mid-1}}}
+if(!res)steps.push({lo,hi,mid:-1,found:false,msg:`lo > hi. Not found.`});}
+function renderStep(){if(steps.length===0)return;save();const s=steps[Math.min(currentStep,steps.length-1)];
+document.getElementById('stepCounter').textContent=`${Math.min(currentStep+1,steps.length)} / ${steps.length}`;
+document.getElementById('loHi').textContent=`${s.lo}, ${s.hi}`;document.getElementById('midVal').textContent=s.mid>=0?s.mid:'--';
+document.getElementById('resVal').textContent=s.found===true?'true ✓':(s.found===false?'false ✗':'...');document.getElementById('stepDesc').textContent=s.msg;
+const viz=document.getElementById('vizArea');viz.innerHTML='';const row=document.createElement('div');row.className='row';
+for(let k=0;k<nums.length;k++){const c=document.createElement('div');c.className='cell';
+if(k<s.lo||k>s.hi)c.classList.add('out-range');else c.classList.add('in-range');
+if(k===s.lo)c.classList.add('lo');if(k===s.hi)c.classList.add('hi');if(k===s.mid)c.classList.add('mid');
+if(s.found===true&&k===s.mid)c.classList.add('found');c.textContent=nums[k];
+const ptrs=[];if(k===s.lo)ptrs.push('lo');if(k===s.hi)ptrs.push('hi');if(k===s.mid)ptrs.push('mid');
+if(ptrs.length){const p=document.createElement('div');p.className='ptr';p.textContent=ptrs.join('/');c.appendChild(p)}row.appendChild(c)}
+viz.appendChild(row);}
+function play(){if(isPlaying)return;isPlaying=true;playInterval=setInterval(()=>{if(currentStep<steps.length-1){currentStep++;renderStep()}else pause()},speed)}
+function pause(){isPlaying=false;clearInterval(playInterval)}
+function stepForward(){pause();if(currentStep<steps.length-1){currentStep++;renderStep()}}
+function reset(){pause();currentStep=0;renderStep()}
+function updateSpeed(){speed=parseInt(document.getElementById('speed').value);if(isPlaying){pause();play()}save()}
+function applyInput(){try{const a=document.getElementById('numsInput').value.replace(/\s/g,'').split(',').map(Number);
+if(a.some(isNaN)||a.length>15)throw new Error();const t=parseInt(document.getElementById('targetInput').value);
+nums=a;target=t;reset();generateSteps();renderStep();save()}catch(e){document.getElementById('stepDesc').textContent='Invalid input.'}}
+generateSteps();if(currentStep>=steps.length)currentStep=0;renderStep();
+</script></body></html>

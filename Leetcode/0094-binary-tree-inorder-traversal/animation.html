@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>94. Inorder Traversal — Animation</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:30px}.header h1{font-size:1.8rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.95rem}.container{max-width:900px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155}
+.controls{display:flex;gap:10px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:500}
+.btn-play{background:#22c55e;color:#fff}.btn-pause{background:#ef4444;color:#fff}.btn-step{background:#3b82f6;color:#fff}.btn-reset{background:#6b7280;color:#fff}
+.viz-area{background:#0f172a;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px;align-items:center;min-height:300px}
+.tree{position:relative;width:400px;height:200px}
+.node{position:absolute;width:36px;height:36px;background:#475569;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .3s}
+.node.cur{background:#fbbf24;color:#0f172a;box-shadow:0 0 0 3px #f59e0b}
+.node.visited{background:#22c55e}
+.edge{position:absolute;background:#475569;height:2px;transform-origin:left}
+.output{display:flex;gap:6px;font-family:'SF Mono',monospace}
+.out-cell{padding:6px 12px;background:#22c55e;color:#fff;border-radius:4px;font-weight:700}
+.stack-row{display:flex;gap:6px;font-family:'SF Mono',monospace;font-size:.85rem;color:#94a3b8}
+.stack-row .pill{background:#3b82f6;color:#fff;padding:3px 8px;border-radius:3px}
+</style></head>
+<body><div class="header"><h1>94. Binary Tree Inorder Traversal</h1><p>Easy — Iterative with Stack</p></div>
+<div class="container">
+<div class="controls"><button class="btn btn-play" onclick="play()">Play</button>
+<button class="btn btn-pause" onclick="pause()">Pause</button>
+<button class="btn btn-step" onclick="stepForward()">Step</button>
+<button class="btn btn-reset" onclick="reset()">Reset</button></div>
+<div class="viz-area" id="viz"></div></div>
+<script>
+// Tree:    1
+//         / \
+//        2   3
+//       / \
+//      4   5
+const positions={1:[180,20],2:[80,80],3:[280,80],4:[40,140],5:[140,140]};
+const tree={1:{l:2,r:3},2:{l:4,r:5},3:{l:null,r:null},4:{l:null,r:null},5:{l:null,r:null}};
+let currentStep=0,speed=700,isPlaying=false,playInterval=null,steps=[];
+function generateSteps(){steps=[];const out=[];const stack=[];let cur=1;
+steps.push({cur,stack:[],out:[],msg:'Start at root.'});
+while(cur||stack.length>0){
+    while(cur){stack.push(cur);steps.push({cur,stack:stack.slice(),out:out.slice(),msg:`Push ${cur}, go left.`});cur=tree[cur].l}
+    cur=stack.pop();out.push(cur);steps.push({cur,stack:stack.slice(),out:out.slice(),msg:`Pop ${cur}, emit.`});
+    cur=tree[cur].r;
+}steps.push({cur:null,stack:[],out:out.slice(),msg:`Done. Inorder: [${out.join(', ')}].`});}
+function renderStep(){const s=steps[Math.min(currentStep,steps.length-1)];const viz=document.getElementById('viz');viz.innerHTML='';
+const t=document.createElement('div');t.className='tree';
+function edge(a,b){const e=document.createElement('div');e.className='edge';
+const[x1,y1]=positions[a],[x2,y2]=positions[b];const dx=x2-x1,dy=y2-y1;const len=Math.sqrt(dx*dx+dy*dy);
+e.style.left=(x1+18)+'px';e.style.top=(y1+18)+'px';e.style.width=len+'px';e.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;t.appendChild(e)}
+edge(1,2);edge(1,3);edge(2,4);edge(2,5);
+[1,2,3,4,5].forEach(v=>{const n=document.createElement('div');n.className='node';
+if(v===s.cur)n.classList.add('cur');if(s.out.includes(v))n.classList.add('visited');
+n.style.left=positions[v][0]+'px';n.style.top=positions[v][1]+'px';n.textContent=v;t.appendChild(n)});
+viz.appendChild(t);
+const stk=document.createElement('div');stk.className='stack-row';stk.innerHTML='Stack: ';
+s.stack.forEach(v=>{const p=document.createElement('span');p.className='pill';p.textContent=v;stk.appendChild(p)});
+viz.appendChild(stk);
+const out=document.createElement('div');out.className='output';
+if(s.out.length===0){const e=document.createElement('div');e.style.color='#64748b';e.textContent='(no output)';out.appendChild(e)}
+else s.out.forEach(v=>{const c=document.createElement('div');c.className='out-cell';c.textContent=v;out.appendChild(c)});
+viz.appendChild(out);
+const desc=document.createElement('div');desc.style.color='#cbd5e1';desc.style.fontSize='.9rem';desc.textContent=s.msg;viz.appendChild(desc);}
+function play(){if(isPlaying)return;isPlaying=true;playInterval=setInterval(()=>{if(currentStep<steps.length-1){currentStep++;renderStep()}else pause()},speed)}
+function pause(){isPlaying=false;clearInterval(playInterval)}
+function stepForward(){pause();if(currentStep<steps.length-1){currentStep++;renderStep()}}
+function reset(){pause();currentStep=0;renderStep()}
+generateSteps();renderStep();
+</script></body></html>

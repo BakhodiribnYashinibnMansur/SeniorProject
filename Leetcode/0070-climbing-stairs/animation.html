@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>70. Climbing Stairs — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .container { max-width: 900px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .speed-control, .gen-options { display: flex; align-items: center; gap: 8px; }
+        .speed-control label, .gen-options label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select, .gen-options select {
+            padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+
+        .viz-area { min-height: 320px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            align-items: center; gap: 12px; justify-content: flex-end; }
+
+        .stairs {
+            display: flex; align-items: flex-end;
+            justify-content: center; gap: 2px;
+        }
+        .stair {
+            display: flex; align-items: center; justify-content: center;
+            background: #475569; color: white; font-weight: 700;
+            border-radius: 4px 4px 0 0; min-width: 44px;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        .stair .v {
+            position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+            color: #fbbf24; font-size: 0.75rem; font-weight: 700;
+            white-space: nowrap;
+        }
+        .stair .num {
+            position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+            color: #cbd5e1; font-size: 0.65rem;
+        }
+        .stair.computed { background: #6366f1; }
+        .stair.contrib { background: #8b5cf6; }
+        .stair.current { background: #fbbf24 !important; color: #0f172a !important;
+            box-shadow: 0 0 0 3px #f59e0b; transform: scale(1.05); }
+
+        .formula {
+            background: #1e293b; padding: 12px 20px; border-radius: 8px;
+            font-family: 'SF Mono', Consolas, monospace; font-size: 0.95rem;
+            color: #fbbf24; border: 1px solid #334155; text-align: center;
+            min-width: 320px;
+        }
+
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1.05rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+            .stair { min-width: 28px; }
+            .stair .v { font-size: 0.65rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>70. Climbing Stairs</h1>
+    <p>Easy — Dynamic Programming, Fibonacci</p>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <div class="gen-options">
+            <label>n:</label>
+            <select id="nSel">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5" selected>5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="12">12</option>
+            </select>
+        </div>
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="700" selected>Normal</option>
+                <option value="300">Fast</option>
+                <option value="100">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to fill the DP.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>i</h3><div class="value" id="iVal">--</div></div>
+        <div class="info-box"><h3>Formula</h3><div class="value" id="formulaVal" style="font-size:0.85rem">--</div></div>
+        <div class="info-box"><h3>Result</h3><div class="value" id="resVal">--</div></div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'climbing-stairs_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentStep, speed, n })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+
+    const saved = loadState();
+    let n = saved ? saved.n : 5;
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 700;
+    let isPlaying = false, playInterval = null;
+    let steps = [];
+
+    document.getElementById('nSel').value = n;
+    document.getElementById('speed').value = speed;
+
+    function generateSteps() {
+        steps = [];
+        const dp = new Array(n + 1).fill(-1);
+        if (n >= 1) {
+            dp[1] = 1;
+            steps.push({
+                dp: dp.slice(), cur: 1, contrib: [],
+                formula: 'dp[1] = 1', result: dp[1],
+                msg: 'Base case: dp[1] = 1.'
+            });
+        }
+        if (n >= 2) {
+            dp[2] = 2;
+            steps.push({
+                dp: dp.slice(), cur: 2, contrib: [],
+                formula: 'dp[2] = 2', result: dp[2],
+                msg: 'Base case: dp[2] = 2.'
+            });
+        }
+        for (let i = 3; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];
+            steps.push({
+                dp: dp.slice(), cur: i, contrib: [i - 1, i - 2],
+                formula: `dp[${i}] = dp[${i-1}] + dp[${i-2}] = ${dp[i - 1]} + ${dp[i - 2]} = ${dp[i]}`,
+                result: dp[i],
+                msg: `Step ${i}: dp[${i}] = ${dp[i - 1]} + ${dp[i - 2]} = ${dp[i]}.`
+            });
+        }
+        steps.push({
+            dp: dp.slice(), cur: n, contrib: [],
+            formula: `result = dp[${n}]`,
+            result: dp[n] || 0,
+            msg: `Done. Number of distinct ways = ${dp[n]}.`
+        });
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('iVal').textContent = step.cur;
+        document.getElementById('formulaVal').textContent = step.formula;
+        document.getElementById('resVal').textContent = step.result;
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        const stairs = document.createElement('div');
+        stairs.className = 'stairs';
+        for (let k = 1; k <= n; k++) {
+            const s = document.createElement('div');
+            s.className = 'stair';
+            const h = 30 + k * 18;
+            s.style.height = `${h}px`;
+            const value = step.dp[k];
+            if (value >= 0) s.classList.add('computed');
+            if (step.contrib && step.contrib.includes(k)) s.classList.add('contrib');
+            if (k === step.cur && step.contrib && step.contrib.length > 0) s.classList.add('current');
+
+            const v = document.createElement('span');
+            v.className = 'v';
+            v.textContent = value >= 0 ? value : '?';
+            s.appendChild(v);
+
+            const num = document.createElement('span');
+            num.className = 'num';
+            num.textContent = k;
+            s.appendChild(num);
+
+            stairs.appendChild(s);
+        }
+        viz.appendChild(stairs);
+
+        const f = document.createElement('div');
+        f.className = 'formula';
+        f.textContent = step.formula;
+        viz.appendChild(f);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const v = parseInt(document.getElementById('nSel').value);
+        if (v >= 1 && v <= 12) {
+            n = v;
+            reset(); generateSteps(); renderStep(); saveState();
+        }
+    }
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

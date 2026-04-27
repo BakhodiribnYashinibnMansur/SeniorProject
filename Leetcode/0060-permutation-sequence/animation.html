@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>60. Permutation Sequence — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .container { max-width: 900px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .speed-control, .gen-options { display: flex; align-items: center; gap: 8px; }
+        .speed-control label, .gen-options label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select, .gen-options select, .gen-options input {
+            padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+
+        .viz-area { min-height: 320px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            gap: 16px; align-items: center; }
+
+        .formula {
+            background: #1e293b; padding: 12px 20px; border-radius: 8px;
+            font-family: 'SF Mono', Consolas, monospace; font-size: 0.9rem;
+            color: #fbbf24; border: 1px solid #334155;
+        }
+
+        .pool-row {
+            display: flex; gap: 6px; flex-wrap: wrap;
+            justify-content: center;
+        }
+        .pool-cell {
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            background: #475569; color: white; font-weight: 700;
+            border-radius: 6px; font-size: 1.1rem;
+            transition: all 0.4s ease; position: relative;
+        }
+        .pool-cell .pos {
+            position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%);
+            font-size: 0.6rem; color: #64748b;
+        }
+        .pool-cell.picked { background: #22c55e; transform: scale(1.15);
+            box-shadow: 0 0 0 3px #4ade80; }
+        .pool-cell.target { background: #fbbf24; color: #0f172a;
+            box-shadow: 0 0 0 3px #f59e0b; }
+        .pool-cell.removed { opacity: 0.2; transform: scale(0.7); }
+
+        .result-row {
+            display: flex; gap: 6px; flex-wrap: wrap;
+            justify-content: center; min-height: 50px;
+        }
+        .result-cell {
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #4ade80, #22c55e); color: white;
+            font-weight: 700; font-size: 1.1rem;
+            border-radius: 6px;
+        }
+
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1.1rem; font-weight: 600; }
+
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+
+        .legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #94a3b8; }
+        .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px;
+            padding: 20px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.85rem; color: #64748b;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 14px; }
+        .chart-row { display: flex; align-items: center; gap: 12px; }
+        .chart-label { min-width: 160px; font-size: 0.82rem; color: #94a3b8;
+            text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 6px; height: 26px;
+            overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 6px;
+            display: flex; align-items: center; padding-left: 10px;
+            font-size: 0.78rem; font-weight: 600; color: white;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute    { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.optimal  { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 130px; font-size: 0.8rem; font-weight: 600;
+            color: #e2e8f0; flex-shrink: 0; }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+            .pool-cell, .result-cell { width: 32px; height: 32px; font-size: 0.9rem; }
+            .chart-label { min-width: 100px; font-size: 0.72rem; }
+            .chart-complexity { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>60. Permutation Sequence</h1>
+    <p>Hard — Math, Factorial Number System</p>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <div class="gen-options">
+            <label>n:</label>
+            <select id="nSel">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4" selected>4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+            </select>
+            <label>k:</label>
+            <input type="number" id="kSel" value="9" min="1" style="width:80px">
+            <span style="color:#94a3b8;font-size:0.8rem" id="kMaxLabel">(max 24)</span>
+        </div>
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="2000">Slow</option>
+                <option value="1000" selected>Normal</option>
+                <option value="500">Fast</option>
+                <option value="200">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to walk through the factorial decomposition.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>Position i</h3><div class="value" id="iVal">--</div></div>
+        <div class="info-box"><h3>Remaining k</h3><div class="value" id="kVal">--</div></div>
+        <div class="info-box"><h3>Result</h3><div class="value" id="resVal">--</div></div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div><span>Index q (target)</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span>Picked digit</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#475569"></div><span>Remaining</span></div>
+    </div>
+
+    <div class="complexity-chart">
+        <div class="chart-title">Algorithm Complexity</div>
+        <div class="chart-bars">
+            <div class="chart-row">
+                <div class="chart-label">Generate All</div>
+                <div class="chart-bar-wrap"><div class="chart-bar brute" data-w="90" style="width:0">O(n · n!)</div></div>
+                <div class="chart-complexity">Time / Space: O(n · n!) / O(n)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Iterate next-perm</div>
+                <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="60" style="width:0">O(k · n)</div></div>
+                <div class="chart-complexity">Time / Space: O(k · n) / O(n)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Factorial Decomposition</div>
+                <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="20" style="width:0">O(n²)</div></div>
+                <div class="chart-complexity">Time / Space: O(n²) / O(n)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'permutation-sequence_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentStep, speed, n, k })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+
+    const saved = loadState();
+    let n = saved ? saved.n : 4;
+    let k = saved ? saved.k : 9;
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 1000;
+    let isPlaying = false;
+    let playInterval = null;
+    let steps = [];
+
+    document.getElementById('nSel').value = n;
+    document.getElementById('kSel').value = k;
+    document.getElementById('speed').value = speed;
+    updateKMax();
+
+    function fact(x) {
+        let r = 1;
+        for (let i = 2; i <= x; i++) r *= i;
+        return r;
+    }
+
+    function updateKMax() {
+        const nv = parseInt(document.getElementById('nSel').value);
+        const f = fact(nv);
+        document.getElementById('kMaxLabel').textContent = `(max ${f})`;
+        document.getElementById('kSel').max = f;
+    }
+
+    document.getElementById('nSel').addEventListener('change', updateKMax);
+
+    function generateSteps() {
+        steps = [];
+        const f = [];
+        for (let i = 0; i <= n; i++) f.push(fact(i));
+        const safeK = Math.min(Math.max(1, k), f[n]);
+        let kk = safeK - 1;
+        let digits = [];
+        for (let i = 1; i <= n; i++) digits.push(i);
+        steps.push({
+            digits: digits.slice(), removed: [],
+            i: -1, q: -1, picked: null, k: kk,
+            formula: `Initial: digits = [${digits.join(',')}], k0 = ${safeK} − 1 = ${kk}`,
+            result: '',
+            msg: `Set k = k − 1 = ${kk} (convert to 0-based).`
+        });
+        let result = '';
+        const removed = [];
+        for (let i = 0; i < n; i++) {
+            const m = n - i;
+            const fm1 = f[m - 1];
+            const q = Math.floor(kk / fm1);
+            const newK = kk % fm1;
+            steps.push({
+                digits: digits.slice(), removed: removed.slice(),
+                i, q, picked: null, k: kk,
+                formula: `i=${i}: m=${m}, (m-1)! = ${fm1} | q = ${kk} / ${fm1} = ${q} | k = ${kk} % ${fm1} = ${newK}`,
+                result,
+                msg: `Position ${i}: index into pool = ${q}.`
+            });
+            const picked = digits[q];
+            result += picked.toString();
+            const removedDigit = picked;
+            digits = digits.slice(0, q).concat(digits.slice(q + 1));
+            removed.push(removedDigit);
+            steps.push({
+                digits: digits.slice(), removed: removed.slice(),
+                i, q: -1, picked, k: newK,
+                formula: `i=${i}: pick digit ${picked}; remaining digits = [${digits.join(',')}]`,
+                result,
+                msg: `Pick digit ${picked}. Result so far: "${result}".`
+            });
+            kk = newK;
+        }
+        steps.push({
+            digits: [], removed: removed.slice(),
+            i: -1, q: -1, picked: null, k: 0,
+            formula: `Result: "${result}"`,
+            result,
+            msg: `Done. The ${safeK}-th permutation of 1..${n} is "${result}".`
+        });
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('iVal').textContent = step.i >= 0 ? step.i : '--';
+        document.getElementById('kVal').textContent = step.k;
+        document.getElementById('resVal').textContent = step.result || '--';
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        const formulaBox = document.createElement('div');
+        formulaBox.className = 'formula';
+        formulaBox.textContent = step.formula;
+        viz.appendChild(formulaBox);
+
+        const poolLabel = document.createElement('div');
+        poolLabel.style.color = '#94a3b8';
+        poolLabel.style.fontSize = '0.75rem';
+        poolLabel.style.textTransform = 'uppercase';
+        poolLabel.style.letterSpacing = '1px';
+        poolLabel.textContent = 'Remaining digits';
+        viz.appendChild(poolLabel);
+
+        const poolRow = document.createElement('div');
+        poolRow.className = 'pool-row';
+        for (let idx = 0; idx < step.digits.length; idx++) {
+            const cell = document.createElement('div');
+            cell.className = 'pool-cell';
+            if (idx === step.q) cell.classList.add('target');
+            if (step.picked === step.digits[idx]) cell.classList.add('picked');
+            cell.textContent = step.digits[idx];
+            const pos = document.createElement('span');
+            pos.className = 'pos';
+            pos.textContent = idx;
+            cell.appendChild(pos);
+            poolRow.appendChild(cell);
+        }
+        if (step.digits.length === 0) {
+            const empty = document.createElement('div');
+            empty.style.color = '#64748b';
+            empty.style.fontSize = '0.85rem';
+            empty.textContent = '(pool empty)';
+            poolRow.appendChild(empty);
+        }
+        viz.appendChild(poolRow);
+
+        const resultLabel = document.createElement('div');
+        resultLabel.style.color = '#94a3b8';
+        resultLabel.style.fontSize = '0.75rem';
+        resultLabel.style.textTransform = 'uppercase';
+        resultLabel.style.letterSpacing = '1px';
+        resultLabel.style.marginTop = '12px';
+        resultLabel.textContent = 'Built result';
+        viz.appendChild(resultLabel);
+
+        const resRow = document.createElement('div');
+        resRow.className = 'result-row';
+        for (const ch of step.result) {
+            const cell = document.createElement('div');
+            cell.className = 'result-cell';
+            cell.textContent = ch;
+            resRow.appendChild(cell);
+        }
+        if (step.result.length === 0) {
+            const empty = document.createElement('div');
+            empty.style.color = '#64748b';
+            empty.style.fontSize = '0.85rem';
+            empty.textContent = '(empty)';
+            resRow.appendChild(empty);
+        }
+        viz.appendChild(resRow);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const newN = parseInt(document.getElementById('nSel').value);
+        const newK = parseInt(document.getElementById('kSel').value);
+        if (newN >= 1 && newN <= 9 && newK >= 1 && newK <= fact(newN)) {
+            n = newN; k = newK;
+            reset(); generateSteps(); renderStep(); saveState();
+        } else {
+            document.getElementById('stepDesc').textContent =
+                `Invalid: k must be between 1 and ${fact(newN)} for n=${newN}.`;
+        }
+    }
+
+    setTimeout(() => {
+        document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+            bar.style.width = bar.dataset.w + '%';
+        });
+    }, 400);
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

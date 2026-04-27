@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>72. Edit Distance — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .container { max-width: 900px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select { padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .input-section input { padding: 8px 12px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 6px; font-size: 0.9rem; min-width: 140px;
+            font-family: 'SF Mono', Consolas, monospace; }
+
+        .viz-area { min-height: 320px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            align-items: center; gap: 12px; }
+
+        .grid { display: grid; gap: 2px; font-family: 'SF Mono', Consolas, monospace; }
+        .cell {
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            background: #1e293b; color: #475569; font-weight: 700;
+            border-radius: 4px; font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: 1px solid #334155;
+        }
+        .cell.label { background: transparent; color: #94a3b8; font-weight: 600; }
+        .cell.filled { background: #475569; color: white; }
+        .cell.diag { background: #6366f1; color: white; }
+        .cell.up   { background: #8b5cf6; color: white; }
+        .cell.left { background: #ec4899; color: white; }
+        .cell.current { background: #fbbf24 !important; color: #0f172a !important;
+            box-shadow: 0 0 0 3px #f59e0b; transform: scale(1.05); }
+
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+            .cell { width: 28px; height: 28px; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>72. Edit Distance</h1>
+    <p>Hard — DP on two strings</p>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <input type="text" id="w1Input" placeholder='word1' value="horse">
+        <input type="text" id="w2Input" placeholder='word2' value="ros">
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="500" selected>Normal</option>
+                <option value="200">Fast</option>
+                <option value="80">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to fill the DP table.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>Cell</h3><div class="value" id="cellVal">--</div></div>
+        <div class="info-box"><h3>Operation</h3><div class="value" id="opVal" style="font-size:0.85rem">--</div></div>
+        <div class="info-box"><h3>Distance</h3><div class="value" id="distVal">--</div></div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'edit-distance_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentStep, speed, w1, w2 })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+
+    const saved = loadState();
+    let w1 = saved ? saved.w1 : 'horse';
+    let w2 = saved ? saved.w2 : 'ros';
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 500;
+    let isPlaying = false, playInterval = null;
+    let steps = [];
+
+    document.getElementById('w1Input').value = w1;
+    document.getElementById('w2Input').value = w2;
+    document.getElementById('speed').value = speed;
+
+    function generateSteps() {
+        steps = [];
+        const m = w1.length, n = w2.length;
+        const dp = [];
+        for (let i = 0; i <= m; i++) {
+            const row = [];
+            for (let j = 0; j <= n; j++) {
+                if (i === 0) row.push(j);
+                else if (j === 0) row.push(i);
+                else row.push(-1);
+            }
+            dp.push(row);
+        }
+        steps.push({
+            dp: dp.map(r => r.slice()), current: null,
+            diag: null, up: null, left: null,
+            op: 'init', dist: '--',
+            msg: 'Initialize base row/col with 0..n / 0..m.'
+        });
+        for (let i = 1; i <= m; i++) {
+            for (let j = 1; j <= n; j++) {
+                let op, val;
+                if (w1[i - 1] === w2[j - 1]) {
+                    val = dp[i - 1][j - 1];
+                    op = `match → dp = dp[${i-1}][${j-1}] = ${val}`;
+                } else {
+                    const upV = dp[i - 1][j];
+                    const leftV = dp[i][j - 1];
+                    const diagV = dp[i - 1][j - 1];
+                    val = 1 + Math.min(upV, leftV, diagV);
+                    let from = 'replace';
+                    if (1 + diagV === val) from = 'replace';
+                    else if (1 + upV === val) from = 'delete';
+                    else from = 'insert';
+                    op = `1 + min(up=${upV}, left=${leftV}, diag=${diagV}) = ${val} (${from})`;
+                }
+                dp[i][j] = val;
+                steps.push({
+                    dp: dp.map(r => r.slice()),
+                    current: [i, j],
+                    diag: [i - 1, j - 1], up: [i - 1, j], left: [i, j - 1],
+                    op, dist: dp[i][j],
+                    msg: `Cell (${i}, ${j}) — w1[${i-1}]='${w1[i-1]}' vs w2[${j-1}]='${w2[j-1]}'. ${op}.`
+                });
+            }
+        }
+        steps.push({
+            dp: dp.map(r => r.slice()), current: [m, n],
+            diag: null, up: null, left: null,
+            op: 'done', dist: dp[m][n],
+            msg: `Done. Edit distance = ${dp[m][n]}.`
+        });
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('cellVal').textContent =
+            step.current ? `(${step.current[0]},${step.current[1]})` : '--';
+        document.getElementById('opVal').textContent = step.op;
+        document.getElementById('distVal').textContent = step.dist;
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        const m = w1.length, n = w2.length;
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        grid.style.gridTemplateColumns = `repeat(${n + 2}, auto)`;
+
+        function cell(content, klass) {
+            const c = document.createElement('div');
+            c.className = 'cell ' + (klass || '');
+            c.textContent = content;
+            return c;
+        }
+
+        // header row
+        grid.appendChild(cell('', 'label'));
+        grid.appendChild(cell('∅', 'label'));
+        for (let j = 0; j < n; j++) grid.appendChild(cell(w2[j], 'label'));
+
+        for (let i = 0; i <= m; i++) {
+            if (i === 0) grid.appendChild(cell('∅', 'label'));
+            else grid.appendChild(cell(w1[i - 1], 'label'));
+            for (let j = 0; j <= n; j++) {
+                let klass = '';
+                if (step.dp[i][j] >= 0) klass += ' filled';
+                if (step.diag && step.diag[0] === i && step.diag[1] === j) klass += ' diag';
+                if (step.up && step.up[0] === i && step.up[1] === j) klass += ' up';
+                if (step.left && step.left[0] === i && step.left[1] === j) klass += ' left';
+                if (step.current && step.current[0] === i && step.current[1] === j) klass += ' current';
+                grid.appendChild(cell(step.dp[i][j] >= 0 ? step.dp[i][j] : '·', klass));
+            }
+        }
+        viz.appendChild(grid);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const a = document.getElementById('w1Input').value;
+        const b = document.getElementById('w2Input').value;
+        if (a.length > 12 || b.length > 12) {
+            document.getElementById('stepDesc').textContent = 'Use words up to 12 characters each.';
+            return;
+        }
+        w1 = a; w2 = b;
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

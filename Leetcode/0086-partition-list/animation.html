@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>86. Partition List — Animation</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:30px}.header h1{font-size:1.8rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.95rem}.container{max-width:900px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155}
+.controls{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:500}
+.btn-play{background:#22c55e;color:#fff}.btn-pause{background:#ef4444;color:#fff}.btn-step{background:#3b82f6;color:#fff}.btn-reset{background:#6b7280;color:#fff}
+.speed-control{display:flex;align-items:center;gap:8px}.speed-control label{color:#94a3b8;font-size:.85rem}
+.speed-control select{padding:6px 10px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px}
+.input-section{display:flex;gap:10px;margin-bottom:20px;align-items:center;justify-content:center;flex-wrap:wrap}
+.input-section input{padding:8px 12px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:6px;min-width:180px;font-family:'SF Mono',monospace}
+.viz-area{min-height:280px;background:#0f172a;border-radius:8px;padding:20px;margin-bottom:20px;display:flex;flex-direction:column;align-items:center;gap:24px}
+.lane{display:flex;flex-direction:column;align-items:center;gap:6px}
+.lane-label{font-size:.75rem;color:#94a3b8;text-transform:uppercase;letter-spacing:1px}
+.row{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
+.node{display:flex;align-items:center;gap:4px}
+.box{min-width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:#475569;color:#fff;font-weight:700;border-radius:8px;transition:all .3s;position:relative}
+.box.cur{box-shadow:0 0 0 3px #fbbf24}
+.box.less{background:#22c55e}
+.box.ge{background:#3b82f6}
+.arrow{color:#94a3b8;font-size:1.2rem}
+.info-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.info-box{background:#0f172a;border-radius:8px;padding:14px;border:1px solid #334155;text-align:center}
+.info-box h3{font-size:.75rem;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.info-box .value{font-size:1rem;font-weight:600}
+.step-description{background:#0f172a;border-left:3px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem;line-height:1.55;min-height:50px}
+</style></head>
+<body><div class="header"><h1>86. Partition List</h1><p>Medium — Two dummy lists</p></div>
+<div class="container">
+<div class="input-section">
+<input type="text" id="numsInput" value="1,4,3,2,5,2">
+<input type="number" id="xInput" value="3" style="padding:8px 12px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:6px;width:80px">
+<button class="btn btn-step" onclick="applyInput()">Apply</button></div>
+<div class="controls"><button class="btn btn-play" onclick="play()">Play</button>
+<button class="btn btn-pause" onclick="pause()">Pause</button>
+<button class="btn btn-step" onclick="stepForward()">Step</button>
+<button class="btn btn-reset" onclick="reset()">Reset</button>
+<div class="speed-control"><label>Speed:</label><select id="speed" onchange="updateSpeed()">
+<option value="1500">Slow</option><option value="700" selected>Normal</option>
+<option value="300">Fast</option></select></div></div>
+<div class="step-description" id="stepDesc">Press Play.</div>
+<div class="viz-area" id="vizArea"></div>
+<div class="info-panel">
+<div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0/0</div></div>
+<div class="info-box"><h3>cur</h3><div class="value" id="curVal">--</div></div>
+<div class="info-box"><h3>x</h3><div class="value" id="xVal">3</div></div>
+</div></div>
+<script>
+const KEY='partition_state';function save(){try{localStorage.setItem(KEY,JSON.stringify({currentStep,speed,nums,x}))}catch(e){}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+const saved=load();let nums=saved?saved.nums:[1,4,3,2,5,2],x=saved?saved.x:3;
+let currentStep=saved?saved.currentStep:0,speed=saved?saved.speed:700,isPlaying=false,playInterval=null,steps=[];
+document.getElementById('numsInput').value=nums.join(',');document.getElementById('xInput').value=x;
+document.getElementById('speed').value=speed;
+function generateSteps(){steps=[];const less=[],ge=[];
+steps.push({less:[],ge:[],cur:-1,msg:`Initialize less and ge lists.`});
+for(let i=0;i<nums.length;i++){
+    if(nums[i]<x){less.push(nums[i]);
+        steps.push({less:less.slice(),ge:ge.slice(),cur:i,msg:`nums[${i}]=${nums[i]} < ${x} → append to less.`});
+    }else{ge.push(nums[i]);
+        steps.push({less:less.slice(),ge:ge.slice(),cur:i,msg:`nums[${i}]=${nums[i]} ≥ ${x} → append to ge.`});}
+}
+steps.push({less:less.slice(),ge:ge.slice(),cur:-1,msg:`Concatenate: ${less.concat(ge).join('→')}.`});}
+function renderStep(){if(steps.length===0)return;save();const s=steps[Math.min(currentStep,steps.length-1)];
+document.getElementById('stepCounter').textContent=`${Math.min(currentStep+1,steps.length)} / ${steps.length}`;
+document.getElementById('curVal').textContent=s.cur>=0?`idx ${s.cur} (${nums[s.cur]})`:'--';
+document.getElementById('xVal').textContent=x;document.getElementById('stepDesc').textContent=s.msg;
+const viz=document.getElementById('vizArea');viz.innerHTML='';
+function makeRow(arr,klass){const lane=document.createElement('div');lane.className='lane';
+const lbl=document.createElement('div');lbl.className='lane-label';lbl.textContent=klass==='less'?'less (< x)':klass==='ge'?'ge (≥ x)':'input';lane.appendChild(lbl);
+const row=document.createElement('div');row.className='row';
+arr.forEach((v,k)=>{const n=document.createElement('div');n.className='node';
+const b=document.createElement('div');b.className='box';if(klass==='less')b.classList.add('less');if(klass==='ge')b.classList.add('ge');
+if(klass==='input'&&k===s.cur)b.classList.add('cur');b.textContent=v;n.appendChild(b);
+if(k<arr.length-1){const a=document.createElement('span');a.className='arrow';a.textContent='→';n.appendChild(a)}
+row.appendChild(n);});if(arr.length===0){const e=document.createElement('span');e.style.color='#64748b';e.style.fontSize='.85rem';e.textContent='(empty)';row.appendChild(e)}
+lane.appendChild(row);return lane;}
+viz.appendChild(makeRow(nums,'input'));viz.appendChild(makeRow(s.less,'less'));viz.appendChild(makeRow(s.ge,'ge'));}
+function play(){if(isPlaying)return;isPlaying=true;playInterval=setInterval(()=>{if(currentStep<steps.length-1){currentStep++;renderStep()}else pause()},speed)}
+function pause(){isPlaying=false;clearInterval(playInterval)}
+function stepForward(){pause();if(currentStep<steps.length-1){currentStep++;renderStep()}}
+function reset(){pause();currentStep=0;renderStep()}
+function updateSpeed(){speed=parseInt(document.getElementById('speed').value);if(isPlaying){pause();play()}save()}
+function applyInput(){try{const a=document.getElementById('numsInput').value.replace(/\s/g,'').split(',').filter(Boolean).map(Number);
+if(a.some(isNaN)||a.length>10)throw new Error();const v=parseInt(document.getElementById('xInput').value);
+nums=a;x=v;reset();generateSteps();renderStep();save()}
+catch(e){document.getElementById('stepDesc').textContent='Invalid input.'}}
+generateSteps();if(currentStep>=steps.length)currentStep=0;renderStep();
+</script></body></html>

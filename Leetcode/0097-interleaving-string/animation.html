@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>97. Interleaving — Animation</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:30px}.header h1{font-size:1.8rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.container{max-width:900px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155}
+.input-section{display:flex;gap:10px;margin-bottom:20px;justify-content:center;flex-wrap:wrap}
+.input-section input{padding:8px 12px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:6px;font-family:'SF Mono',monospace}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;background:#3b82f6;color:#fff}
+.viz-area{background:#0f172a;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px;align-items:center;min-height:240px}
+.grid{display:grid;gap:2px;font-family:'SF Mono',monospace}
+.cell{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:#1e293b;color:#cbd5e1;border-radius:4px;font-weight:700}
+.cell.lbl{background:transparent;color:#94a3b8}
+.cell.true{background:#22c55e;color:#fff}.cell.false{background:#ef4444;color:#fff;opacity:.6}
+.verdict{padding:12px 24px;border-radius:8px;font-weight:800;font-size:1.2rem}
+.verdict.t{background:#22c55e;color:#fff}.verdict.f{background:#ef4444;color:#fff}
+</style></head>
+<body><div class="header"><h1>97. Interleaving String</h1></div>
+<div class="container">
+<div class="input-section"><input type="text" id="s1" value="aabcc"><input type="text" id="s2" value="dbbca"><input type="text" id="s3" value="aadbbcbcac"><button class="btn" onclick="render()">Check</button></div>
+<div class="viz-area" id="viz"></div></div>
+<script>
+function render(){const s1=document.getElementById('s1').value,s2=document.getElementById('s2').value,s3=document.getElementById('s3').value;
+const m=s1.length,n=s2.length;const viz=document.getElementById('viz');viz.innerHTML='';
+if(m+n!==s3.length){const v=document.createElement('div');v.className='verdict f';v.textContent='Length mismatch → false';viz.appendChild(v);return}
+const dp=Array.from({length:m+1},()=>new Array(n+1).fill(false));dp[0][0]=true;
+for(let i=0;i<=m;i++)for(let j=0;j<=n;j++){if(i===0&&j===0)continue;
+const k=i+j-1;dp[i][j]=(i>0&&dp[i-1][j]&&s1[i-1]===s3[k])||(j>0&&dp[i][j-1]&&s2[j-1]===s3[k])}
+const grid=document.createElement('div');grid.className='grid';grid.style.gridTemplateColumns=`repeat(${n+2},auto)`;
+function cell(c,k){const d=document.createElement('div');d.className='cell '+(k||'');d.textContent=c;return d}
+grid.appendChild(cell('','lbl'));grid.appendChild(cell('∅','lbl'));
+for(let j=0;j<n;j++)grid.appendChild(cell(s2[j],'lbl'));
+for(let i=0;i<=m;i++){grid.appendChild(cell(i===0?'∅':s1[i-1],'lbl'));
+for(let j=0;j<=n;j++)grid.appendChild(cell(dp[i][j]?'T':'F',dp[i][j]?'true':'false'))}
+viz.appendChild(grid);
+const v=document.createElement('div');v.className='verdict '+(dp[m][n]?'t':'f');v.textContent=dp[m][n]?'TRUE — interleaving':'FALSE';viz.appendChild(v);}
+render();
+</script></body></html>

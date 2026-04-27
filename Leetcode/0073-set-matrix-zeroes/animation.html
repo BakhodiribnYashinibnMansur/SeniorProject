@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>73. Set Matrix Zeroes — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .container { max-width: 900px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-generate { background: #8b5cf6; color: white; }
+        .speed-control, .gen-options { display: flex; align-items: center; gap: 8px; }
+        .speed-control label, .gen-options label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select, .gen-options select {
+            padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .viz-area { min-height: 300px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            align-items: center; gap: 12px; }
+        .grid { display: grid; gap: 4px; }
+        .cell {
+            min-width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            background: #475569; color: white; font-weight: 700;
+            border-radius: 6px; font-size: 1rem;
+            transition: all 0.4s ease;
+            border: 1px solid #334155;
+            cursor: pointer;
+        }
+        .cell.zero { background: #ef4444; color: white; }
+        .cell.marker-row { background: #fbbf24; color: #0f172a; }
+        .cell.marker-col { background: #fbbf24; color: #0f172a; }
+        .cell.zeroed { background: #6366f1; color: white; }
+        .cell.cursor { box-shadow: 0 0 0 3px #60a5fa; }
+        .info-panel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(3, 1fr); }
+            .container { padding: 14px; }
+            .cell { min-width: 36px; height: 36px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>73. Set Matrix Zeroes</h1>
+    <p>Medium — In-place markers</p>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <div class="gen-options">
+            <label>Rows:</label>
+            <select id="mSel">
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+            </select>
+            <label>Cols:</label>
+            <select id="nSel">
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <button class="btn btn-step" onclick="applyInput()">Resize</button>
+        <button class="btn btn-generate" onclick="generateRandom()">Random</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="700" selected>Normal</option>
+                <option value="300">Fast</option>
+                <option value="100">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">
+        Click a cell to set it to 0. Press Play to walk through the algorithm.
+    </div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>Phase</h3><div class="value" id="phaseVal" style="font-size:0.85rem">--</div></div>
+        <div class="info-box"><h3>Flags</h3><div class="value" id="flagsVal" style="font-size:0.8rem">--</div></div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'set-matrix-zeroes_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentStep, speed, m, n, grid })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+    const saved = loadState();
+    let m = saved ? saved.m : 3;
+    let n = saved ? saved.n : 3;
+    let grid = saved ? saved.grid : [[1,1,1],[1,0,1],[1,1,1]];
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 700;
+    let isPlaying = false, playInterval = null;
+    let steps = [];
+
+    document.getElementById('mSel').value = m;
+    document.getElementById('nSel').value = n;
+    document.getElementById('speed').value = speed;
+
+    function generateSteps() {
+        steps = [];
+        const g = grid.map(r => r.slice());
+        let firstRowZero = false, firstColZero = false;
+        for (let j = 0; j < n; j++) if (g[0][j] === 0) { firstRowZero = true; break; }
+        for (let i = 0; i < m; i++) if (g[i][0] === 0) { firstColZero = true; break; }
+        steps.push({
+            grid: g.map(r => r.slice()),
+            phase: 'flags', current: null,
+            firstRowZero, firstColZero,
+            msg: `Detect first row/col zero flags. firstRowZero=${firstRowZero}, firstColZero=${firstColZero}.`
+        });
+        // Mark
+        for (let i = 1; i < m; i++) {
+            for (let j = 1; j < n; j++) {
+                if (g[i][j] === 0) {
+                    g[i][0] = 0;
+                    g[0][j] = 0;
+                    steps.push({
+                        grid: g.map(r => r.slice()),
+                        phase: 'mark', current: [i, j],
+                        firstRowZero, firstColZero,
+                        msg: `Cell (${i},${j}) is 0 → mark row ${i} and col ${j} via first row/col.`
+                    });
+                }
+            }
+        }
+        // Apply
+        for (let i = 1; i < m; i++) {
+            for (let j = 1; j < n; j++) {
+                if (g[i][0] === 0 || g[0][j] === 0) {
+                    g[i][j] = 0;
+                    steps.push({
+                        grid: g.map(r => r.slice()),
+                        phase: 'apply', current: [i, j],
+                        firstRowZero, firstColZero,
+                        msg: `Apply (${i},${j}): marker triggers zero.`
+                    });
+                }
+            }
+        }
+        if (firstRowZero) {
+            for (let j = 0; j < n; j++) g[0][j] = 0;
+            steps.push({
+                grid: g.map(r => r.slice()),
+                phase: 'first row', current: null,
+                firstRowZero, firstColZero,
+                msg: `Zero out the entire first row.`
+            });
+        }
+        if (firstColZero) {
+            for (let i = 0; i < m; i++) g[i][0] = 0;
+            steps.push({
+                grid: g.map(r => r.slice()),
+                phase: 'first col', current: null,
+                firstRowZero, firstColZero,
+                msg: `Zero out the entire first column.`
+            });
+        }
+        steps.push({
+            grid: g.map(r => r.slice()),
+            phase: 'done', current: null,
+            firstRowZero, firstColZero,
+            msg: 'Done.'
+        });
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('phaseVal').textContent = step.phase;
+        document.getElementById('flagsVal').textContent =
+            `R0=${step.firstRowZero}, C0=${step.firstColZero}`;
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+        const gridEl = document.createElement('div');
+        gridEl.className = 'grid';
+        gridEl.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+        for (let r = 0; r < m; r++) {
+            for (let c = 0; c < n; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                if (step.grid[r][c] === 0) cell.classList.add('zero');
+                if (step.current && step.current[0] === r && step.current[1] === c)
+                    cell.classList.add('cursor');
+                cell.textContent = step.grid[r][c];
+                cell.addEventListener('click', () => {
+                    if (isPlaying) return;
+                    grid[r][c] = grid[r][c] === 0 ? 1 : 0;
+                    reset(); generateSteps(); renderStep(); saveState();
+                });
+                gridEl.appendChild(cell);
+            }
+        }
+        viz.appendChild(gridEl);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        m = parseInt(document.getElementById('mSel').value);
+        n = parseInt(document.getElementById('nSel').value);
+        grid = [];
+        for (let i = 0; i < m; i++) {
+            const row = [];
+            for (let j = 0; j < n; j++) row.push(1);
+            grid.push(row);
+        }
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+    function generateRandom() {
+        m = parseInt(document.getElementById('mSel').value);
+        n = parseInt(document.getElementById('nSel').value);
+        grid = [];
+        for (let i = 0; i < m; i++) {
+            const row = [];
+            for (let j = 0; j < n; j++) {
+                row.push(Math.random() < 0.2 ? 0 : Math.floor(Math.random() * 9) + 1);
+            }
+            grid.push(row);
+        }
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

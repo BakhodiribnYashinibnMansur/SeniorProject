@@ -1,0 +1,27 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>95. Unique BSTs II — Animation</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:30px}.header h1{font-size:1.8rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.95rem}.container{max-width:900px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155}
+.input-section{display:flex;gap:10px;margin-bottom:20px;justify-content:center}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;background:#3b82f6;color:#fff}
+select{padding:6px 10px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px}
+.viz-area{background:#0f172a;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px;align-items:center;min-height:300px}
+.trees{display:flex;flex-wrap:wrap;gap:20px;justify-content:center}
+.tree{background:#1e293b;padding:12px;border-radius:6px;font-family:'SF Mono',monospace;font-size:.85rem;color:#fbbf24}
+</style></head>
+<body><div class="header"><h1>95. Unique Binary Search Trees II</h1><p>Medium — Catalan</p></div>
+<div class="container">
+<div class="input-section"><label style="color:#94a3b8;font-size:.85rem;align-self:center">n:</label>
+<select id="nSel"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select>
+<button class="btn" onclick="render()">Generate</button></div>
+<div class="viz-area" id="viz"></div></div>
+<script>
+function gen(lo,hi){if(lo>hi)return[null];const result=[];for(let root=lo;root<=hi;root++){for(const L of gen(lo,root-1)){for(const R of gen(root+1,hi)){result.push({val:root,l:L,r:R})}}}return result}
+function serialize(t){if(!t)return'·';return`(${t.val} ${serialize(t.l)} ${serialize(t.r)})`}
+function render(){const n=parseInt(document.getElementById('nSel').value);const trees=gen(1,n);const viz=document.getElementById('viz');viz.innerHTML='';
+const info=document.createElement('div');info.style.color='#94a3b8';info.textContent=`Found ${trees.length} unique BST(s) for n=${n}.`;viz.appendChild(info);
+const ts=document.createElement('div');ts.className='trees';
+trees.forEach(t=>{const d=document.createElement('div');d.className='tree';d.textContent=serialize(t);ts.appendChild(d)});
+viz.appendChild(ts);}
+render();
+</script></body></html>

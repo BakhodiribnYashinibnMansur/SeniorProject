@@ -68,3 +68,53 @@ Each problem includes:
 | 48 | [Rotate Image](0048-rotate-image/solution) | Medium |
 | 49 | [Group Anagrams](0049-group-anagrams/solution) | Medium |
 | 50 | [Pow(x, n)](0050-powx-n/solution) | Medium |
+| 51 | [N-Queens](0051-n-queens/solution) | Hard |
+| 52 | [N-Queens II](0052-n-queens-ii/solution) | Hard |
+| 53 | [Maximum Subarray](0053-maximum-subarray/solution) | Medium |
+| 54 | [Spiral Matrix](0054-spiral-matrix/solution) | Medium |
+| 55 | [Jump Game](0055-jump-game/solution) | Medium |
+| 56 | [Merge Intervals](0056-merge-intervals/solution) | Medium |
+| 57 | [Insert Interval](0057-insert-interval/solution) | Medium |
+| 58 | [Length of Last Word](0058-length-of-last-word/solution) | Easy |
+| 59 | [Spiral Matrix II](0059-spiral-matrix-ii/solution) | Medium |
+| 60 | [Permutation Sequence](0060-permutation-sequence/solution) | Hard |
+| 61 | [Rotate List](0061-rotate-list/solution) | Medium |
+| 62 | [Unique Paths](0062-unique-paths/solution) | Medium |
+| 63 | [Unique Paths II](0063-unique-paths-ii/solution) | Medium |
+| 64 | [Minimum Path Sum](0064-minimum-path-sum/solution) | Medium |
+| 65 | [Valid Number](0065-valid-number/solution) | Hard |
+| 66 | [Plus One](0066-plus-one/solution) | Easy |
+| 67 | [Add Binary](0067-add-binary/solution) | Easy |
+| 68 | [Text Justification](0068-text-justification/solution) | Hard |
+| 69 | [Sqrt(x)](0069-sqrtx/solution) | Easy |
+| 70 | [Climbing Stairs](0070-climbing-stairs/solution) | Easy |
+| 71 | [Simplify Path](0071-simplify-path/solution) | Medium |
+| 72 | [Edit Distance](0072-edit-distance/solution) | Hard |
+| 73 | [Set Matrix Zeroes](0073-set-matrix-zeroes/solution) | Medium |
+| 74 | [Search a 2D Matrix](0074-search-a-2d-matrix/solution) | Medium |
+| 75 | [Sort Colors](0075-sort-colors/solution) | Medium |
+| 76 | [Minimum Window Substring](0076-minimum-window-substring/solution) | Hard |
+| 77 | [Combinations](0077-combinations/solution) | Medium |
+| 78 | [Subsets](0078-subsets/solution) | Medium |
+| 79 | [Word Search](0079-word-search/solution) | Medium |
+| 80 | [Remove Duplicates from Sorted Array II](0080-remove-duplicates-from-sorted-array-ii/solution) | Medium |
+| 81 | [Search in Rotated Sorted Array II](0081-search-in-rotated-sorted-array-ii/solution) | Medium |
+| 82 | [Remove Duplicates from Sorted List II](0082-remove-duplicates-from-sorted-list-ii/solution) | Medium |
+| 83 | [Remove Duplicates from Sorted List](0083-remove-duplicates-from-sorted-list/solution) | Easy |
+| 84 | [Largest Rectangle in Histogram](0084-largest-rectangle-in-histogram/solution) | Hard |
+| 85 | [Maximal Rectangle](0085-maximal-rectangle/solution) | Hard |
+| 86 | [Partition List](0086-partition-list/solution) | Medium |
+| 87 | [Scramble String](0087-scramble-string/solution) | Hard |
+| 88 | [Merge Sorted Array](0088-merge-sorted-array/solution) | Easy |
+| 89 | [Gray Code](0089-gray-code/solution) | Medium |
+| 90 | [Subsets II](0090-subsets-ii/solution) | Medium |
+| 91 | [Decode Ways](0091-decode-ways/solution) | Medium |
+| 92 | [Reverse Linked List II](0092-reverse-linked-list-ii/solution) | Medium |
+| 93 | [Restore IP Addresses](0093-restore-ip-addresses/solution) | Medium |
+| 94 | [Binary Tree Inorder Traversal](0094-binary-tree-inorder-traversal/solution) | Easy |
+| 95 | [Unique Binary Search Trees II](0095-unique-binary-search-trees-ii/solution) | Medium |
+| 96 | [Unique Binary Search Trees](0096-unique-binary-search-trees/solution) | Medium |
+| 97 | [Interleaving String](0097-interleaving-string/solution) | Medium |
+| 98 | [Validate Binary Search Tree](0098-validate-binary-search-tree/solution) | Medium |
+| 99 | [Recover Binary Search Tree](0099-recover-binary-search-tree/solution) | Medium |
+| 100 | [Same Tree](0100-same-tree/solution) | Easy |

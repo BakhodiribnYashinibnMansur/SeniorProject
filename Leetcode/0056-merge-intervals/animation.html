@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>56. Merge Intervals — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .tab { padding: 10px 20px; background: #1e293b; border: 1px solid #334155;
+            border-radius: 8px 8px 0 0; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; }
+        .tab:hover { background: #334155; }
+        .tab.active { background: #3b82f6; border-color: #3b82f6; color: white; font-weight: 600; }
+        .container { max-width: 1000px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-generate { background: #8b5cf6; color: white; }
+        .speed-control, .gen-options { display: flex; align-items: center; gap: 8px; }
+        .speed-control label, .gen-options label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select, .gen-options select {
+            padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px;
+        }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .input-section input {
+            padding: 8px 12px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 6px;
+            font-size: 0.9rem; min-width: 280px;
+        }
+        .viz-area { min-height: 320px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            gap: 16px; }
+        .number-line {
+            position: relative; padding: 10px 8px;
+            background: #1e293b; border-radius: 6px;
+        }
+        .axis {
+            display: flex; gap: 4px; padding: 6px 0; border-top: 1px solid #475569;
+            font-size: 0.65rem; color: #94a3b8; justify-content: space-between;
+        }
+        .interval-row { display: flex; flex-direction: column; gap: 6px; }
+        .iv-track {
+            position: relative; height: 24px; background: rgba(15,23,42,0.5);
+            border-radius: 4px; border: 1px dashed #334155;
+        }
+        .iv-bar {
+            position: absolute; height: 22px; top: 1px;
+            border-radius: 4px; display: flex; align-items: center;
+            justify-content: center; color: white; font-size: 0.75rem;
+            font-weight: 600; padding: 0 6px;
+            transition: all 0.5s ease;
+        }
+        .iv-bar.input    { background: linear-gradient(90deg, #475569, #64748b); }
+        .iv-bar.current  { background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            box-shadow: 0 0 0 2px #93c5fd; }
+        .iv-bar.merged   { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .iv-bar.appended { background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            color: #0f172a; }
+
+        .lane-label {
+            font-size: 0.75rem; color: #94a3b8;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1.1rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        .legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+            margin-top: 16px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #94a3b8; }
+        .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px;
+            padding: 20px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.85rem; color: #64748b;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 14px; }
+        .chart-row { display: flex; align-items: center; gap: 12px; }
+        .chart-label { min-width: 160px; font-size: 0.82rem; color: #94a3b8;
+            text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 6px; height: 26px;
+            overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 6px;
+            display: flex; align-items: center; padding-left: 10px;
+            font-size: 0.78rem; font-weight: 600; color: white;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute    { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.optimal  { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 130px; font-size: 0.8rem; font-weight: 600;
+            color: #e2e8f0; flex-shrink: 0; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+            .chart-label { min-width: 100px; font-size: 0.72rem; }
+            .chart-complexity { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>56. Merge Intervals</h1>
+    <p>Medium — Sorting</p>
+</div>
+
+<div class="tabs" id="tabs">
+    <div class="tab active" data-tab="sort">Sort + Merge</div>
+    <div class="tab" data-tab="sweep">Sweep Line</div>
+</div>
+
+<div class="container">
+
+    <div class="input-section">
+        <input type="text" id="customInput" placeholder="Example: [1,3],[2,6],[8,10],[15,18]">
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+        <button class="btn btn-generate" onclick="generateRandom()">Generate</button>
+        <div class="gen-options">
+            <label>Count:</label>
+            <select id="genSize">
+                <option value="3">3</option>
+                <option value="5" selected>5</option>
+                <option value="8">8</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="700" selected>Normal</option>
+                <option value="300">Fast</option>
+                <option value="100">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to see merging happen.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>Inputs</h3><div class="value" id="inCounter">0</div></div>
+        <div class="info-box"><h3>Merged</h3><div class="value" id="outCounter">0</div></div>
+        <div class="info-box"><h3>Sweep Counter</h3><div class="value" id="sweepCounter">0</div></div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#475569"></div><span>Input</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#3b82f6"></div><span>Current focus</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div><span>Appended</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span>Merged</span></div>
+    </div>
+
+    <div class="complexity-chart">
+        <div class="chart-title">Algorithm Complexity (smaller bar = faster)</div>
+        <div class="chart-bars">
+            <div class="chart-row">
+                <div class="chart-label">Pairwise Merge</div>
+                <div class="chart-bar-wrap"><div class="chart-bar brute" data-w="90" style="width:0">O(n³)</div></div>
+                <div class="chart-complexity">Time / Space: O(n³) / O(n)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Sort + Merge</div>
+                <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="35" style="width:0">O(n log n)</div></div>
+                <div class="chart-complexity">Time / Space: O(n log n) / O(n)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Sweep Line</div>
+                <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="38" style="width:0">O(n log n)</div></div>
+                <div class="chart-complexity">Time / Space: O(n log n) / O(n)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'merge-intervals_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentTab, currentStep, speed, intervals })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+
+    const saved = loadState();
+    let currentTab = saved ? saved.currentTab : 'sort';
+    let intervals = saved ? saved.intervals : [[1,3],[2,6],[8,10],[15,18]];
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 700;
+    let isPlaying = false;
+    let playInterval = null;
+    let steps = [];
+
+    document.getElementById('customInput').value = formatIntervals(intervals);
+    document.getElementById('speed').value = speed;
+    document.querySelectorAll('.tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === currentTab);
+        t.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            currentTab = t.dataset.tab;
+            reset(); generateSteps(); renderStep(); saveState();
+        });
+    });
+
+    function formatIntervals(arr) {
+        return arr.map(iv => `[${iv[0]},${iv[1]}]`).join(',');
+    }
+
+    // --- Step generators ----------------------------------------
+
+    function generateSortSteps() {
+        steps = [];
+        const sorted = intervals.slice().sort((a, b) => a[0] - b[0]);
+        steps.push({
+            inputs: intervals.slice(),
+            sorted: sorted.slice(),
+            merged: [],
+            cursor: -1, kind: 'init',
+            msg: `Sort intervals by start. ${formatIntervals(intervals)} → ${formatIntervals(sorted)}.`
+        });
+        const merged = [];
+        for (let k = 0; k < sorted.length; k++) {
+            const iv = sorted[k];
+            if (merged.length === 0 || merged[merged.length - 1][1] < iv[0]) {
+                merged.push([iv[0], iv[1]]);
+                steps.push({
+                    inputs: intervals.slice(),
+                    sorted: sorted.slice(),
+                    merged: merged.map(x => x.slice()),
+                    cursor: k, kind: 'append',
+                    msg: `[${iv[0]},${iv[1]}] does not overlap last → append. Merged: ${formatIntervals(merged)}.`
+                });
+            } else {
+                const prevEnd = merged[merged.length - 1][1];
+                merged[merged.length - 1][1] = Math.max(prevEnd, iv[1]);
+                steps.push({
+                    inputs: intervals.slice(),
+                    sorted: sorted.slice(),
+                    merged: merged.map(x => x.slice()),
+                    cursor: k, kind: 'merge',
+                    msg: `[${iv[0]},${iv[1]}] overlaps last (end ${prevEnd}) → extend to ${merged[merged.length-1][1]}.`
+                });
+            }
+        }
+        steps.push({
+            inputs: intervals.slice(),
+            sorted: sorted.slice(),
+            merged: merged.map(x => x.slice()),
+            cursor: -1, kind: 'done',
+            msg: `Done. Result: ${formatIntervals(merged)}.`
+        });
+    }
+
+    function generateSweepSteps() {
+        steps = [];
+        const events = [];
+        for (const [s, e] of intervals) {
+            events.push([s, 0, +1]);
+            events.push([e, 1, -1]);
+        }
+        events.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+        steps.push({
+            inputs: intervals.slice(),
+            events: events.slice(),
+            merged: [], cur: 0, eventIdx: -1, kind: 'init',
+            msg: `Build sorted events: ${events.length} (open / close pairs).`
+        });
+        let cur = 0, start = 0;
+        const merged = [];
+        for (let i = 0; i < events.length; i++) {
+            const [pos, , delta] = events[i];
+            const before = cur;
+            if (cur === 0 && delta === +1) start = pos;
+            cur += delta;
+            const msg = delta === +1
+                ? `Open event at ${pos}: counter ${before} → ${cur}.${before === 0 ? ' Start of merged.' : ''}`
+                : `Close event at ${pos}: counter ${before} → ${cur}.${cur === 0 ? ' End of merged.' : ''}`;
+            let kind = 'process';
+            if (cur === 0) {
+                merged.push([start, pos]);
+                kind = 'append';
+            }
+            steps.push({
+                inputs: intervals.slice(),
+                events: events.slice(),
+                merged: merged.map(x => x.slice()),
+                cur, eventIdx: i, kind, msg
+            });
+        }
+        steps.push({
+            inputs: intervals.slice(),
+            events: events.slice(),
+            merged: merged.map(x => x.slice()),
+            cur, eventIdx: -1, kind: 'done',
+            msg: `Done. Result: ${formatIntervals(merged)}.`
+        });
+    }
+
+    function generateSteps() {
+        if (currentTab === 'sweep') generateSweepSteps();
+        else generateSortSteps();
+    }
+
+    // --- Rendering ----------------------------------------------
+
+    function renderBar(track, iv, scale, minX, klass, label) {
+        const bar = document.createElement('div');
+        bar.className = 'iv-bar ' + klass;
+        const left = (iv[0] - minX) * scale;
+        const width = Math.max(28, (iv[1] - iv[0]) * scale);
+        bar.style.left = `${left}px`;
+        bar.style.width = `${width}px`;
+        bar.textContent = label || `[${iv[0]},${iv[1]}]`;
+        track.appendChild(bar);
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('inCounter').textContent = step.inputs.length;
+        document.getElementById('outCounter').textContent = step.merged.length;
+        document.getElementById('sweepCounter').textContent =
+            currentTab === 'sweep' ? step.cur : '—';
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        const all = step.inputs.concat(step.merged);
+        const minX = Math.min(...all.map(iv => iv[0]));
+        const maxX = Math.max(...all.map(iv => iv[1]));
+        const range = Math.max(1, maxX - minX);
+        const trackWidth = 720;
+        const scale = trackWidth / range;
+
+        // Inputs lane
+        const inputBlock = document.createElement('div');
+        inputBlock.className = 'interval-row';
+        const inLabel = document.createElement('div');
+        inLabel.className = 'lane-label';
+        inLabel.textContent = currentTab === 'sweep' ? 'Inputs (with sweep events)' : `Inputs (sorted: ${formatIntervals(step.sorted || [])})`;
+        inputBlock.appendChild(inLabel);
+
+        const inputs = currentTab === 'sweep' ? step.inputs : (step.sorted || step.inputs);
+        for (let k = 0; k < inputs.length; k++) {
+            const track = document.createElement('div');
+            track.className = 'iv-track';
+            track.style.width = `${trackWidth + 8}px`;
+            track.style.maxWidth = '100%';
+            const klass = (k === step.cursor) ? 'current' : 'input';
+            renderBar(track, inputs[k], scale, minX, klass);
+            inputBlock.appendChild(track);
+        }
+        viz.appendChild(inputBlock);
+
+        // Merged lane
+        const mergedBlock = document.createElement('div');
+        mergedBlock.className = 'interval-row';
+        const outLabel = document.createElement('div');
+        outLabel.className = 'lane-label';
+        outLabel.textContent = `Merged output (${step.merged.length})`;
+        mergedBlock.appendChild(outLabel);
+        if (step.merged.length === 0) {
+            const empty = document.createElement('div');
+            empty.style.color = '#64748b';
+            empty.style.fontSize = '0.85rem';
+            empty.style.padding = '6px 0';
+            empty.textContent = '(no merged intervals yet)';
+            mergedBlock.appendChild(empty);
+        } else {
+            const lastIdx = step.merged.length - 1;
+            const track = document.createElement('div');
+            track.className = 'iv-track';
+            track.style.width = `${trackWidth + 8}px`;
+            track.style.maxWidth = '100%';
+            track.style.height = '32px';
+            for (let k = 0; k < step.merged.length; k++) {
+                const isLast = k === lastIdx;
+                const klass = (step.kind === 'merge' && isLast) ? 'merged'
+                            : (step.kind === 'append' && isLast) ? 'appended'
+                            : 'input';
+                renderBar(track, step.merged[k], scale, minX, klass);
+            }
+            mergedBlock.appendChild(track);
+        }
+        viz.appendChild(mergedBlock);
+    }
+
+    // --- Controls -----------------------------------------------
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const raw = document.getElementById('customInput').value.trim();
+        try {
+            // Match patterns like [a,b]
+            const matches = raw.match(/\[\s*-?\d+\s*,\s*-?\d+\s*\]/g);
+            if (!matches || matches.length === 0) throw new Error('parse');
+            const arr = matches.map(s => {
+                const [a, b] = s.replace(/[\[\]\s]/g, '').split(',').map(Number);
+                if (a > b) throw new Error('invalid');
+                return [a, b];
+            });
+            if (arr.length > 12) throw new Error('size');
+            intervals = arr;
+            reset(); generateSteps(); renderStep(); saveState();
+        } catch(e) {
+            document.getElementById('stepDesc').textContent =
+                'Invalid format. Provide intervals like [1,3],[2,6],...';
+        }
+    }
+    function generateRandom() {
+        const size = parseInt(document.getElementById('genSize').value);
+        const arr = [];
+        for (let i = 0; i < size; i++) {
+            const s = Math.floor(Math.random() * 18);
+            const e = s + 1 + Math.floor(Math.random() * 5);
+            arr.push([s, e]);
+        }
+        intervals = arr;
+        document.getElementById('customInput').value = formatIntervals(arr);
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+
+    setTimeout(() => {
+        document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+            bar.style.width = bar.dataset.w + '%';
+        });
+    }, 400);
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

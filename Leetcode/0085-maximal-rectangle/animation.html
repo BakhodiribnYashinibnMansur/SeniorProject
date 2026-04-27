@@ -1,0 +1,87 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>85. Maximal Rectangle — Animation</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:30px}.header h1{font-size:1.8rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.95rem}.container{max-width:900px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155}
+.controls{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:500}
+.btn-play{background:#22c55e;color:#fff}.btn-pause{background:#ef4444;color:#fff}.btn-step{background:#3b82f6;color:#fff}.btn-reset{background:#6b7280;color:#fff}
+.speed-control{display:flex;align-items:center;gap:8px}.speed-control label{color:#94a3b8;font-size:.85rem}
+.speed-control select{padding:6px 10px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px}
+.viz-area{min-height:300px;background:#0f172a;border-radius:8px;padding:20px;margin-bottom:20px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.matrix{display:grid;gap:3px}
+.cell{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:#1e293b;color:#475569;border-radius:4px;font-weight:700;transition:all .3s}
+.cell.one{background:#475569;color:#fff}
+.cell.in-row{box-shadow:0 0 0 2px #fbbf24}
+.cell.in-best{background:#22c55e!important;color:#fff!important}
+.heights{display:flex;gap:3px;font-size:.7rem;color:#94a3b8;font-family:'SF Mono',monospace}
+.h-cell{width:36px;text-align:center}
+.info-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.info-box{background:#0f172a;border-radius:8px;padding:14px;border:1px solid #334155;text-align:center}
+.info-box h3{font-size:.75rem;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.info-box .value{font-size:1rem;font-weight:600}
+.step-description{background:#0f172a;border-left:3px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem;line-height:1.55;min-height:50px}
+@media(max-width:768px){.cell{width:28px;height:28px;font-size:.8rem}.h-cell{width:28px}}</style></head>
+<body><div class="header"><h1>85. Maximal Rectangle</h1><p>Hard — Histogram per row</p></div>
+<div class="container">
+<div class="controls"><button class="btn btn-play" onclick="play()">Play</button>
+<button class="btn btn-pause" onclick="pause()">Pause</button>
+<button class="btn btn-step" onclick="stepForward()">Step</button>
+<button class="btn btn-reset" onclick="reset()">Reset</button>
+<div class="speed-control"><label>Speed:</label><select id="speed" onchange="updateSpeed()">
+<option value="1500">Slow</option><option value="700" selected>Normal</option>
+<option value="300">Fast</option></select></div></div>
+<div class="step-description" id="stepDesc">Press Play to walk through.</div>
+<div class="viz-area" id="vizArea"></div>
+<div class="info-panel">
+<div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0/0</div></div>
+<div class="info-box"><h3>Row</h3><div class="value" id="rowVal">--</div></div>
+<div class="info-box"><h3>Best</h3><div class="value" id="bestVal">0</div></div>
+</div></div>
+<script>
+const matrix=[['1','0','1','0','0'],['1','0','1','1','1'],['1','1','1','1','1'],['1','0','0','1','0']];
+const M=matrix.length,N=matrix[0].length;
+const KEY='maxrect_state';function save(){try{localStorage.setItem(KEY,JSON.stringify({currentStep,speed}))}catch(e){}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+const saved=load();let currentStep=saved?saved.currentStep:0,speed=saved?saved.speed:700,isPlaying=false,playInterval=null,steps=[];
+document.getElementById('speed').value=speed;
+function lr(heights){const n=heights.length,stk=[];let bestArea=0,bl=-1,br=-1,bh=0;
+for(let i=0;i<=n;i++){const h=i===n?0:heights[i];
+while(stk.length>0&&heights[stk[stk.length-1]]>h){
+const top=stk.pop();const width=stk.length===0?i:i-stk[stk.length-1]-1;
+const area=heights[top]*width;if(area>bestArea){bestArea=area;bl=stk.length===0?0:stk[stk.length-1]+1;br=i-1;bh=heights[top]}}
+stk.push(i)}return{best:bestArea,bl,br,bh}}
+function generateSteps(){steps=[];const heights=new Array(N).fill(0);let best=0,bestRange=null;
+steps.push({row:-1,heights:heights.slice(),best,bestRange:null,msg:'Initial heights = [0,...].'});
+for(let r=0;r<M;r++){
+    for(let c=0;c<N;c++){heights[c]=matrix[r][c]==='1'?heights[c]+1:0}
+    steps.push({row:r,heights:heights.slice(),best,bestRange,
+        msg:`Row ${r}: heights = [${heights.join(',')}].`});
+    const res=lr(heights);
+    if(res.best>best){best=res.best;
+        bestRange={r:r-res.bh+1,r2:r,c:res.bl,c2:res.br};
+        steps.push({row:r,heights:heights.slice(),best,bestRange,
+            msg:`Largest rect at row ${r}: area=${res.best} from (${bestRange.r},${bestRange.c}) to (${bestRange.r2},${bestRange.c2}).`});
+    }
+}
+steps.push({row:-1,heights:heights.slice(),best,bestRange,msg:`Done. Maximum area = ${best}.`});}
+function renderStep(){if(steps.length===0)return;save();const s=steps[Math.min(currentStep,steps.length-1)];
+document.getElementById('stepCounter').textContent=`${Math.min(currentStep+1,steps.length)} / ${steps.length}`;
+document.getElementById('rowVal').textContent=s.row>=0?s.row:'--';
+document.getElementById('bestVal').textContent=s.best;document.getElementById('stepDesc').textContent=s.msg;
+const viz=document.getElementById('vizArea');viz.innerHTML='';
+const mat=document.createElement('div');mat.className='matrix';mat.style.gridTemplateColumns=`repeat(${N},1fr)`;
+for(let r=0;r<M;r++){for(let c=0;c<N;c++){const cell=document.createElement('div');cell.className='cell';
+if(matrix[r][c]==='1')cell.classList.add('one');
+if(r===s.row)cell.classList.add('in-row');
+if(s.bestRange&&r>=s.bestRange.r&&r<=s.bestRange.r2&&c>=s.bestRange.c&&c<=s.bestRange.c2)cell.classList.add('in-best');
+cell.textContent=matrix[r][c];mat.appendChild(cell)}}viz.appendChild(mat);
+const hr=document.createElement('div');hr.className='heights';
+s.heights.forEach(h=>{const c=document.createElement('div');c.className='h-cell';c.textContent=h;hr.appendChild(c)});
+viz.appendChild(hr);}
+function play(){if(isPlaying)return;isPlaying=true;playInterval=setInterval(()=>{if(currentStep<steps.length-1){currentStep++;renderStep()}else pause()},speed)}
+function pause(){isPlaying=false;clearInterval(playInterval)}
+function stepForward(){pause();if(currentStep<steps.length-1){currentStep++;renderStep()}}
+function reset(){pause();currentStep=0;renderStep()}
+function updateSpeed(){speed=parseInt(document.getElementById('speed').value);if(isPlaying){pause();play()}save()}
+generateSteps();if(currentStep>=steps.length)currentStep=0;renderStep();
+</script></body></html>

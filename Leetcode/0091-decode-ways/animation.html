@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>91. Decode Ways — Animation</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:30px}.header h1{font-size:1.8rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.95rem}.container{max-width:900px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155}
+.input-section{display:flex;gap:10px;margin-bottom:20px;align-items:center;justify-content:center}
+.input-section input{padding:8px 12px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:6px;font-family:'SF Mono',monospace;min-width:160px}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:500}
+.btn-step{background:#3b82f6;color:#fff}
+.viz-area{background:#0f172a;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px;align-items:center;min-height:240px}
+.row{display:flex;gap:6px;font-family:'SF Mono',monospace}
+.cell{width:48px;height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#475569;color:#fff;font-weight:700;border-radius:6px;font-size:1.1rem;position:relative}
+.cell.zero{background:#ef4444}
+.cell .small{font-size:.6rem;color:#cbd5e1;margin-top:2px}
+.dp-row{display:flex;gap:6px;margin-top:12px;font-family:'SF Mono',monospace}
+.dp-cell{padding:6px 12px;background:#1e293b;border-radius:4px;color:#fbbf24;font-weight:700}
+.formula{background:#1e293b;padding:12px 20px;border-radius:6px;font-family:'SF Mono',monospace;color:#fbbf24}
+</style></head>
+<body><div class="header"><h1>91. Decode Ways</h1><p>Medium — DP</p></div>
+<div class="container">
+<div class="input-section"><input type="text" id="sInput" value="226"><button class="btn btn-step" onclick="render()">Compute</button></div>
+<div class="viz-area" id="vizArea"></div></div>
+<script>
+function render(){const s=document.getElementById('sInput').value;const viz=document.getElementById('vizArea');viz.innerHTML='';
+const n=s.length;if(n===0){viz.innerHTML='Empty';return}
+const dp=new Array(n+1).fill(0);dp[0]=1;
+if(s[0]!=='0')dp[1]=1;
+for(let i=2;i<=n;i++){
+    if(s[i-1]!=='0')dp[i]+=dp[i-1];
+    const two=parseInt(s.slice(i-2,i));if(two>=10&&two<=26)dp[i]+=dp[i-2];
+}
+const row=document.createElement('div');row.className='row';
+for(let k=0;k<n;k++){const c=document.createElement('div');c.className='cell';
+if(s[k]==='0')c.classList.add('zero');c.textContent=s[k];
+const sm=document.createElement('div');sm.className='small';sm.textContent=k;c.appendChild(sm);row.appendChild(c)}
+viz.appendChild(row);
+const dpRow=document.createElement('div');dpRow.className='dp-row';
+const lbl=document.createElement('div');lbl.style.color='#94a3b8';lbl.style.padding='6px 12px';lbl.textContent='dp:';dpRow.appendChild(lbl);
+dp.forEach((v,i)=>{const c=document.createElement('div');c.className='dp-cell';c.textContent=`dp[${i}]=${v}`;dpRow.appendChild(c)});
+viz.appendChild(dpRow);
+const f=document.createElement('div');f.className='formula';f.textContent=`Result = dp[${n}] = ${dp[n]}`;viz.appendChild(f);}
+render();
+</script></body></html>

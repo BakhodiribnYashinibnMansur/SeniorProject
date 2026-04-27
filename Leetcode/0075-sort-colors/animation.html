@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>75. Sort Colors — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .container { max-width: 900px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-generate { background: #8b5cf6; color: white; }
+        .speed-control, .gen-options { display: flex; align-items: center; gap: 8px; }
+        .speed-control label, .gen-options label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select, .gen-options select {
+            padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .input-section input { padding: 8px 12px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 6px; font-size: 0.9rem; min-width: 220px; }
+        .viz-area { min-height: 280px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            gap: 24px; align-items: center; }
+        .row {
+            display: flex; gap: 6px; align-items: center; justify-content: center;
+            position: relative;
+        }
+        .ball {
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 700; border-radius: 8px;
+            font-size: 1.1rem; transition: all 0.4s ease;
+            position: relative;
+        }
+        .ball.c0 { background: #ef4444; } /* red */
+        .ball.c1 { background: #f8fafc; color: #0f172a; } /* white */
+        .ball.c2 { background: #3b82f6; } /* blue */
+        .ball .ptr {
+            position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+            color: #fbbf24; font-size: 0.7rem; font-weight: 700; white-space: nowrap;
+        }
+        .ball.swap-low { box-shadow: 0 0 0 3px #4ade80; }
+        .ball.swap-high { box-shadow: 0 0 0 3px #ec4899; }
+        .ball.cursor { box-shadow: 0 0 0 3px #fbbf24; transform: scale(1.08); }
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+            .ball { width: 30px; height: 30px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>75. Sort Colors</h1>
+    <p>Medium — Dutch National Flag</p>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <input type="text" id="customInput" placeholder="2,0,2,1,1,0" value="2,0,2,1,1,0">
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+        <button class="btn btn-generate" onclick="generateRandom()">Random</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="700" selected>Normal</option>
+                <option value="300">Fast</option>
+                <option value="100">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to sort.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>low</h3><div class="value" id="loVal">0</div></div>
+        <div class="info-box"><h3>mid</h3><div class="value" id="midVal">0</div></div>
+        <div class="info-box"><h3>high</h3><div class="value" id="hiVal">0</div></div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'sort-colors_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentStep, speed, nums })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+    const saved = loadState();
+    let nums = saved ? saved.nums : [2, 0, 2, 1, 1, 0];
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 700;
+    let isPlaying = false, playInterval = null;
+    let steps = [];
+
+    document.getElementById('customInput').value = nums.join(',');
+    document.getElementById('speed').value = speed;
+
+    function generateSteps() {
+        steps = [];
+        const a = nums.slice();
+        let lo = 0, mi = 0, hi = a.length - 1;
+        steps.push({arr: a.slice(), lo, mi, hi, swapLow: -1, swapHigh: -1,
+            msg: `Init: low=${lo}, mid=${mi}, high=${hi}.`});
+        while (mi <= hi) {
+            if (a[mi] === 0) {
+                [a[lo], a[mi]] = [a[mi], a[lo]];
+                steps.push({arr: a.slice(), lo, mi, hi, swapLow: lo, swapHigh: -1,
+                    msg: `nums[mid=${mi}]=0 → swap with low=${lo}. Advance both.`});
+                lo++; mi++;
+            } else if (a[mi] === 1) {
+                steps.push({arr: a.slice(), lo, mi, hi, swapLow: -1, swapHigh: -1,
+                    msg: `nums[mid=${mi}]=1 → keep, mid++.`});
+                mi++;
+            } else {
+                [a[mi], a[hi]] = [a[hi], a[mi]];
+                steps.push({arr: a.slice(), lo, mi, hi, swapLow: -1, swapHigh: hi,
+                    msg: `nums[mid=${mi}]=2 → swap with high=${hi}. high--.`});
+                hi--;
+            }
+        }
+        steps.push({arr: a.slice(), lo, mi, hi, swapLow: -1, swapHigh: -1,
+            msg: `Done. Sorted: [${a.join(', ')}].`});
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('loVal').textContent = step.lo;
+        document.getElementById('midVal').textContent = step.mi;
+        document.getElementById('hiVal').textContent = step.hi;
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.style.marginTop = '24px';
+        for (let k = 0; k < step.arr.length; k++) {
+            const b = document.createElement('div');
+            b.className = 'ball c' + step.arr[k];
+            if (k === step.mi) b.classList.add('cursor');
+            if (k === step.swapLow) b.classList.add('swap-low');
+            if (k === step.swapHigh) b.classList.add('swap-high');
+            b.textContent = step.arr[k];
+            const ptrs = [];
+            if (k === step.lo) ptrs.push('lo');
+            if (k === step.mi) ptrs.push('mid');
+            if (k === step.hi) ptrs.push('hi');
+            if (ptrs.length > 0) {
+                const p = document.createElement('div');
+                p.className = 'ptr';
+                p.textContent = ptrs.join('/');
+                b.appendChild(p);
+            }
+            row.appendChild(b);
+        }
+        viz.appendChild(row);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const raw = document.getElementById('customInput').value.trim();
+        try {
+            const arr = raw.replace(/\s/g, '').split(',').map(Number);
+            if (arr.some(x => isNaN(x) || x < 0 || x > 2)) throw new Error('bad');
+            if (arr.length === 0 || arr.length > 20) throw new Error('size');
+            nums = arr;
+            reset(); generateSteps(); renderStep(); saveState();
+        } catch (e) {
+            document.getElementById('stepDesc').textContent =
+                'Invalid input. Provide 1..20 values from {0, 1, 2}.';
+        }
+    }
+    function generateRandom() {
+        const sz = 6 + Math.floor(Math.random() * 6);
+        nums = [];
+        for (let i = 0; i < sz; i++) nums.push(Math.floor(Math.random() * 3));
+        document.getElementById('customInput').value = nums.join(',');
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

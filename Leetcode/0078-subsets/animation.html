@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>78. Subsets — Animation</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:20px}
+.header{text-align:center;margin-bottom:30px}
+.header h1{font-size:1.8rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.header p{color:#94a3b8;font-size:.95rem}
+.container{max-width:900px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px;border:1px solid #334155}
+.controls{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:500;transition:all .2s}
+.btn-play{background:#22c55e;color:#fff}.btn-pause{background:#ef4444;color:#fff}.btn-step{background:#3b82f6;color:#fff}.btn-reset{background:#6b7280;color:#fff}
+.gen-options,.speed-control{display:flex;align-items:center;gap:8px}
+.gen-options label,.speed-control label{color:#94a3b8;font-size:.85rem}
+.gen-options select,.gen-options input,.speed-control select{padding:6px 10px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px}
+.input-section{display:flex;gap:10px;margin-bottom:20px;align-items:center;justify-content:center;flex-wrap:wrap}
+.viz-area{min-height:280px;background:#0f172a;border-radius:8px;padding:20px;margin-bottom:20px;display:flex;flex-direction:column;gap:16px;align-items:center}
+.num-row{display:flex;gap:6px}
+.num{width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#475569;color:#fff;font-weight:700;border-radius:6px;font-size:1rem;transition:all .3s}
+.num.in-cur{background:#fbbf24;color:#0f172a}
+.num.start{box-shadow:0 0 0 3px #60a5fa}
+.results{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;background:#1e293b;padding:10px;border-radius:6px;max-height:200px;overflow-y:auto}
+.result-pill{background:#22c55e;color:#fff;padding:4px 10px;border-radius:4px;font-family:'SF Mono',Consolas,monospace;font-size:.8rem}
+.info-panel{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.info-box{background:#0f172a;border-radius:8px;padding:14px;border:1px solid #334155;text-align:center}
+.info-box h3{font-size:.75rem;color:#94a3b8;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.info-box .value{font-size:1rem;font-weight:600}
+.step-description{background:#0f172a;border-left:3px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem;line-height:1.55;min-height:50px}
+@media(max-width:768px){body{padding:10px}.info-panel{grid-template-columns:repeat(2,1fr)}.container{padding:14px}}
+</style></head>
+<body>
+<div class="header"><h1>78. Subsets</h1><p>Medium — Power Set</p></div>
+<div class="container">
+<div class="input-section">
+<input type="text" id="numsInput" placeholder="1,2,3" value="1,2,3" style="padding:8px 12px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:6px;min-width:200px">
+<button class="btn btn-step" onclick="applyInput()">Apply</button>
+</div>
+<div class="controls">
+<button class="btn btn-play" onclick="play()">Play</button>
+<button class="btn btn-pause" onclick="pause()">Pause</button>
+<button class="btn btn-step" onclick="stepForward()">Step</button>
+<button class="btn btn-reset" onclick="reset()">Reset</button>
+<div class="speed-control"><label>Speed:</label><select id="speed" onchange="updateSpeed()">
+<option value="1500">Slow</option><option value="500" selected>Normal</option>
+<option value="200">Fast</option><option value="80">Very Fast</option></select></div>
+</div>
+<div class="step-description" id="stepDesc">Press Play to enumerate subsets.</div>
+<div class="viz-area" id="vizArea"></div>
+<div class="info-panel">
+<div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0/0</div></div>
+<div class="info-box"><h3>cur</h3><div class="value" id="curVal" style="font-size:.85rem">[]</div></div>
+<div class="info-box"><h3>Found</h3><div class="value" id="foundVal">0</div></div>
+<div class="info-box"><h3>Total</h3><div class="value" id="totalVal">--</div></div>
+</div>
+</div>
+<script>
+const KEY='subsets_state';
+function save(){try{localStorage.setItem(KEY,JSON.stringify({currentStep,speed,nums}))}catch(e){}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+const saved=load();
+let nums=saved?saved.nums:[1,2,3],currentStep=saved?saved.currentStep:0,speed=saved?saved.speed:500;
+let isPlaying=false,playInterval=null,steps=[];
+document.getElementById('numsInput').value=nums.join(',');
+document.getElementById('speed').value=speed;
+function generateSteps(){
+    steps=[];
+    const cur=[],result=[];
+    function bt(start){
+        result.push(cur.slice());
+        steps.push({cur:cur.slice(),start,results:result.map(r=>r.slice()),act:'emit',msg:`Emit subset [${cur.join(',')}]`});
+        for(let i=start;i<nums.length;i++){
+            cur.push(nums[i]);
+            steps.push({cur:cur.slice(),start:i+1,results:result.map(r=>r.slice()),act:`push ${nums[i]}`,msg:`Push ${nums[i]} → cur=[${cur.join(',')}]`});
+            bt(i+1);
+            cur.pop();
+            steps.push({cur:cur.slice(),start,results:result.map(r=>r.slice()),act:'pop',msg:`Pop → cur=[${cur.join(',')}]`});
+        }
+    }
+    bt(0);
+    steps.push({cur:[],start:-1,results:result.map(r=>r.slice()),act:'done',msg:`Done. ${result.length} subsets (= 2^${nums.length}).`});
+}
+function renderStep(){
+    if(steps.length===0)return;save();
+    const step=steps[Math.min(currentStep,steps.length-1)];
+    document.getElementById('stepCounter').textContent=`${Math.min(currentStep+1,steps.length)} / ${steps.length}`;
+    document.getElementById('curVal').textContent=`[${step.cur.join(',')}]`;
+    document.getElementById('foundVal').textContent=step.results.length;
+    document.getElementById('totalVal').textContent=1<<nums.length;
+    document.getElementById('stepDesc').textContent=step.msg;
+    const viz=document.getElementById('vizArea');viz.innerHTML='';
+    const row=document.createElement('div');row.className='num-row';
+    nums.forEach((v,k)=>{const d=document.createElement('div');d.className='num';
+        if(step.cur.includes(v))d.classList.add('in-cur');
+        if(k===step.start)d.classList.add('start');
+        d.textContent=v;row.appendChild(d)});
+    viz.appendChild(row);
+    const res=document.createElement('div');res.className='results';
+    if(step.results.length===0){const e=document.createElement('div');e.style.color='#64748b';e.style.fontSize='.85rem';e.textContent='(none)';res.appendChild(e)}
+    else step.results.forEach(r=>{const p=document.createElement('div');p.className='result-pill';p.textContent=`[${r.join(',')}]`;res.appendChild(p)});
+    viz.appendChild(res);
+}
+function play(){if(isPlaying)return;isPlaying=true;playInterval=setInterval(()=>{if(currentStep<steps.length-1){currentStep++;renderStep()}else pause()},speed)}
+function pause(){isPlaying=false;clearInterval(playInterval)}
+function stepForward(){pause();if(currentStep<steps.length-1){currentStep++;renderStep()}}
+function reset(){pause();currentStep=0;renderStep()}
+function updateSpeed(){speed=parseInt(document.getElementById('speed').value);if(isPlaying){pause();play()}save()}
+function applyInput(){
+    const raw=document.getElementById('numsInput').value.trim();
+    try{const a=raw.replace(/[\[\]\s]/g,'').split(',').map(Number);
+        if(a.some(isNaN))throw new Error('nan');if(a.length===0||a.length>5)throw new Error('size');
+        nums=a;reset();generateSteps();renderStep();save();
+    }catch(e){document.getElementById('stepDesc').textContent='Invalid input (max 5 distinct integers).'}
+}
+generateSteps();if(currentStep>=steps.length)currentStep=0;renderStep();
+</script></body></html>

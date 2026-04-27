@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>69. Sqrt(x) — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .tab { padding: 10px 20px; background: #1e293b; border: 1px solid #334155;
+            border-radius: 8px 8px 0 0; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; }
+        .tab:hover { background: #334155; }
+        .tab.active { background: #3b82f6; border-color: #3b82f6; color: white; font-weight: 600; }
+        .container { max-width: 900px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select { padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .input-section input { padding: 8px 12px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 6px; font-size: 0.95rem; min-width: 200px; }
+
+        .viz-area { min-height: 240px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            gap: 16px; align-items: center; }
+
+        .number-line {
+            position: relative; height: 80px; width: 100%; max-width: 720px;
+            background: #1e293b; border-radius: 6px; padding: 14px 16px;
+        }
+        .nl-axis {
+            position: absolute; left: 16px; right: 16px; top: 50%;
+            height: 2px; background: #475569; transform: translateY(-50%);
+        }
+        .nl-tick {
+            position: absolute; top: 50%; transform: translate(-50%, -50%);
+            color: #94a3b8; font-size: 0.7rem;
+        }
+        .nl-marker {
+            position: absolute; top: 50%; transform: translate(-50%, -50%);
+            display: flex; flex-direction: column; align-items: center;
+            font-size: 0.75rem; color: #fbbf24; font-weight: 700;
+        }
+        .nl-marker .dot { width: 12px; height: 12px; border-radius: 50%; background: currentColor; }
+        .nl-marker .lbl { margin-top: 2px; }
+        .nl-marker.lo { color: #22c55e; }
+        .nl-marker.hi { color: #ef4444; }
+        .nl-marker.mid { color: #fbbf24; transform: translate(-50%, -55%) scale(1.1); }
+
+        .formula {
+            background: #1e293b; padding: 12px 20px; border-radius: 8px;
+            font-family: 'SF Mono', Consolas, monospace; font-size: 0.95rem;
+            color: #fbbf24; border: 1px solid #334155; text-align: center;
+            min-width: 320px;
+        }
+
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1.05rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>69. Sqrt(x)</h1>
+    <p>Easy — Math, Binary Search</p>
+</div>
+
+<div class="tabs" id="tabs">
+    <div class="tab active" data-tab="binary">Binary Search</div>
+    <div class="tab" data-tab="newton">Newton's Method</div>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <input type="number" id="xInput" min="0" max="2147483647" value="101">
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="700" selected>Normal</option>
+                <option value="300">Fast</option>
+                <option value="100">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to compute the integer square root.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>lo / hi</h3><div class="value" id="loHiVal">--</div></div>
+        <div class="info-box"><h3>mid / r</h3><div class="value" id="midVal">--</div></div>
+        <div class="info-box"><h3>Result</h3><div class="value" id="resVal">--</div></div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'sqrtx_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentTab, currentStep, speed, x })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+
+    const saved = loadState();
+    let currentTab = saved ? saved.currentTab : 'binary';
+    let x = saved ? saved.x : 101;
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 700;
+    let isPlaying = false, playInterval = null;
+    let steps = [];
+
+    document.getElementById('xInput').value = x;
+    document.getElementById('speed').value = speed;
+    document.querySelectorAll('.tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === currentTab);
+        t.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            currentTab = t.dataset.tab;
+            reset(); generateSteps(); renderStep(); saveState();
+        });
+    });
+
+    function generateBinarySteps() {
+        steps = [];
+        if (x < 2) {
+            steps.push({lo: 0, hi: x, mid: x, ans: x, msg: `x = ${x} < 2 → return ${x}.`,
+                formula: `if (x < 2) return x → ${x}`});
+            return;
+        }
+        let lo = 1, hi = Math.floor(x / 2), ans = 0;
+        steps.push({
+            lo, hi, mid: -1, ans,
+            formula: `Init: lo = 1, hi = ${hi}, ans = 0`,
+            msg: `Initial range: lo = 1, hi = floor(x/2) = ${hi}.`
+        });
+        while (lo <= hi) {
+            const mid = Math.floor((lo + hi) / 2);
+            const sq = mid * mid;
+            const ok = sq <= x;
+            if (ok) {
+                ans = mid;
+                steps.push({
+                    lo, hi, mid, ans, ok,
+                    formula: `mid = ${mid}, mid*mid = ${sq} ≤ ${x} ✓`,
+                    msg: `mid = ${mid}, mid*mid = ${sq} ≤ ${x}. Update ans = ${mid}, lo = ${mid + 1}.`
+                });
+                lo = mid + 1;
+            } else {
+                steps.push({
+                    lo, hi, mid, ans, ok,
+                    formula: `mid = ${mid}, mid*mid = ${sq} > ${x} ✗`,
+                    msg: `mid = ${mid}, mid*mid = ${sq} > ${x}. hi = ${mid - 1}.`
+                });
+                hi = mid - 1;
+            }
+        }
+        steps.push({
+            lo, hi, mid: -1, ans,
+            formula: `result = ${ans}`,
+            msg: `Done. floor(sqrt(${x})) = ${ans}.`
+        });
+    }
+
+    function generateNewtonSteps() {
+        steps = [];
+        if (x < 2) {
+            steps.push({lo: 0, hi: x, mid: x, ans: x, msg: `x = ${x} < 2 → return ${x}.`,
+                formula: `if (x < 2) return x → ${x}`});
+            return;
+        }
+        let r = x;
+        steps.push({
+            lo: 0, hi: x, mid: r, ans: -1,
+            formula: `r₀ = ${r}`,
+            msg: `Initial guess: r = ${r}.`
+        });
+        let it = 0;
+        while (r * r > x && it < 60) {
+            const next = Math.floor((r + Math.floor(x / r)) / 2);
+            steps.push({
+                lo: 0, hi: x, mid: r, ans: -1,
+                formula: `r ← (${r} + ${x}/${r}) / 2 = ${next}`,
+                msg: `Iter ${it + 1}: r*r = ${r*r} > ${x}. New r = (r + x/r) / 2 = ${next}.`
+            });
+            r = next;
+            it++;
+        }
+        steps.push({
+            lo: 0, hi: x, mid: r, ans: r,
+            formula: `r*r = ${r*r} ≤ ${x} → return ${r}`,
+            msg: `Converged. r = ${r}, r*r = ${r*r} ≤ ${x}. Return ${r}.`
+        });
+    }
+
+    function generateSteps() {
+        if (currentTab === 'newton') generateNewtonSteps();
+        else generateBinarySteps();
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('loHiVal').textContent = `${step.lo}, ${step.hi}`;
+        document.getElementById('midVal').textContent = step.mid >= 0 ? step.mid : '--';
+        document.getElementById('resVal').textContent = step.ans >= 0 ? step.ans : '...';
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        if (currentTab === 'binary') {
+            const nl = document.createElement('div');
+            nl.className = 'number-line';
+            const axis = document.createElement('div');
+            axis.className = 'nl-axis';
+            nl.appendChild(axis);
+            const range = Math.max(step.hi, 1);
+            for (let p = 0; p <= 4; p++) {
+                const t = document.createElement('div');
+                t.className = 'nl-tick';
+                t.style.left = `${(p / 4) * 100}%`;
+                t.style.top = '70%';
+                t.textContent = Math.round(range * p / 4);
+                nl.appendChild(t);
+            }
+            function marker(klass, val, label) {
+                const m = document.createElement('div');
+                m.className = 'nl-marker ' + klass;
+                m.style.left = `${Math.min(100, (val / range) * 100)}%`;
+                m.innerHTML = `<div class="dot"></div><div class="lbl">${label} ${val}</div>`;
+                nl.appendChild(m);
+            }
+            marker('lo', step.lo, 'lo');
+            marker('hi', step.hi, 'hi');
+            if (step.mid >= 0) marker('mid', step.mid, 'mid');
+            viz.appendChild(nl);
+        }
+
+        const f = document.createElement('div');
+        f.className = 'formula';
+        f.textContent = step.formula;
+        viz.appendChild(f);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const v = parseInt(document.getElementById('xInput').value);
+        if (isNaN(v) || v < 0 || v > 2147483647) {
+            document.getElementById('stepDesc').textContent = 'x must be in [0, 2^31 - 1].';
+            return;
+        }
+        x = v;
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>71. Simplify Path — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .container { max-width: 900px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select { padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .input-section input { padding: 8px 12px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 6px; font-size: 0.9rem; min-width: 280px;
+            font-family: 'SF Mono', Consolas, monospace; }
+        .preset-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 12px; }
+        .preset {
+            padding: 4px 10px; background: #0f172a; border: 1px solid #334155;
+            border-radius: 4px; cursor: pointer; font-size: 0.78rem; color: #cbd5e1;
+            font-family: 'SF Mono', Consolas, monospace;
+        }
+        .preset:hover { background: #334155; color: white; }
+
+        .viz-area { min-height: 280px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            gap: 16px; }
+
+        .tokens {
+            display: flex; gap: 6px; flex-wrap: wrap; padding: 8px;
+            background: #1e293b; border-radius: 6px; border: 1px solid #334155;
+        }
+        .token {
+            padding: 4px 10px; background: #475569; border-radius: 4px;
+            font-family: 'SF Mono', Consolas, monospace; font-size: 0.85rem;
+        }
+        .token.processed { background: #6366f1; color: white; }
+        .token.current { background: #fbbf24; color: #0f172a; font-weight: 700; }
+        .token.skip { opacity: 0.5; text-decoration: line-through; }
+        .token.empty { background: #334155; color: #64748b; }
+
+        .stack-display {
+            display: flex; gap: 6px; align-items: flex-end;
+            justify-content: center; min-height: 80px; padding: 12px;
+            background: #1e293b; border-radius: 6px; border: 1px solid #334155;
+        }
+        .stack-cell {
+            padding: 8px 14px; background: #22c55e; color: white;
+            font-family: 'SF Mono', Consolas, monospace; font-weight: 700;
+            border-radius: 6px; transition: all 0.4s ease;
+        }
+
+        .output-display {
+            background: #0c1424; padding: 12px 16px; border-radius: 6px;
+            border: 1px solid #334155;
+            font-family: 'SF Mono', Consolas, monospace; font-size: 1rem;
+            color: #fbbf24; text-align: center;
+        }
+
+        .info-panel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(3, 1fr); }
+            .container { padding: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>71. Simplify Path</h1>
+    <p>Medium — Stack-based Parsing</p>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <input type="text" id="customInput" placeholder='/a/./b/../../c/' value="/a/./b/../../c/">
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+    </div>
+
+    <div class="preset-row" id="presets"></div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="700" selected>Normal</option>
+                <option value="300">Fast</option>
+                <option value="100">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to walk the parser.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>Token</h3><div class="value" id="tokVal">--</div></div>
+        <div class="info-box"><h3>Action</h3><div class="value" id="actionVal">--</div></div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'simplify-path_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentStep, speed, path })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+
+    const PRESETS = ["/home/", "/../", "/home//foo/", "/a/./b/../../c/", "/.hidden/file",
+                     "/a/b/c/../../../", "/.../", "/"];
+
+    const saved = loadState();
+    let path = saved ? saved.path : '/a/./b/../../c/';
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 700;
+    let isPlaying = false, playInterval = null;
+    let steps = [];
+
+    document.getElementById('customInput').value = path;
+    document.getElementById('speed').value = speed;
+    const presetRow = document.getElementById('presets');
+    PRESETS.forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'preset';
+        el.textContent = p;
+        el.onclick = () => { path = p; document.getElementById('customInput').value = p;
+            reset(); generateSteps(); renderStep(); saveState(); };
+        presetRow.appendChild(el);
+    });
+
+    function generateSteps() {
+        steps = [];
+        const tokens = path.split('/');
+        const stack = [];
+        steps.push({
+            tokens: tokens.slice(), idx: -1, stack: stack.slice(), action: 'init',
+            output: '/', msg: `Split path by '/' → [${tokens.map(t => `"${t}"`).join(', ')}].`
+        });
+        for (let k = 0; k < tokens.length; k++) {
+            const t = tokens[k];
+            let action, msg;
+            if (t === '' || t === '.') {
+                action = t === '' ? 'skip empty' : 'skip "."';
+                msg = `Token "${t}" → ${action}.`;
+            } else if (t === '..') {
+                if (stack.length > 0) {
+                    const popped = stack.pop();
+                    action = `pop "${popped}"`;
+                    msg = `Token "..": pop "${popped}" from stack.`;
+                } else {
+                    action = 'pop (no-op)';
+                    msg = `Token "..": stack empty, no-op.`;
+                }
+            } else {
+                stack.push(t);
+                action = `push "${t}"`;
+                msg = `Token "${t}": push to stack.`;
+            }
+            steps.push({
+                tokens: tokens.slice(), idx: k, stack: stack.slice(), action,
+                output: '/' + stack.join('/'), msg
+            });
+        }
+        steps.push({
+            tokens: tokens.slice(), idx: -1, stack: stack.slice(), action: 'done',
+            output: '/' + stack.join('/'),
+            msg: `Done. Result: "${'/' + stack.join('/')}".`
+        });
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('tokVal').textContent =
+            step.idx >= 0 ? `"${step.tokens[step.idx]}"` : '--';
+        document.getElementById('actionVal').textContent = step.action;
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        const tokRow = document.createElement('div');
+        tokRow.className = 'tokens';
+        for (let k = 0; k < step.tokens.length; k++) {
+            const tok = document.createElement('div');
+            tok.className = 'token';
+            const t = step.tokens[k];
+            if (t === '') tok.classList.add('empty');
+            if (k < step.idx) tok.classList.add('processed');
+            if (k === step.idx) tok.classList.add('current');
+            tok.textContent = t === '' ? '∅' : t;
+            tokRow.appendChild(tok);
+        }
+        viz.appendChild(tokRow);
+
+        const stackEl = document.createElement('div');
+        stackEl.className = 'stack-display';
+        if (step.stack.length === 0) {
+            const empty = document.createElement('div');
+            empty.style.color = '#64748b';
+            empty.style.fontSize = '0.85rem';
+            empty.textContent = '(stack empty)';
+            stackEl.appendChild(empty);
+        } else {
+            for (const item of step.stack) {
+                const s = document.createElement('div');
+                s.className = 'stack-cell';
+                s.textContent = item;
+                stackEl.appendChild(s);
+            }
+        }
+        viz.appendChild(stackEl);
+
+        const out = document.createElement('div');
+        out.className = 'output-display';
+        out.textContent = step.output;
+        viz.appendChild(out);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const v = document.getElementById('customInput').value.trim();
+        if (!v.startsWith('/') || v.length > 80) {
+            document.getElementById('stepDesc').textContent = 'Path must start with "/" and be ≤ 80 chars.';
+            return;
+        }
+        path = v;
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

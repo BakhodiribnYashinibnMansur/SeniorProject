@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>54. Spiral Matrix — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .tab { padding: 10px 20px; background: #1e293b; border: 1px solid #334155;
+            border-radius: 8px 8px 0 0; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; }
+        .tab:hover { background: #334155; }
+        .tab.active { background: #3b82f6; border-color: #3b82f6; color: white; font-weight: 600; }
+        .container { max-width: 1000px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-generate { background: #8b5cf6; color: white; }
+        .speed-control, .gen-options { display: flex; align-items: center; gap: 8px; }
+        .speed-control label, .gen-options label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select, .gen-options select {
+            padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px;
+        }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .viz-area { min-height: 320px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            align-items: center; gap: 16px; }
+        .matrix { display: grid; gap: 4px; }
+        .mcell {
+            width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            background: #334155; color: #e2e8f0; font-weight: 600;
+            border-radius: 6px; font-size: 1rem;
+            transition: all 0.3s ease; position: relative;
+        }
+        .mcell.visited { background: #6366f1; color: white; }
+        .mcell.in-band { background: #3b82f6; color: white; box-shadow: 0 0 0 2px #60a5fa; }
+        .mcell.current { background: #fbbf24 !important; color: #0f172a !important;
+            transform: scale(1.1); box-shadow: 0 0 0 3px #f59e0b; }
+        .mcell.next     { background: #22c55e !important; color: white !important; }
+        .mcell .arrow {
+            position: absolute; bottom: 2px; right: 4px;
+            font-size: 0.85rem; color: #fff;
+        }
+        .output-strip {
+            display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;
+            background: #1e293b; padding: 10px; border-radius: 8px; min-height: 44px;
+        }
+        .out-cell {
+            background: #0f172a; padding: 6px 10px; border-radius: 4px;
+            border: 1px solid #334155; font-size: 0.85rem;
+        }
+        .out-cell.fresh {
+            background: #fbbf24; color: #0f172a; font-weight: 700;
+            box-shadow: 0 0 8px rgba(251,191,36,0.5);
+        }
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1.1rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        .legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+            margin-top: 16px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #94a3b8; }
+        .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px;
+            padding: 20px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.85rem; color: #64748b;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 14px; }
+        .chart-row { display: flex; align-items: center; gap: 12px; }
+        .chart-label { min-width: 160px; font-size: 0.82rem; color: #94a3b8;
+            text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 6px; height: 26px;
+            overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 6px;
+            display: flex; align-items: center; padding-left: 10px;
+            font-size: 0.78rem; font-weight: 600; color: white;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.optimal { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 130px; font-size: 0.8rem; font-weight: 600;
+            color: #e2e8f0; flex-shrink: 0; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .mcell { width: 36px; height: 36px; font-size: 0.85rem; }
+            .container { padding: 14px; }
+            .chart-label { min-width: 100px; font-size: 0.72rem; }
+            .chart-complexity { display: none; }
+        }
+        @media (max-width: 480px) {
+            .mcell { width: 28px; height: 28px; font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>54. Spiral Matrix</h1>
+    <p>Medium — Matrix Simulation</p>
+</div>
+
+<div class="tabs" id="tabs">
+    <div class="tab active" data-tab="layer">Layer by Layer</div>
+    <div class="tab" data-tab="dirvec">Direction Vectors</div>
+</div>
+
+<div class="container">
+
+    <div class="input-section">
+        <div class="gen-options">
+            <label>Rows:</label>
+            <select id="rows">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+            <label>Cols:</label>
+            <select id="cols">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4" selected>4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+        </div>
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+        <button class="btn btn-generate" onclick="generateRandom()">Generate</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="700" selected>Normal</option>
+                <option value="300">Fast</option>
+                <option value="100">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to walk through the spiral.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>Visited</h3><div class="value" id="visCounter">0</div></div>
+        <div class="info-box"><h3>Direction</h3><div class="value" id="dirLabel">→</div></div>
+        <div class="info-box"><h3>Output Length</h3><div class="value" id="outLen">0</div></div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div><span>Current cell</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span>Next cell</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#3b82f6"></div><span>Active band</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#6366f1"></div><span>Already emitted</span></div>
+    </div>
+
+    <div class="complexity-chart">
+        <div class="chart-title">Algorithm Complexity (smaller bar = faster / less memory)</div>
+        <div class="chart-bars">
+            <div class="chart-row">
+                <div class="chart-label">Direction + Visited</div>
+                <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="40" style="width:0">O(mn) / O(mn)</div></div>
+                <div class="chart-complexity">Time / Space: O(mn) / O(mn)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Layer by Layer</div>
+                <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="20" style="width:0">O(mn) / O(1)</div></div>
+                <div class="chart-complexity">Time / Space: O(mn) / O(1)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">In-Place Marker</div>
+                <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="22" style="width:0">O(mn) mutates</div></div>
+                <div class="chart-complexity">Time / Space: O(mn) / O(1)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'spiral-matrix_animation_state';
+    function saveState() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentTab, currentStep, speed, rows, cols, matrix }));
+        } catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+
+    const saved = loadState();
+    let currentTab = saved ? saved.currentTab : 'layer';
+    let rows = saved ? saved.rows : 3;
+    let cols = saved ? saved.cols : 4;
+    let matrix = saved ? saved.matrix : null;
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 700;
+    let isPlaying = false;
+    let playInterval = null;
+    let steps = [];
+
+    if (!matrix) matrix = buildSequenceMatrix(rows, cols);
+
+    document.getElementById('rows').value = rows;
+    document.getElementById('cols').value = cols;
+    document.getElementById('speed').value = speed;
+    document.querySelectorAll('.tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === currentTab);
+        t.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            currentTab = t.dataset.tab;
+            reset(); generateSteps(); renderStep(); saveState();
+        });
+    });
+
+    function buildSequenceMatrix(r, c) {
+        const m = [];
+        let v = 1;
+        for (let i = 0; i < r; i++) {
+            const row = [];
+            for (let j = 0; j < c; j++) row.push(v++);
+            m.push(row);
+        }
+        return m;
+    }
+
+    // --- Step generators ----------------------------------------
+
+    const DIR_LABEL = ['→', '↓', '←', '↑'];
+
+    function generateLayerSteps() {
+        steps = [];
+        const m = rows, n = cols;
+        if (m === 0 || n === 0) return;
+        let top = 0, bottom = m - 1, left = 0, right = n - 1;
+        let result = [];
+        let visited = new Set();
+        let dir = 0;
+        steps.push({
+            top, bottom, left, right, dir,
+            current: null, next: null,
+            visited: new Set(), result: [],
+            msg: `Initial boundaries: top=${top}, bottom=${bottom}, left=${left}, right=${right}.`,
+            kind: 'init'
+        });
+
+        while (top <= bottom && left <= right) {
+            // Right sweep
+            dir = 0;
+            for (let c = left; c <= right; c++) {
+                visited.add(top * n + c);
+                result.push(matrix[top][c]);
+                steps.push({
+                    top, bottom, left, right, dir,
+                    current: [top, c],
+                    next: c < right ? [top, c + 1] : null,
+                    visited: new Set(visited),
+                    result: result.slice(),
+                    msg: `Right sweep along row ${top}: emit ${matrix[top][c]} at (${top},${c}).`,
+                    kind: 'emit'
+                });
+            }
+            top++;
+            steps.push({
+                top, bottom, left, right, dir,
+                current: null, next: null,
+                visited: new Set(visited), result: result.slice(),
+                msg: `Top boundary moves down → top=${top}.`,
+                kind: 'shrink'
+            });
+
+            if (top > bottom) break;
+
+            // Down sweep
+            dir = 1;
+            for (let r = top; r <= bottom; r++) {
+                visited.add(r * n + right);
+                result.push(matrix[r][right]);
+                steps.push({
+                    top, bottom, left, right, dir,
+                    current: [r, right],
+                    next: r < bottom ? [r + 1, right] : null,
+                    visited: new Set(visited), result: result.slice(),
+                    msg: `Down sweep along col ${right}: emit ${matrix[r][right]} at (${r},${right}).`,
+                    kind: 'emit'
+                });
+            }
+            right--;
+            steps.push({
+                top, bottom, left, right, dir,
+                current: null, next: null,
+                visited: new Set(visited), result: result.slice(),
+                msg: `Right boundary moves left → right=${right}.`,
+                kind: 'shrink'
+            });
+
+            if (left > right) break;
+
+            // Left sweep
+            if (top <= bottom) {
+                dir = 2;
+                for (let c = right; c >= left; c--) {
+                    visited.add(bottom * n + c);
+                    result.push(matrix[bottom][c]);
+                    steps.push({
+                        top, bottom, left, right, dir,
+                        current: [bottom, c],
+                        next: c > left ? [bottom, c - 1] : null,
+                        visited: new Set(visited), result: result.slice(),
+                        msg: `Left sweep along row ${bottom}: emit ${matrix[bottom][c]} at (${bottom},${c}).`,
+                        kind: 'emit'
+                    });
+                }
+                bottom--;
+                steps.push({
+                    top, bottom, left, right, dir,
+                    current: null, next: null,
+                    visited: new Set(visited), result: result.slice(),
+                    msg: `Bottom boundary moves up → bottom=${bottom}.`,
+                    kind: 'shrink'
+                });
+            }
+
+            if (top > bottom) break;
+
+            // Up sweep
+            if (left <= right) {
+                dir = 3;
+                for (let r = bottom; r >= top; r--) {
+                    visited.add(r * n + left);
+                    result.push(matrix[r][left]);
+                    steps.push({
+                        top, bottom, left, right, dir,
+                        current: [r, left],
+                        next: r > top ? [r - 1, left] : null,
+                        visited: new Set(visited), result: result.slice(),
+                        msg: `Up sweep along col ${left}: emit ${matrix[r][left]} at (${r},${left}).`,
+                        kind: 'emit'
+                    });
+                }
+                left++;
+                steps.push({
+                    top, bottom, left, right, dir,
+                    current: null, next: null,
+                    visited: new Set(visited), result: result.slice(),
+                    msg: `Left boundary moves right → left=${left}.`,
+                    kind: 'shrink'
+                });
+            }
+        }
+        steps.push({
+            top, bottom, left, right, dir,
+            current: null, next: null,
+            visited: new Set(visited), result: result.slice(),
+            msg: `Done. Output: [${result.join(', ')}].`,
+            kind: 'done'
+        });
+    }
+
+    function generateDirVecSteps() {
+        steps = [];
+        const m = rows, n = cols;
+        if (m === 0 || n === 0) return;
+        const visited = new Set();
+        const result = [];
+        const DR = [0, 1, 0, -1], DC = [1, 0, -1, 0];
+        let r = 0, c = 0, d = 0;
+
+        steps.push({
+            top: -1, bottom: -1, left: -1, right: -1, dir: d,
+            current: null, next: [r, c], visited: new Set(),
+            result: [], msg: `Start at (0,0), direction →.`, kind: 'init'
+        });
+
+        for (let i = 0; i < m * n; i++) {
+            visited.add(r * n + c);
+            result.push(matrix[r][c]);
+            const lastDir = d;
+            let nr = r + DR[d], nc = c + DC[d];
+            const need_rotate = (nr < 0 || nr >= m || nc < 0 || nc >= n || visited.has(nr * n + nc));
+            if (need_rotate) {
+                d = (d + 1) % 4;
+                nr = r + DR[d]; nc = c + DC[d];
+            }
+            steps.push({
+                top: -1, bottom: -1, left: -1, right: -1, dir: d,
+                current: [r, c],
+                next: (i < m * n - 1) ? [nr, nc] : null,
+                visited: new Set(visited), result: result.slice(),
+                msg: `Visit (${r},${c}), emit ${matrix[r][c]}.${need_rotate
+                    ? ` Boundary/visited hit → rotate to ${DIR_LABEL[d]}.`
+                    : ` Continue ${DIR_LABEL[lastDir]}.`}`,
+                kind: 'emit'
+            });
+            r = nr; c = nc;
+        }
+        steps.push({
+            top: -1, bottom: -1, left: -1, right: -1, dir: d,
+            current: null, next: null, visited: new Set(visited),
+            result: result.slice(),
+            msg: `Done. Output: [${result.join(', ')}].`,
+            kind: 'done'
+        });
+    }
+
+    function generateSteps() {
+        if (currentTab === 'dirvec') generateDirVecSteps();
+        else generateLayerSteps();
+    }
+
+    // --- Rendering ----------------------------------------------
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('visCounter').textContent = step.visited.size;
+        document.getElementById('dirLabel').textContent = DIR_LABEL[step.dir] || '→';
+        document.getElementById('outLen').textContent = step.result.length;
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        // Matrix grid
+        const grid = document.createElement('div');
+        grid.className = 'matrix';
+        grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'mcell';
+                const id = r * cols + c;
+                if (step.visited.has(id)) cell.classList.add('visited');
+                const inBand = currentTab === 'layer' && step.top >= 0 &&
+                    ((r === step.top && c >= step.left && c <= step.right) ||
+                     (r === step.bottom && c >= step.left && c <= step.right) ||
+                     (c === step.left && r >= step.top && r <= step.bottom) ||
+                     (c === step.right && r >= step.top && r <= step.bottom));
+                if (inBand && !step.visited.has(id)) cell.classList.add('in-band');
+                if (step.current && step.current[0] === r && step.current[1] === c)
+                    cell.classList.add('current');
+                if (step.next && step.next[0] === r && step.next[1] === c &&
+                    !(step.current && step.current[0] === r && step.current[1] === c))
+                    cell.classList.add('next');
+                cell.textContent = matrix[r][c];
+                if (step.current && step.current[0] === r && step.current[1] === c) {
+                    const arr = document.createElement('span');
+                    arr.className = 'arrow';
+                    arr.textContent = DIR_LABEL[step.dir];
+                    cell.appendChild(arr);
+                }
+                grid.appendChild(cell);
+            }
+        }
+        viz.appendChild(grid);
+
+        // Output strip
+        const out = document.createElement('div');
+        out.className = 'output-strip';
+        const lastIdx = step.result.length - 1;
+        step.result.forEach((v, idx) => {
+            const c = document.createElement('div');
+            c.className = 'out-cell' + (idx === lastIdx && step.kind === 'emit' ? ' fresh' : '');
+            c.textContent = v;
+            out.appendChild(c);
+        });
+        if (step.result.length === 0) {
+            const placeholder = document.createElement('div');
+            placeholder.style.color = '#64748b';
+            placeholder.style.fontSize = '0.8rem';
+            placeholder.textContent = '(output empty)';
+            out.appendChild(placeholder);
+        }
+        viz.appendChild(out);
+    }
+
+    // --- Controls -----------------------------------------------
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        rows = parseInt(document.getElementById('rows').value);
+        cols = parseInt(document.getElementById('cols').value);
+        matrix = buildSequenceMatrix(rows, cols);
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+    function generateRandom() {
+        rows = parseInt(document.getElementById('rows').value);
+        cols = parseInt(document.getElementById('cols').value);
+        matrix = [];
+        for (let i = 0; i < rows; i++) {
+            const row = [];
+            for (let j = 0; j < cols; j++) row.push(Math.floor(Math.random() * 100));
+            matrix.push(row);
+        }
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+
+    setTimeout(() => {
+        document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+            bar.style.width = bar.dataset.w + '%';
+        });
+    }, 400);
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>61. Rotate List — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .container { max-width: 1000px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .speed-control, .gen-options { display: flex; align-items: center; gap: 8px; }
+        .speed-control label, .gen-options label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select, .gen-options select, .gen-options input {
+            padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .input-section input[type="text"] {
+            padding: 8px 12px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 6px;
+            font-size: 0.9rem; min-width: 220px;
+        }
+        .viz-area { min-height: 300px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            gap: 24px; align-items: center; }
+        .ll-row {
+            display: flex; gap: 4px; align-items: center;
+            justify-content: center; flex-wrap: wrap;
+        }
+        .node {
+            display: flex; align-items: center; gap: 4px;
+        }
+        .node-box {
+            min-width: 44px; height: 44px; padding: 0 6px;
+            display: flex; align-items: center; justify-content: center;
+            background: #475569; color: white; font-weight: 700;
+            border-radius: 8px; font-size: 1rem;
+            transition: all 0.4s ease;
+        }
+        .node-box.tail { background: #6366f1; }
+        .node-box.new-tail { background: #fbbf24; color: #0f172a; box-shadow: 0 0 0 3px #f59e0b; }
+        .node-box.new-head { background: #22c55e; box-shadow: 0 0 0 3px #4ade80; }
+        .node-box.cursor { box-shadow: 0 0 0 3px #60a5fa; transform: scale(1.1); }
+        .arrow {
+            color: #94a3b8; font-size: 1.3rem;
+            transition: color 0.3s;
+        }
+        .arrow.cut { color: #ef4444; text-decoration: line-through; opacity: 0.5; }
+        .arrow.fresh { color: #4ade80; font-weight: 700; }
+
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1.05rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        .legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #94a3b8; }
+        .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px;
+            padding: 20px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.85rem; color: #64748b;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 14px; }
+        .chart-row { display: flex; align-items: center; gap: 12px; }
+        .chart-label { min-width: 160px; font-size: 0.82rem; color: #94a3b8;
+            text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 6px; height: 26px;
+            overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 6px;
+            display: flex; align-items: center; padding-left: 10px;
+            font-size: 0.78rem; font-weight: 600; color: white;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.brute    { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.optimal  { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 130px; font-size: 0.8rem; font-weight: 600;
+            color: #e2e8f0; flex-shrink: 0; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+            .node-box { min-width: 32px; height: 32px; font-size: 0.85rem; }
+            .chart-label { min-width: 100px; font-size: 0.72rem; }
+            .chart-complexity { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>61. Rotate List</h1>
+    <p>Medium — Linked List, Two Pointers</p>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <input type="text" id="customInput" placeholder="1,2,3,4,5" value="1,2,3,4,5">
+        <div class="gen-options">
+            <label>k:</label>
+            <input type="number" id="kSel" value="2" min="0" style="width:80px">
+        </div>
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="800" selected>Normal</option>
+                <option value="350">Fast</option>
+                <option value="120">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to walk the rotation.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>n</h3><div class="value" id="nVal">--</div></div>
+        <div class="info-box"><h3>k mod n</h3><div class="value" id="kModVal">--</div></div>
+        <div class="info-box"><h3>Phase</h3><div class="value" id="phaseVal">--</div></div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#60a5fa"></div><span>Cursor</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#6366f1"></div><span>Tail</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div><span>New tail</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div><span>New head</span></div>
+    </div>
+
+    <div class="complexity-chart">
+        <div class="chart-title">Algorithm Complexity</div>
+        <div class="chart-bars">
+            <div class="chart-row">
+                <div class="chart-label">Brute (rotate one)</div>
+                <div class="chart-bar-wrap"><div class="chart-bar brute" data-w="80" style="width:0">O(n · k)</div></div>
+                <div class="chart-complexity">Time / Space: O(n · k) / O(1)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Length + Re-Link</div>
+                <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="22" style="width:0">O(n)</div></div>
+                <div class="chart-complexity">Time / Space: O(n) / O(1)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'rotate-list_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentStep, speed, arr, k })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+
+    const saved = loadState();
+    let arr = saved ? saved.arr : [1,2,3,4,5];
+    let k = saved ? saved.k : 2;
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 800;
+    let isPlaying = false;
+    let playInterval = null;
+    let steps = [];
+
+    document.getElementById('customInput').value = arr.join(',');
+    document.getElementById('kSel').value = k;
+    document.getElementById('speed').value = speed;
+
+    function generateSteps() {
+        steps = [];
+        const n = arr.length;
+        if (n === 0) {
+            steps.push({nodes: arr.slice(), cursor: -1, newTail: -1, newHead: -1, tailIdx: -1,
+                cutIdx: -1, freshLink: null, k, kMod: 0, n: 0, phase: 'empty',
+                msg: 'Empty list — return as is.'});
+            return;
+        }
+        if (n === 1) {
+            steps.push({nodes: arr.slice(), cursor: 0, newTail: 0, newHead: 0, tailIdx: 0,
+                cutIdx: -1, freshLink: null, k, kMod: 0, n: 1, phase: 'single',
+                msg: 'Single node — return as is.'});
+            return;
+        }
+        // Phase 1: count length
+        for (let i = 0; i < n; i++) {
+            steps.push({
+                nodes: arr.slice(), cursor: i,
+                newTail: -1, newHead: -1, tailIdx: -1,
+                cutIdx: -1, freshLink: null,
+                k, kMod: -1, n: i + 1, phase: 'count',
+                msg: `Phase 1 (count): walk to index ${i}, n = ${i + 1}.`
+            });
+        }
+        const tailIdx = n - 1;
+        const kMod = k % n;
+        steps.push({
+            nodes: arr.slice(), cursor: tailIdx,
+            newTail: -1, newHead: -1, tailIdx,
+            cutIdx: -1, freshLink: null,
+            k, kMod, n, phase: 'reduce',
+            msg: `Found tail at index ${tailIdx}. n = ${n}. Reduce k = ${k} % ${n} = ${kMod}.`
+        });
+        if (kMod === 0) {
+            steps.push({
+                nodes: arr.slice(), cursor: -1,
+                newTail: -1, newHead: -1, tailIdx,
+                cutIdx: -1, freshLink: null,
+                k, kMod, n, phase: 'noop',
+                msg: `k mod n = 0 → no rotation needed.`
+            });
+            return;
+        }
+        // Phase 2: walk to new tail
+        const newTailIdx = n - kMod - 1;
+        for (let i = 0; i <= newTailIdx; i++) {
+            steps.push({
+                nodes: arr.slice(), cursor: i,
+                newTail: -1, newHead: -1, tailIdx,
+                cutIdx: -1, freshLink: null,
+                k, kMod, n, phase: 'walk',
+                msg: `Phase 2 (walk): move to index ${i} (need ${newTailIdx}).`
+            });
+        }
+        steps.push({
+            nodes: arr.slice(), cursor: newTailIdx,
+            newTail: newTailIdx, newHead: newTailIdx + 1, tailIdx,
+            cutIdx: -1, freshLink: null,
+            k, kMod, n, phase: 'mark',
+            msg: `Found newTail at index ${newTailIdx} (value ${arr[newTailIdx]}). newHead = index ${newTailIdx + 1} (value ${arr[newTailIdx + 1]}).`
+        });
+        // Phase 3: cut
+        steps.push({
+            nodes: arr.slice(), cursor: -1,
+            newTail: newTailIdx, newHead: newTailIdx + 1, tailIdx,
+            cutIdx: newTailIdx, freshLink: null,
+            k, kMod, n, phase: 'cut',
+            msg: `Cut: newTail.next = null (between index ${newTailIdx} and ${newTailIdx + 1}).`
+        });
+        // Phase 4: relink
+        steps.push({
+            nodes: arr.slice(), cursor: -1,
+            newTail: newTailIdx, newHead: newTailIdx + 1, tailIdx,
+            cutIdx: newTailIdx, freshLink: [tailIdx, 0],
+            k, kMod, n, phase: 'relink',
+            msg: `Relink: tail.next = head (index ${tailIdx} → 0).`
+        });
+        // Phase 5: rotated result
+        const rotated = arr.slice(newTailIdx + 1).concat(arr.slice(0, newTailIdx + 1));
+        steps.push({
+            nodes: rotated, cursor: -1,
+            newTail: rotated.length - 1, newHead: 0, tailIdx: rotated.length - 1,
+            cutIdx: -1, freshLink: null,
+            k, kMod, n, phase: 'done',
+            msg: `Rotated result: [${rotated.join(', ')}].`
+        });
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('nVal').textContent = step.n;
+        document.getElementById('kModVal').textContent = step.kMod >= 0 ? step.kMod : '--';
+        document.getElementById('phaseVal').textContent = step.phase;
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        const row = document.createElement('div');
+        row.className = 'll-row';
+        const len = step.nodes.length;
+        for (let i = 0; i < len; i++) {
+            const wrap = document.createElement('div');
+            wrap.className = 'node';
+
+            const box = document.createElement('div');
+            box.className = 'node-box';
+            if (i === step.tailIdx) box.classList.add('tail');
+            if (i === step.newTail && step.phase !== 'done') box.classList.add('new-tail');
+            if (i === step.newHead && step.phase !== 'done') box.classList.add('new-head');
+            if (i === step.cursor) box.classList.add('cursor');
+            box.textContent = step.nodes[i];
+            wrap.appendChild(box);
+
+            if (i < len - 1) {
+                const a = document.createElement('span');
+                a.className = 'arrow';
+                if (step.cutIdx === i) a.classList.add('cut');
+                a.textContent = '→';
+                wrap.appendChild(a);
+            }
+            row.appendChild(wrap);
+        }
+        // Show fresh link from tail back to head when relinking
+        if (step.freshLink && step.phase === 'relink') {
+            const note = document.createElement('div');
+            note.style.color = '#4ade80';
+            note.style.fontSize = '0.85rem';
+            note.style.marginTop = '8px';
+            note.textContent = `↻ tail (idx ${step.freshLink[0]}) → head (idx ${step.freshLink[1]})`;
+            viz.appendChild(row);
+            viz.appendChild(note);
+            return;
+        }
+        viz.appendChild(row);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const raw = document.getElementById('customInput').value.trim();
+        const newK = parseInt(document.getElementById('kSel').value);
+        try {
+            const cleaned = raw.replace(/[\[\]\s]/g, '');
+            const a = cleaned ? cleaned.split(',').map(Number) : [];
+            if (a.some(isNaN)) throw new Error('NaN');
+            if (a.length > 12) throw new Error('size');
+            if (newK < 0 || newK > 100) throw new Error('k');
+            arr = a; k = newK;
+            reset(); generateSteps(); renderStep(); saveState();
+        } catch(e) {
+            document.getElementById('stepDesc').textContent =
+                'Invalid input. Provide up to 12 comma-separated integers and a non-negative k (≤ 100).';
+        }
+    }
+
+    setTimeout(() => {
+        document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+            bar.style.width = bar.dataset.w + '%';
+        });
+    }, 400);
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

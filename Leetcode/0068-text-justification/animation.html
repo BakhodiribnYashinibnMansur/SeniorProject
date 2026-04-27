@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>68. Text Justification — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .container { max-width: 900px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .speed-control, .gen-options { display: flex; align-items: center; gap: 8px; }
+        .speed-control label, .gen-options label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select, .gen-options select, .gen-options input {
+            padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .input-section input { padding: 8px 12px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 6px; font-size: 0.85rem; min-width: 320px; }
+        .viz-area { min-height: 280px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            gap: 16px; }
+        .word-stream {
+            display: flex; gap: 6px; flex-wrap: wrap;
+            padding: 8px; background: #1e293b; border-radius: 6px;
+            border: 1px solid #334155;
+        }
+        .word {
+            padding: 4px 10px; background: #475569; border-radius: 4px;
+            font-family: 'SF Mono', Consolas, monospace; font-size: 0.85rem;
+        }
+        .word.current { background: #fbbf24; color: #0f172a; font-weight: 700; }
+        .word.in-line { background: #3b82f6; color: white; }
+        .word.placed { background: #22c55e; color: white; }
+        .lines {
+            font-family: 'SF Mono', Consolas, monospace;
+            background: #0c1424; padding: 12px; border-radius: 6px;
+            border: 1px solid #334155; font-size: 0.95rem;
+        }
+        .line-row {
+            display: flex; gap: 1px; padding: 2px 0;
+            position: relative;
+        }
+        .line-cell {
+            min-width: 14px; text-align: center;
+            padding: 2px 0;
+        }
+        .line-cell.word-char { background: #3b82f6; color: white; border-radius: 1px; }
+        .line-cell.space { background: #1e293b; }
+        .line-cell.extra { background: #f59e0b !important; color: #0f172a; }
+        .line-row.current-line { box-shadow: 0 0 0 2px #fbbf24; }
+        .ruler {
+            display: flex; gap: 1px; padding-bottom: 4px; color: #64748b;
+            font-size: 0.6rem;
+        }
+        .ruler-cell { min-width: 14px; text-align: center; }
+
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+            .line-cell, .ruler-cell { min-width: 8px; font-size: 0.65rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>68. Text Justification</h1>
+    <p>Hard — Greedy line packing</p>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <input type="text" id="wordsInput" placeholder='words: "This is an example..."'
+               value="This is an example of text justification.">
+        <div class="gen-options">
+            <label>Width:</label>
+            <input type="number" id="widthInput" value="16" min="3" max="40" style="width:60px">
+        </div>
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="2000">Slow</option>
+                <option value="1000" selected>Normal</option>
+                <option value="500">Fast</option>
+                <option value="200">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to layout the text.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>Line</h3><div class="value" id="lineVal">0</div></div>
+        <div class="info-box"><h3>Slots / Gaps</h3><div class="value" id="slotsVal">--</div></div>
+        <div class="info-box"><h3>Mode</h3><div class="value" id="modeVal">--</div></div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'text-justification_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentStep, speed, raw, width })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+
+    const saved = loadState();
+    let raw = saved ? saved.raw : 'This is an example of text justification.';
+    let width = saved ? saved.width : 16;
+    let words = raw.split(/\s+/).filter(Boolean);
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 1000;
+    let isPlaying = false, playInterval = null;
+    let steps = [];
+
+    document.getElementById('wordsInput').value = raw;
+    document.getElementById('widthInput').value = width;
+    document.getElementById('speed').value = speed;
+
+    function generateSteps() {
+        steps = [];
+        const n = words.length;
+        let i = 0, lineNum = 0;
+        const allLines = [];
+        steps.push({
+            i, j: -1, lineLen: 0, lineNum,
+            currentLineWords: [], currentMode: 'idle',
+            slots: 0, gaps: 0, extra: 0,
+            allLines: [],
+            msg: 'Begin layout.'
+        });
+        while (i < n) {
+            let j = i, lineLen = 0;
+            while (j < n && lineLen + words[j].length + (j - i) <= width) {
+                lineLen += words[j].length;
+                j++;
+                steps.push({
+                    i, j, lineLen, lineNum,
+                    currentLineWords: words.slice(i, j),
+                    currentMode: 'gathering',
+                    slots: 0, gaps: 0, extra: 0,
+                    allLines: allLines.slice(),
+                    msg: `Add "${words[j-1]}" to line ${lineNum + 1}. lineLen = ${lineLen}.`
+                });
+            }
+            const isLast = j === n;
+            const isSingle = j - i === 1;
+            const mode = (isLast || isSingle) ? 'left' : 'full';
+            const slots = width - lineLen;
+            const gaps = j - i - 1;
+            const base = gaps > 0 ? Math.floor(slots / gaps) : 0;
+            const extra = gaps > 0 ? slots % gaps : 0;
+            // Build line and a per-cell colorization
+            const cells = [];
+            if (mode === 'left') {
+                for (let k = i; k < j; k++) {
+                    for (const ch of words[k]) cells.push({type: 'word', ch});
+                    if (k < j - 1) cells.push({type: 'space', ch: ' '});
+                }
+                while (cells.length < width) cells.push({type: 'space', ch: ' '});
+            } else {
+                for (let k = i; k < j - 1; k++) {
+                    for (const ch of words[k]) cells.push({type: 'word', ch});
+                    const sp = base + ((k - i) < extra ? 1 : 0);
+                    for (let s = 0; s < sp; s++)
+                        cells.push({type: (k - i < extra) ? 'extra' : 'space', ch: ' '});
+                }
+                for (const ch of words[j - 1]) cells.push({type: 'word', ch});
+            }
+            steps.push({
+                i, j, lineLen, lineNum,
+                currentLineWords: words.slice(i, j),
+                currentMode: mode === 'left' ? (isLast ? 'last (left)' : 'single (left)') : 'full',
+                slots, gaps, extra,
+                allLines: allLines.slice(),
+                buildingCells: cells,
+                msg: `Line ${lineNum + 1}: ${j - i} word(s), lineLen=${lineLen}, slots=${slots}, gaps=${gaps}. Mode: ${mode === 'left' ? 'left-justify' : `full-justify (extra=${extra} on left)`}.`
+            });
+            allLines.push(cells);
+            steps.push({
+                i: j, j: -1, lineLen: 0, lineNum: lineNum + 1,
+                currentLineWords: [], currentMode: 'commit',
+                slots, gaps, extra,
+                allLines: allLines.slice(),
+                msg: `Commit line ${lineNum + 1}.`
+            });
+            i = j;
+            lineNum++;
+        }
+        steps.push({
+            i: n, j: -1, lineLen: 0, lineNum,
+            currentLineWords: [], currentMode: 'done',
+            slots: 0, gaps: 0, extra: 0,
+            allLines: allLines.slice(),
+            msg: `Done. Produced ${lineNum} line(s).`
+        });
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('lineVal').textContent = step.lineNum + 1;
+        document.getElementById('slotsVal').textContent =
+            step.gaps > 0 ? `${step.slots} / ${step.gaps}` : `${step.slots} / 0`;
+        document.getElementById('modeVal').textContent = step.currentMode;
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        // Words stream
+        const stream = document.createElement('div');
+        stream.className = 'word-stream';
+        for (let k = 0; k < words.length; k++) {
+            const w = document.createElement('div');
+            w.className = 'word';
+            if (k < step.i) w.classList.add('placed');
+            else if (k >= step.i && k < step.j) w.classList.add('in-line');
+            if (k === step.j - 1 && step.currentMode === 'gathering') w.classList.add('current');
+            w.textContent = words[k];
+            stream.appendChild(w);
+        }
+        viz.appendChild(stream);
+
+        // Output lines
+        const lines = document.createElement('div');
+        lines.className = 'lines';
+        // ruler
+        const ruler = document.createElement('div');
+        ruler.className = 'ruler';
+        for (let k = 0; k < width; k++) {
+            const r = document.createElement('div');
+            r.className = 'ruler-cell';
+            r.textContent = (k % 5 === 0) ? k : '·';
+            ruler.appendChild(r);
+        }
+        lines.appendChild(ruler);
+        const allLines = step.allLines.slice();
+        if (step.buildingCells) allLines.push(step.buildingCells);
+        for (let lk = 0; lk < allLines.length; lk++) {
+            const lineRow = document.createElement('div');
+            lineRow.className = 'line-row';
+            if (lk === step.allLines.length && step.buildingCells) lineRow.classList.add('current-line');
+            for (const cell of allLines[lk]) {
+                const c = document.createElement('div');
+                c.className = 'line-cell ' + (cell.type === 'word' ? 'word-char' :
+                    (cell.type === 'extra' ? 'extra' : 'space'));
+                c.textContent = cell.ch === ' ' ? '·' : cell.ch;
+                lineRow.appendChild(c);
+            }
+            lines.appendChild(lineRow);
+        }
+        viz.appendChild(lines);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const newRaw = document.getElementById('wordsInput').value.trim();
+        const newWidth = parseInt(document.getElementById('widthInput').value);
+        if (!newRaw || newWidth < 3 || newWidth > 40) {
+            document.getElementById('stepDesc').textContent =
+                'Provide non-empty words and width 3..40.';
+            return;
+        }
+        const ws = newRaw.split(/\s+/).filter(Boolean);
+        if (ws.some(w => w.length > newWidth)) {
+            document.getElementById('stepDesc').textContent =
+                'A single word cannot exceed maxWidth.';
+            return;
+        }
+        if (ws.length > 30) {
+            document.getElementById('stepDesc').textContent =
+                'Too many words (max 30 for animation).';
+            return;
+        }
+        raw = newRaw; width = newWidth; words = ws;
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

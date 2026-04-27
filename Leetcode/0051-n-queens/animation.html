@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>51. N-Queens — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .tab {
+            padding: 10px 20px; background: #1e293b; border: 1px solid #334155;
+            border-radius: 8px 8px 0 0; cursor: pointer; transition: all 0.3s; font-size: 0.9rem;
+        }
+        .tab:hover { background: #334155; }
+        .tab.active { background: #3b82f6; border-color: #3b82f6; color: white; font-weight: 600; }
+
+        .container {
+            max-width: 1000px; margin: 0 auto;
+            background: #1e293b; border-radius: 12px; padding: 24px; border: 1px solid #334155;
+        }
+
+        .controls {
+            display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s;
+        }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-pause:hover { background: #dc2626; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-reset:hover { background: #4b5563; }
+        .btn-generate { background: #8b5cf6; color: white; }
+        .btn-generate:hover { background: #7c3aed; }
+
+        .speed-control, .gen-options { display: flex; align-items: center; gap: 8px; }
+        .speed-control label, .gen-options label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select, .gen-options select {
+            padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px;
+        }
+
+        .input-section {
+            display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap;
+        }
+
+        .viz-area {
+            min-height: 320px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex;
+            flex-direction: column; align-items: center;
+        }
+
+        .board {
+            display: grid; gap: 0; border: 2px solid #475569;
+            background: #475569; box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            border-radius: 6px; overflow: hidden;
+        }
+        .cell {
+            width: 48px; height: 48px;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; font-size: 1.6rem;
+            transition: all 0.25s ease;
+        }
+        .cell.light { background: #f1f5f9; color: #0f172a; }
+        .cell.dark  { background: #64748b; color: #f1f5f9; }
+        .cell.attacked-light { background: #fecaca !important; }
+        .cell.attacked-dark  { background: #f87171 !important; }
+        .cell.placing { background: #fde68a !important; transform: scale(0.92); }
+        .cell.queen-active { background: #fbbf24 !important; }
+        .cell.queen-confirmed { background: #4ade80 !important; }
+        .cell.row-current { box-shadow: inset 0 0 0 2px #60a5fa; }
+        .queen { font-size: 1.6rem; }
+
+        .info-panel {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center;
+        }
+        .info-box h3 {
+            font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .info-box .value { font-size: 1.1rem; font-weight: 600; }
+
+        .step-description {
+            background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55;
+            min-height: 50px;
+        }
+
+        .solutions-strip {
+            margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap;
+            justify-content: center; max-height: 220px; overflow-y: auto;
+            padding: 4px;
+        }
+        .mini-board {
+            display: grid; gap: 0; border: 1px solid #334155;
+            background: #334155; border-radius: 4px; overflow: hidden;
+        }
+        .mini-cell {
+            width: 16px; height: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px;
+        }
+        .mini-cell.light { background: #f1f5f9; color: #0f172a; }
+        .mini-cell.dark  { background: #64748b; color: #fff; }
+
+        .legend {
+            display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #94a3b8; }
+        .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+
+        .complexity-chart {
+            margin-top: 20px; background: #0f172a; border-radius: 10px;
+            padding: 20px; border: 1px solid #1e293b;
+        }
+        .chart-title {
+            text-align: center; font-size: 0.85rem; color: #64748b;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
+        }
+        .chart-bars { display: flex; flex-direction: column; gap: 14px; }
+        .chart-row { display: flex; align-items: center; gap: 12px; }
+        .chart-label {
+            min-width: 160px; font-size: 0.82rem; color: #94a3b8;
+            text-align: right; flex-shrink: 0;
+        }
+        .chart-bar-wrap {
+            flex: 1; background: #1e293b; border-radius: 6px; height: 26px;
+            overflow: hidden; position: relative;
+        }
+        .chart-bar {
+            height: 100%; border-radius: 6px;
+            display: flex; align-items: center; padding-left: 10px;
+            font-size: 0.78rem; font-weight: 600; color: white;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 0; white-space: nowrap; position: absolute;
+        }
+        .chart-bar.brute    { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .chart-bar.opt-tc   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.optimal  { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity {
+            min-width: 130px; font-size: 0.8rem; font-weight: 600;
+            color: #e2e8f0; flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header h1 { font-size: 1.3rem; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .cell { width: 36px; height: 36px; font-size: 1.2rem; }
+            .container { padding: 14px; }
+            .chart-label { min-width: 100px; font-size: 0.72rem; }
+            .chart-complexity { display: none; }
+        }
+        @media (max-width: 480px) {
+            .cell { width: 28px; height: 28px; font-size: 0.9rem; }
+            .info-box .value { font-size: 0.9rem; }
+            .info-box h3 { font-size: 0.65rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>51. N-Queens</h1>
+    <p>Hard — Backtracking</p>
+</div>
+
+<div class="tabs" id="tabs">
+    <div class="tab active" data-tab="sets">Backtracking + Sets</div>
+    <div class="tab" data-tab="bitmask">Bitmask</div>
+    <div class="tab" data-tab="brute">Brute (Permutations)</div>
+</div>
+
+<div class="container">
+
+    <div class="input-section">
+        <div class="gen-options">
+            <label>Board size n:</label>
+            <select id="boardSize">
+                <option value="4" selected>4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+            </select>
+        </div>
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="700" selected>Normal</option>
+                <option value="300">Fast</option>
+                <option value="100">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to walk through the search.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>Placements</h3><div class="value" id="placeCounter">0</div></div>
+        <div class="info-box"><h3>Backtracks</h3><div class="value" id="backCounter">0</div></div>
+        <div class="info-box"><h3>Solutions Found</h3><div class="value" id="solCounter">0</div></div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#fde68a"></div><span>Trying</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div><span>Queen placed</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#4ade80"></div><span>Solution row</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#f87171"></div><span>Attacked</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#60a5fa"></div><span>Current row</span></div>
+    </div>
+
+    <div class="complexity-chart">
+        <div class="chart-title">Algorithm Complexity (smaller bar = faster)</div>
+        <div class="chart-bars">
+            <div class="chart-row">
+                <div class="chart-label">Brute Permutations</div>
+                <div class="chart-bar-wrap"><div class="chart-bar brute" data-w="95" style="width:0">O(n! · n²)</div></div>
+                <div class="chart-complexity">Time / Space: O(n!·n²) / O(n)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Backtracking + Sets</div>
+                <div class="chart-bar-wrap"><div class="chart-bar opt-tc" data-w="55" style="width:0">O(n!) pruned</div></div>
+                <div class="chart-complexity">Time / Space: O(n!) / O(n)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Backtracking + Bitmask</div>
+                <div class="chart-bar-wrap"><div class="chart-bar optimal" data-w="40" style="width:0">O(n!) bitwise</div></div>
+                <div class="chart-complexity">Time / Space: O(n!) / O(n)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'n-queens_animation_state';
+
+    function saveState() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                currentTab, currentStep, speed, n
+            }));
+        } catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); }
+        catch(e) { return null; }
+    }
+
+    const saved = loadState();
+    let currentTab = saved ? saved.currentTab : 'sets';
+    let n = saved ? saved.n : 4;
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 700;
+    let isPlaying = false;
+    let playInterval = null;
+    let steps = [];
+    let solutions = [];
+
+    document.getElementById('boardSize').value = n;
+    document.getElementById('speed').value = speed;
+    document.querySelectorAll('.tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === currentTab);
+        t.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            currentTab = t.dataset.tab;
+            reset(); generateSteps(); renderStep(); saveState();
+        });
+    });
+
+    // --- Step generation ---------------------------------------
+
+    function isSafe(queens, r, c) {
+        for (let i = 0; i < r; i++) {
+            const qc = queens[i];
+            if (qc === c) return false;
+            if (Math.abs(i - r) === Math.abs(qc - c)) return false;
+        }
+        return true;
+    }
+
+    function pushStep(queens, row, tryingCol, msg, kind) {
+        steps.push({
+            queens: queens.slice(),
+            row, tryingCol, msg, kind,
+            placements: stats.placements,
+            backtracks: stats.backtracks,
+            solutionsSoFar: solutions.length
+        });
+    }
+
+    let stats;
+
+    function generateSetsSteps() {
+        steps = []; solutions = [];
+        stats = { placements: 0, backtracks: 0 };
+        const queens = new Array(n).fill(-1);
+        const cols = new Set(), d1 = new Set(), d2 = new Set();
+
+        function backtrack(r) {
+            if (r === n) {
+                solutions.push(queens.slice());
+                pushStep(queens, r - 1, -1,
+                    `SOLUTION found! Configuration #${solutions.length}: queens=[${queens.join(',')}]`,
+                    'solution');
+                return;
+            }
+            for (let c = 0; c < n; c++) {
+                pushStep(queens, r, c,
+                    `Row ${r}: try column ${c}. Checking cols/diagonals...`, 'try');
+                if (cols.has(c) || d1.has(r - c) || d2.has(r + c)) {
+                    pushStep(queens, r, c,
+                        `Conflict at (${r},${c}). Skip.`, 'reject');
+                    continue;
+                }
+                queens[r] = c;
+                cols.add(c); d1.add(r - c); d2.add(r + c);
+                stats.placements++;
+                pushStep(queens, r, c,
+                    `Place queen at (${r},${c}). Recurse to row ${r + 1}.`, 'place');
+                backtrack(r + 1);
+                queens[r] = -1;
+                cols.delete(c); d1.delete(r - c); d2.delete(r + c);
+                stats.backtracks++;
+                pushStep(queens, r, c,
+                    `Backtrack from (${r},${c}). Restore state.`, 'undo');
+            }
+        }
+        backtrack(0);
+        pushStep(queens, -1, -1,
+            `Search complete. Found ${solutions.length} solution(s).`, 'done');
+    }
+
+    function generateBitmaskSteps() {
+        steps = []; solutions = [];
+        stats = { placements: 0, backtracks: 0 };
+        const queens = new Array(n).fill(-1);
+        const full = (1 << n) - 1;
+
+        function backtrack(r, cols, dd1, dd2) {
+            if (r === n) {
+                solutions.push(queens.slice());
+                pushStep(queens, r - 1, -1,
+                    `SOLUTION! cols=${cols.toString(2).padStart(n,'0')} ` +
+                    `queens=[${queens.join(',')}]`, 'solution');
+                return;
+            }
+            const free = full & ~(cols | dd1 | dd2);
+            pushStep(queens, r, -1,
+                `Row ${r}: free columns mask = ${free.toString(2).padStart(n,'0')}`, 'info');
+            let f = free;
+            while (f !== 0) {
+                const bit = f & -f;
+                let c = 0, t = bit;
+                while ((t & 1) === 0) { t >>= 1; c++; }
+                pushStep(queens, r, c,
+                    `Pick lowest free bit → column ${c}.`, 'try');
+                queens[r] = c;
+                stats.placements++;
+                pushStep(queens, r, c,
+                    `Place queen at (${r},${c}). New cols=${(cols|bit).toString(2).padStart(n,'0')}`, 'place');
+                backtrack(r + 1, cols | bit, ((dd1 | bit) << 1) & full, (dd2 | bit) >> 1);
+                queens[r] = -1;
+                stats.backtracks++;
+                pushStep(queens, r, c,
+                    `Backtrack: clear bit at column ${c}.`, 'undo');
+                f &= f - 1;
+            }
+        }
+        backtrack(0, 0, 0, 0);
+        pushStep(queens, -1, -1,
+            `Search complete. Found ${solutions.length} solution(s).`, 'done');
+    }
+
+    function generateBruteSteps() {
+        steps = []; solutions = [];
+        stats = { placements: 0, backtracks: 0 };
+        const arr = [...Array(n).keys()];
+        const queens = new Array(n).fill(-1);
+        let permsChecked = 0;
+
+        function permute(start) {
+            if (start === n) {
+                permsChecked++;
+                let ok = true;
+                for (let i = 0; i < n && ok; i++) {
+                    for (let j = i + 1; j < n && ok; j++) {
+                        if (Math.abs(i - j) === Math.abs(arr[i] - arr[j])) ok = false;
+                    }
+                }
+                stats.placements = permsChecked;
+                if (ok) {
+                    for (let i = 0; i < n; i++) queens[i] = arr[i];
+                    solutions.push(queens.slice());
+                    pushStep(queens, n - 1, -1,
+                        `Permutation #${permsChecked}: [${arr.join(',')}] is valid! Solution found.`, 'solution');
+                } else {
+                    for (let i = 0; i < n; i++) queens[i] = arr[i];
+                    pushStep(queens, n - 1, -1,
+                        `Permutation #${permsChecked}: [${arr.join(',')}] has diagonal conflict, reject.`, 'reject');
+                    for (let i = 0; i < n; i++) queens[i] = -1;
+                }
+                return;
+            }
+            for (let i = start; i < n; i++) {
+                [arr[start], arr[i]] = [arr[i], arr[start]];
+                permute(start + 1);
+                [arr[start], arr[i]] = [arr[i], arr[start]];
+            }
+        }
+        permute(0);
+        pushStep(queens, -1, -1,
+            `Brute force scanned ${permsChecked} permutations. Solutions: ${solutions.length}.`, 'done');
+    }
+
+    function generateSteps() {
+        if (n > 7 && currentTab === 'brute') {
+            // Avoid overwhelming the browser with 8! = 40320 permutations
+            steps = [{
+                queens: new Array(n).fill(-1),
+                row: -1, tryingCol: -1,
+                msg: `Brute force is disabled for n=${n} (would generate ${factorial(n)} permutations). Use Backtracking tabs.`,
+                kind: 'info', placements: 0, backtracks: 0, solutionsSoFar: 0
+            }];
+            solutions = [];
+            return;
+        }
+        if (currentTab === 'sets') generateSetsSteps();
+        else if (currentTab === 'bitmask') generateBitmaskSteps();
+        else if (currentTab === 'brute') generateBruteSteps();
+    }
+
+    function factorial(k) {
+        let r = 1;
+        for (let i = 2; i <= k; i++) r *= i;
+        return r;
+    }
+
+    // --- Rendering ---------------------------------------------
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('placeCounter').textContent = step.placements;
+        document.getElementById('backCounter').textContent = step.backtracks;
+        document.getElementById('solCounter').textContent = step.solutionsSoFar;
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        // Build the chess board
+        const board = document.createElement('div');
+        board.className = 'board';
+        board.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+        for (let r = 0; r < n; r++) {
+            for (let c = 0; c < n; c++) {
+                const cell = document.createElement('div');
+                const lightSquare = (r + c) % 2 === 0;
+                cell.className = 'cell ' + (lightSquare ? 'light' : 'dark');
+                if (r === step.row) cell.classList.add('row-current');
+
+                const qc = step.queens[r];
+                if (qc === c) {
+                    if (step.kind === 'solution') cell.classList.add('queen-confirmed');
+                    else if (step.row === r && step.kind === 'place') cell.classList.add('queen-active');
+                    cell.textContent = '♛';
+                }
+
+                // Highlight the cell currently being tried
+                if (r === step.row && c === step.tryingCol && qc !== c) {
+                    cell.classList.add('placing');
+                    cell.textContent = '?';
+                }
+
+                // Highlight cells attacked by already-placed queens
+                if (step.row >= 0 && r > step.row) {
+                    let attacked = false;
+                    for (let i = 0; i < step.row; i++) {
+                        const queenC = step.queens[i];
+                        if (queenC < 0) continue;
+                        if (queenC === c) attacked = true;
+                        if (Math.abs(i - r) === Math.abs(queenC - c)) attacked = true;
+                    }
+                    if (attacked) {
+                        cell.classList.add(lightSquare ? 'attacked-light' : 'attacked-dark');
+                    }
+                }
+                board.appendChild(cell);
+            }
+        }
+        viz.appendChild(board);
+
+        // Solutions strip
+        if (solutions.length > 0) {
+            const strip = document.createElement('div');
+            strip.className = 'solutions-strip';
+            const header = document.createElement('div');
+            header.style.width = '100%';
+            header.style.textAlign = 'center';
+            header.style.color = '#94a3b8';
+            header.style.fontSize = '0.8rem';
+            header.textContent = `Solutions found so far: ${step.solutionsSoFar}`;
+            strip.appendChild(header);
+            for (let s = 0; s < step.solutionsSoFar; s++) {
+                const mb = document.createElement('div');
+                mb.className = 'mini-board';
+                mb.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+                const sol = solutions[s];
+                for (let r = 0; r < n; r++) {
+                    for (let c = 0; c < n; c++) {
+                        const mc = document.createElement('div');
+                        const light = (r + c) % 2 === 0;
+                        mc.className = 'mini-cell ' + (light ? 'light' : 'dark');
+                        if (sol[r] === c) mc.textContent = '♛';
+                        mb.appendChild(mc);
+                    }
+                }
+                strip.appendChild(mb);
+            }
+            viz.appendChild(strip);
+        }
+    }
+
+    // --- Controls ----------------------------------------------
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const val = parseInt(document.getElementById('boardSize').value);
+        if (val >= 1 && val <= 9) {
+            n = val;
+            reset(); generateSteps(); renderStep(); saveState();
+        }
+    }
+
+    setTimeout(() => {
+        document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+            bar.style.width = bar.dataset.w + '%';
+        });
+    }, 400);
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>

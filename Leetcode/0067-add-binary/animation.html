@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>67. Add Binary — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px; }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+        .container { max-width: 900px; margin: 0 auto; background: #1e293b;
+            border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center;
+            margin-bottom: 20px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-reset { background: #6b7280; color: white; }
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select { padding: 6px 10px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 4px; }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px;
+            align-items: center; justify-content: center; flex-wrap: wrap; }
+        .input-section input { padding: 8px 12px; background: #0f172a; color: #e2e8f0;
+            border: 1px solid #334155; border-radius: 6px; font-size: 0.9rem; min-width: 180px;
+            font-family: 'SF Mono', Consolas, monospace; }
+        .viz-area { min-height: 280px; background: #0f172a; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column;
+            gap: 10px; align-items: center; }
+        .lane {
+            display: flex; gap: 4px; align-items: center; justify-content: center;
+            font-family: 'SF Mono', Consolas, monospace;
+        }
+        .lane-label {
+            min-width: 60px; color: #94a3b8; font-size: 0.85rem; text-align: right;
+        }
+        .bit {
+            width: 36px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            background: #475569; color: white; font-weight: 700;
+            border-radius: 6px; font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        .bit.empty { background: transparent; color: #475569; }
+        .bit.cursor { box-shadow: 0 0 0 3px #fbbf24; transform: scale(1.1); }
+        .bit.processed { background: #6366f1; }
+        .bit.result { background: #22c55e; }
+        .bit.carry { background: #f59e0b; color: #0f172a; }
+        .bit.fresh { background: #22c55e; color: white; }
+        .info-panel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+            margin-bottom: 20px; }
+        .info-box { background: #0f172a; border-radius: 8px; padding: 14px;
+            border: 1px solid #334155; text-align: center; }
+        .info-box h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 1px; }
+        .info-box .value { font-size: 1.05rem; font-weight: 600; }
+        .step-description { background: #0f172a; border-left: 3px solid #3b82f6;
+            padding: 12px 16px; border-radius: 0 8px 8px 0;
+            margin-bottom: 20px; font-size: 0.92rem; line-height: 1.55; min-height: 50px; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px; }
+            .bit { width: 26px; height: 34px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>67. Add Binary</h1>
+    <p>Easy — Math, String, Bit Manipulation</p>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <input type="text" id="aInput" placeholder='a = "1010"' value="1010">
+        <input type="text" id="bInput" placeholder='b = "1011"' value="1011">
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">Play</button>
+        <button class="btn btn-pause" onclick="pause()">Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">Step</button>
+        <button class="btn btn-reset" onclick="reset()">Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="1500">Slow</option>
+                <option value="700" selected>Normal</option>
+                <option value="300">Fast</option>
+                <option value="100">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">Press "Play" or "Step" to walk the addition.</div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box"><h3>Step</h3><div class="value" id="stepCounter">0 / 0</div></div>
+        <div class="info-box"><h3>i</h3><div class="value" id="iVal">--</div></div>
+        <div class="info-box"><h3>j</h3><div class="value" id="jVal">--</div></div>
+        <div class="info-box"><h3>Carry</h3><div class="value" id="carryVal">0</div></div>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'add-binary_animation_state';
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentStep, speed, a, b })); }
+        catch(e) {}
+    }
+    function loadState() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) { return null; }
+    }
+
+    const saved = loadState();
+    let a = saved ? saved.a : '1010';
+    let b = saved ? saved.b : '1011';
+    let currentStep = saved ? saved.currentStep : 0;
+    let speed = saved ? saved.speed : 700;
+    let isPlaying = false, playInterval = null;
+    let steps = [];
+
+    document.getElementById('aInput').value = a;
+    document.getElementById('bInput').value = b;
+    document.getElementById('speed').value = speed;
+
+    function generateSteps() {
+        steps = [];
+        const maxLen = Math.max(a.length, b.length);
+        // Pad inputs visually but keep originals
+        let i = a.length - 1, j = b.length - 1, carry = 0;
+        const out = [];
+        steps.push({
+            i, j, carry, out: out.slice(),
+            msg: `Initial: i=${i}, j=${j}, carry=0.`
+        });
+        while (i >= 0 || j >= 0 || carry > 0) {
+            let s = carry;
+            const bitA = i >= 0 ? parseInt(a[i]) : 0;
+            const bitB = j >= 0 ? parseInt(b[j]) : 0;
+            s += bitA + bitB;
+            out.unshift(s % 2);
+            carry = Math.floor(s / 2);
+            steps.push({
+                i, j, carry, out: out.slice(),
+                msg: `bitA=${bitA}, bitB=${bitB}, carry-in=${s - bitA - bitB} → sum=${s}, write ${s % 2}, new carry=${carry}.`
+            });
+            i--;
+            j--;
+        }
+        steps.push({
+            i: -1, j: -1, carry: 0, out: out.slice(),
+            msg: `Done. Result: "${out.join('')}".`
+        });
+    }
+
+    function renderStep() {
+        if (steps.length === 0) return;
+        saveState();
+        const step = steps[Math.min(currentStep, steps.length - 1)];
+
+        document.getElementById('stepCounter').textContent =
+            `${Math.min(currentStep + 1, steps.length)} / ${steps.length}`;
+        document.getElementById('iVal').textContent = step.i >= 0 ? step.i : '--';
+        document.getElementById('jVal').textContent = step.j >= 0 ? step.j : '--';
+        document.getElementById('carryVal').textContent = step.carry;
+        document.getElementById('stepDesc').textContent = step.msg;
+
+        const viz = document.getElementById('vizArea');
+        viz.innerHTML = '';
+
+        const maxLen = Math.max(a.length, b.length, step.out.length);
+
+        function makeLane(label, str, cursor, cursorColor) {
+            const lane = document.createElement('div');
+            lane.className = 'lane';
+            const lab = document.createElement('div');
+            lab.className = 'lane-label';
+            lab.textContent = label;
+            lane.appendChild(lab);
+            // Pad with empty cells on the left so columns align
+            const pad = maxLen - str.length;
+            for (let k = 0; k < pad; k++) {
+                const empty = document.createElement('div');
+                empty.className = 'bit empty';
+                empty.textContent = '·';
+                lane.appendChild(empty);
+            }
+            for (let k = 0; k < str.length; k++) {
+                const cell = document.createElement('div');
+                cell.className = 'bit';
+                if (k === cursor) cell.classList.add('cursor');
+                if (cursor >= 0 && k > cursor) cell.classList.add('processed');
+                cell.textContent = str[k];
+                lane.appendChild(cell);
+            }
+            return lane;
+        }
+
+        viz.appendChild(makeLane('a', a, step.i));
+        viz.appendChild(makeLane('+ b', b, step.j));
+        const sep = document.createElement('div');
+        sep.style.borderTop = '2px solid #475569';
+        sep.style.width = '300px';
+        viz.appendChild(sep);
+
+        const outStr = step.out.map(String).join('');
+        const outLane = document.createElement('div');
+        outLane.className = 'lane';
+        const lab = document.createElement('div');
+        lab.className = 'lane-label';
+        lab.textContent = '=';
+        outLane.appendChild(lab);
+        const pad = maxLen - outStr.length;
+        for (let k = 0; k < pad; k++) {
+            const empty = document.createElement('div');
+            empty.className = 'bit empty';
+            empty.textContent = '·';
+            outLane.appendChild(empty);
+        }
+        for (let k = 0; k < outStr.length; k++) {
+            const cell = document.createElement('div');
+            cell.className = 'bit result';
+            if (k === 0) cell.classList.add('fresh');
+            cell.textContent = outStr[k];
+            outLane.appendChild(cell);
+        }
+        viz.appendChild(outLane);
+
+        // Carry indicator
+        const carryRow = document.createElement('div');
+        carryRow.className = 'lane';
+        carryRow.style.marginTop = '8px';
+        const lab2 = document.createElement('div');
+        lab2.className = 'lane-label';
+        lab2.textContent = 'carry';
+        carryRow.appendChild(lab2);
+        const c = document.createElement('div');
+        c.className = 'bit carry';
+        c.textContent = step.carry;
+        carryRow.appendChild(c);
+        viz.appendChild(carryRow);
+    }
+
+    function play() {
+        if (isPlaying) return;
+        isPlaying = true;
+        playInterval = setInterval(() => {
+            if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+            else pause();
+        }, speed);
+    }
+    function pause() { isPlaying = false; clearInterval(playInterval); }
+    function stepForward() {
+        pause();
+        if (currentStep < steps.length - 1) { currentStep++; renderStep(); }
+    }
+    function reset() { pause(); currentStep = 0; renderStep(); }
+    function updateSpeed() {
+        speed = parseInt(document.getElementById('speed').value);
+        if (isPlaying) { pause(); play(); }
+        saveState();
+    }
+    function applyInput() {
+        const newA = document.getElementById('aInput').value.trim();
+        const newB = document.getElementById('bInput').value.trim();
+        if (!/^[01]+$/.test(newA) || !/^[01]+$/.test(newB) || newA.length > 20 || newB.length > 20) {
+            document.getElementById('stepDesc').textContent =
+                'Each input must be a binary string (0/1) up to 20 characters.';
+            return;
+        }
+        a = newA; b = newB;
+        reset(); generateSteps(); renderStep(); saveState();
+    }
+
+    generateSteps();
+    if (currentStep >= steps.length) currentStep = 0;
+    renderStep();
+</script>
+
+</body>
+</html>
