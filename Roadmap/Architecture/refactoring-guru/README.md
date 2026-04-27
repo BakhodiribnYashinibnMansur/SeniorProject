@@ -124,8 +124,9 @@ Comparing the same pattern across all three is a powerful learning device: it sh
 
 ## Status
 
-- ✅ **Singleton** — complete (8/8 files: junior, middle, senior, professional, interview, tasks, find-bug, optimize)
-- ⏳ Other 21 patterns: pending future phases
+- ✅ **Singleton** — complete (8/8 files)
+- ✅ **Factory Method** — complete (8/8 files)
+- ⏳ Other 20 patterns: pending future phases
 
 ---
 
