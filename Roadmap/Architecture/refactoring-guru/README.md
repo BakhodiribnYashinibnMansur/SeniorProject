@@ -174,12 +174,12 @@ Comparing the same pattern across all three is a powerful learning device: it sh
 - ✅ Structural (7/7) — Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy
 - ✅ Behavioral (10/10) — Chain of Responsibility, Command, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor
 
-### ⏳ Code Smells — IN PROGRESS (0/5)
-- ⬜ Bloaters
-- ⬜ OO Abusers
-- ⬜ Change Preventers
-- ⬜ Dispensables
-- ⬜ Couplers
+### ✅ Code Smells — COMPLETE (5/5)
+- ✅ Bloaters (Long Method, Large Class, Primitive Obsession, Long Parameter List, Data Clumps)
+- ✅ OO Abusers (Switch Statements, Temporary Field, Refused Bequest, Alternative Classes)
+- ✅ Change Preventers (Divergent Change, Shotgun Surgery, Parallel Inheritance Hierarchies)
+- ✅ Dispensables (Comments, Duplicate Code, Lazy Class, Data Class, Dead Code, Speculative Generality)
+- ✅ Couplers (Feature Envy, Inappropriate Intimacy, Message Chains, Middle Man)
 
 ### ⏳ Refactoring Techniques — PENDING (0/6)
 - ⬜ Composing Methods
