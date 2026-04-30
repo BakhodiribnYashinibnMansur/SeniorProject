@@ -11,8 +11,8 @@
 | Section | Topics | Files |
 |---|---|---|
 | [Design Patterns](01-design-patterns/README.md) | 22 GoF patterns (Creational, Structural, Behavioral) | 176 |
-
-> Code Smells and Refactoring Techniques are **out of scope** for this roadmap (planned as separate future projects).
+| [Code Smells](02-code-smells/README.md) | 22 smells in 5 categories | 40 |
+| [Refactoring Techniques](03-refactoring-techniques/README.md) | ~70 techniques in 6 categories | 48 |
 
 ---
 
@@ -110,6 +110,51 @@ graph TD
 
 ---
 
+## Code Smells & Techniques at a Glance
+
+```mermaid
+graph TD
+    R[Refactoring]
+    R --> CS[Code Smells - 22]
+    R --> RT[Refactoring Techniques - ~70]
+
+    CS --> CSB[Bloaters - 5]
+    CS --> CSO[OO Abusers - 4]
+    CS --> CSCP[Change Preventers - 3]
+    CS --> CSD[Dispensables - 6]
+    CS --> CSC[Couplers - 4]
+
+    RT --> RTCM[Composing Methods]
+    RT --> RTMF[Moving Features]
+    RT --> RTOD[Organizing Data]
+    RT --> RTSC[Simplifying Conditionals]
+    RT --> RTSM[Simplifying Method Calls]
+    RT --> RTDG[Dealing with Generalization]
+```
+
+---
+
+## Cross-References: Smell ↔ Technique
+
+Smells and techniques are two sides of the same coin: a smell is a *symptom*, a technique is the *cure*. The two new sections are linked bidirectionally — each smell file lists the techniques that resolve it, and each technique file lists the smells it addresses.
+
+A few high-traffic correspondences:
+
+| Smell | Resolved by |
+|---|---|
+| Long Method | Extract Method, Replace Method with Method Object, Decompose Conditional |
+| Large Class | Extract Class, Extract Subclass, Extract Interface |
+| Primitive Obsession | Replace Data Value with Object, Replace Type Code with Class/Subclasses, Introduce Parameter Object |
+| Switch Statements | Replace Conditional with Polymorphism, Replace Type Code with State/Strategy |
+| Duplicate Code | Extract Method, Pull Up Method, Form Template Method |
+| Feature Envy | Move Method, Extract Method |
+| Message Chains | Hide Delegate |
+| Refused Bequest | Push Down Method/Field, Replace Inheritance with Delegation |
+
+The catalog continues inside each section — every smell page enumerates its full set of resolving techniques, and every technique page enumerates the smells it addresses.
+
+---
+
 ## Languages
 
 All code examples in three languages — **Go**, **Java**, **Python** — to highlight idiomatic differences:
@@ -124,16 +169,25 @@ Comparing the same pattern across all three is a powerful learning device: it sh
 
 ## Status
 
-### ✅ Creational Patterns — COMPLETE (5/5)
-- ✅ **Factory Method** — 8/8 files
-- ✅ **Abstract Factory** — 8/8 files
-- ✅ **Builder** — 8/8 files
-- ✅ **Prototype** — 8/8 files
-- ✅ **Singleton** — 8/8 files
+### ✅ Design Patterns — COMPLETE (22/22)
+- ✅ Creational (5/5) — Factory Method, Abstract Factory, Builder, Prototype, Singleton
+- ✅ Structural (7/7) — Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy
+- ✅ Behavioral (10/10) — Chain of Responsibility, Command, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor
 
-### ⏳ Pending
-- Structural Patterns (7 patterns × 8 files = 56 files)
-- Behavioral Patterns (10 patterns × 8 files = 80 files)
+### ⏳ Code Smells — IN PROGRESS (0/5)
+- ⬜ Bloaters
+- ⬜ OO Abusers
+- ⬜ Change Preventers
+- ⬜ Dispensables
+- ⬜ Couplers
+
+### ⏳ Refactoring Techniques — PENDING (0/6)
+- ⬜ Composing Methods
+- ⬜ Moving Features Between Objects
+- ⬜ Organizing Data
+- ⬜ Simplifying Conditional Expressions
+- ⬜ Simplifying Method Calls
+- ⬜ Dealing with Generalization
 
 ---
 
