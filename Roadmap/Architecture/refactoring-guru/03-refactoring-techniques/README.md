@@ -201,12 +201,12 @@ graph TD
 
 ## Status
 
-- ⬜ **Composing Methods** (Extract/Inline Method, Extract Variable, Replace Temp with Query, ...) — 0/8 files
-- ⬜ **Moving Features Between Objects** (Move Method/Field, Extract/Inline Class, Hide/Remove Delegate, ...) — 0/8 files
-- ⬜ **Organizing Data** (Replace Magic Number, Replace Type Code, Encapsulate Field/Collection, ...) — 0/8 files
-- ⬜ **Simplifying Conditional Expressions** (Decompose, Guard Clauses, Polymorphism, Null Object, ...) — 0/8 files
-- ⬜ **Simplifying Method Calls** (Rename, Parameter Object, Factory Method, ...) — 0/8 files
-- ⬜ **Dealing with Generalization** (Pull Up/Push Down, Extract Super/Subclass/Interface, Form Template Method, ...) — 0/8 files
+- ✅ **Composing Methods** (Extract/Inline Method, Extract Variable, Replace Temp with Query, ...) — 8/8 files
+- ✅ **Moving Features Between Objects** (Move Method/Field, Extract/Inline Class, Hide/Remove Delegate, ...) — 8/8 files
+- ✅ **Organizing Data** (Replace Magic Number, Replace Type Code, Encapsulate Field/Collection, ...) — 8/8 files
+- ✅ **Simplifying Conditional Expressions** (Decompose, Guard Clauses, Polymorphism, Null Object, ...) — 8/8 files
+- ✅ **Simplifying Method Calls** (Rename, Parameter Object, Factory Method, ...) — 8/8 files
+- ✅ **Dealing with Generalization** (Pull Up/Push Down, Extract Super/Subclass/Interface, Form Template Method, ...) — 8/8 files
 
 ---
 
