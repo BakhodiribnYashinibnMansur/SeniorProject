@@ -115,26 +115,200 @@
 - 6.2.3 Publishing Modules
 
 ## 7. Concurrency
-- 7.1 Goroutines
+
+### 7.0 Introduction
+- 7.0.1 What is Concurrency (Concurrency vs Parallelism)
+- 7.0.2 CSP Model (Communicating Sequential Processes)
+- 7.0.3 Go Runtime & GMP Scheduler
+- 7.0.4 Go Memory Model (happens-before)
+- 7.0.5 When to Use Concurrency (and when not to)
+
+### 7.1 Goroutines
+- 7.1.1 Overview (creation & syntax)
+- 7.1.2 Goroutines vs OS Threads
+- 7.1.3 Stack Growth
+- 7.1.4 Runtime Management
+- 7.1.5 Best Practices
+- 7.1.6 Common Pitfalls
 
 ### 7.2 Channels
 - 7.2.1 Buffered vs Unbuffered
 - 7.2.2 Select Statement
 - 7.2.3 Worker Pools
+- 7.2.4 Channel Direction
+- 7.2.5 Nil Channels
+- 7.2.6 Closing Channels
+- 7.2.7 Range over Channels
 
 ### 7.3 `sync` Package
 - 7.3.1 Mutexes
 - 7.3.2 WaitGroups
+- 7.3.3 Once
+- 7.3.4 Cond
+- 7.3.5 Pool
+- 7.3.6 Map
+- 7.3.7 Atomic (`sync/atomic`)
 
 ### 7.4 `context` Package
 - 7.4.1 Deadlines & Cancellations
 - 7.4.2 Common Usecases
+- 7.4.3 Context Values
+- 7.4.4 Context Tree
+- 7.4.5 Context Internals
 
 ### 7.5 Concurrency Patterns
 - 7.5.1 fan-in
 - 7.5.2 fan-out
 - 7.5.3 pipeline
 - 7.5.4 Race Detection
+- 7.5.5 Future / Promise
+- 7.5.6 Broadcast Pattern
+
+### 7.6 Errgroup & `x/sync`
+- 7.6.1 `errgroup.Group`
+- 7.6.2 `semaphore.Weighted`
+- 7.6.3 `singleflight.Group`
+
+### 7.7 Goroutine Lifecycle & Leaks
+- 7.7.1 Goroutine Lifecycle
+- 7.7.2 Detecting Leaks (`runtime.NumGoroutine`, `pprof`)
+- 7.7.3 Preventing Leaks
+- 7.7.4 pprof Tools
+
+### 7.8 Deadlock, Livelock, Starvation
+- 7.8.1 Deadlock
+- 7.8.2 Livelock
+- 7.8.3 Starvation
+
+### 7.9 Channel Internals
+- 7.9.1 `hchan` Struct
+- 7.9.2 Runtime Behavior
+- 7.9.3 Buffer Mechanics
+- 7.9.4 Send / Receive Flow
+
+### 7.10 Scheduler Deep-Dive
+- 7.10.1 GMP Model
+- 7.10.2 Preemption (Go 1.14+)
+- 7.10.3 `GOMAXPROCS` Tuning
+- 7.10.4 Work Stealing
+- 7.10.5 Syscall Handling
+
+### 7.11 Advanced Channel Patterns
+- 7.11.1 or-done-channel
+- 7.11.2 tee-channel
+- 7.11.3 bridge-channel
+- 7.11.4 Generator
+- 7.11.5 Rate Limiter
+
+### 7.12 Lock-Free Programming
+- 7.12.1 CAS-based Algorithms
+- 7.12.2 ABA Problem
+- 7.12.3 Lock-Free Data Structures (queue, stack)
+- 7.12.4 Memory Fences
+- 7.12.5 Lock-Free vs Wait-Free
+
+### 7.13 Testing Concurrent Code
+- 7.13.1 Race Detector Deep-Dive
+- 7.13.2 Deterministic Testing
+- 7.13.3 `sync.WaitGroup` in Tests
+- 7.13.4 Mocking Time
+- 7.13.5 Concurrent Fuzzing
+
+### 7.14 Performance Tuning
+- 7.14.1 `GOMAXPROCS`
+- 7.14.2 `GOGC`
+- 7.14.3 `runtime.LockOSThread`
+- 7.14.4 Profiling Concurrent Code
+- 7.14.5 Scheduler Tracing
+
+### 7.15 Concurrency Anti-Patterns
+- 7.15.1 Unlimited Goroutines
+- 7.15.2 Mutex Copying
+- 7.15.3 Channel Close Violations
+- 7.15.4 Premature Optimization
+- 7.15.5 Wait-for-Empty-Channel
+- 7.15.6 Sleep-for-Sync
+
+### 7.16 Time-based Concurrency
+- 7.16.1 `time.Ticker`
+- 7.16.2 `time.AfterFunc`
+- 7.16.3 Timer Leaks
+- 7.16.4 Exponential Backoff
+- 7.16.5 Debounce / Throttle
+
+### 7.17 Goroutine Pools (3rd-party)
+- 7.17.1 `ants`
+- 7.17.2 `tunny`
+- 7.17.3 `workerpool`
+- 7.17.4 When to Use Pools
+
+### 7.18 Production Patterns
+- 7.18.1 Backpressure
+- 7.18.2 Dynamic Worker Scaling
+- 7.18.3 Batching
+- 7.18.4 Graceful Shutdown
+- 7.18.5 Drain Pattern
+
+### 7.19 Pipeline Production Patterns
+- 7.19.1 Error Propagation
+- 7.19.2 Cancellation Propagation
+- 7.19.3 Fan-out within Pipeline
+- 7.19.4 Batching Stages
+- 7.19.5 Fan-in/Fan-out within Pipeline
+
+### 7.20 Cancellation Deep
+- 7.20.1 Cooperative vs Force Cancellation
+- 7.20.2 Partial Cancellation
+- 7.20.3 Cleanup Ordering
+
+### 7.21 Concurrent Data Structures
+- 7.21.1 TTL Caches
+- 7.21.2 LRU Concurrent
+- 7.21.3 Concurrent Skip List
+- 7.21.4 Concurrent Trees
+- 7.21.5 Copy-on-Write
+- 7.21.6 Concurrent Counters
+- 7.21.7 Concurrent Bloom Filter
+
+### 7.22 Memory Ordering & Barriers
+- 7.22.1 Hardware Memory Barriers
+- 7.22.2 Acquire / Release Semantics
+- 7.22.3 Sequential Consistency
+- 7.22.4 Cache Coherence
+- 7.22.5 False Sharing
+
+### 7.23 Concurrency in stdlib
+- 7.23.1 `net/http` Server Concurrency
+- 7.23.2 `database/sql` Connection Pool
+- 7.23.3 `sync.Pool` Internals
+- 7.23.4 Runtime Internals
+- 7.23.5 `time` Package Concurrency
+
+### 7.24 Primitives Decision Guide
+- 7.24.1 Channel vs Mutex
+- 7.24.2 Mutex vs Atomic
+- 7.24.3 When to Use `sync.Cond`
+- 7.24.4 Decision Tree
+
+### 7.25 Famous Bugs & Postmortems
+- 7.25.1 Cloudflare Incidents
+- 7.25.2 Uber Incidents
+- 7.25.3 Dropbox Incidents
+- 7.25.4 GitHub Incidents
+- 7.25.5 Twitter Incidents
+
+### 7.26 Modern Features
+- 7.26.1 `sync.OnceFunc` (Go 1.21+)
+- 7.26.2 Structured Concurrency
+- 7.26.3 Future Proposals
+
+### 7.27 Real-World Case Studies
+- 7.27.1 Kubernetes Scheduler
+- 7.27.2 etcd Raft
+- 7.27.3 gRPC Stream
+- 7.27.4 Docker Concurrency
+- 7.27.5 Prometheus Concurrency
+- 7.27.6 Postgres Driver
 
 ## 8. Standard Library
 - 8.1 I/O & File Handling
