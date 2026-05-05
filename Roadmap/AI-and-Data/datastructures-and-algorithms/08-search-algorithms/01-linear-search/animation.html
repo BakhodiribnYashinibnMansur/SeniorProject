@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><title>Linear Search — Visual Animation</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;
+--green:#3fb950;--yellow:#d29922;--red:#f85149;--blue:#58a6ff;--purple:#bc8cff;--orange:#ffa657}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);
+min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+h1{font-size:2rem;color:var(--blue);margin-bottom:6px;text-align:center}
+.subtitle{color:var(--muted);margin-bottom:18px;text-align:center}
+.badges{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;justify-content:center}
+.badge{padding:4px 10px;border-radius:12px;font-size:.8rem;font-weight:600;
+border:1px solid var(--border);background:var(--surface)}
+.badge.best{color:var(--green);border-color:var(--green)}
+.badge.worst{color:var(--red);border-color:var(--red)}
+.badge.space{color:var(--blue);border-color:var(--blue)}
+.badge.note{color:var(--purple);border-color:var(--purple)}
+.controls,.input-control{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;justify-content:center}
+button{padding:8px 18px;border:2px solid var(--blue);background:transparent;
+color:var(--blue);border-radius:6px;cursor:pointer;font-size:.95rem}
+button:hover:not(:disabled){background:var(--blue);color:var(--bg)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.secondary{border-color:var(--border);color:var(--muted)}
+button.secondary:hover:not(:disabled){background:var(--border);color:var(--text)}
+input[type=text],input[type=number]{padding:8px 14px;border:2px solid var(--border);background:var(--surface);
+color:var(--text);border-radius:6px;font-size:.95rem}
+input[type=text]{width:280px}
+input[type=number]{width:90px}
+input[type=range]{width:160px;accent-color:var(--blue)}
+.canvas-container{background:var(--surface);border:2px solid var(--border);border-radius:12px;
+padding:30px 24px 36px;margin-bottom:16px;width:100%;max-width:980px;min-height:160px;
+display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:nowrap;overflow-x:auto;position:relative}
+.cell{min-width:48px;height:60px;display:flex;flex-direction:column;align-items:center;
+justify-content:center;background:var(--bg);border:2px solid var(--border);border-radius:6px;
+font-family:monospace;font-size:1.1rem;font-weight:600;color:var(--text);transition:all .25s;position:relative}
+.cell.scanning{background:var(--yellow);color:var(--bg);border-color:var(--yellow);transform:translateY(-12px);
+box-shadow:0 8px 18px rgba(210,153,34,.45)}
+.cell.mismatch{background:var(--red);color:var(--bg);border-color:var(--red)}
+.cell.match{background:var(--green);color:var(--bg);border-color:var(--green);transform:scale(1.15);
+box-shadow:0 0 22px rgba(63,185,80,.7)}
+.cell.checked{opacity:.5;border-color:var(--border)}
+.cell .idx{font-size:.7rem;color:var(--muted);position:absolute;bottom:-20px;font-weight:400}
+.cell.scanning .idx,.cell.mismatch .idx,.cell.match .idx{color:var(--text)}
+.pointer{position:absolute;top:-22px;font-size:1.2rem;color:var(--yellow);
+transition:left .25s;font-family:monospace;font-weight:700}
+.target-display{background:var(--surface);border:2px solid var(--purple);border-radius:8px;
+padding:10px 24px;font-family:monospace;font-size:1.1rem;color:var(--purple);margin-bottom:16px}
+.target-display .label{color:var(--muted);font-size:.8rem;margin-right:8px}
+.info-panel{background:var(--surface);border:2px solid var(--border);border-radius:12px;
+padding:16px 20px;width:100%;max-width:980px;margin-bottom:16px}
+.info-panel h3{color:var(--blue);margin-bottom:8px;font-size:1rem}
+.step-info{font-family:monospace;font-size:.92rem;line-height:1.6}
+.step-info .highlight{color:var(--yellow);font-weight:600}
+.step-info .ok{color:var(--green);font-weight:600}
+.step-info .bad{color:var(--red);font-weight:600}
+.stats{background:var(--surface);border:2px solid var(--border);border-radius:12px;
+padding:12px 20px;display:flex;gap:30px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+.stat{text-align:center}
+.stat-label{color:var(--muted);font-size:.75rem;text-transform:uppercase}
+.stat-value{color:var(--blue);font-size:1.2rem;font-weight:700;font-family:monospace}
+.legend{display:flex;gap:18px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+.legend-color{width:14px;height:14px;border-radius:3px;border:1px solid var(--border)}
+.preset-buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
+.preset-buttons button{padding:6px 12px;font-size:.8rem;border-color:var(--border);color:var(--muted)}
+.preset-buttons button:hover{background:var(--border);color:var(--text)}
+.complexity{font-size:.85rem;color:var(--muted);margin-top:8px;text-align:center;font-family:monospace}
+.complexity .label{color:var(--purple)}
+</style></head><body>
+<h1>Linear Search</h1>
+<p class="subtitle">Sequential O(n) scan — check every element until target found or end reached. Works on any data, sorted or not.</p>
+<div class="badges">
+<span class="badge best">Best: O(1)</span>
+<span class="badge worst">Avg/Worst: O(n)</span>
+<span class="badge space">Space: O(1)</span>
+<span class="badge note">Unsorted OK</span>
+<span class="badge note">In-place</span>
+</div>
+<div class="input-control">
+<input type="text" id="customInput" placeholder="Array: 7,3,9,1,5,8,2,6">
+<input type="number" id="targetInput" placeholder="target">
+<button onclick="loadInput()">Load</button>
+<button onclick="genRandom()" class="secondary">Random</button>
+</div>
+<div class="preset-buttons">
+<button onclick="preset('found-early')">First-element hit</button>
+<button onclick="preset('found-mid')">Middle hit</button>
+<button onclick="preset('found-last')">Last-element hit</button>
+<button onclick="preset('not-found')">Not found</button>
+<button onclick="preset('duplicates')">Duplicates</button>
+</div>
+<div class="controls">
+<button id="startBtn" onclick="start()">▶ Start</button>
+<button id="stepBtn" onclick="stepFwd()">▷ Step</button>
+<button id="pauseBtn" onclick="pause()" disabled>❚❚ Pause</button>
+<button id="resetBtn" onclick="reset()" class="secondary">↺ Reset</button>
+</div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+<span style="color:var(--muted);font-size:.8rem">slow</span>
+<input type="range" id="speedSlider" min="1" max="10" value="5">
+<span style="color:var(--muted);font-size:.8rem">fast</span>
+</div>
+<div class="legend">
+<div class="legend-item"><div class="legend-color" style="background:var(--bg)"></div>Default (unchecked)</div>
+<div class="legend-item"><div class="legend-color" style="background:var(--yellow)"></div>Currently scanning</div>
+<div class="legend-item"><div class="legend-color" style="background:var(--red)"></div>Mismatch (skipped)</div>
+<div class="legend-item"><div class="legend-color" style="background:var(--green)"></div>Match found</div>
+</div>
+<div class="target-display">
+<span class="label">Searching for target:</span><span id="targetVal">—</span>
+</div>
+<div class="stats">
+<div class="stat"><div class="stat-label">Step</div><div class="stat-value"><span id="curStep">0</span>/<span id="totSteps">0</span></div></div>
+<div class="stat"><div class="stat-label">Position i</div><div class="stat-value" id="posIdx">—</div></div>
+<div class="stat"><div class="stat-label">Comparisons</div><div class="stat-value" id="comps">0</div></div>
+<div class="stat"><div class="stat-label">Result</div><div class="stat-value" id="result">—</div></div>
+</div>
+<div class="canvas-container" id="canvas"></div>
+<div class="info-panel">
+<h3>Algorithm Trace</h3>
+<div class="step-info" id="info">Press <span class="highlight">Start</span> to run linear search.</div>
+<div class="complexity"><span class="label">for</span> i := 0; i &lt; n; i++ { <span class="label">if</span> a[i] == target { <span class="label">return</span> i } } <span class="label">return</span> -1</div>
+</div>
+<script>
+let array=[7,3,9,1,5,8,2,6], target=5, steps=[], idx=0, running=false, timer=null;
+
+function genSteps(arr, t){
+  const out=[]; let comps=0;
+  out.push({array:[...arr], i:-1, status:'init', comps:0,
+    desc:`Initialize: scanning <b>${arr.length}</b> elements for target <span class="highlight">${t}</span>. Start at i=0.`});
+  for(let i=0;i<arr.length;i++){
+    comps++;
+    out.push({array:[...arr], i, status:'scanning', comps,
+      desc:`<b>i=${i}</b>: read a[${i}]=<span class="highlight">${arr[i]}</span>; compare with target ${t}.`});
+    if(arr[i]===t){
+      out.push({array:[...arr], i, status:'match', comps,
+        desc:`a[${i}]=${arr[i]} <span class="ok">== ${t}</span> → <b class="ok">FOUND at index ${i}</b>. Return ${i}.`});
+      return out;
+    } else {
+      out.push({array:[...arr], i, status:'mismatch', comps,
+        desc:`a[${i}]=${arr[i]} <span class="bad">!= ${t}</span> → keep scanning.`});
+    }
+  }
+  out.push({array:[...arr], i:arr.length, status:'notfound', comps,
+    desc:`Reached end of array without finding ${t}. <span class="bad">Return -1</span> (not found).`});
+  return out;
+}
+
+function render(s){
+  const c=document.getElementById('canvas');
+  c.innerHTML = s.array.map((v,i)=>{
+    let cls='';
+    if(s.status==='match' && i===s.i) cls='match';
+    else if(s.status==='mismatch' && i===s.i) cls='mismatch';
+    else if(s.status==='scanning' && i===s.i) cls='scanning';
+    else if(i < s.i) cls='checked';
+    return `<div class="cell ${cls}">${v}<span class="idx">${i}</span></div>`;
+  }).join('');
+  if(s.i>=0 && s.i<s.array.length){
+    const ptr = document.createElement('div');
+    ptr.className='pointer';
+    ptr.textContent='▼ i';
+    ptr.style.left = `calc(50% + ${(s.i - (s.array.length-1)/2) * 54}px - 12px)`;
+    c.appendChild(ptr);
+  }
+  document.getElementById('curStep').textContent = idx+1;
+  document.getElementById('posIdx').textContent = (s.i>=0 && s.i<s.array.length) ? s.i : '—';
+  document.getElementById('comps').textContent = s.comps;
+  if(s.status==='match'){
+    document.getElementById('result').textContent = `idx ${s.i}`;
+    document.getElementById('result').style.color = 'var(--green)';
+  } else if(s.status==='notfound'){
+    document.getElementById('result').textContent = '-1';
+    document.getElementById('result').style.color = 'var(--red)';
+  } else {
+    document.getElementById('result').textContent = '—';
+    document.getElementById('result').style.color = 'var(--blue)';
+  }
+  document.getElementById('info').innerHTML = s.desc;
+}
+
+function delay(){ return 1100 - parseInt(document.getElementById('speedSlider').value)*100; }
+
+function start(){
+  if(steps.length===0){
+    steps = genSteps(array, target);
+    document.getElementById('totSteps').textContent = steps.length;
+  }
+  running = true;
+  document.getElementById('startBtn').disabled = true;
+  document.getElementById('pauseBtn').disabled = false;
+  tick();
+}
+function tick(){
+  if(!running || idx>=steps.length){ pause(); return; }
+  render(steps[idx]); idx++;
+  timer = setTimeout(tick, delay());
+}
+function stepFwd(){
+  if(steps.length===0){
+    steps = genSteps(array, target);
+    document.getElementById('totSteps').textContent = steps.length;
+  }
+  if(idx<steps.length){ render(steps[idx]); idx++; }
+}
+function pause(){
+  running = false; clearTimeout(timer);
+  document.getElementById('startBtn').disabled = false;
+  document.getElementById('pauseBtn').disabled = true;
+}
+function reset(){
+  pause(); steps=[]; idx=0;
+  document.getElementById('curStep').textContent='0';
+  document.getElementById('totSteps').textContent='0';
+  document.getElementById('posIdx').textContent='—';
+  document.getElementById('comps').textContent='0';
+  document.getElementById('result').textContent='—';
+  document.getElementById('result').style.color='var(--blue)';
+  document.getElementById('targetVal').textContent = target;
+  document.getElementById('info').innerHTML = 'Press <span class="highlight">Start</span> to run linear search.';
+  renderInit();
+}
+function loadInput(){
+  const raw = document.getElementById('customInput').value;
+  const nums = raw.split(/[, ]+/).map(s=>parseInt(s.trim())).filter(n=>!isNaN(n));
+  const t = parseInt(document.getElementById('targetInput').value);
+  if(nums.length>0) array = nums;
+  if(!isNaN(t)) target = t;
+  reset();
+}
+function genRandom(){
+  const size = 8 + Math.floor(Math.random()*5);
+  array = Array.from({length:size}, ()=>Math.floor(Math.random()*30)+1);
+  target = array[Math.floor(Math.random()*array.length)];
+  document.getElementById('customInput').value = array.join(', ');
+  document.getElementById('targetInput').value = target;
+  reset();
+}
+function preset(kind){
+  if(kind==='found-early'){ array=[5,12,7,3,9,1,8,2]; target=5; }
+  else if(kind==='found-mid'){ array=[7,3,9,1,5,8,2,6]; target=5; }
+  else if(kind==='found-last'){ array=[7,3,9,1,8,2,6,5]; target=5; }
+  else if(kind==='not-found'){ array=[7,3,9,1,8,2,6,4]; target=99; }
+  else if(kind==='duplicates'){ array=[3,7,5,1,5,9,5,2]; target=5; }
+  document.getElementById('customInput').value = array.join(', ');
+  document.getElementById('targetInput').value = target;
+  reset();
+}
+function renderInit(){
+  document.getElementById('canvas').innerHTML = array.map((v,i)=>
+    `<div class="cell">${v}<span class="idx">${i}</span></div>`).join('');
+  document.getElementById('targetVal').textContent = target;
+}
+document.getElementById('customInput').value = array.join(', ');
+document.getElementById('targetInput').value = target;
+renderInit();
+</script>
+</body></html>

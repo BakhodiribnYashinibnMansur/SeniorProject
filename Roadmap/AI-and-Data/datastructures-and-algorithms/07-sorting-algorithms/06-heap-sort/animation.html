@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><title>Heap Sort — Visual Animation</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;
+--green:#3fb950;--yellow:#d29922;--red:#f85149;--blue:#58a6ff;--purple:#bc8cff;--orange:#ffa657}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);
+min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+h1{font-size:2rem;color:var(--blue);margin-bottom:6px;text-align:center}
+.subtitle{color:var(--muted);margin-bottom:18px;text-align:center}
+.badges{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;justify-content:center}
+.badge{padding:4px 10px;border-radius:12px;font-size:.8rem;font-weight:600;
+border:1px solid var(--border);background:var(--surface)}
+.badge.best{color:var(--green);border-color:var(--green)}
+.badge.worst{color:var(--red);border-color:var(--red)}
+.badge.space{color:var(--blue);border-color:var(--blue)}
+.controls,.input-control{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;justify-content:center}
+button{padding:8px 18px;border:2px solid var(--blue);background:transparent;
+color:var(--blue);border-radius:6px;cursor:pointer;font-size:.95rem}
+button:hover:not(:disabled){background:var(--blue);color:var(--bg)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.secondary{border-color:var(--border);color:var(--muted)}
+input[type=text]{padding:8px 14px;border:2px solid var(--border);background:var(--surface);
+color:var(--text);border-radius:6px;font-size:.95rem;width:300px}
+input[type=range]{width:160px;accent-color:var(--blue)}
+.canvas-container{background:var(--surface);border:2px solid var(--border);border-radius:12px;
+padding:18px;margin-bottom:16px;width:100%;max-width:1000px;display:flex;flex-direction:column;align-items:center;gap:14px}
+#tree-svg{width:100%;max-width:960px;height:340px;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+.array-row{display:flex;justify-content:center;gap:6px;flex-wrap:nowrap;overflow-x:auto;width:100%}
+.cell{min-width:42px;height:50px;display:flex;flex-direction:column;align-items:center;
+justify-content:center;background:var(--bg);border:2px solid var(--border);border-radius:6px;
+font-family:monospace;color:var(--text);transition:all .25s;position:relative}
+.cell.current{background:var(--purple);color:var(--bg);border-color:var(--purple);transform:translateY(-6px)}
+.cell.compare{background:var(--red);color:var(--bg);border-color:var(--red)}
+.cell.swap{background:var(--yellow);color:var(--bg);border-color:var(--yellow)}
+.cell.sorted{background:var(--green);color:var(--bg);border-color:var(--green);opacity:.7}
+.cell.outheap{opacity:.35}
+.cell .idx{font-size:.7rem;color:var(--muted);position:absolute;bottom:-18px}
+.node{transition:all .25s}
+.node circle{stroke-width:2.5}
+.node text{fill:var(--text);font-family:monospace;font-size:14px;font-weight:700;text-anchor:middle;dominant-baseline:central}
+.edge{stroke:var(--border);stroke-width:2;fill:none}
+.info-panel{background:var(--surface);border:2px solid var(--border);border-radius:12px;
+padding:16px 20px;width:100%;max-width:1000px;margin-bottom:16px}
+.info-panel h3{color:var(--blue);margin-bottom:8px;font-size:1rem}
+.step-info{font-family:monospace;font-size:.92rem;line-height:1.6}
+.step-info .highlight{color:var(--yellow);font-weight:600}
+.stats{background:var(--surface);border:2px solid var(--border);border-radius:12px;
+padding:12px 20px;display:flex;gap:30px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+.stat-label{color:var(--muted);font-size:.75rem;text-transform:uppercase}
+.stat-value{color:var(--blue);font-size:1.2rem;font-weight:700;font-family:monospace}
+.legend{display:flex;gap:18px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+.legend-color{width:14px;height:14px;border-radius:3px}
+.phase-tag{padding:4px 10px;border-radius:6px;font-size:.85rem;font-weight:700;font-family:monospace;
+background:var(--surface);color:var(--orange);border:1px solid var(--orange)}
+</style></head><body>
+<h1>Heap Sort</h1>
+<p class="subtitle">Build max-heap (Floyd's bottom-up O(n)), then extract root to end repeatedly.</p>
+<div class="badges">
+<span class="badge best">Best: O(n log n)</span>
+<span class="badge worst">Worst: O(n log n)</span>
+<span class="badge space">Space: O(1)</span>
+<span class="badge worst">Not Stable</span>
+</div>
+<div class="input-control">
+<input type="text" id="customInput" placeholder="Enter numbers: 4,10,3,5,1,8,7,2,9,6">
+<button onclick="loadInput()">Load</button>
+<button onclick="genRandom()" class="secondary">Random</button>
+</div>
+<div class="controls">
+<button id="startBtn" onclick="start()">▶ Start</button>
+<button id="stepBtn" onclick="stepFwd()">▷ Step</button>
+<button id="pauseBtn" onclick="pause()" disabled>❚❚ Pause</button>
+<button id="resetBtn" onclick="reset()" class="secondary">↺ Reset</button>
+</div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+<span style="color:var(--muted);font-size:.8rem">slow</span>
+<input type="range" id="speedSlider" min="1" max="10" value="6">
+<span style="color:var(--muted);font-size:.8rem">fast</span>
+</div>
+<div class="legend">
+<div class="legend-item"><div class="legend-color" style="background:var(--purple)"></div>Current node</div>
+<div class="legend-item"><div class="legend-color" style="background:var(--red)"></div>Comparing children</div>
+<div class="legend-item"><div class="legend-color" style="background:var(--yellow)"></div>Swap</div>
+<div class="legend-item"><div class="legend-color" style="background:var(--green)"></div>Sorted (placed)</div>
+<div class="legend-item"><div class="legend-color" style="background:var(--blue)"></div>Default</div>
+</div>
+<div class="canvas-container">
+  <svg id="tree-svg" viewBox="0 0 960 340" preserveAspectRatio="xMidYMid meet"></svg>
+  <div class="array-row" id="array-row"></div>
+</div>
+<div class="info-panel">
+  <h3>Current Step</h3>
+  <div class="step-info" id="stepInfo">Press <span class="highlight">Start</span> to run heap sort.</div>
+</div>
+<div class="stats">
+  <div><div class="stat-label">Phase</div><div class="stat-value" id="statPhase"><span class="phase-tag" id="phaseTag">idle</span></div></div>
+  <div><div class="stat-label">Comparisons</div><div class="stat-value" id="statComp">0</div></div>
+  <div><div class="stat-label">Swaps</div><div class="stat-value" id="statSwap">0</div></div>
+  <div><div class="stat-label">Heap Size</div><div class="stat-value" id="statHeap">0</div></div>
+</div>
+<script>
+let arr=[], steps=[], stepIdx=0, timer=null, running=false;
+let comp=0, swap=0, heapSize=0, phase='idle';
+let highlights={current:-1,compare:[],swap:[],sorted:new Set()};
+
+function genRandom(){
+  const n=10;
+  arr=Array.from({length:n},()=>Math.floor(Math.random()*90)+10);
+  document.getElementById('customInput').value=arr.join(',');
+  reset();
+}
+function loadInput(){
+  const raw=document.getElementById('customInput').value.trim();
+  if(!raw){ genRandom(); return; }
+  const parsed=raw.split(/[,\s]+/).map(Number).filter(x=>!isNaN(x));
+  if(parsed.length<2){ alert('Enter at least 2 numbers'); return; }
+  if(parsed.length>16){ alert('Max 16 numbers for clear visualization'); return; }
+  arr=parsed; reset();
+}
+function reset(){
+  if(timer){clearTimeout(timer); timer=null;}
+  running=false; stepIdx=0; comp=0; swap=0; phase='idle';
+  heapSize=arr.length;
+  highlights={current:-1,compare:[],swap:[],sorted:new Set()};
+  steps=generateSteps([...arr]);
+  document.getElementById('startBtn').disabled=false;
+  document.getElementById('pauseBtn').disabled=true;
+  document.getElementById('stepInfo').innerHTML='Loaded array. Press <span class="highlight">Start</span> or <span class="highlight">Step</span>.';
+  render();
+  updateStats();
+}
+function generateSteps(a){
+  const s=[]; const n=a.length;
+  s.push({type:'init',arr:[...a],msg:`Initial array of ${n} elements. Phase 1: build max-heap (Floyd's bottom-up).`,phase:'build',heap:n});
+  // Build max heap: start from last non-leaf
+  for(let i=Math.floor(n/2)-1;i>=0;i--){
+    s.push({type:'visit',arr:[...a],idx:i,msg:`Sift-down node at index ${i} (value ${a[i]}).`,phase:'build',heap:n});
+    siftDownRecord(a,i,n,s,'build',n);
+  }
+  s.push({type:'built',arr:[...a],msg:'Max-heap built. Root holds the maximum. Phase 2: extract root → end repeatedly.',phase:'extract',heap:n,sorted:[]});
+  // Extract phase
+  const sortedSet=[];
+  for(let end=n-1;end>0;end--){
+    s.push({type:'swap',arr:[...a],i:0,j:end,msg:`Swap root (max=${a[0]}) with last heap element at index ${end}.`,phase:'extract',heap:end+1,sorted:[...sortedSet]});
+    [a[0],a[end]]=[a[end],a[0]];
+    sortedSet.push(end);
+    s.push({type:'placed',arr:[...a],idx:end,msg:`Index ${end} now holds ${a[end]} — placed in final sorted position. Heap size shrinks to ${end}.`,phase:'extract',heap:end,sorted:[...sortedSet]});
+    if(end>0){
+      s.push({type:'visit',arr:[...a],idx:0,msg:`Restore heap: sift-down new root (value ${a[0]}) within heap[0..${end-1}].`,phase:'extract',heap:end,sorted:[...sortedSet]});
+      siftDownRecord(a,0,end,s,'extract',end,sortedSet);
+    }
+  }
+  sortedSet.push(0);
+  s.push({type:'done',arr:[...a],msg:'Sorted! All elements placed. Heap empty.',phase:'done',heap:0,sorted:[...sortedSet]});
+  return s;
+}
+function siftDownRecord(a,i,n,s,phase,heap,sortedSet){
+  let cur=i;
+  while(true){
+    const l=2*cur+1, r=2*cur+2;
+    let largest=cur;
+    if(l<n){
+      s.push({type:'compare',arr:[...a],i:largest,j:l,msg:`Compare parent[${largest}]=${a[largest]} vs left[${l}]=${a[l]}.`,phase,heap,sorted:sortedSet?[...sortedSet]:[]});
+      if(a[l]>a[largest]) largest=l;
+    }
+    if(r<n){
+      s.push({type:'compare',arr:[...a],i:largest,j:r,msg:`Compare current largest[${largest}]=${a[largest]} vs right[${r}]=${a[r]}.`,phase,heap,sorted:sortedSet?[...sortedSet]:[]});
+      if(a[r]>a[largest]) largest=r;
+    }
+    if(largest===cur){
+      s.push({type:'settled',arr:[...a],idx:cur,msg:`Heap property OK at index ${cur}. Stop sifting.`,phase,heap,sorted:sortedSet?[...sortedSet]:[]});
+      break;
+    }
+    s.push({type:'swap',arr:[...a],i:cur,j:largest,msg:`Swap index ${cur} (${a[cur]}) ↔ index ${largest} (${a[largest]}). Continue down.`,phase,heap,sorted:sortedSet?[...sortedSet]:[]});
+    [a[cur],a[largest]]=[a[largest],a[cur]];
+    cur=largest;
+  }
+}
+function applyStep(st){
+  highlights={current:-1,compare:[],swap:[],sorted:new Set(st.sorted||[])};
+  phase=st.phase; heapSize=st.heap;
+  if(st.type==='visit'||st.type==='settled'||st.type==='placed') highlights.current=st.idx;
+  if(st.type==='compare'){ highlights.compare=[st.i,st.j]; comp++; }
+  if(st.type==='swap'){ highlights.swap=[st.i,st.j]; swap++; }
+  arr=[...st.arr];
+  document.getElementById('stepInfo').innerHTML=st.msg;
+  render(); updateStats();
+}
+function stepFwd(){
+  if(stepIdx>=steps.length){ running=false; document.getElementById('pauseBtn').disabled=true; document.getElementById('startBtn').disabled=true; return; }
+  applyStep(steps[stepIdx++]);
+}
+function start(){
+  if(stepIdx>=steps.length) return;
+  running=true;
+  document.getElementById('startBtn').disabled=true;
+  document.getElementById('pauseBtn').disabled=false;
+  loop();
+}
+function loop(){
+  if(!running) return;
+  stepFwd();
+  if(stepIdx>=steps.length){ running=false; document.getElementById('pauseBtn').disabled=true; return; }
+  const sp=parseInt(document.getElementById('speedSlider').value);
+  const delay=Math.max(80,1100-sp*100);
+  timer=setTimeout(loop,delay);
+}
+function pause(){
+  running=false;
+  if(timer){clearTimeout(timer); timer=null;}
+  document.getElementById('startBtn').disabled=false;
+  document.getElementById('pauseBtn').disabled=true;
+}
+function updateStats(){
+  document.getElementById('statComp').textContent=comp;
+  document.getElementById('statSwap').textContent=swap;
+  document.getElementById('statHeap').textContent=heapSize;
+  const tag=document.getElementById('phaseTag');
+  tag.textContent=phase;
+  const colorMap={idle:'var(--muted)',build:'var(--orange)',extract:'var(--purple)',done:'var(--green)'};
+  tag.style.color=colorMap[phase]||'var(--muted)';
+  tag.style.borderColor=colorMap[phase]||'var(--muted)';
+}
+function render(){
+  renderArray(); renderTree();
+}
+function renderArray(){
+  const row=document.getElementById('array-row');
+  row.innerHTML='';
+  arr.forEach((v,i)=>{
+    const c=document.createElement('div'); c.className='cell';
+    if(i>=heapSize && !highlights.sorted.has(i)) c.classList.add('outheap');
+    if(highlights.sorted.has(i)) c.classList.add('sorted');
+    if(highlights.compare.includes(i)) c.classList.add('compare');
+    if(highlights.swap.includes(i)) c.classList.add('swap');
+    if(highlights.current===i) c.classList.add('current');
+    c.innerHTML=`<div>${v}</div><div class="idx">${i}</div>`;
+    row.appendChild(c);
+  });
+}
+function renderTree(){
+  const svg=document.getElementById('tree-svg');
+  svg.innerHTML='';
+  const W=960,H=340;
+  const n=arr.length;
+  if(n===0) return;
+  const depth=Math.floor(Math.log2(n))+1;
+  const levelH=Math.min(70,(H-40)/Math.max(1,depth));
+  // Compute positions
+  const pos=[];
+  for(let i=0;i<n;i++){
+    const d=Math.floor(Math.log2(i+1));
+    const offset=i+1 - (1<<d);
+    const cnt=1<<d;
+    const x=(offset+0.5)*(W/cnt);
+    const y=30+d*levelH;
+    pos.push({x,y});
+  }
+  // Edges
+  for(let i=1;i<n;i++){
+    const p=Math.floor((i-1)/2);
+    const inHeap=i<heapSize && p<heapSize;
+    const e=document.createElementNS('http://www.w3.org/2000/svg','line');
+    e.setAttribute('x1',pos[p].x); e.setAttribute('y1',pos[p].y);
+    e.setAttribute('x2',pos[i].x); e.setAttribute('y2',pos[i].y);
+    e.setAttribute('class','edge');
+    if(!inHeap) e.setAttribute('opacity','0.25');
+    svg.appendChild(e);
+  }
+  // Nodes
+  for(let i=0;i<n;i++){
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','node');
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',pos[i].x); c.setAttribute('cy',pos[i].y); c.setAttribute('r',20);
+    let fill='var(--bg)', stroke='var(--blue)', op=1;
+    if(i>=heapSize && !highlights.sorted.has(i)){ op=0.35; }
+    if(highlights.sorted.has(i)){ fill='var(--green)'; stroke='var(--green)'; }
+    if(highlights.compare.includes(i)){ fill='var(--red)'; stroke='var(--red)'; }
+    if(highlights.swap.includes(i)){ fill='var(--yellow)'; stroke='var(--yellow)'; }
+    if(highlights.current===i){ fill='var(--purple)'; stroke='var(--purple)'; }
+    c.setAttribute('fill',fill); c.setAttribute('stroke',stroke); c.setAttribute('opacity',op);
+    g.appendChild(c);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',pos[i].x); t.setAttribute('y',pos[i].y);
+    if(fill!=='var(--bg)') t.setAttribute('fill','var(--bg)');
+    t.setAttribute('opacity',op);
+    t.textContent=arr[i];
+    g.appendChild(t);
+    // index label
+    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x',pos[i].x); lbl.setAttribute('y',pos[i].y+32);
+    lbl.setAttribute('fill','var(--muted)');
+    lbl.setAttribute('opacity',op);
+    lbl.style.fontSize='11px';
+    lbl.textContent='['+i+']';
+    g.appendChild(lbl);
+    svg.appendChild(g);
+  }
+}
+// Boot
+arr=[4,10,3,5,1,8,7,2,9,6];
+document.getElementById('customInput').value=arr.join(',');
+reset();
+</script>
+</body></html>
