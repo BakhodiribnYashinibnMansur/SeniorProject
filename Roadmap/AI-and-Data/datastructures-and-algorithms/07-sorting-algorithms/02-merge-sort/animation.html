@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Merge Sort — Visual Animation</title>
+<style>
+:root { --bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;
+        --green:#3fb950;--yellow:#d29922;--red:#f85149;--blue:#58a6ff;--purple:#bc8cff;--orange:#ffa657; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);
+     min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+h1{font-size:2rem;color:var(--blue);margin-bottom:6px;text-align:center}
+.subtitle{color:var(--muted);margin-bottom:20px;text-align:center}
+.badges{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;justify-content:center}
+.badge{padding:4px 10px;border-radius:12px;font-size:.8rem;font-weight:600;
+       border:1px solid var(--border);background:var(--surface)}
+.badge.best{color:var(--green);border-color:var(--green)}
+.badge.worst{color:var(--red);border-color:var(--red)}
+.badge.space{color:var(--blue);border-color:var(--blue)}
+.controls,.input-control{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;justify-content:center}
+button{padding:8px 18px;border:2px solid var(--blue);background:transparent;
+       color:var(--blue);border-radius:6px;cursor:pointer;font-size:.95rem}
+button:hover:not(:disabled){background:var(--blue);color:var(--bg)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.secondary{border-color:var(--border);color:var(--muted)}
+input[type=text]{padding:8px 14px;border:2px solid var(--border);background:var(--surface);
+       color:var(--text);border-radius:6px;font-size:.95rem;width:300px}
+input[type=range]{width:160px;accent-color:var(--blue)}
+.canvas-container{background:var(--surface);border:2px solid var(--border);border-radius:12px;
+       padding:24px;margin-bottom:16px;width:100%;max-width:1000px;min-height:280px;overflow-x:auto}
+.level-row{display:flex;justify-content:center;gap:12px;margin-bottom:14px;flex-wrap:nowrap}
+.subarray{display:inline-flex;gap:2px;padding:6px;border-radius:6px;background:rgba(88,166,255,.06);
+       border:1px solid var(--border)}
+.subarray.merging{border-color:var(--yellow);background:rgba(210,153,34,.12)}
+.subarray.sorted{border-color:var(--green);background:rgba(63,185,80,.08)}
+.cell{min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+      background:var(--bg);border:1px solid var(--border);border-radius:4px;font-size:.85rem;
+      font-family:monospace;color:var(--text);transition:all .25s}
+.cell.compare{background:var(--red);color:var(--bg);transform:translateY(-3px)}
+.cell.taken{background:var(--green);color:var(--bg)}
+.cell.muted{opacity:.4}
+.info-panel{background:var(--surface);border:2px solid var(--border);border-radius:12px;
+       padding:16px 20px;width:100%;max-width:1000px;margin-bottom:16px}
+.info-panel h3{color:var(--blue);margin-bottom:8px;font-size:1rem}
+.step-info{font-family:monospace;font-size:.92rem;line-height:1.6}
+.step-info .highlight{color:var(--yellow);font-weight:600}
+.stats{background:var(--surface);border:2px solid var(--border);border-radius:12px;
+       padding:12px 20px;display:flex;gap:30px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+.stat-label{color:var(--muted);font-size:.75rem;text-transform:uppercase}
+.stat-value{color:var(--blue);font-size:1.2rem;font-weight:700;font-family:monospace}
+.legend{display:flex;gap:18px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+.legend-color{width:14px;height:14px;border-radius:3px}
+.footer-note{color:var(--muted);font-size:.78rem;margin-top:8px;text-align:center;max-width:700px}
+</style>
+</head>
+<body>
+<h1>Merge Sort</h1>
+<p class="subtitle">Divide-and-conquer: split in half, recursively sort, merge.</p>
+
+<div class="badges">
+<span class="badge best">Best: O(n log n)</span>
+<span class="badge worst">Worst: O(n log n)</span>
+<span class="badge space">Space: O(n)</span>
+<span class="badge best">Stable</span>
+</div>
+
+<div class="input-control">
+<input type="text" id="customInput" placeholder="Enter numbers: 5,2,8,1,9,3,7,4">
+<button onclick="loadInput()">Load</button>
+<button onclick="genRandom()" class="secondary">Random</button>
+</div>
+
+<div class="controls">
+<button id="startBtn" onclick="start()">▶ Start</button>
+<button id="stepBtn" onclick="stepFwd()">▷ Step</button>
+<button id="pauseBtn" onclick="pause()" disabled>❚❚ Pause</button>
+<button id="resetBtn" onclick="reset()" class="secondary">↺ Reset</button>
+</div>
+
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+<span style="color:var(--muted);font-size:.8rem">slow</span>
+<input type="range" id="speedSlider" min="1" max="10" value="5">
+<span style="color:var(--muted);font-size:.8rem">fast</span>
+</div>
+
+<div class="legend">
+<div class="legend-item"><div class="legend-color" style="background:var(--blue)"></div>Default</div>
+<div class="legend-item"><div class="legend-color" style="background:var(--red)"></div>Comparing</div>
+<div class="legend-item"><div class="legend-color" style="background:var(--green)"></div>Taken/Merged</div>
+<div class="legend-item"><div class="legend-color" style="background:var(--yellow)"></div>Merging</div>
+</div>
+
+<div class="stats">
+<div><div class="stat-label">Step</div><div class="stat-value"><span id="curStep">0</span>/<span id="totSteps">0</span></div></div>
+<div><div class="stat-label">Depth</div><div class="stat-value" id="depth">0</div></div>
+<div><div class="stat-label">Comparisons</div><div class="stat-value" id="comps">0</div></div>
+<div><div class="stat-label">Merges</div><div class="stat-value" id="merges">0</div></div>
+</div>
+
+<div class="canvas-container" id="canvas"></div>
+
+<div class="info-panel">
+<h3>Algorithm Trace</h3>
+<div class="step-info" id="info">Press <span class="highlight">Start</span> to run animation.</div>
+</div>
+
+<p class="footer-note">Merge Sort: O(n log n) all cases. Stable. O(n) auxiliary memory. Used by Python (TimSort) and Java for objects.</p>
+
+<script>
+let array=[5,2,8,1,9,3,7,4],steps=[],idx=0,running=false,timer=null;
+
+function genSteps(arr){
+  const out=[];
+  let comps=0,merges=0,maxDepth=0;
+  function sort(a,depth){
+    if(a.length<=1) return a;
+    if(depth>maxDepth) maxDepth=depth;
+    const m=Math.floor(a.length/2);
+    out.push({type:'split',left:a.slice(0,m),right:a.slice(m),depth,comps,merges});
+    const L=sort(a.slice(0,m),depth+1);
+    const R=sort(a.slice(m),depth+1);
+    // merge
+    merges++;
+    const result=[];
+    let i=0,j=0;
+    while(i<L.length&&j<R.length){
+      comps++;
+      out.push({type:'compare',L:[...L],R:[...R],i,j,result:[...result],depth,comps,merges});
+      if(L[i]<=R[j]){ result.push(L[i]); i++; }
+      else          { result.push(R[j]); j++; }
+      out.push({type:'taken',L:[...L],R:[...R],i,j,result:[...result],depth,comps,merges});
+    }
+    while(i<L.length){ result.push(L[i]); i++; }
+    while(j<R.length){ result.push(R[j]); j++; }
+    out.push({type:'merged',result:[...result],depth,comps,merges});
+    return result;
+  }
+  sort(arr,0);
+  out.push({type:'done',result:[...arr].sort((a,b)=>a-b),depth:maxDepth,comps,merges});
+  return out;
+}
+
+function renderCells(arr,highlights,cls){
+  return `<div class="subarray ${cls||''}">${arr.map((v,i)=>{
+    const c=highlights&&highlights[i]?highlights[i]:'';
+    return `<div class="cell ${c}">${v}</div>`;
+  }).join('')}</div>`;
+}
+
+function render(s){
+  const c=document.getElementById('canvas');
+  let html='';
+  if(s.type==='split'){
+    html=`<div class="level-row">${renderCells(s.left.concat(s.right))}</div>`;
+    html+=`<div class="level-row">${renderCells(s.left)}${renderCells(s.right)}</div>`;
+    document.getElementById('info').innerHTML=`<b>Split</b> at depth ${s.depth}: left=[${s.left}], right=[${s.right}]`;
+  } else if(s.type==='compare'){
+    const lh={}; lh[s.i]='compare';
+    const rh={}; rh[s.j]='compare';
+    html=`<div class="level-row">${renderCells(s.L,lh,'merging')}${renderCells(s.R,rh,'merging')}</div>`;
+    html+=`<div class="level-row">${renderCells(s.result,{},'sorted')}</div>`;
+    document.getElementById('info').innerHTML=`<b>Compare</b> L[${s.i}]=${s.L[s.i]} vs R[${s.j}]=${s.R[s.j]}`;
+  } else if(s.type==='taken'){
+    const lh={},rh={};
+    for(let k=0;k<s.i;k++) lh[k]='muted';
+    for(let k=0;k<s.j;k++) rh[k]='muted';
+    html=`<div class="level-row">${renderCells(s.L,lh,'merging')}${renderCells(s.R,rh,'merging')}</div>`;
+    const resultH={}; resultH[s.result.length-1]='taken';
+    html+=`<div class="level-row">${renderCells(s.result,resultH,'sorted')}</div>`;
+    document.getElementById('info').innerHTML=`<span class="highlight">Take</span> ${s.result[s.result.length-1]} → result=[${s.result}]`;
+  } else if(s.type==='merged'){
+    html=`<div class="level-row">${renderCells(s.result,{},'sorted')}</div>`;
+    document.getElementById('info').innerHTML=`<b>Merged</b> at depth ${s.depth}: [${s.result}]`;
+  } else if(s.type==='done'){
+    const h={}; for(let k=0;k<s.result.length;k++) h[k]='taken';
+    html=`<div class="level-row">${renderCells(s.result,h,'sorted')}</div>`;
+    document.getElementById('info').innerHTML=`✓ <b>Sorted</b>: [${s.result}]`;
+  }
+  c.innerHTML=html;
+  document.getElementById('curStep').textContent=idx+1;
+  document.getElementById('depth').textContent=s.depth;
+  document.getElementById('comps').textContent=s.comps;
+  document.getElementById('merges').textContent=s.merges;
+}
+
+function delay(){ return 1100-parseInt(document.getElementById('speedSlider').value)*100; }
+function start(){
+  if(steps.length===0){ steps=genSteps(array); document.getElementById('totSteps').textContent=steps.length; }
+  running=true;
+  document.getElementById('startBtn').disabled=true;
+  document.getElementById('pauseBtn').disabled=false;
+  tick();
+}
+function tick(){
+  if(!running||idx>=steps.length){ pause(); return; }
+  render(steps[idx]); idx++;
+  timer=setTimeout(tick,delay());
+}
+function stepFwd(){
+  if(steps.length===0){ steps=genSteps(array); document.getElementById('totSteps').textContent=steps.length; }
+  if(idx<steps.length){ render(steps[idx]); idx++; }
+}
+function pause(){
+  running=false; clearTimeout(timer);
+  document.getElementById('startBtn').disabled=false;
+  document.getElementById('pauseBtn').disabled=true;
+}
+function reset(){
+  pause(); steps=[]; idx=0;
+  ['curStep','totSteps','depth','comps','merges'].forEach(id=>document.getElementById(id).textContent='0');
+  document.getElementById('info').innerHTML='Press <span class="highlight">Start</span> to run animation.';
+  renderInit();
+}
+function loadInput(){
+  const raw=document.getElementById('customInput').value;
+  const nums=raw.split(/[, ]+/).map(s=>parseInt(s.trim())).filter(n=>!isNaN(n));
+  if(nums.length>0){ array=nums; reset(); }
+}
+function genRandom(){
+  const size=6+Math.floor(Math.random()*4);
+  array=Array.from({length:size},()=>Math.floor(Math.random()*50)+1);
+  document.getElementById('customInput').value=array.join(', ');
+  reset();
+}
+function renderInit(){
+  document.getElementById('canvas').innerHTML=`<div class="level-row">${renderCells(array)}</div>`;
+}
+document.getElementById('customInput').value=array.join(', ');
+renderInit();
+</script>
+</body>
+</html>
