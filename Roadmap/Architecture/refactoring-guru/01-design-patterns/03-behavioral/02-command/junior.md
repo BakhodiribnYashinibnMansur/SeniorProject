@@ -595,8 +595,8 @@ If you find yourself writing custom queue / log / undo logic, Command is what yo
 - [Strategy](../08-strategy/junior.md) — algorithm variation, not action wrapping
 - [Memento](../05-memento/junior.md) — state snapshots, often used for undo
 - [Chain of Responsibility](../01-chain-of-responsibility/junior.md) — for handler chains
-- [Event Sourcing](../../../coding-principles/event-sourcing.md) — Commands persisted as events
-- [CQRS](../../../coding-principles/cqrs.md) — Commands separated from Queries
+- Event Sourcing — Commands persisted as events
+- CQRS — Commands separated from Queries
 
 ---
 

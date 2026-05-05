@@ -203,7 +203,7 @@ Once you have a Method Object, four directions of growth are common:
 
 ### Command pattern
 
-Add `undo()`, `serialize()`, `enqueue()`. Now the method is a first-class action: you can audit it, replay it, queue it. (See [Behavioral Patterns](../../01-design-patterns/03-behavioral/junior.md).)
+Add `undo()`, `serialize()`, `enqueue()`. Now the method is a first-class action: you can audit it, replay it, queue it. (See Behavioral Patterns.)
 
 ### Saga / orchestration
 

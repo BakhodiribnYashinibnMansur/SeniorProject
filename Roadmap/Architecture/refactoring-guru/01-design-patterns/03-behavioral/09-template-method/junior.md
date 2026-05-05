@@ -587,10 +587,10 @@ If you find yourself copy-pasting the same lifecycle with minor variations, Temp
 ## Related Topics
 
 - [Strategy](../08-strategy/junior.md) — composition-based variation
-- [Factory Method](../../01-creational/02-factory-method/junior.md) — Template often calls Factory Method
-- [Hollywood Principle](../../../coding-principles/inversion-of-control.md)
-- [Liskov substitution](../../../coding-principles/solid.md)
-- [Frameworks vs libraries](../../../coding-principles/frameworks.md)
+- Factory Method — Template often calls Factory Method
+- Hollywood Principle
+- Liskov substitution
+- Frameworks vs libraries
 
 ---
 

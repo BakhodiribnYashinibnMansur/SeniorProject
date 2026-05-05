@@ -515,11 +515,11 @@ Each WASM module sandboxed; hot-deployable.
 
 ## Related Topics
 
-- [JIT internals](../../../performance/jit-internals.md)
-- [Reactive backpressure](../../../coding-principles/reactive-streams.md)
-- [Service mesh](../../../coding-principles/service-mesh.md)
-- [Virtual threads](../../../coding-principles/virtual-threads.md)
-- [Async patterns](../../../coding-principles/async-patterns.md)
-- [Compile-time codegen](../../../coding-principles/codegen.md)
+- JIT internals
+- Reactive backpressure
+- Service mesh
+- Virtual threads
+- Async patterns
+- Compile-time codegen
 
 [← Senior](senior.md) · [Interview →](interview.md)

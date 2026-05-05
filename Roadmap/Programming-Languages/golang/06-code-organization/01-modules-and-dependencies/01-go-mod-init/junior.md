@@ -686,7 +686,7 @@ You cannot yet:
 - [6.1.3 `go mod vendor`](../03-go-mod-vendor/) — offline-friendly dependency copies
 - [6.2.1 Package Import Rules](../../02-packages/01-package-import-rules/) — how imports inside a module are resolved
 - [6.2.3 Publishing Modules](../../02-packages/03-publishing-modules/) — sharing your module with the world
-- [11.1.5 `go mod`](../../../11-go-toolchain-and-tools/) — the full `go mod` subcommand reference
+- 11.1.5 `go mod` — the full `go mod` subcommand reference
 
 ---
 

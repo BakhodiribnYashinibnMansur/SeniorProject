@@ -813,9 +813,9 @@ You cannot yet:
 
 - [6.1.1 `go mod init`](../01-go-mod-init/) — start a module
 - [6.1.2 `go mod tidy`](../02-go-mod-tidy/) — synchronize `go.mod` with imports; precedes vendoring
-- [6.1.4 Replace and Exclude Directives](../04-replace-and-exclude/) — patch dependencies without forking
+- 6.1.4 Replace and Exclude Directives — patch dependencies without forking
 - [6.2.1 Package Import Rules](../../02-packages/01-package-import-rules/) — how imports resolve under vendoring
-- [11.1.5 `go mod`](../../../11-go-toolchain-and-tools/) — full subcommand reference
+- 11.1.5 `go mod` — full subcommand reference
 
 ---
 

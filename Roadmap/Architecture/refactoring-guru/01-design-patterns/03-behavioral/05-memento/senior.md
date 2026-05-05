@@ -512,10 +512,10 @@ graph TD
 
 ## Related Topics
 
-- [Event sourcing](../../../coding-principles/event-sourcing.md)
-- [MVCC](../../../infra/mvcc.md)
-- [Persistent data structures](../../../coding-principles/persistent-data.md)
-- [Database snapshots](../../../infra/db-snapshots.md)
-- [Schema evolution](../../../coding-principles/schema-evolution.md)
+- Event sourcing
+- MVCC
+- Persistent data structures
+- Database snapshots
+- Schema evolution
 
 [← Middle](middle.md) · [Professional →](professional.md)

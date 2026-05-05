@@ -502,7 +502,7 @@ sequenceDiagram
 - [State](../07-state/senior.md) — sibling pattern at scale
 - [Template Method](../09-template-method/senior.md) — for extracting shared scaffolding
 - [Chain of Responsibility](../01-chain-of-responsibility/senior.md) — when "pick one" becomes "try several in order"
-- [SOLID — OCP & DIP](../../../coding-principles/solid.md) — Strategy is the canonical OCP application
-- [Plugin architecture](../../../infra/plugin-systems.md)
+- SOLID — OCP & DIP — Strategy is the canonical OCP application
+- Plugin architecture
 
 [← Middle](middle.md) · [Professional →](professional.md)

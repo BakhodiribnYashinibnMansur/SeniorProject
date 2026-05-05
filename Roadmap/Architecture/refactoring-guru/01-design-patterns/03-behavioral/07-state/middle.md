@@ -541,8 +541,8 @@ The win is replacing tangled conditional logic with an expressive FSM. The cost 
 - [Strategy](../08-strategy/middle.md) — sibling pattern
 - [Memento](../05-memento/middle.md) — state snapshot for restore
 - [Mediator](../04-mediator/middle.md) — coordinates multiple objects
-- [Statecharts](../../../coding-principles/statecharts.md)
-- [Workflow engines](../../../infra/workflows.md)
+- Statecharts
+- Workflow engines
 
 ---
 

@@ -391,10 +391,10 @@ sequenceDiagram
 
 ## Related Topics
 
-- [Schema evolution](../../../coding-principles/schema-evolution.md)
-- [Event sourcing internals](../../../coding-principles/event-sourcing.md)
-- [Saga & compensations](../../../coding-principles/saga.md)
-- [Workflow engines](../../../infra/workflows.md)
-- [Idempotency at scale](../../../coding-principles/idempotency.md)
+- Schema evolution
+- Event sourcing internals
+- Saga & compensations
+- Workflow engines
+- Idempotency at scale
 
 [← Senior](senior.md) · [Interview →](interview.md)

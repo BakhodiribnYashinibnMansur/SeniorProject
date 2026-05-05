@@ -608,8 +608,8 @@ If you find yourself adding `if A then B.method()` inside a Component, the Media
 - [Observer](../06-observer/junior.md) — broadcast counterpart
 - [Facade](../../02-structural/05-facade/junior.md) — different intent, similar centralization
 - [Command](../02-command/junior.md) — Mediator often dispatches Commands
-- [Saga / orchestration](../../../coding-principles/saga.md) — distributed Mediator
-- [MVC / MVVM](../../../coding-principles/mvc.md) — controller as Mediator
+- Saga / orchestration — distributed Mediator
+- MVC / MVVM — controller as Mediator
 
 ---
 

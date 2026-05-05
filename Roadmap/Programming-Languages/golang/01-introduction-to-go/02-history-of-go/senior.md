@@ -1051,8 +1051,8 @@ The most likely cause is the loop variable scoping change in Go 1.22. When the `
 
 ## Related Topics
 
-- **[Go Runtime Internals](../../15-runtime/)** — how the GC and scheduler actually work
-- **[Go Modules](../../05-modules/)** — deep dive into the module system
+- **Go Runtime Internals** — how the GC and scheduler actually work
+- **Go Modules** — deep dive into the module system
 
 ---
 

@@ -678,10 +678,10 @@ The win is structural reuse without duplication. The cost is hierarchy rigidity.
 ## Related Topics
 
 - [Strategy](../08-strategy/middle.md) — composition alternative
-- [Factory Method](../../01-creational/02-factory-method/middle.md) — Template often calls Factory Method
+- Factory Method — Template often calls Factory Method
 - [Decorator](../../02-structural/04-decorator/middle.md) — for stacking behavior
-- [Higher-order functions](../../../coding-principles/hof.md)
-- [Hollywood Principle](../../../coding-principles/inversion-of-control.md)
+- Higher-order functions
+- Hollywood Principle
 
 ---
 

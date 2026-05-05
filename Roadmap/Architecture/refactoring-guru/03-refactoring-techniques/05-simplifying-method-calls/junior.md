@@ -510,7 +510,7 @@ class Manager extends Employee {}
 - The class is a value object with one obvious constructor.
 - Adding factory methods scatters construction logic without adding clarity.
 
-> See [Creational Patterns](../../01-design-patterns/01-creational/junior.md).
+> See Creational Patterns.
 
 ---
 

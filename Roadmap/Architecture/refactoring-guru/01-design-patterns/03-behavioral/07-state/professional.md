@@ -379,10 +379,10 @@ sequenceDiagram
 
 ## Related Topics
 
-- [JIT inlining](../../../performance/jit-internals.md)
-- [Sealed types](../../../coding-principles/sealed-types.md)
-- [XState statecharts](../../../coding-principles/statecharts.md)
-- [Lock-free CAS](../../../performance/lock-free.md)
-- [Workflow replay](../../../infra/workflows.md)
+- JIT inlining
+- Sealed types
+- XState statecharts
+- Lock-free CAS
+- Workflow replay
 
 [← Senior](senior.md) · [Interview →](interview.md)

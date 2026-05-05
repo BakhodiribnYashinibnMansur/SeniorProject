@@ -986,10 +986,10 @@ flowchart LR
 
 ## Related Topics
 
-- **[Arrays](../07-arrays/)** — loops are most commonly used to iterate over arrays
-- **[Conditionals](../08-conditionals/)** — loop conditions use the same boolean logic
-- **[Variables and Scopes](../09-variables-and-scopes/)** — loop variables have specific scoping rules
-- **[Stream API](../../03-functional-programming/)** — the modern alternative to many loop patterns
+- **[Arrays](../08-arrays/)** — loops are most commonly used to iterate over arrays
+- **[Conditionals](../09-conditionals/)** — loop conditions use the same boolean logic
+- **[Variables and Scopes](../04-variables-and-scopes/)** — loop variables have specific scoping rules
+- **Stream API** — the modern alternative to many loop patterns
 
 ---
 

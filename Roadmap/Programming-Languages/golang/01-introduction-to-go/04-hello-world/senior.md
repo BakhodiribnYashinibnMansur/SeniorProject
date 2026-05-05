@@ -1327,9 +1327,9 @@ This is specified in the Go spec: "the init functions are invoked in the order t
 
 ## Related Topics
 
-- **[Error Handling](../../03-error-handling/)** — production error strategies referenced in this document
-- **[Concurrency](../../05-concurrency/)** — goroutine lifecycle and context propagation
-- **[Testing](../../04-testing/)** — how to test the `run()` pattern and graceful shutdown
+- **[Error Handling](../../05-error-handling/)** — production error strategies referenced in this document
+- **Concurrency** — goroutine lifecycle and context propagation
+- **Testing** — how to test the `run()` pattern and graceful shutdown
 
 ---
 

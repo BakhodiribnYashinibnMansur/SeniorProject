@@ -332,10 +332,10 @@ sequenceDiagram
 
 ## Related Topics
 
-- [JIT inlining](../../../performance/jit-internals.md)
-- [Sealed types](../../../coding-principles/sealed-types.md)
-- [Default methods](../../../coding-principles/default-methods.md)
-- [Async patterns](../../../coding-principles/async-patterns.md)
-- [Lambda performance](../../../performance/lambdas.md)
+- JIT inlining
+- Sealed types
+- Default methods
+- Async patterns
+- Lambda performance
 
 [← Senior](senior.md) · [Interview →](interview.md)

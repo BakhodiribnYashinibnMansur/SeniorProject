@@ -610,7 +610,7 @@ If you find yourself writing `if (mode == "x") ...` in five different methods, S
 - [Mediator](../04-mediator/junior.md) — coordinates objects, not states
 - [Memento](../05-memento/junior.md) — captures state snapshots
 - [Command](../02-command/junior.md) — actions vs modes
-- [Statecharts / Hierarchical FSMs](../../../coding-principles/statecharts.md)
+- Statecharts / Hierarchical FSMs
 
 ---
 

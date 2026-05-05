@@ -593,7 +593,7 @@ class ManagerType implements EmployeeType { ... }
 - The "type" can transition during the object's lifetime.
 - Different "states" require different behavior + the transitions matter.
 
-> See the [State](../../01-design-patterns/03-behavioral/junior.md) and [Strategy](../../01-design-patterns/03-behavioral/junior.md) patterns.
+> See the State and Strategy patterns.
 
 ---
 

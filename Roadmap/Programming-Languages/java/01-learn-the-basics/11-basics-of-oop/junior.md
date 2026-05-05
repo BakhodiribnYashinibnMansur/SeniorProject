@@ -1208,9 +1208,9 @@ flowchart LR
 
 ## Related Topics
 
-- **[Inheritance](../../02-oop/)** — how classes can extend other classes to reuse code
-- **[Encapsulation](../../02-oop/)** — deeper dive into data hiding and information protection
-- **[Interfaces and Abstract Classes](../../02-oop/)** — contracts that classes must fulfill
+- **Inheritance** — how classes can extend other classes to reuse code
+- **Encapsulation** — deeper dive into data hiding and information protection
+- **Interfaces and Abstract Classes** — contracts that classes must fulfill
 - **[Type Casting](../05-type-casting/)** — how objects can be cast between types in class hierarchies
 
 ---

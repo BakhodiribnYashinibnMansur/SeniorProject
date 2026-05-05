@@ -124,17 +124,7 @@ Inference reduces noise but can hide intent. Three questions help you decide:
 A simple metric: count characters at the call site that are not "what is happening".
 
 ```go
-// 24 chars before noise: doubled := Map[int, int](
-// vs 13 chars without:    doubled := Map(
-```
-
-Multiply by call frequency and you have a quality-of-life budget. Senior engineers often refactor APIs when call-site noise crosses a threshold.
-
-### Tactics
-- **Re-order parameters** so the explicit one is the first.
-- **Wrap noisy calls** in a small adapter:
-```go
-func MapInts(s []int, f func(int) int) []int { return Map(s, f) }
+// 24 chars before noise: doubled := Mapint, int int) []int { return Map(s, f) }
 ```
 - **Provide overloads via descriptive names** for the most common element types.
 - **Lean on the latest Go version** — modern inference may already handle a case that previously required brackets.

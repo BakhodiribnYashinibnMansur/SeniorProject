@@ -590,7 +590,7 @@ If you're tempted to add `if (mode == "X") doX(); else if (mode == "Y") doY()` t
 - [Template Method](../09-template-method/junior.md) — inheritance-based variation
 - [Command](../02-command/junior.md) — encapsulates an action, not an algorithm step
 - [Decorator](../../02-structural/04-decorator/junior.md) — adds behavior; doesn't replace it
-- [SOLID — OCP & DIP](../../../coding-principles/solid.md) — Strategy applies both directly
+- SOLID — OCP & DIP — Strategy applies both directly
 
 ---
 

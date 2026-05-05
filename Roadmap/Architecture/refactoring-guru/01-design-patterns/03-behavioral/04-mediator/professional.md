@@ -332,10 +332,10 @@ graph LR
 
 ## Related Topics
 
-- [Workflow engines internals](../../../infra/workflows.md)
-- [CQRS](../../../coding-principles/cqrs.md)
-- [Event sourcing](../../../coding-principles/event-sourcing.md)
-- [Distributed tracing](../../../infra/observability.md)
-- [Saga compensations](../../../coding-principles/saga.md)
+- Workflow engines internals
+- CQRS
+- Event sourcing
+- Distributed tracing
+- Saga compensations
 
 [← Senior](senior.md) · [Interview →](interview.md)

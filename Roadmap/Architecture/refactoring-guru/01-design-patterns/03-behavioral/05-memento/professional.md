@@ -318,10 +318,10 @@ T1 sees v1 throughout, even though T2 wrote v2.
 
 ## Related Topics
 
-- [Persistent data structures](../../../coding-principles/persistent-data.md)
-- [MVCC implementation](../../../infra/mvcc.md)
-- [Snapshot compression strategies](../../../performance/snapshot-compression.md)
-- [Serialization formats](../../../coding-principles/serialization.md)
-- [Event sourcing snapshots](../../../coding-principles/event-sourcing.md)
+- Persistent data structures
+- MVCC implementation
+- Snapshot compression strategies
+- Serialization formats
+- Event sourcing snapshots
 
 [← Senior](senior.md) · [Interview →](interview.md)

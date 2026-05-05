@@ -1112,8 +1112,8 @@ flowchart LR
 
 ## Related Topics
 
-- **[Docker for Go](../../devops/docker/)** — deeper dive into containerized Go
-- **[Go Modules](../../03-modules-and-packages/)** — advanced module management
+- **Docker for Go** — deeper dive into containerized Go
+- **Go Modules** — advanced module management
 
 ---
 

@@ -535,10 +535,10 @@ graph TD
 
 ## Related Topics
 
-- [Saga pattern](../../../coding-principles/saga.md)
-- [Workflow engines](../../../infra/workflows.md)
-- [API gateway](../../../infra/api-gateway.md)
-- [Event-driven choreography](../../../coding-principles/event-driven.md)
-- [Idempotency at scale](../../../coding-principles/idempotency.md)
+- Saga pattern
+- Workflow engines
+- API gateway
+- Event-driven choreography
+- Idempotency at scale
 
 [← Middle](middle.md) · [Professional →](professional.md)

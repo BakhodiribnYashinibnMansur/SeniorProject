@@ -581,8 +581,8 @@ If you find a setter calling 5 specific consumers by name, Observer is asking to
 - [Mediator](../04-mediator/junior.md) — many-to-many, central coordinator
 - [Chain of Responsibility](../01-chain-of-responsibility/junior.md) — linear, first-handler-wins
 - [Command](../02-command/junior.md) — encapsulates the action; can be observed
-- [Pub/Sub](../../../infra/pubsub.md) — Observer at distributed scale
-- [Reactive streams](../../../infra/reactive.md) — Observer formalized
+- Pub/Sub — Observer at distributed scale
+- Reactive streams — Observer formalized
 
 ---
 

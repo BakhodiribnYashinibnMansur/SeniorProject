@@ -1133,9 +1133,9 @@ flowchart LR
 
 ## Related Topics
 
-- **[Go Basics](../02-go-basics/)** — variables, types, control flow, functions
-- **[Go Tooling](../03-go-tooling/)** — go build, go test, go fmt, go vet
-- **[Concurrency](../../03-concurrency/)** — deep dive into goroutines and channels
+- **Go Basics** — variables, types, control flow, functions
+- **Go Tooling** — go build, go test, go fmt, go vet
+- **Concurrency** — deep dive into goroutines and channels
 
 ---
 

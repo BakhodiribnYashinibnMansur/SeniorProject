@@ -949,9 +949,9 @@ flowchart LR
 
 ## Related Topics
 
-- **[Variables and Types](../05-variables-and-types/)** — next step after Hello World, learn to store data
-- **[Functions](../06-functions/)** — learn to organize code into reusable functions
-- **[Packages](../03-packages/)** — deeper understanding of Go's package system
+- **Variables and Types** — next step after Hello World, learn to store data
+- **Functions** — learn to organize code into reusable functions
+- **Packages** — deeper understanding of Go's package system
 
 ---
 

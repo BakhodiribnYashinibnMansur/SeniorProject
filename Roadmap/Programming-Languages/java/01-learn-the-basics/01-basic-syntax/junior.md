@@ -985,7 +985,7 @@ Topics to explore next or that connect to this one:
 
 - **[Lifecycle of a Program](../02-lifecycle-of-program/)** — understand how Java compiles and runs your code
 - **[Data Types](../03-data-types/)** — learn what types of data Java supports
-- **[Variables and Scopes](../10-variables-and-scopes/)** — understand where variables live and how long they last
+- **[Variables and Scopes](../04-variables-and-scopes/)** — understand where variables live and how long they last
 
 ---
 

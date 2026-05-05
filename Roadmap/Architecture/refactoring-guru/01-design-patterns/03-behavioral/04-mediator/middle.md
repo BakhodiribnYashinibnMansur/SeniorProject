@@ -510,8 +510,8 @@ The win is local reasoning: components are independent; coordination is in one n
 - [Observer](../06-observer/middle.md) — broadcast pattern
 - [Command](../02-command/middle.md) — Mediator dispatches Commands
 - [Facade](../../02-structural/05-facade/middle.md) — encapsulation, not coordination
-- [Saga / orchestration](../../../coding-principles/saga.md) — distributed Mediator
-- [MVC / MVVM](../../../coding-principles/mvc.md)
+- Saga / orchestration — distributed Mediator
+- MVC / MVVM
 
 ---
 

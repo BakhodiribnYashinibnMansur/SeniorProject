@@ -759,7 +759,7 @@ debug.PrintStack() // or string(debug.Stack())
 
 - [01-error-handling-basics](../01-error-handling-basics/index.md) — errors as values, the foundation
 - [02-error-interface](../02-error-interface/index.md) — the `error` interface
-- [03-creating-errors](../03-creating-errors/index.md) — `errors.New`, `fmt.Errorf`
+- 03-creating-errors — `errors.New`, `fmt.Errorf`
 - Goroutines and concurrency — panic interacts strongly with goroutine boundaries
 
 ---

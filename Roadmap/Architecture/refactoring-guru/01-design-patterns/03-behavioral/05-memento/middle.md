@@ -522,9 +522,9 @@ The win is restorability without breaking encapsulation. The cost is memory and 
 
 - [Command](../02-command/middle.md) — partner for undo/redo
 - [Prototype](../../01-creational/04-prototype/middle.md) — clone for creation, similar mechanics
-- [Event sourcing](../../../coding-principles/event-sourcing.md)
-- [Persistent data structures](../../../coding-principles/persistent-data.md)
-- [Snapshot in databases](../../../infra/db-snapshots.md)
+- Event sourcing
+- Persistent data structures
+- Snapshot in databases
 
 ---
 

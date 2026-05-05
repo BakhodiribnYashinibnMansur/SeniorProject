@@ -1107,8 +1107,8 @@ flowchart LR
 
 ## Related Topics
 
-- **[Go Modules](../../05-modules/)** — deep dive into the module system introduced in Go 1.11
-- **[Generics](../../10-generics/)** — understanding type parameters added in Go 1.18
+- **Go Modules** — deep dive into the module system introduced in Go 1.11
+- **[Generics](../../04-generics/)** — understanding type parameters added in Go 1.18
 
 ---
 

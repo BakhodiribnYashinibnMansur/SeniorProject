@@ -903,8 +903,8 @@ flowchart LR
 
 ## Related Topics
 
-- **[Packages & Imports](../06-packages/)** — how Go organizes code that the `go` command compiles
-- **[Go Modules](../07-modules/)** — deep dive into `go.mod`, versioning, and dependency management
+- **Packages & Imports** — how Go organizes code that the `go` command compiles
+- **Go Modules** — deep dive into `go.mod`, versioning, and dependency management
 
 ---
 

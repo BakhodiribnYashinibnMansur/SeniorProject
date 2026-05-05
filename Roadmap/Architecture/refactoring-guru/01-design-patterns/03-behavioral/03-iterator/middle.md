@@ -582,9 +582,9 @@ The win is decoupling. The cost is one more class per collection (mitigated by g
 
 - [Visitor](../10-visitor/middle.md) — operations across element types
 - [Composite](../../02-structural/03-composite/middle.md) — tree structures
-- [Reactive streams](../../../infra/reactive.md) — Iterators with backpressure
-- [Pagination](../../../infra/pagination.md)
-- [Stream API](../../../coding-principles/streams.md)
+- Reactive streams — Iterators with backpressure
+- Pagination
+- Stream API
 
 ---
 

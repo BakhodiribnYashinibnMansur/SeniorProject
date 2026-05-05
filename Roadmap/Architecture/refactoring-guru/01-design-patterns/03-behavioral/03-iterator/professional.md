@@ -438,10 +438,10 @@ graph LR
 
 ## Related Topics
 
-- [Spliterator parallelism](../../../performance/spliterator.md)
-- [Reactive Streams spec](../../../infra/reactive.md)
-- [Columnar storage](../../../infra/columnar.md)
-- [Generator internals](../../../coding-principles/generators.md)
-- [JIT inlining](../../../performance/jit-internals.md)
+- Spliterator parallelism
+- Reactive Streams spec
+- Columnar storage
+- Generator internals
+- JIT inlining
 
 [← Senior](senior.md) · [Interview →](interview.md)

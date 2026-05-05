@@ -939,7 +939,7 @@ flowchart LR
 
 - **[Conditionals](../03-conditionals/)** — loops often contain `if/elif/else` logic
 - **[Type Casting](../05-type-casting/)** — converting loop values between types
-- **[List Comprehensions](../../02-data-structures/)** — advanced use of comprehension syntax
+- **List Comprehensions** — advanced use of comprehension syntax
 - **[Functions](../07-functions/)** — encapsulating loop logic into reusable functions
 
 ---

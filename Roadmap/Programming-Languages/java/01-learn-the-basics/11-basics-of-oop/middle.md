@@ -1317,9 +1317,9 @@ flowchart LR
 
 ## Related Topics
 
-- **[Inheritance](../../02-oop/)** — how to extend classes and the Liskov Substitution Principle
-- **[Interfaces & Abstract Classes](../../02-oop/)** — contracts and polymorphism
-- **[Generics](../../02-oop/)** — type-safe collections and generic classes
+- **Inheritance** — how to extend classes and the Liskov Substitution Principle
+- **Interfaces & Abstract Classes** — contracts and polymorphism
+- **Generics** — type-safe collections and generic classes
 - **[Data Types](../03-data-types/)** — primitive vs reference types and autoboxing
 
 ---

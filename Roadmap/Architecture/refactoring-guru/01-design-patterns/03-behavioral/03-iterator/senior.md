@@ -543,10 +543,10 @@ sequenceDiagram
 
 ## Related Topics
 
-- [Reactive Streams](../../../infra/reactive.md)
-- [Pagination patterns](../../../infra/pagination.md)
-- [Database cursors](../../../infra/db-cursors.md)
-- [Stream processing](../../../infra/stream-processing.md)
-- [Spliterator parallelism](../../../performance/spliterator.md)
+- Reactive Streams
+- Pagination patterns
+- Database cursors
+- Stream processing
+- Spliterator parallelism
 
 [← Middle](middle.md) · [Professional →](professional.md)

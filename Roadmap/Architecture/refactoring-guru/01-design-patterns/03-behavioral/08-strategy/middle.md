@@ -467,7 +467,7 @@ The real win isn't fewer lines; it's **contract clarity**. Every strategy is a s
 - [Template Method](../09-template-method/middle.md) — inheritance-based variation
 - [Command](../02-command/middle.md) — actions as objects
 - [Factory Method / Abstract Factory](../../01-creational/) — creating strategies cleanly
-- [Dependency Injection](../../../coding-principles/di.md) — wiring strategies into Contexts
+- Dependency Injection — wiring strategies into Contexts
 
 ---
 

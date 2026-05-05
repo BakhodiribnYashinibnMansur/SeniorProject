@@ -925,8 +925,8 @@ flowchart LR
 
 ## Related Topics
 
-- **[Go Basics](../03-go-basics/)** — the syntax and fundamentals you learn after understanding Go's history
-- **[Setting Up Go](../01-what-is-go/)** — installing and configuring your Go environment
+- **Go Basics** — the syntax and fundamentals you learn after understanding Go's history
+- **Setting Up Go** — installing and configuring your Go environment
 
 ---
 

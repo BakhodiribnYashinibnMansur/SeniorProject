@@ -566,9 +566,9 @@ If you find yourself writing `for (int i = 0; i < internalArray.length; i++)` fr
 
 - [Visitor](../10-visitor/junior.md) — operations across a collection's elements
 - [Composite](../../02-structural/03-composite/junior.md) — tree-like structures often paired with Iterators
-- [Generators / Coroutines](../../../coding-principles/generators.md)
-- [Reactive streams](../../../infra/reactive.md) — Iterators with backpressure
-- [Pagination patterns](../../../infra/pagination.md)
+- Generators / Coroutines
+- Reactive streams — Iterators with backpressure
+- Pagination patterns
 
 ---
 

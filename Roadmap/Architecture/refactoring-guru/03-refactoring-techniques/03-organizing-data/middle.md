@@ -313,7 +313,7 @@ The new shape is exposed through new API; old shape stays. Migrate callers one a
 
 A class converts between old and new shapes. New code uses the new shape; the layer translates as needed for old callers.
 
-> See [Database Migration Patterns](../../../System Design/database-migration-patterns) for full migration strategies.
+> See Database Migration Patterns for full migration strategies.
 
 ---
 

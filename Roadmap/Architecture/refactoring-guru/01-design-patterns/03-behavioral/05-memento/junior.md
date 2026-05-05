@@ -590,8 +590,8 @@ If you're building anything with "go back to before," Memento is the formal name
 
 - [Command](../02-command/junior.md) — pairs with Memento for undo
 - [Prototype](../../01-creational/04-prototype/junior.md) — different intent, similar mechanics
-- [Snapshot in event sourcing](../../../coding-principles/event-sourcing.md)
-- [Database savepoints / transactions](../../../infra/transactions.md)
+- Snapshot in event sourcing
+- Database savepoints / transactions
 
 ---
 

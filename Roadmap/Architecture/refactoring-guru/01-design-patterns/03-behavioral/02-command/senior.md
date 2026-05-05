@@ -570,11 +570,11 @@ sequenceDiagram
 
 ## Related Topics
 
-- [CQRS](../../../coding-principles/cqrs.md)
-- [Event sourcing](../../../coding-principles/event-sourcing.md)
-- [Saga pattern](../../../coding-principles/saga.md)
-- [Outbox pattern](../../../coding-principles/outbox.md)
-- [Idempotency](../../../coding-principles/idempotency.md)
-- [Workflow engines](../../../infra/workflows.md)
+- CQRS
+- Event sourcing
+- Saga pattern
+- Outbox pattern
+- Idempotency
+- Workflow engines
 
 [← Middle](middle.md) · [Professional →](professional.md)

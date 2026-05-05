@@ -474,7 +474,7 @@ class HtmlStatement extends Statement {
 }
 ```
 
-The skeleton (`emit`) is common; the specific steps vary per subclass. This is the [Template Method pattern](../../01-design-patterns/03-behavioral/junior.md).
+The skeleton (`emit`) is common; the specific steps vary per subclass. This is the Template Method pattern.
 
 ---
 

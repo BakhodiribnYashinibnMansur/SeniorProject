@@ -564,10 +564,10 @@ graph LR
 
 ## Related Topics
 
-- [Workflow engines](../../../infra/workflows.md)
-- [Statecharts (XState)](../../../coding-principles/statecharts.md)
-- [Saga pattern](../../../coding-principles/saga.md)
-- [Event sourcing](../../../coding-principles/event-sourcing.md)
-- [Optimistic concurrency](../../../coding-principles/optimistic-locking.md)
+- Workflow engines
+- Statecharts (XState)
+- Saga pattern
+- Event sourcing
+- Optimistic concurrency
 
 [← Middle](middle.md) · [Professional →](professional.md)

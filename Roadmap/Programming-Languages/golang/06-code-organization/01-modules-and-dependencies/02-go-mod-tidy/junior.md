@@ -807,11 +807,11 @@ You cannot yet:
 
 - [6.1.1 `go mod init`](../01-go-mod-init/) — the prerequisite step
 - [6.1.3 `go mod vendor`](../03-go-mod-vendor/) — capture the tidy graph as a folder
-- [6.1.4 `replace` directives](../04-replace-directives/) — overriding what tidy sees
-- [6.1.5 Multi-module workspaces (`go work`)](../05-go-work/) — tidy across multiple modules
+- 6.1.4 `replace` directives — overriding what tidy sees
+- 6.1.5 Multi-module workspaces (`go work`) — tidy across multiple modules
 - [6.2.1 Package import rules](../../02-packages/01-package-import-rules/) — how imports become module references
 - [6.2.3 Publishing modules](../../02-packages/03-publishing-modules/) — making *your* module tidyable by others
-- [11.1.5 `go mod` subcommand reference](../../../11-go-toolchain-and-tools/) — every `go mod` flag
+- 11.1.5 `go mod` subcommand reference — every `go mod` flag
 
 ---
 

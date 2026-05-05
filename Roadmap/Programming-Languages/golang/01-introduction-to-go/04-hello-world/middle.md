@@ -1259,9 +1259,9 @@ flowchart LR
 
 ## Related Topics
 
-- **[Program Structure](../05-program-structure/)** — deeper dive into organizing Go applications
-- **[Error Handling](../../03-error-handling/)** — Go's error handling philosophy and patterns
-- **[Testing](../../04-testing/)** — how to test the patterns shown in this document
+- **Program Structure** — deeper dive into organizing Go applications
+- **[Error Handling](../../05-error-handling/)** — Go's error handling philosophy and patterns
+- **Testing** — how to test the patterns shown in this document
 
 ---
 

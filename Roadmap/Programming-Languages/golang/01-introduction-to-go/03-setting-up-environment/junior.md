@@ -843,8 +843,8 @@ flowchart LR
 
 ## Related Topics
 
-- **[Go Syntax Basics](../04-go-syntax-basics/)** — what to learn after your environment is ready
-- **[Go Modules](../../03-modules-and-packages/)** — deeper dive into dependency management
+- **Go Syntax Basics** — what to learn after your environment is ready
+- **Go Modules** — deeper dive into dependency management
 
 ---
 

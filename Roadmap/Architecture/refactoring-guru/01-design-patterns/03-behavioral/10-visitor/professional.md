@@ -639,11 +639,11 @@ No materialized AST. Pure event stream.
 
 ## Related Topics
 
-- [Sealed types](../../../coding-principles/sealed-types.md)
-- [Pattern matching](../../../coding-principles/pattern-matching.md)
-- [JIT internals](../../../performance/jit-internals.md)
-- [Persistent data structures](../../../coding-principles/persistent-data-structures.md)
-- [Cache locality](../../../performance/memory-layout.md)
-- [Compiler architecture](../../../coding-principles/compilers.md)
+- Sealed types
+- Pattern matching
+- JIT internals
+- Persistent data structures
+- Cache locality
+- Compiler architecture
 
 [← Senior](senior.md) · [Interview →](interview.md)

@@ -895,8 +895,8 @@ You cannot yet:
 - [6.1.1 `go mod init`](../../01-modules-and-dependencies/01-go-mod-init/) — creating the module before you publish it
 - [6.1.2 `go mod tidy`](../../01-modules-and-dependencies/02-go-mod-tidy/) — cleaning up dependencies before tagging
 - [6.2.1 Package Import Rules](../01-package-import-rules/) — how consumers will import your module
-- [6.2.2 Internal & Vendor Folders](../02-internal-and-vendor-folders/) — controlling visibility before publishing
-- [11.1.5 `go mod`](../../../11-go-toolchain-and-tools/) — the full module subcommand reference
+- 6.2.2 Internal & Vendor Folders — controlling visibility before publishing
+- 11.1.5 `go mod` — the full module subcommand reference
 
 ---
 

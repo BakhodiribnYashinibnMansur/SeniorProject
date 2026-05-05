@@ -1191,8 +1191,8 @@ If `GOPROXY=https://proxy.golang.org,direct` (default), Go falls back to `direct
 
 ## Related Topics
 
-- **[Go Modules Deep Dive](../../03-modules-and-packages/)** — advanced module management
-- **[Docker Best Practices](../../../DevOps/docker/)** — containerization patterns
+- **Go Modules Deep Dive** — advanced module management
+- **Docker Best Practices** — containerization patterns
 
 ---
 

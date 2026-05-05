@@ -673,8 +673,8 @@ Stack traces are how Go tells you *where* code was running when something intere
 
 - [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/index.md) — `%w` does *not* capture a stack
 - [07-panic-and-recover](../07-panic-and-recover/index.md) — panic is the most common source of a trace
-- [04-custom-error-types](../04-custom-error-types/index.md) — adding a stack field to an error
-- [03-error-vs-panic](../03-error-vs-panic/index.md) — when to escalate to panic so a trace gets printed
+- 04-custom-error-types — adding a stack field to an error
+- 03-error-vs-panic — when to escalate to panic so a trace gets printed
 
 ---
 

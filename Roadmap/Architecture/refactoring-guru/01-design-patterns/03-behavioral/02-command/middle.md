@@ -552,9 +552,9 @@ The win is treating actions as first-class data. The cost is class explosion if 
 
 - [Memento](../05-memento/middle.md) — for snapshot-based undo
 - [Strategy](../08-strategy/middle.md) — algorithm variation
-- [Saga pattern](../../../coding-principles/saga.md) — distributed transactions
-- [CQRS](../../../coding-principles/cqrs.md)
-- [Event sourcing](../../../coding-principles/event-sourcing.md)
+- Saga pattern — distributed transactions
+- CQRS
+- Event sourcing
 
 ---
 

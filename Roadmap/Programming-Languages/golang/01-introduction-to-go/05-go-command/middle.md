@@ -1030,8 +1030,8 @@ flowchart LR
 
 ## Related Topics
 
-- **[Testing & Benchmarks](../06-testing/)** — deep dive into `go test` flags and patterns
-- **[Go Modules](../07-modules/)** — versioning, proxies, and private modules
+- **Testing & Benchmarks** — deep dive into `go test` flags and patterns
+- **Go Modules** — versioning, proxies, and private modules
 
 ---
 

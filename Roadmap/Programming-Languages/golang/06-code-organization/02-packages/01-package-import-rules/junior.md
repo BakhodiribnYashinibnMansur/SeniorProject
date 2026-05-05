@@ -1021,10 +1021,10 @@ You cannot yet:
 
 - [6.1.1 `go mod init`](../../01-modules-and-dependencies/01-go-mod-init/) — creates the module that gives import paths their first segment
 - [6.1.2 `go mod tidy`](../../01-modules-and-dependencies/02-go-mod-tidy/) — what fills in `go.mod` once your imports are in place
-- [6.2.2 Package Naming Conventions](../02-package-naming-conventions/) — choosing names that match paths
+- 6.2.2 Package Naming Conventions — choosing names that match paths
 - [6.2.3 Publishing Modules](../03-publishing-modules/) — how your module's import paths look to the world
-- [6.2.4 Internal Packages](../04-internal-packages/) — the `internal/` rule in depth
-- [11.1 Go Toolchain](../../../11-go-toolchain-and-tools/) — `go list`, `go vet`, and friends that operate on imports
+- 6.2.4 Internal Packages — the `internal/` rule in depth
+- 11.1 Go Toolchain — `go list`, `go vet`, and friends that operate on imports
 
 ---
 

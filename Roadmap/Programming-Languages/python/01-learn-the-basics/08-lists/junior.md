@@ -1048,9 +1048,9 @@ flowchart LR
 ## Related Topics
 
 - **[Tuples](../09-tuples/)** — immutable version of lists
-- **[Dictionaries](../10-dictionaries/)** — key-value mapping data structure
-- **[Sets](../11-sets/)** — unordered collection of unique elements
-- **[List Comprehensions](../../02-advanced-language-features/01-list-comprehensions/)** — advanced list creation patterns
+- **[Dictionaries](../11-dictionaries/)** — key-value mapping data structure
+- **[Sets](../10-sets/)** — unordered collection of unique elements
+- **List Comprehensions** — advanced list creation patterns
 
 ---
 

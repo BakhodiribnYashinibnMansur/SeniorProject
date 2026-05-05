@@ -1095,8 +1095,8 @@ The second option is strongly preferred for production deployments.
 
 ## Related Topics
 
-- **[Testing & Benchmarks](../06-testing/)** — advanced `go test` flags and profiling
-- **[Go Modules](../07-modules/)** — private modules, proxies, and dependency security
+- **Testing & Benchmarks** — advanced `go test` flags and profiling
+- **Go Modules** — private modules, proxies, and dependency security
 
 ---
 

@@ -390,8 +390,8 @@ sequenceDiagram
 
 - [Template Method](../09-template-method/professional.md) — performance trade-offs vs Strategy
 - [Visitor](../10-visitor/professional.md) — double dispatch costs
-- [Polymorphism vs branching](../../../performance/polymorphism-cost.md)
-- [JIT & inline caching](../../../performance/jit-internals.md)
-- [Async patterns](../../../coding-principles/async-patterns.md)
+- Polymorphism vs branching
+- JIT & inline caching
+- Async patterns
 
 [← Senior](senior.md) · [Interview →](interview.md)

@@ -1183,10 +1183,10 @@ flowchart LR
 
 ## Related Topics
 
-- **[Inheritance & Polymorphism](../../02-oop/)** — sealed classes build on these concepts
-- **[Generics](../../02-oop/)** — type-safe containers use generics extensively
-- **[Concurrency](../../03-concurrency/)** — immutable objects are thread-safe by design
-- **[JVM Internals](../../04-jvm/)** — object header, GC, class loading
+- **Inheritance & Polymorphism** — sealed classes build on these concepts
+- **Generics** — type-safe containers use generics extensively
+- **Concurrency** — immutable objects are thread-safe by design
+- **JVM Internals** — object header, GC, class loading
 
 ---
 

@@ -1540,9 +1540,9 @@ Verify with: `go test -bench=. -benchmem` — look for `0 allocs/op`.
 
 ## Related Topics
 
-- **[Concurrency Patterns](../../03-concurrency/)** — advanced goroutine and channel patterns
-- **[Performance Optimization](../../05-performance/)** — pprof, benchmarks, escape analysis
-- **[Error Handling](../../02-go-fundamentals/04-error-handling/)** — production error strategies
+- **Concurrency Patterns** — advanced goroutine and channel patterns
+- **Performance Optimization** — pprof, benchmarks, escape analysis
+- **Error Handling** — production error strategies
 
 ---
 

@@ -466,10 +466,10 @@ graph LR
 
 ## Related Topics
 
-- [Reactive streams spec](../../../infra/reactive.md)
-- [Disruptor architecture](../../../infra/disruptor.md)
-- [Kafka consumer tuning](../../../infra/kafka.md)
-- [Backpressure patterns](../../../coding-principles/backpressure.md)
-- [Memory model — happens-before](../../../performance/jmm.md)
+- Reactive streams spec
+- Disruptor architecture
+- Kafka consumer tuning
+- Backpressure patterns
+- Memory model — happens-before
 
 [← Senior](senior.md) · [Interview →](interview.md)

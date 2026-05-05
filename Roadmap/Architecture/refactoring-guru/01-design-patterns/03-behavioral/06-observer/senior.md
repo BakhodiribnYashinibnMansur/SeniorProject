@@ -497,10 +497,10 @@ sequenceDiagram
 ## Related Topics
 
 - [Mediator](../04-mediator/senior.md) — many-to-many
-- [Pub/Sub](../../../infra/pubsub.md)
-- [Reactive streams](../../../infra/reactive.md)
-- [Event sourcing](../../../coding-principles/event-sourcing.md)
-- [Outbox pattern](../../../coding-principles/outbox.md)
-- [CDC](../../../infra/cdc.md)
+- Pub/Sub
+- Reactive streams
+- Event sourcing
+- Outbox pattern
+- CDC
 
 [← Middle](middle.md) · [Professional →](professional.md)

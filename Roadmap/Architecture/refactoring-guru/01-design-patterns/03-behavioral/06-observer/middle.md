@@ -549,9 +549,9 @@ The wins are decoupling and extensibility. The pitfalls are leaks, cascades, and
 
 - [Mediator](../04-mediator/middle.md) — for many-to-many
 - [Chain of Responsibility](../01-chain-of-responsibility/middle.md) — for first-handler-wins
-- [Pub/Sub](../../../infra/pubsub.md) — Observer at network scale
-- [Reactive streams](../../../infra/reactive.md) — Observer with backpressure
-- [Event sourcing](../../../coding-principles/event-sourcing.md) — events as state
+- Pub/Sub — Observer at network scale
+- Reactive streams — Observer with backpressure
+- Event sourcing — events as state
 
 ---
 

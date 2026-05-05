@@ -728,7 +728,7 @@ A *sentinel error* is a package-level error variable used as a named marker. Dec
 
 - [01-error-handling-basics](../01-error-handling-basics/index.md) — the foundation
 - [02-error-interface](../02-error-interface/index.md) — what an error is
-- [03-creating-custom-errors](../03-creating-custom-errors/index.md) — typed errors as the alternative
+- 03-creating-custom-errors — typed errors as the alternative
 - [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/index.md) — `%w`, `errors.Is`, `errors.As`
 - [07-panic-and-recover](../07-panic-and-recover/index.md) — the other failure mechanism
 

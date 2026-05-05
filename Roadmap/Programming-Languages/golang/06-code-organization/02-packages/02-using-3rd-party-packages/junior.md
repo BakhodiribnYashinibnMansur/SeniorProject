@@ -905,7 +905,7 @@ You cannot yet:
 - [6.1.3 `go mod vendor`](../../01-modules-and-dependencies/03-go-mod-vendor/) — when you want dependency source committed
 - [6.2.1 Package Import Rules](../01-package-import-rules/) — how Go resolves imports
 - [6.2.3 Publishing Modules](../03-publishing-modules/) — be the third-party for someone else
-- [11.1.5 `go mod`](../../../11-go-toolchain-and-tools/) — full toolchain reference
+- 11.1.5 `go mod` — full toolchain reference
 
 ---
 

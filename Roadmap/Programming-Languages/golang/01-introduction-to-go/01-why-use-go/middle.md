@@ -1488,9 +1488,9 @@ flowchart LR
 
 ## Related Topics
 
-- **[Go Basics](../02-go-basics/)** — syntax, types, control flow
-- **[Concurrency](../../03-concurrency/)** — goroutines, channels, patterns in depth
-- **[Error Handling](../../02-go-fundamentals/04-error-handling/)** — Go's error philosophy
+- **Go Basics** — syntax, types, control flow
+- **Concurrency** — goroutines, channels, patterns in depth
+- **Error Handling** — Go's error philosophy
 
 ---
 
