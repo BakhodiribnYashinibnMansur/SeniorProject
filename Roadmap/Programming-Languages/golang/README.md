@@ -84,6 +84,12 @@
   - 3.4.2 Embedding Interfaces
   - 3.4.3 Type Assertions
   - 3.4.4 Type Switch
+- 3.5 Method Sets Deep
+- 3.6 Interface Internals (`iface`, `eface`, `itab`)
+- 3.7 Method Dispatch
+- 3.8 Common Interfaces (`io.Reader`, `fmt.Stringer`, `error`)
+- 3.9 Interface Best Practices
+- 3.10 Interface Anti-Patterns
 
 ## 4. Generics
 - 4.1 Why Generics?
@@ -91,6 +97,11 @@
 - 4.3 Generic Types / Interfaces
 - 4.4 Type Constraints
 - 4.5 Type Inference
+- 4.6 Generic Constraints Deep
+- 4.7 Generic Performance (monomorphization vs dictionary)
+- 4.8 Generics vs Interfaces
+- 4.9 Generic Data Structures
+- 4.10 Generic Limitations
 
 ## 5. Error Handling
 - 5.1 Error Handling Basics
@@ -101,6 +112,11 @@
 - 5.6 Sentinel Errors
 - 5.7 `panic` and `recover`
 - 5.8 Stack Traces & Debugging
+- 5.9 `errors.Is` vs `errors.As` Deep
+- 5.10 Custom Error Types
+- 5.11 `errors.Join` (Go 1.20+)
+- 5.12 Error Design Best Practices
+- 5.13 Don't Just Check, Handle
 
 ## 6. Code Organization
 
@@ -113,6 +129,14 @@
 - 6.2.1 Package Import Rules
 - 6.2.2 Using 3rd Party Packages
 - 6.2.3 Publishing Modules
+
+### 6.3 Project Layout
+### 6.4 Internal Packages
+### 6.5 Workspaces (`go.work`)
+### 6.6 Dependency Injection (Wire, fx, manual)
+### 6.7 Architecture Patterns (Clean, Hexagonal, DDD)
+### 6.8 Module Versioning (semver, v2+)
+### 6.9 Private Modules (GOPRIVATE)
 
 ## 7. Concurrency
 
@@ -320,6 +344,14 @@
 - 8.7 `slog`
 - 8.8 `regexp`
 - 8.9 `go:embed` for embedding
+- 8.10 `net` (TCP/UDP)
+- 8.11 `net/http` Internals
+- 8.12 `encoding/*` (binary, csv, xml, gob)
+- 8.13 `crypto/*` (tls, hmac, aes, rsa)
+- 8.14 `io`, `io/fs`
+- 8.15 `text/template`, `html/template`
+- 8.16 `sort`, `slices`, `maps` (Go 1.21+)
+- 8.17 `container/*` (heap, list, ring)
 
 ## 9. Testing & Benchmarking
 - 9.1 `testing` package basics
@@ -328,6 +360,17 @@
 - 9.4 `httptest` for HTTP Tests
 - 9.5 Benchmarks
 - 9.6 Coverage
+- 9.7 Subtests (`t.Run`)
+- 9.8 `TestMain`
+- 9.9 Parallel Tests (`t.Parallel`)
+- 9.10 Test Helpers (`t.Helper`)
+- 9.11 Golden Files
+- 9.12 Fuzzing (Go 1.18+)
+- 9.13 Integration Tests (testcontainers-go)
+- 9.14 E2E Tests
+- 9.15 Mocking Libraries (testify, gomock, mockery)
+- 9.16 Property-Based Testing
+- 9.17 Benchmark Deep (`b.RunParallel`, allocs)
 
 ## 10. Ecosystem & Popular Libraries
 
@@ -356,6 +399,18 @@
 ### 10.5 Realtime Communication
 - 10.5.1 Melody
 - 10.5.2 Centrifugo
+
+### 10.6 Configuration (viper, koanf)
+### 10.7 Validation (go-playground/validator)
+### 10.8 HTTP Client (resty, retryablehttp)
+### 10.9 Migrations (golang-migrate, goose)
+### 10.10 Caching (bigcache, freecache, ristretto)
+### 10.11 Background Jobs (asynq, machinery)
+### 10.12 Message Queues (Sarama, NATS, RabbitMQ)
+### 10.13 Observability (OpenTelemetry, Prometheus)
+### 10.14 Cloud SDKs (AWS, GCP, Azure)
+### 10.15 GraphQL (gqlgen)
+### 10.16 Workflow Engines (Temporal, Cadence)
 
 ## 11. Go Toolchain and Tools
 
@@ -394,6 +449,12 @@
 - 11.6.1 Cross-compilation
 - 11.6.2 Building Executables
 
+### 11.7 `go work` (Workspaces)
+### 11.8 Debugging with Delve (`dlv`)
+### 11.9 `go tool` Suite (objdump, compile, link, nm)
+### 11.10 Live Reload (air, reflex)
+### 11.11 Build Tools (mage, task)
+
 ## 12. Advanced Topics
 - 12.1 Memory Mgmt. in Depth
 - 12.2 Escape Analysis
@@ -403,3 +464,126 @@
 - 12.6 CGO Basics
 - 12.7 Compiler & Linker Flags
 - 12.8 Plugins & Dynamic Loading
+- 12.9 Assembly (Plan9 syntax)
+- 12.10 `linkname` Directive
+- 12.11 PGO (Profile-Guided Optimization, Go 1.21+)
+- 12.12 Runtime Hooks (`runtime/trace`, finalizers)
+- 12.13 `plugin` Package
+
+## 13. Performance Engineering
+- 13.1 CPU Profiling
+- 13.2 Memory Profiling
+- 13.3 Mutex / Block Profiling
+- 13.4 Benchmarking Strategy
+- 13.5 Optimization Workflow
+- 13.6 pprof Deep
+- 13.7 trace Tool
+
+## 14. Production & Operations
+- 14.1 Graceful Shutdown
+- 14.2 Health Checks
+- 14.3 Readiness / Liveness
+- 14.4 Configuration Management
+- 14.5 Secrets Management
+- 14.6 Feature Flags
+- 14.7 Deployment Strategies
+
+## 15. Observability
+- 15.1 `slog` Deep
+- 15.2 Prometheus Metrics
+- 15.3 OpenTelemetry
+- 15.4 Distributed Tracing
+- 15.5 Correlation IDs
+- 15.6 Structured Logging
+- 15.7 Error Tracking
+
+## 16. Security in Go
+- 16.1 TLS Config
+- 16.2 JWT
+- 16.3 OAuth
+- 16.4 Secure Headers
+- 16.5 OWASP Go
+- 16.6 govulncheck Deep
+- 16.7 Input Validation
+- 16.8 Crypto Best Practices
+
+## 17. Design Patterns in Go
+- 17.1 Functional Options
+- 17.2 Builder Pattern
+- 17.3 Strategy Pattern
+- 17.4 Decorator Pattern
+- 17.5 Adapter Pattern
+- 17.6 Factory Pattern
+- 17.7 Observer Pattern
+- 17.8 Singleton Pattern
+- 17.9 Iterator Pattern
+
+## 18. Architecture Patterns
+- 18.1 Clean Architecture
+- 18.2 Hexagonal Architecture
+- 18.3 Domain-Driven Design (DDD)
+- 18.4 CQRS
+- 18.5 Event Sourcing
+- 18.6 Onion Architecture
+
+## 19. Microservices
+- 19.1 Service Discovery
+- 19.2 Circuit Breaker
+- 19.3 Retries & Backoff
+- 19.4 Bulkheads
+- 19.5 Saga Pattern
+- 19.6 API Gateway
+- 19.7 Service Mesh Basics
+
+## 20. Database Patterns
+- 20.1 Connection Pool Tuning
+- 20.2 Transactions
+- 20.3 Prepared Statements
+- 20.4 sqlc
+- 20.5 sqlx
+- 20.6 GORM Deep
+- 20.7 pgx Deep
+- 20.8 Database Migrations
+
+## 21. API Design
+- 21.1 REST Design
+- 21.2 gRPC Deep
+- 21.3 GraphQL Design
+- 21.4 OpenAPI / Swagger
+- 21.5 Versioning
+- 21.6 Pagination
+- 21.7 Rate Limiting
+- 21.8 Error Responses
+
+## 22. Distributed Systems
+- 22.1 Raft Consensus
+- 22.2 Distributed Locks
+- 22.3 Leader Election
+- 22.4 Eventual Consistency
+- 22.5 Distributed Transactions
+- 22.6 Clock & Time
+- 22.7 Gossip Protocols
+
+## 23. Cloud-Native Go
+- 23.1 Kubernetes Operators
+- 23.2 controller-runtime
+- 23.3 Custom Resources (CRD)
+- 23.4 Helm Charts
+- 23.5 Service Mesh
+- 23.6 Serverless Go
+
+## 24. Runtime & Internals
+- 24.1 Runtime Source Dive
+- 24.2 Scheduler Source
+- 24.3 GC Source
+- 24.4 Memory Allocator
+- 24.5 `runtime` Package Deep
+- 24.6 Go Runtime Architecture
+
+## 25. Go Source Reading
+- 25.1 `net/http` Source
+- 25.2 `sync` Source
+- 25.3 `runtime` Source
+- 25.4 `context` Source
+- 25.5 `database/sql` Source
+- 25.6 `encoding/json` Source
