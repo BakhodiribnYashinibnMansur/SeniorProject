@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><title>Selection Sort — Visual Animation</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;
+--green:#3fb950;--yellow:#d29922;--red:#f85149;--blue:#58a6ff;--purple:#bc8cff;--orange:#ffa657}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);
+min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+h1{font-size:2rem;color:var(--blue);margin-bottom:6px;text-align:center}
+.subtitle{color:var(--muted);margin-bottom:18px;text-align:center}
+.badges{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;justify-content:center}
+.badge{padding:4px 10px;border-radius:12px;font-size:.8rem;font-weight:600;
+border:1px solid var(--border);background:var(--surface)}
+.badge.best{color:var(--green);border-color:var(--green)}
+.badge.worst{color:var(--red);border-color:var(--red)}
+.badge.space{color:var(--blue);border-color:var(--blue)}
+.badge.writes{color:var(--purple);border-color:var(--purple)}
+.controls,.input-control{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;justify-content:center}
+button{padding:8px 18px;border:2px solid var(--blue);background:transparent;
+color:var(--blue);border-radius:6px;cursor:pointer;font-size:.95rem;transition:all .2s}
+button:hover:not(:disabled){background:var(--blue);color:var(--bg)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.secondary{border-color:var(--border);color:var(--muted)}
+button.secondary:hover{background:var(--border);color:var(--text)}
+input[type=text]{padding:8px 14px;border:2px solid var(--border);background:var(--surface);
+color:var(--text);border-radius:6px;font-size:.95rem;width:300px}
+input[type=text]:focus{outline:none;border-color:var(--blue)}
+input[type=range]{width:160px;accent-color:var(--blue)}
+.canvas-container{background:var(--surface);border:2px solid var(--border);border-radius:12px;
+padding:30px 24px 38px;margin-bottom:16px;width:100%;max-width:1000px;min-height:140px;
+display:flex;justify-content:center;align-items:flex-end;gap:6px;flex-wrap:nowrap;overflow-x:auto}
+.cell{min-width:46px;height:54px;display:flex;flex-direction:column;align-items:center;
+justify-content:center;background:var(--bg);border:2px solid var(--blue);border-radius:6px;
+font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:600;font-size:1rem;
+transition:all .25s;position:relative}
+.cell.compare{background:var(--red);color:var(--bg);border-color:var(--red);transform:translateY(-6px)}
+.cell.minmark{background:var(--purple);color:var(--bg);border-color:var(--purple);transform:translateY(-10px)}
+.cell.current{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange) inset}
+.cell.swap{background:var(--yellow);color:var(--bg);border-color:var(--yellow);transform:translateY(-4px)}
+.cell.sorted{background:var(--green);color:var(--bg);border-color:var(--green)}
+.cell .idx{font-size:.7rem;color:var(--muted);position:absolute;bottom:-20px;font-weight:400}
+.cell.compare .idx,.cell.minmark .idx,.cell.swap .idx,.cell.sorted .idx{color:var(--muted)}
+.cell .ptr{position:absolute;top:-24px;font-size:.72rem;color:var(--muted);font-weight:700;white-space:nowrap}
+.cell .ptr.i{color:var(--orange)}
+.cell .ptr.j{color:var(--red)}
+.cell .ptr.m{color:var(--purple)}
+.info-panel{background:var(--surface);border:2px solid var(--border);border-radius:12px;
+padding:16px 20px;width:100%;max-width:1000px;margin-bottom:16px}
+.info-panel h3{color:var(--blue);margin-bottom:8px;font-size:1rem}
+.step-info{font-family:'JetBrains Mono',monospace;font-size:.92rem;line-height:1.6;color:var(--text)}
+.step-info .highlight{color:var(--yellow);font-weight:600}
+.step-info code{background:var(--bg);padding:2px 6px;border-radius:4px;color:var(--blue)}
+.stats{background:var(--surface);border:2px solid var(--border);border-radius:12px;
+padding:12px 20px;display:flex;gap:30px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+.stat-block{text-align:center}
+.stat-label{color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px}
+.stat-value{color:var(--blue);font-size:1.2rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+.legend{display:flex;gap:18px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+.legend-color{width:14px;height:14px;border-radius:3px;border:1px solid var(--border)}
+.speed-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.speed-row span{color:var(--muted);font-size:.8rem}
+</style></head><body>
+<h1>Selection Sort</h1>
+<p class="subtitle">Find the minimum in the unsorted suffix; swap it to the front. Repeat n-1 times.</p>
+<div class="badges">
+<span class="badge best">Best: O(n²)</span>
+<span class="badge worst">Worst: O(n²)</span>
+<span class="badge space">Space: O(1)</span>
+<span class="badge writes">Writes: n-1</span>
+<span class="badge worst">Not Stable</span>
+</div>
+<div class="input-control">
+<input type="text" id="customInput" placeholder="Enter numbers: 64,25,12,22,11,90">
+<button onclick="loadInput()">Load</button>
+<button onclick="genRandom()" class="secondary">Random</button>
+</div>
+<div class="controls">
+<button id="startBtn" onclick="start()">▶ Start</button>
+<button id="stepBtn" onclick="stepFwd()">▷ Step</button>
+<button id="pauseBtn" onclick="pause()" disabled>❚❚ Pause</button>
+<button id="resetBtn" onclick="reset()" class="secondary">↺ Reset</button>
+</div>
+<div class="speed-row">
+<span>slow</span>
+<input type="range" id="speedSlider" min="1" max="10" value="6">
+<span>fast</span>
+</div>
+<div class="legend">
+<div class="legend-item"><div class="legend-color" style="background:var(--blue)"></div>Default</div>
+<div class="legend-item"><div class="legend-color" style="background:var(--red)"></div>Comparing (j)</div>
+<div class="legend-item"><div class="legend-color" style="background:var(--purple)"></div>Current min</div>
+<div class="legend-item"><div class="legend-color" style="background:var(--yellow)"></div>Swap</div>
+<div class="legend-item"><div class="legend-color" style="background:var(--green)"></div>Sorted prefix</div>
+</div>
+<div class="stats">
+<div class="stat-block"><div class="stat-label">Pass</div><div class="stat-value" id="pass">0</div></div>
+<div class="stat-block"><div class="stat-label">Step</div><div class="stat-value"><span id="curStep">0</span>/<span id="totSteps">0</span></div></div>
+<div class="stat-block"><div class="stat-label">Comparisons</div><div class="stat-value" id="comps">0</div></div>
+<div class="stat-block"><div class="stat-label">Swaps</div><div class="stat-value" id="swaps">0</div></div>
+</div>
+<div class="canvas-container" id="canvas"></div>
+<div class="info-panel">
+<h3>Algorithm Trace</h3>
+<div class="step-info" id="info">Press <span class="highlight">Start</span> to run. Selection Sort finds the minimum element in the unsorted region and swaps it to the boundary on each pass.</div>
+</div>
+<script>
+let array=[64,25,12,22,11,90],steps=[],idx=0,running=false,timer=null;
+
+function genSteps(arr){
+  const out=[]; const a=[...arr]; let comps=0,swaps=0;
+  const n=a.length;
+  const sorted=new Set();
+  out.push({array:[...a],phase:'init',i:-1,j:-1,m:-1,sortedSet:new Set(sorted),pass:0,
+    desc:`Initial array: <code>[${a.join(', ')}]</code>. We will perform <b>${n-1} passes</b>.`,comps,swaps});
+  for(let i=0;i<n-1;i++){
+    let minIdx=i;
+    out.push({array:[...a],phase:'pass-start',i,j:-1,m:minIdx,sortedSet:new Set(sorted),pass:i+1,
+      desc:`<b>Pass ${i+1}</b> — find the minimum in <code>arr[${i}..${n-1}]</code>. Start with min = arr[${i}] = <span class="highlight">${a[i]}</span>.`,comps,swaps});
+    for(let j=i+1;j<n;j++){
+      comps++;
+      out.push({array:[...a],phase:'compare',i,j,m:minIdx,sortedSet:new Set(sorted),pass:i+1,
+        desc:`Compare <code>arr[${j}]=${a[j]}</code> with current min <code>arr[${minIdx}]=${a[minIdx]}</code>.`,comps,swaps});
+      if(a[j]<a[minIdx]){
+        minIdx=j;
+        out.push({array:[...a],phase:'newmin',i,j,m:minIdx,sortedSet:new Set(sorted),pass:i+1,
+          desc:`<span class="highlight">${a[j]} &lt; ${a[minIdx===j?j:minIdx]}</span> — new minimum at index ${j}.`,comps,swaps});
+      }
+    }
+    if(minIdx!==i){
+      out.push({array:[...a],phase:'swap-prep',i,j:-1,m:minIdx,sortedSet:new Set(sorted),pass:i+1,
+        desc:`Minimum of pass ${i+1} is <code>arr[${minIdx}]=${a[minIdx]}</code>. Swap with <code>arr[${i}]=${a[i]}</code>.`,comps,swaps});
+      [a[i],a[minIdx]]=[a[minIdx],a[i]];
+      swaps++;
+      out.push({array:[...a],phase:'swap',i,j:-1,m:minIdx,sortedSet:new Set(sorted),pass:i+1,
+        desc:`Swapped. <code>arr[${i}]</code> is now <span class="highlight">${a[i]}</span> (in its final position).`,comps,swaps});
+    } else {
+      out.push({array:[...a],phase:'no-swap',i,j:-1,m:i,sortedSet:new Set(sorted),pass:i+1,
+        desc:`Minimum is already at index ${i}. <span class="highlight">No swap needed</span> (saves a write — important for flash/EEPROM).`,comps,swaps});
+    }
+    sorted.add(i);
+    out.push({array:[...a],phase:'placed',i,j:-1,m:-1,sortedSet:new Set(sorted),pass:i+1,
+      desc:`Index ${i} is locked into the sorted prefix. Continuing with <code>arr[${i+1}..${n-1}]</code>.`,comps,swaps});
+  }
+  sorted.add(n-1);
+  out.push({array:[...a],phase:'done',i:-1,j:-1,m:-1,sortedSet:new Set(sorted),pass:n-1,
+    desc:`✓ <b>Sorted</b>: <code>[${a.join(', ')}]</code>. Total comparisons: <span class="highlight">${comps}</span>, swaps: <span class="highlight">${swaps}</span> (≤ n-1 = ${n-1}).`,comps,swaps});
+  return out;
+}
+
+function render(s){
+  const c=document.getElementById('canvas');
+  c.innerHTML=s.array.map((v,k)=>{
+    let cls='';
+    let ptrs='';
+    if(s.sortedSet&&s.sortedSet.has(k)) cls='sorted';
+    else if(s.phase==='done') cls='sorted';
+    if(s.phase==='swap'&&(k===s.i||k===s.m)) cls='swap';
+    else if(s.phase==='compare'&&k===s.j) cls='compare';
+    else if(k===s.m&&s.m>=0&&!cls) cls='minmark';
+    if(k===s.i&&s.i>=0&&!cls) cls='current';
+    // pointer labels above the cell
+    const labels=[];
+    if(k===s.i&&s.i>=0) labels.push('<span class="ptr i">i</span>');
+    if(k===s.j&&s.j>=0) labels.push('<span class="ptr j">j</span>');
+    if(k===s.m&&s.m>=0&&s.m!==s.i) labels.push('<span class="ptr m">min</span>');
+    if(labels.length) ptrs=`<span class="ptr">${labels.join(' ')}</span>`;
+    return `<div class="cell ${cls}">${ptrs}${v}<span class="idx">${k}</span></div>`;
+  }).join('');
+  document.getElementById('curStep').textContent=idx;
+  document.getElementById('pass').textContent=s.pass||0;
+  document.getElementById('comps').textContent=s.comps;
+  document.getElementById('swaps').textContent=s.swaps;
+  document.getElementById('info').innerHTML=s.desc;
+}
+
+function delay(){return 1100-parseInt(document.getElementById('speedSlider').value)*100}
+
+function start(){
+  if(steps.length===0){
+    steps=genSteps(array);
+    document.getElementById('totSteps').textContent=steps.length;
+  }
+  running=true;
+  document.getElementById('startBtn').disabled=true;
+  document.getElementById('pauseBtn').disabled=false;
+  tick();
+}
+
+function tick(){
+  if(!running||idx>=steps.length){pause();return}
+  render(steps[idx]); idx++;
+  timer=setTimeout(tick,delay());
+}
+
+function stepFwd(){
+  if(steps.length===0){
+    steps=genSteps(array);
+    document.getElementById('totSteps').textContent=steps.length;
+  }
+  if(idx<steps.length){render(steps[idx]); idx++}
+}
+
+function pause(){
+  running=false; clearTimeout(timer);
+  document.getElementById('startBtn').disabled=false;
+  document.getElementById('pauseBtn').disabled=true;
+}
+
+function reset(){
+  pause(); steps=[]; idx=0;
+  ['curStep','totSteps','pass','comps','swaps'].forEach(id=>document.getElementById(id).textContent='0');
+  document.getElementById('info').innerHTML='Press <span class="highlight">Start</span> to run. Selection Sort finds the minimum element in the unsorted region and swaps it to the boundary on each pass.';
+  renderInit();
+}
+
+function loadInput(){
+  const raw=document.getElementById('customInput').value;
+  const nums=raw.split(/[, ]+/).map(s=>parseInt(s.trim())).filter(n=>!isNaN(n));
+  if(nums.length>0&&nums.length<=20){array=nums;reset()}
+}
+
+function genRandom(){
+  const size=7+Math.floor(Math.random()*4);
+  array=Array.from({length:size},()=>Math.floor(Math.random()*90)+10);
+  document.getElementById('customInput').value=array.join(', ');
+  reset();
+}
+
+function renderInit(){
+  document.getElementById('canvas').innerHTML=array.map((v,i)=>
+    `<div class="cell">${v}<span class="idx">${i}</span></div>`).join('');
+}
+
+document.getElementById('customInput').value=array.join(', ');
+renderInit();
+</script>
+</body></html>
