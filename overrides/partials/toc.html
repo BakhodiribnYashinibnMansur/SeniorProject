@@ -1,0 +1,57 @@
+{#-
+  Sibling-page navigation panel + Material's standard table of contents.
+
+  The TOC block at the bottom of this file is copied verbatim from
+  mkdocs-material's upstream ``partials/toc.html`` (see the package source
+  shipped with the version pinned in requirements-docs.txt). If the upstream
+  partial changes during a Material upgrade, re-sync the TOC block; the
+  sibling_nav block above it is independent.
+-#}
+{%- set sibling_nav = page.meta.get("sibling_nav") if page else none -%}
+{%- if sibling_nav -%}
+  <nav class="sibling-nav" aria-label="Related pages">
+    {%- for group_name, items in [("Levels", sibling_nav.levels), ("Modes", sibling_nav.modes)] -%}
+      {%- if items -%}
+        <section class="sibling-nav__group">
+          <h3 class="sibling-nav__title">{{ group_name }}</h3>
+          <ul class="sibling-nav__list">
+            {%- for item in items -%}
+              <li class="sibling-nav__item">
+                {%- if item.current -%}
+                  <span class="sibling-nav__link sibling-nav__link--current">{{ item.name }}</span>
+                {%- else -%}
+                  <a class="sibling-nav__link" href="{{ item.url | url }}">{{ item.name }}</a>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </section>
+      {%- endif -%}
+    {%- endfor -%}
+  </nav>
+{%- endif -%}
+
+{# --- Begin verbatim copy of mkdocs-material partials/toc.html --- #}
+{% set title = lang.t("toc") %}
+{% if config.mdx_configs.toc and config.mdx_configs.toc.title %}
+  {% set title = config.mdx_configs.toc.title %}
+{% endif %}
+<nav class="md-nav md-nav--secondary" aria-label="{{ title | e }}">
+  {% set toc = page.toc %}
+  {% set first = toc | first %}
+  {% if first and first.level == 1 %}
+    {% set toc = first.children %}
+  {% endif %}
+  {% if toc %}
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      {{ title }}
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      {% for toc_item in toc %}
+        {% include "partials/toc-item.html" %}
+      {% endfor %}
+    </ul>
+  {% endif %}
+</nav>
+{# --- End verbatim copy of mkdocs-material partials/toc.html --- #}
