@@ -1,0 +1,28 @@
+{% if page.meta.comments %}
+  <h2 id="__comments">Comments</h2>
+  <div id="giscus-container"></div>
+  <script>
+    document$.subscribe(function() {
+      var container = document.getElementById("giscus-container");
+      if (!container) return;
+      container.innerHTML = "";
+      var s = document.createElement("script");
+      s.src = "https://giscus.app/client.js";
+      s.async = true;
+      s.crossOrigin = "anonymous";
+      s.setAttribute("data-repo", "BakhodiribnYashinibnMansur/SeniorProject");
+      s.setAttribute("data-repo-id", "<FROM_GISCUS_APP>");
+      s.setAttribute("data-category", "Comments");
+      s.setAttribute("data-category-id", "<FROM_GISCUS_APP>");
+      s.setAttribute("data-mapping", "pathname");
+      s.setAttribute("data-strict", "0");
+      s.setAttribute("data-reactions-enabled", "1");
+      s.setAttribute("data-emit-metadata", "0");
+      s.setAttribute("data-input-position", "bottom");
+      s.setAttribute("data-theme", "transparent_dark");
+      s.setAttribute("data-lang", "en");
+      s.setAttribute("data-loading", "lazy");
+      container.appendChild(s);
+    });
+  </script>
+{% endif %}
