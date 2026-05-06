@@ -292,6 +292,59 @@ body,
 /* Hide light-mode toggle since we're always dark */
 [data-md-component="palette"] { display: none; }
 
+/* ================================================================
+   "Report this page" footer block — injected by extra.js
+   ================================================================ */
+.sp-report {
+  margin-top: 3rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  color: var(--md-default-fg-color--lighter);
+}
+.sp-report-rule {
+  border: none;
+  border-top: 1px dashed var(--md-default-fg-color--lightest);
+  margin: 0 0 1rem;
+}
+.sp-report-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 0.55rem;
+  padding: 0.55rem 0.85rem;
+  background: rgba(57, 255, 122, 0.02);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 2px;
+}
+.sp-report-prompt {
+  color: var(--md-primary-fg-color);
+  font-weight: 500;
+}
+.sp-report-text {
+  color: var(--md-default-fg-color--light);
+}
+.sp-report-link {
+  color: var(--md-default-fg-color) !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid transparent !important;
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+.sp-report-link:hover {
+  color: var(--md-primary-fg-color) !important;
+  border-bottom-color: var(--md-primary-fg-color) !important;
+  text-shadow: 0 0 6px rgba(57, 255, 122, 0.3);
+}
+.sp-report-link--soft {
+  color: var(--md-default-fg-color--light) !important;
+}
+.sp-report-arrow {
+  color: var(--md-primary-fg-color);
+  margin-right: 0.15em;
+}
+.sp-report-sep {
+  color: var(--md-default-fg-color--lightest);
+}
+
 /* Hide mermaid syntax errors (broken diagrams won't show empty crashed bombs) */
 .mermaid svg[aria-roledescription="error"],
 .mermaid svg[aria-roledescription="error"] ~ * {

@@ -3,6 +3,11 @@ site_description: A field guide for senior software engineering — Roadmaps, Le
 site_author: Bakhodir Yashin Mansur
 site_url: https://senior-stack.uz/
 
+copyright: >
+  // all documentation generated with
+  <a href="https://claude.com/claude-code" target="_blank" rel="noopener">claude</a>
+  &nbsp;·&nbsp; © 2026 senior-project
+
 repo_url: https://github.com/BakhodiribnYashinibnMansur/SeniorProject
 repo_name: BakhodiribnYashinibnMansur/SeniorProject
 edit_uri: edit/main/
@@ -94,3 +99,6 @@ extra:
 
 extra_css:
   - assets/extra.css
+
+extra_javascript:
+  - assets/extra.js
