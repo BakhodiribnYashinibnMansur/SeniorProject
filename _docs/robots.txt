@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://senior-stack.uz/sitemap.xml
