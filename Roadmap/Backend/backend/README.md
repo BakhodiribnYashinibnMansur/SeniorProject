@@ -1,3 +1,7 @@
+---
+comments: true
+---
+
 # Backend Roadmap
 
 - Roadmap: https://roadmap.sh/backend

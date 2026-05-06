@@ -1,3 +1,7 @@
+---
+comments: true
+---
+
 # 0002. Add Two Numbers
 
 ## Table of Contents

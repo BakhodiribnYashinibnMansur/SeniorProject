@@ -1,3 +1,7 @@
+---
+comments: true
+---
+
 # Go Roadmap
 
 - Roadmap: https://roadmap.sh/golang

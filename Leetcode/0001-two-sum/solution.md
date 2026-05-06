@@ -1,3 +1,7 @@
+---
+comments: true
+---
+
 # 0001. Two Sum
 
 ## Table of Contents

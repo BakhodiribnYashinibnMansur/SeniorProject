@@ -1,3 +1,7 @@
+---
+comments: true
+---
+
 # 🏗️ System Design — 1000 Interview Questions
 
 > **Maqsad:** System Design intervyularga to'liq tayyorgarlik. 4 darajada **1000 ta unique savol**, internet va FAANG manbalaridan to'plangan.
