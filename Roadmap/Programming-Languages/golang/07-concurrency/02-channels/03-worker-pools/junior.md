@@ -817,7 +817,7 @@ You learned: the jobs/workers/results layout, how `sync.WaitGroup` tracks worker
 
 - [Buffered vs Unbuffered Channels](../01-buffered-vs-unbuffered/junior.md) — Why buffer sizes matter inside a pool.
 - [Select Statement](../02-select-statement/junior.md) — Used at middle level to add cancellation and timeouts.
-- [Goroutines](../../01-goroutines/junior.md) — The primitive workers are built on.
+- [Goroutines](../../01-goroutines/01-overview/junior.md) — The primitive workers are built on.
 - Middle level [middle.md](middle.md) — Pool sizing, errgroup, context.
 - Senior level [senior.md](senior.md) — Backpressure modelling, dynamic resizing, work stealing.
 

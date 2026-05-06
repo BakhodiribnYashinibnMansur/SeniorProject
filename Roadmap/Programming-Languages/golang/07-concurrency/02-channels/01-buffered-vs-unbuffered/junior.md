@@ -61,7 +61,7 @@ You do **not** need to know the runtime internals, the `hchan` struct, or the fo
 ## Prerequisites
 
 - **Required:** A working Go install, version 1.18 or newer. Check with `go version`.
-- **Required:** Comfort with the `go` keyword from the [Goroutines](../../01-goroutines/junior.md) chapter. You should be able to launch a goroutine without thinking about it.
+- **Required:** Comfort with the `go` keyword from the [Goroutines](../../01-goroutines/01-overview/junior.md) chapter. You should be able to launch a goroutine without thinking about it.
 - **Required:** Familiarity with `for` loops, slices, and basic functions.
 - **Helpful:** Having seen `sync.WaitGroup` once, even if you do not love it. We will avoid it for the first few examples on purpose.
 - **Helpful:** A terminal where you can run `go run main.go` and see panics. The runtime's deadlock detector will be your tutor; we *want* it to fire while you experiment.
@@ -825,10 +825,10 @@ A channel is a typed conduit between goroutines. Made with `make(chan T)` it is 
 
 ## Related Topics
 
-- [Goroutines](../../01-goroutines/junior.md) — without goroutines, you have no one to send to or receive from.
+- [Goroutines](../../01-goroutines/01-overview/junior.md) — without goroutines, you have no one to send to or receive from.
 - [Select Statement](../02-select-statement/junior.md) — the next step: multiplexing several channels.
 - [Worker Pools](../03-worker-pools/junior.md) — applying buffered channels in a real pattern.
-- [Sync package](../../03-sync-package/junior.md) — when *not* to use a channel.
+- [Sync package](../../03-sync-package/01-mutexes/junior.md) — when *not* to use a channel.
 
 ---
 
