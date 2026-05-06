@@ -157,3 +157,140 @@
     }
   }
 })();
+
+/* ================================================================
+   GA4 custom event tracking
+   - 404 pages
+   - External (outbound) link clicks
+   - Search queries
+   - Scroll depth (25/50/75/100)
+   - Reading time on page
+   Material's built-in google provider loads gtag only after consent.
+   We guard every send with a typeof check so nothing fires before then.
+   ================================================================ */
+(function () {
+  function send(name, params) {
+    if (typeof gtag !== "function") return;
+    gtag("event", name, params || {});
+  }
+
+  // ---- 404 tracking ---------------------------------------------------
+  function track404() {
+    const title = (document.title || "").toLowerCase();
+    const looks404 =
+      title.includes("404") ||
+      document.body.classList.contains("not-found") ||
+      !!document.querySelector("[data-404]");
+    if (!looks404) return;
+    send("page_not_found", {
+      page_location: location.href,
+      page_referrer: document.referrer || "(direct)",
+    });
+  }
+
+  // ---- External link tracking ----------------------------------------
+  function trackExternalLinks() {
+    const host = location.hostname;
+    document.body.addEventListener("click", function (e) {
+      const a = e.target.closest("a[href]");
+      if (!a) return;
+      let url;
+      try {
+        url = new URL(a.href, location.href);
+      } catch (_) {
+        return;
+      }
+      if (url.protocol !== "http:" && url.protocol !== "https:") return;
+      if (url.hostname === host) return;
+      send("click_external", {
+        link_url: url.href,
+        link_domain: url.hostname,
+        link_text: (a.innerText || "").trim().slice(0, 100),
+      });
+    }, { passive: true });
+  }
+
+  // ---- Search query tracking -----------------------------------------
+  function trackSearch() {
+    const input = document.querySelector(".md-search__input");
+    if (!input || input.dataset.spTracked === "1") return;
+    input.dataset.spTracked = "1";
+    let timer = null;
+    input.addEventListener("input", function () {
+      const q = input.value.trim();
+      if (q.length < 3) return;
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        send("search", { search_term: q });
+      }, 800);
+    });
+  }
+
+  // ---- Scroll depth (25 / 50 / 75 / 100) -----------------------------
+  function trackScrollDepth() {
+    const marks = [25, 50, 75, 100];
+    const seen = new Set();
+    function onScroll() {
+      const h = document.documentElement;
+      const scrolled = h.scrollTop + window.innerHeight;
+      const total = h.scrollHeight;
+      if (total <= window.innerHeight) return;
+      const pct = (scrolled / total) * 100;
+      for (const m of marks) {
+        if (pct >= m && !seen.has(m)) {
+          seen.add(m);
+          send("scroll_depth", { percent: m });
+        }
+      }
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+
+  // ---- Reading time on page (sent on unload / nav) -------------------
+  function trackReadingTime() {
+    const start = Date.now();
+    let active = true;
+    let total = 0;
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        if (active) total += Date.now() - start;
+        active = false;
+      } else {
+        active = true;
+      }
+    });
+
+    function flush() {
+      const seconds = Math.round((active ? Date.now() - start : total) / 1000);
+      if (seconds < 5 || seconds > 3600) return;
+      send("reading_time", {
+        seconds: seconds,
+        page_path: location.pathname,
+      });
+    }
+    window.addEventListener("beforeunload", flush);
+  }
+
+  // ---- Per-navigation hooks (Material instant nav) -------------------
+  function onPage() {
+    track404();
+    trackSearch();
+    trackScrollDepth();
+    trackReadingTime();
+  }
+
+  // Body-level listener once; per-page hooks via document$
+  if (typeof document$ !== "undefined" && document$.subscribe) {
+    trackExternalLinks();
+    document$.subscribe(onPage);
+  } else if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      trackExternalLinks();
+      onPage();
+    });
+  } else {
+    trackExternalLinks();
+    onPage();
+  }
+})();

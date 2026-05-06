@@ -7,6 +7,7 @@ copyright: >
   // all documentation generated with
   <a href="https://claude.com/claude-code" target="_blank" rel="noopener">claude</a>
   &nbsp;·&nbsp; © 2026 senior-project
+  &nbsp;·&nbsp; <a href="#__consent">Change cookie settings</a>
 
 repo_url: https://github.com/BakhodiribnYashinibnMansur/SeniorProject
 repo_name: BakhodiribnYashinibnMansur/SeniorProject
@@ -107,6 +108,33 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/BakhodiribnYashinibnMansur
+  analytics:
+    provider: google
+    property: G-9M5F0VDHK4
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/thumb-up-outline
+          name: This page was helpful
+          data: 1
+          note: >-
+            Thanks for your feedback!
+        - icon: material/thumb-down-outline
+          name: This page could be improved
+          data: 0
+          note: >-
+            Thanks for your feedback! Help us improve by
+            <a href="https://github.com/BakhodiribnYashinibnMansur/SeniorProject/issues/new/?title=[Feedback]+{title}+-+{url}" target="_blank" rel="noopener">opening an issue</a>.
+  consent:
+    title: Cookie consent
+    description: >-
+      We use cookies to recognize your repeated visits and preferences,
+      as well as to measure the effectiveness of our documentation.
+      With your consent, you're helping us make our content better.
+    actions:
+      - accept
+      - reject
+      - manage
 
 extra_css:
   - assets/extra.css
