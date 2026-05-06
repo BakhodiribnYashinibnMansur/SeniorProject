@@ -2,7 +2,7 @@
    Senior Project — terminal / phosphor theme (all pages)
    ================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@300;400;500;600;700&display=swap');
 
 /* Both light & dark schemes share the dark hacker palette */
 [data-md-color-scheme="default"],
@@ -36,7 +36,7 @@
 /* Whole page typography */
 body,
 .md-typeset {
-  font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: "Intel One Mono", ui-monospace, "SF Mono", Menlo, monospace;
   font-feature-settings: "ss01";
 }
 
@@ -52,13 +52,13 @@ body,
 .md-typeset h4,
 .md-typeset h5,
 .md-typeset h6 {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Intel One Mono", monospace;
   color: var(--md-default-fg-color);
   font-weight: 500;
   letter-spacing: -0.005em;
 }
 .md-typeset h1 {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-family: "Intel One Mono", ui-monospace, monospace;
   font-size: 1.85rem;
   line-height: 1.15;
   font-weight: 700;
@@ -84,7 +84,7 @@ body,
   background: #050505 !important;
   color: var(--md-default-fg-color) !important;
   box-shadow: 0 1px 0 #1a1a1a;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Intel One Mono", monospace;
 }
 .md-header__title { color: var(--md-default-fg-color); font-weight: 500; }
 .md-header__topic > .md-header__button + span::before {
@@ -108,7 +108,7 @@ body,
   background: #050505;
   color: var(--md-default-fg-color);
   border-bottom: 1px solid #1a1a1a;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Intel One Mono", monospace;
 }
 .md-tabs__link { opacity: 0.6; font-size: 0.72rem; }
 .md-tabs__link--active,
@@ -121,7 +121,7 @@ body,
 /* Sidebar nav — terminal tree style */
 .md-nav {
   font-size: 0.72rem;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Intel One Mono", monospace;
 }
 .md-nav__title {
   color: var(--md-default-fg-color--light);
@@ -297,7 +297,7 @@ body,
    ================================================================ */
 .sp-report {
   margin-top: 3rem;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Intel One Mono", monospace;
   font-size: 0.78rem;
   color: var(--md-default-fg-color--lighter);
 }
@@ -381,3 +381,24 @@ body,
 .md-typeset .grid.cards a:not(.md-button) {
   font-size: 0.78rem;
 }
+
+/* ================================================================
+   "Coming soon" nav items — non-clickable + soft badge
+   Triggered by frontmatter:  status: coming-soon
+   ================================================================ */
+.md-nav__item:has(> .md-nav__link .md-status--coming-soon) > .md-nav__link,
+.md-nav__link:has(.md-status--coming-soon) {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.md-nav__link:has(.md-status--coming-soon) .md-ellipsis::after {
+  content: " · soon";
+  color: var(--md-default-fg-color--lighter);
+  font-size: 0.85em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-left: 0.25em;
+}
+/* Hide the redundant status icon — the "· soon" tag already says it */
+.md-nav__link .md-status--coming-soon { display: none; }

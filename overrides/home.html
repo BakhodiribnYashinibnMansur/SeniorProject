@@ -4,7 +4,7 @@
   {{ super() }}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     /* ================================================================
@@ -29,7 +29,7 @@
       padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 3rem) clamp(2.5rem, 7vw, 5rem);
       background: var(--sp-bg);
       color: var(--sp-fg);
-      font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      font-family: "Intel One Mono", ui-monospace, "SF Mono", Menlo, monospace;
       font-size: 14px;
       line-height: 1.55;
       overflow: hidden;
@@ -243,26 +243,27 @@
     .sp-prompt .dollar { color: var(--sp-green); margin: 0 0.5em; }
     .sp-prompt .cmd { color: var(--sp-fg); }
 
-    /* huge ASCII / display title */
-    .sp-display {
-      display: block;
-      font-family: "JetBrains Mono", ui-monospace, monospace;
-      font-weight: 600;
-      font-size: clamp(1.8rem, 6vw, 4.5rem);
-      line-height: 1.1;
-      letter-spacing: 0;
+    /* MOTD-style login banner (replaces the old huge prompt h1) */
+    .sp-motd {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      margin: 1rem 0 0.8rem;
+      padding: 0.6rem 0.85rem;
+      border-top: 1px solid var(--sp-line);
+      border-bottom: 1px solid var(--sp-line);
+      background: rgba(57, 255, 122, 0.015);
+      font-family: "Intel One Mono", ui-monospace, monospace;
+      font-weight: 400;
+      font-size: 0.84rem;
+      line-height: 1.55;
       color: var(--sp-fg);
-      margin: 1.2rem 0 0.6rem;
-      text-shadow: 0 0 24px rgba(57, 255, 122, 0.15);
-      animation: sp-rise 0.8s 1.05s both cubic-bezier(0.2, 0.8, 0.2, 1);
-      white-space: nowrap;
-      overflow: hidden;
+      letter-spacing: 0;
+      animation: sp-fade 0.6s 1.05s both ease-out;
     }
-    .sp-display .dim { color: var(--sp-fg-dim); }
-    .sp-display .green {
-      color: var(--sp-green);
-      text-shadow: 0 0 12px var(--sp-green);
-    }
+    .sp-motd-line { display: block; }
+    .sp-motd .dim { color: var(--sp-fg-dim); }
+    .sp-motd .green { color: var(--sp-green); }
     .sp-cursor {
       display: inline-block;
       width: 0.5em;
@@ -316,6 +317,11 @@
     }
     .sp-cmd-line .dollar { color: var(--sp-green); }
     .sp-cmd-line .cmd { color: var(--sp-fg); }
+    .sp-cmd-line .user  { color: var(--sp-green); }
+    .sp-cmd-line .host  { color: var(--sp-fg); }
+    .sp-cmd-line .path  { color: #6fa8dc; }
+    .sp-cmd-line .dim   { color: var(--sp-fg-dim); }
+    .sp-cmd-line .green { color: var(--sp-green); margin-right: 0.5em; }
 
     .sp-chapters {
       display: grid;
@@ -382,7 +388,7 @@
     }
 
     .sp-chapter-title {
-      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-family: "Intel One Mono", ui-monospace, monospace;
       font-weight: 600;
       font-size: clamp(1.25rem, 2vw, 1.65rem);
       line-height: 1.1;
@@ -475,7 +481,7 @@
         transition: none !important;
       }
       .sp-canvas { display: none !important; }
-      .sp-boot li, .sp-display, .sp-tagline, .sp-stats, .sp-cmd-line, .sp-chapter, .sp-footer {
+      .sp-boot li, .sp-motd, .sp-tagline, .sp-stats, .sp-cmd-line, .sp-chapter, .sp-footer {
         opacity: 1 !important;
         transform: none !important;
       }
@@ -518,8 +524,9 @@
         <li><span class="arr">&gt;</span> ready</li>
       </ul>
 
-      <h1 class="sp-display">
-        <span class="green">root</span> <span class="dim">@</span> senior <span class="dim">:</span> ~ <span class="green">#</span><span class="sp-cursor" aria-hidden="true"></span>
+      <h1 class="sp-motd" aria-label="Login banner">
+        <span class="sp-motd-line"><span class="dim">Last login:</span> Wed May 06 2026 from <span class="green">senior-stack.uz</span></span>
+        <span class="sp-motd-line"><span class="dim">Welcome to</span> <span class="green">senior</span> <span class="dim">·</span> 50 roadmaps online <span class="dim">·</span> 2,131 entries indexed</span>
       </h1>
 
       <p class="sp-tagline">
@@ -537,7 +544,7 @@
       </div>
 
       <p class="sp-cmd-line sp-typer-line">
-        <span class="dollar">$</span>
+        <span class="user">root</span><span class="dim">@</span><span class="host">senior</span><span class="dim">:</span><span class="path">~</span><span class="green">#</span>
         <span class="cmd"><span data-typer></span><span class="sp-cursor sp-cursor-inline" aria-hidden="true"></span></span>
       </p>
 
@@ -595,8 +602,8 @@
       </nav>
 
       <footer class="sp-footer">
-        <span>// built with mkdocs-material · set in JetBrains Mono</span>
-        <span>// curated by <a href="https://github.com/BakhodiribnYashinibnMansur" target="_blank" rel="noopener">@BakhodiribnYashinibnMansur</a></span>
+        <span>// docs generated with <a href="https://claude.com/claude-code" target="_blank" rel="noopener">claude</a></span>
+        <span>// curated by <a href="https://github.com/BakhodiribnYashinibnMansur" target="_blank" rel="noopener">Bakhodir Yashin Mansur</a></span>
       </footer>
 
         </div><!-- /.sp-window-pane -->
@@ -641,7 +648,7 @@
         cols = Math.ceil(cw / FONT_SIZE);
         drops  = new Array(cols).fill(0).map(() => Math.random() * -ch);
         speeds = new Array(cols).fill(0).map(() => 0.4 + Math.random() * 1.2);
-        ctx.font = `${FONT_SIZE}px "JetBrains Mono", monospace`;
+        ctx.font = `${FONT_SIZE}px "Intel One Mono", monospace`;
         ctx.textBaseline = 'top';
       };
 

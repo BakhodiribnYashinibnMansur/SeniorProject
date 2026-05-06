@@ -1,0 +1,261 @@
+{% extends "main.html" %}
+
+{% block htmltitle %}
+  <title>404 — {{ config.site_name }}</title>
+{% endblock %}
+
+{% block extrahead %}
+  {{ super() }}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ================================================================
+       Senior Project — 404 page (terminal / phosphor theme)
+       ================================================================ */
+    .sp-404 {
+      --sp-bg: #050505;
+      --sp-fg: #d4d4d4;
+      --sp-fg-dim: #6a6a6a;
+      --sp-fg-deep: #3a3a3a;
+      --sp-line: #1a1a1a;
+      --sp-line-strong: #2a2a2a;
+      --sp-green: #39ff7a;
+      --sp-green-dim: #1f8a3e;
+
+      min-height: calc(100vh - 6rem);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem);
+      background: var(--sp-bg);
+      color: var(--sp-fg);
+      font-family: "Intel One Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .sp-404__shell {
+      max-width: 640px;
+      width: 100%;
+      border: 1px solid var(--sp-line-strong);
+      border-radius: 8px;
+      background: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(8px);
+      box-shadow:
+        0 0 0 1px rgba(57, 255, 122, 0.04),
+        0 30px 80px rgba(0, 0, 0, 0.6),
+        0 8px 24px rgba(57, 255, 122, 0.05);
+      overflow: hidden;
+      animation: sp-404-fade 0.5s 0.05s both ease-out;
+    }
+    @keyframes sp-404-fade {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .sp-404__bar {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.55rem 0.9rem;
+      background: linear-gradient(to bottom, #1a1a1a, #0e0e0e);
+      border-bottom: 1px solid var(--sp-line-strong);
+      font-size: 0.72rem;
+      color: var(--sp-fg-dim);
+      letter-spacing: 0.05em;
+    }
+    .sp-404__dots {
+      display: inline-flex;
+      gap: 6px;
+    }
+    .sp-404__dots span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .sp-404__dots span:nth-child(1) { background: #ff5f57; }
+    .sp-404__dots span:nth-child(2) { background: #febc2e; }
+    .sp-404__dots span:nth-child(3) { background: #28c840; }
+    .sp-404__bar-title {
+      flex: 1;
+      text-align: center;
+      color: var(--sp-fg);
+      font-weight: 500;
+    }
+    .sp-404__bar-meta {
+      color: var(--sp-fg-deep);
+    }
+
+    .sp-404__body {
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+    }
+
+    .sp-404__code {
+      font-size: clamp(3.5rem, 9vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--sp-green);
+      text-shadow: 0 0 24px rgba(57, 255, 122, 0.35);
+      letter-spacing: 0.05em;
+      margin: 0 0 0.6rem;
+    }
+
+    .sp-404__heading {
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--sp-fg);
+      margin: 0 0 0.4rem;
+      letter-spacing: 0.02em;
+    }
+
+    .sp-404__sub {
+      color: var(--sp-fg-dim);
+      font-size: 0.88rem;
+      margin: 0 0 1.75rem;
+      max-width: 42ch;
+    }
+
+    .sp-404__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .sp-404__btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 1rem;
+      border: 1px solid var(--sp-line-strong);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--sp-fg);
+      font-family: inherit;
+      font-size: 0.85rem;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      text-decoration: none;
+      transition:
+        border-color 0.15s ease,
+        color 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease;
+    }
+    .sp-404__btn:hover,
+    .sp-404__btn:focus-visible {
+      border-color: var(--sp-green);
+      color: var(--sp-green);
+      box-shadow: 0 0 0 1px rgba(57, 255, 122, 0.18);
+      outline: none;
+    }
+    .sp-404__btn--primary {
+      border-color: var(--sp-green-dim);
+      color: var(--sp-green);
+    }
+    .sp-404__btn--primary:hover,
+    .sp-404__btn--primary:focus-visible {
+      background: rgba(57, 255, 122, 0.06);
+    }
+
+    .sp-404__prompt {
+      color: var(--sp-fg-dim);
+      font-size: 0.78rem;
+      margin: 1.6rem 0 0;
+      letter-spacing: 0.02em;
+    }
+    .sp-404__prompt::before {
+      content: "$ ";
+      color: var(--sp-green);
+    }
+    .sp-404__caret {
+      display: inline-block;
+      width: 0.5em;
+      height: 1em;
+      vertical-align: -0.15em;
+      margin-left: 0.1em;
+      background: var(--sp-green);
+      box-shadow: 0 0 6px var(--sp-green);
+      animation: sp-404-blink 1.05s steps(2) infinite;
+    }
+    @keyframes sp-404-blink {
+      50% { opacity: 0; }
+    }
+
+    /* hide page chrome that doesn't make sense on a 404 */
+    .md-content__button { display: none !important; }
+    .md-sidebar { display: none !important; }
+    .md-main__inner { margin-top: 0 !important; }
+    .md-content { max-width: none !important; }
+    .md-content__inner { margin: 0 !important; padding: 0 !important; }
+    .md-content__inner::before { display: none !important; }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <section class="sp-404" role="main" aria-labelledby="sp-404-heading">
+    <div class="sp-404__shell">
+      <div class="sp-404__bar">
+        <span class="sp-404__dots" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span class="sp-404__bar-title">~/error/404</span>
+        <span class="sp-404__bar-meta">status: not_found</span>
+      </div>
+      <div class="sp-404__body">
+        <p class="sp-404__code" aria-hidden="true">404</p>
+        <h1 id="sp-404-heading" class="sp-404__heading">Page not found</h1>
+        <p class="sp-404__sub">
+          The page you're looking for doesn't exist or has been moved.
+        </p>
+        <div class="sp-404__actions">
+          <button
+            type="button"
+            class="sp-404__btn sp-404__btn--primary"
+            data-sp-action="back"
+          >← Go back</button>
+          <a class="sp-404__btn" href="{{ config.site_url | default('/', true) }}">Home</a>
+          <button
+            type="button"
+            class="sp-404__btn"
+            data-sp-action="search"
+          >Search the site</button>
+        </div>
+        <p class="sp-404__prompt">
+          try one of the routes above<span class="sp-404__caret" aria-hidden="true"></span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      var root = document.querySelector(".sp-404");
+      if (!root) return;
+
+      root.addEventListener("click", function (event) {
+        var target = event.target.closest("[data-sp-action]");
+        if (!target) return;
+
+        var action = target.getAttribute("data-sp-action");
+
+        if (action === "back") {
+          if (window.history.length > 1 && document.referrer) {
+            window.history.back();
+          } else {
+            window.location.href = "/";
+          }
+        } else if (action === "search") {
+          var input = document.querySelector(".md-search__input");
+          var toggle = document.querySelector("[data-md-toggle='search']");
+          if (toggle && !toggle.checked) toggle.checked = true;
+          if (input) {
+            setTimeout(function () { input.focus(); }, 50);
+          }
+        }
+      });
+    })();
+  </script>
+{% endblock %}

@@ -36,7 +36,7 @@
             lineColor: "#39ff7a",
             secondaryColor: "#1a1a1a",
             tertiaryColor: "#0e0e0e",
-            fontFamily: "JetBrains Mono, ui-monospace, monospace",
+            fontFamily: "Intel One Mono, ui-monospace, monospace",
           },
         });
         resolve(mermaid);
