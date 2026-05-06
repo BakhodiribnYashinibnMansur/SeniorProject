@@ -1,11 +1,90 @@
 /* ================================================================
    Senior Project — small client-side enhancements
    - Inject "Report a problem" link at the end of every content page
+   - Render Mermaid diagrams (Material 9.7 + Mermaid 11 native integration
+     is broken — we load Mermaid 10 ourselves and call run())
    - Re-runs on Material's instant navigation (document$)
    ================================================================ */
 (function () {
   const REPO = "BakhodiribnYashinibnMansur/SeniorProject";
   const REPORT_CLASS = "sp-report";
+
+  // ---- Mermaid bootstrap ------------------------------------------------
+  // pymdownx.superfences with fence_div_format produces <div class="mermaid">
+  // containing the diagram source as text. We load Mermaid 10 and call run()
+  // on every page (including SPA instant nav).
+  let mermaidReady = null;
+  function loadMermaid() {
+    if (mermaidReady) return mermaidReady;
+    mermaidReady = new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = "https://unpkg.com/mermaid@10/dist/mermaid.min.js";
+      s.onload = () => {
+        if (typeof mermaid === "undefined") {
+          reject(new Error("mermaid global missing after script load"));
+          return;
+        }
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: "dark",
+          securityLevel: "loose",
+          themeVariables: {
+            background: "#0a0a0a",
+            primaryColor: "#0a0a0a",
+            primaryTextColor: "#d4d4d4",
+            primaryBorderColor: "#39ff7a",
+            lineColor: "#39ff7a",
+            secondaryColor: "#1a1a1a",
+            tertiaryColor: "#0e0e0e",
+            fontFamily: "JetBrains Mono, ui-monospace, monospace",
+          },
+        });
+        resolve(mermaid);
+      };
+      s.onerror = () => reject(new Error("failed to load mermaid"));
+      document.head.appendChild(s);
+    });
+    return mermaidReady;
+  }
+
+  function fixMermaidSize(block) {
+    // Mermaid hard-codes width="100%" + max-width on the SVG, which squashes
+    // wide graphs. Use the inline style's max-width as the natural width and
+    // set explicit width/height attributes so the parent .mermaid container
+    // can scroll horizontally.
+    const svg = block.querySelector("svg");
+    if (!svg) return;
+    const styleMaxW = svg.style.maxWidth;
+    if (styleMaxW && styleMaxW.endsWith("px")) {
+      const naturalW = parseFloat(styleMaxW);
+      const vb = svg.viewBox && svg.viewBox.baseVal;
+      const naturalH = vb && vb.height ? naturalW * (vb.height / vb.width) : naturalW;
+      svg.setAttribute("width", naturalW);
+      svg.setAttribute("height", naturalH);
+      svg.style.maxWidth = "none";
+    }
+  }
+
+  function renderMermaid() {
+    // Find unprocessed mermaid blocks. We skip ones already rendered
+    // (have a child SVG) so SPA navigation re-render is idempotent.
+    const blocks = Array.from(document.querySelectorAll(".mermaid")).filter(
+      (b) => !b.querySelector("svg") && b.textContent.trim().length > 0
+    );
+    if (blocks.length === 0) return;
+    loadMermaid()
+      .then((m) => m.run({ nodes: blocks }))
+      .then(() => {
+        blocks.forEach(fixMermaidSize);
+      })
+      .catch((err) => {
+        // Hide blocks we can't render rather than showing raw source
+        blocks.forEach((b) => {
+          b.style.display = "none";
+        });
+        console.warn("[sp] mermaid render failed:", err);
+      });
+  }
 
   function inject() {
     // Skip the home page (it has its own custom footer)
@@ -56,14 +135,19 @@
     content.appendChild(wrap);
   }
 
+  function run() {
+    inject();
+    renderMermaid();
+  }
+
   // Initial run + re-run on Material instant nav
   if (typeof document$ !== "undefined" && document$.subscribe) {
-    document$.subscribe(inject);
+    document$.subscribe(run);
   } else {
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", inject);
+      document.addEventListener("DOMContentLoaded", run);
     } else {
-      inject();
+      run();
     }
   }
 })();

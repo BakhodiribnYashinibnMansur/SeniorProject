@@ -345,6 +345,25 @@ body,
   color: var(--md-default-fg-color--lightest);
 }
 
+/* Mermaid diagrams — let wide graphs scroll horizontally instead of squashing */
+.mermaid {
+  margin: 1.4rem 0;
+  padding: 0.5rem;
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+  border-radius: 2px;
+  overflow-x: auto;
+  text-align: center;
+}
+.mermaid svg {
+  /* Mermaid hard-codes width="100%". Force natural intrinsic size so wide
+     graphs scroll horizontally instead of squashing to one line. */
+  max-width: none !important;
+  width: max-content !important;
+  height: auto !important;
+  display: inline-block;
+}
+
 /* Hide mermaid syntax errors (broken diagrams won't show empty crashed bombs) */
 .mermaid svg[aria-roledescription="error"],
 .mermaid svg[aria-roledescription="error"] ~ * {
