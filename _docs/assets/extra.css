@@ -405,64 +405,14 @@ body,
 
 /* ================================================================
    Sibling page navigation panel (right sidebar, above TOC)
+   Reuses .md-nav md-nav--secondary so it inherits TOC typography
+   automatically. Only spacing tweaks live here.
    ================================================================ */
 
-.sibling-nav {
-  margin: 0 0 1rem;
-  padding: 0 0 0.75rem;
-  border-bottom: 1px dotted var(--md-default-fg-color--lightest);
-  font-family: "Intel One Mono", ui-monospace, "SF Mono", Menlo, monospace;
+.md-nav.sibling-nav {
+  margin-bottom: 0.75rem;
 }
 
-.sibling-nav__group {
-  margin: 0 0 0.6rem;
-}
-
-.sibling-nav__group:last-child {
-  margin-bottom: 0;
-}
-
-.sibling-nav__title {
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--md-default-fg-color--lighter);
-  border-left: 2px solid var(--md-primary-fg-color);
-  padding: 0 0 0 0.5rem;
-  margin: 0 0 0.3rem;
-}
-
-.sibling-nav__list {
-  list-style: none;
-  margin: 0;
-  padding: 0 0 0 0.6rem;
-}
-
-.sibling-nav__item {
-  margin: 0;
-}
-
-.sibling-nav__link {
-  display: block;
-  font-size: 0.72rem;
-  line-height: 1.5;
-  padding: 0.15rem 0;
-  color: var(--md-default-fg-color--light);
-  text-decoration: none;
-  position: relative;
-}
-
-.sibling-nav__link:hover {
-  color: var(--md-primary-fg-color);
-}
-
-.sibling-nav__link--current {
-  color: var(--md-primary-fg-color);
-  font-weight: 600;
-}
-
-.sibling-nav__link--current::before {
-  content: "› ";
-  color: var(--md-primary-fg-color);
+.md-nav.sibling-nav + .md-nav.sibling-nav {
+  margin-top: -0.25rem;
 }
