@@ -22,7 +22,7 @@ The knowledge required for modern software development is scattered across count
 
     Step-by-step learning paths across 50+ topics — Backend, Frontend, AI, DevOps, Mobile, Security, and more.
 
-    [:octicons-arrow-right-24: Browse roadmaps](Roadmap/)
+    [:octicons-arrow-right-24: Browse roadmaps](roadmap.md)
 
 - :material-code-braces:{ .lg .middle } **Leetcode**
 
@@ -30,7 +30,7 @@ The knowledge required for modern software development is scattered across count
 
     Algorithmic problem solutions with clear explanations and visual animations.
 
-    [:octicons-arrow-right-24: Browse problems](Leetcode/)
+    [:octicons-arrow-right-24: Browse problems](Leetcode/index.md)
 
 - :material-sitemap:{ .lg .middle } **System Design**
 
@@ -38,7 +38,7 @@ The knowledge required for modern software development is scattered across count
 
     Materials on designing large-scale, distributed systems.
 
-    [:octicons-arrow-right-24: Open System Design](System%20Design/)
+    [:octicons-arrow-right-24: Open System Design](system-design.md)
 
 </div>
 
