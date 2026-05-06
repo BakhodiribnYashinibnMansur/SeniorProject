@@ -1,9 +1,3 @@
-+++
-version = "2.1"
-aliases = ["/version/2/1"]
-reportingPlaceholder = "opening an issue at https://github.com/BakhodiribnYashinibnMansur/SeniorProject/issues with label `coc` and tagging @BakhodiribnYashinibnMansur"
-+++
-
 # Contributor Covenant Code of Conduct
 
 ## Our Pledge
