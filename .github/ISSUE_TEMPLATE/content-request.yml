@@ -1,0 +1,43 @@
+name: Content request
+description: Request a new topic, leaf, or roadmap area
+title: "[request] "
+labels: ["enhancement", "content-request"]
+body:
+  - type: dropdown
+    id: domain
+    attributes:
+      label: Domain
+      options:
+        - AI
+        - Architecture
+        - Backend
+        - Data
+        - DevOps
+        - Frontend
+        - Mobile
+        - Programming Languages
+        - Security
+        - Soft Skills
+        - Tools and Platforms
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: level
+    attributes:
+      label: Target level
+      options:
+        - junior
+        - middle
+        - senior
+        - professional
+        - all
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: What and why
+      description: What topic, sub-topic, or area is missing? Why does it matter for senior engineers?
+    validations:
+      required: true

@@ -1,0 +1,29 @@
+name: Content error
+description: Typo, wrong information, or broken example on a page
+title: "[content] "
+labels: ["docs", "content-error"]
+body:
+  - type: input
+    id: page_url
+    attributes:
+      label: Page URL
+      description: Full URL of the page with the issue.
+      placeholder: https://senior-stack.uz/Roadmap/Backend/backend/junior/
+    validations:
+      required: true
+  - type: textarea
+    id: current_text
+    attributes:
+      label: Current text or code
+      description: Quote the offending passage, or paste the broken example.
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: suggested_correction
+    attributes:
+      label: Suggested correction
+      description: What it should say or do instead. Cite a source if helpful.
+      render: markdown
+    validations:
+      required: true

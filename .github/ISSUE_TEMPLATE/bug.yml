@@ -1,0 +1,36 @@
+name: Site bug
+description: Something on senior-stack.uz is broken (layout, link, JS, etc.)
+title: "[bug] "
+labels: ["bug", "site"]
+body:
+  - type: input
+    id: page_url
+    attributes:
+      label: Page URL
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: e.g. Chrome 130 on macOS
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
