@@ -411,7 +411,7 @@ body,
   margin: 0 0 1rem;
   padding: 0 0 0.75rem;
   border-bottom: 1px dotted var(--md-default-fg-color--lightest);
-  font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: "Intel One Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }
 
 .sibling-nav__group {
