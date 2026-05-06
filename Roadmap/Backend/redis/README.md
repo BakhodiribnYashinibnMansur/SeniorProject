@@ -1,7 +1,6 @@
 # Redis Roadmap
 
 - Roadmap: https://roadmap.sh/redis
-- PDF: [redis.pdf](./redis.pdf)
 
 ## 1. Overview of Redis / What is it?
 - 1.1 In-memory Data Structure Store

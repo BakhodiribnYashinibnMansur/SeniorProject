@@ -1,7 +1,6 @@
 # System Design Roadmap
 
 - Roadmap: https://roadmap.sh/system-design
-- PDF: [system-design.pdf](./system-design.pdf)
 
 ## 1. Introduction
 - 1.1 What is System Design?

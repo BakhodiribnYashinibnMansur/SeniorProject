@@ -1,7 +1,6 @@
 # GraphQL Roadmap
 
 - Roadmap: https://roadmap.sh/graphql
-- PDF: [graphql.pdf](./graphql.pdf)
 
 ## 1. Introduction
 - 1.1 What is GraphQL

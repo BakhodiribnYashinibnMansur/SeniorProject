@@ -1,7 +1,6 @@
 # Docker Roadmap
 
 - Roadmap: https://roadmap.sh/docker
-- PDF: [docker.pdf](./docker.pdf)
 
 ## 1. Introduction
 - What are Containers?

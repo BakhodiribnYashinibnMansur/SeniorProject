@@ -1,7 +1,6 @@
 # Android Roadmap
 
 - Roadmap: https://roadmap.sh/android
-- PDF: [android.pdf](./android.pdf)
 
 ## 1. Pick a Language
 - 1.1 Kotlin

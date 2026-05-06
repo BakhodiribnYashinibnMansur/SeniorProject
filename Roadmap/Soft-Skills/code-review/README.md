@@ -1,7 +1,6 @@
 # Code Review Roadmap
 
 - Roadmap: https://roadmap.sh/code-review
-- PDF: [code-review.pdf](./code-review.pdf)
 
 ## 1. Code Styles
 - 1.1 Smaller effort for changes later on

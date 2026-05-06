@@ -1,7 +1,6 @@
 # Cloudflare Roadmap
 
 - Roadmap: https://roadmap.sh/cloudflare
-- PDF: [cloudflare.pdf](./cloudflare.pdf)
 
 ## 1. Prerequisites
 - JavaScript Fundamentals

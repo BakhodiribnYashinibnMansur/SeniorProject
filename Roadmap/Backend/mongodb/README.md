@@ -1,7 +1,6 @@
 # MongoDB Roadmap
 
 - Roadmap: https://roadmap.sh/mongodb
-- PDF: [mongodb.pdf](./mongodb.pdf)
 
 ## 1. MongoDB Basics
 - 1.1 SQL vs NoSQL

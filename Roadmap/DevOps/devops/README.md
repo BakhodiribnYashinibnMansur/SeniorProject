@@ -1,7 +1,6 @@
 # DevOps Roadmap
 
 - Roadmap: https://roadmap.sh/devops
-- PDF: [devops.pdf](./devops.pdf)
 
 ## 1. Learn a Programming Language
 - Python

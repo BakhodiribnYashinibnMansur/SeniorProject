@@ -1,7 +1,6 @@
 # Blockchain Roadmap
 
 - Roadmap: https://roadmap.sh/blockchain
-- PDF: [blockchain.pdf](./blockchain.pdf)
 
 ## 1. Basic Blockchain Knowledge
 - 1.1 What is Blockchain

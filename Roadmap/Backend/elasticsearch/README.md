@@ -1,7 +1,6 @@
 # Elasticsearch Roadmap
 
 - Roadmap: https://roadmap.sh/elasticsearch
-- PDF: [elasticsearch.pdf](./elasticsearch.pdf)
 
 ## 1. Introduction
 - 1.1 What is Elasticsearch

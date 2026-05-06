@@ -1,7 +1,6 @@
 # Terraform Roadmap
 
 - Roadmap: https://roadmap.sh/terraform
-- PDF: [terraform.pdf](./terraform.pdf)
 
 ## 1. Introduction
 - What is Infrastructure as Code?

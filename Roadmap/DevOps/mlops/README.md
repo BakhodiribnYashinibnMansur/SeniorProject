@@ -1,7 +1,6 @@
 # MLOps Roadmap
 
 - Roadmap: https://roadmap.sh/mlops
-- PDF: [mlops.pdf](./mlops.pdf)
 
 ## 1. Programming Fundamentals
 - Python

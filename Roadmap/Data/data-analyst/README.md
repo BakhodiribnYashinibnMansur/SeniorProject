@@ -1,7 +1,6 @@
 # Data Analyst Roadmap
 
 - Roadmap: https://roadmap.sh/data-analyst
-- PDF: [data-analyst.pdf](./data-analyst.pdf)
 
 ## 1. Introduction
 - 1.1 What is Data Analytics

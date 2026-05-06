@@ -1,45 +1,44 @@
 # Java Roadmap
 
 - Roadmap: https://roadmap.sh/java
-- PDF: [java.pdf](./java.pdf)
 
-## 1. Learn the Basics
-- 1.1 Basic Syntax
-- 1.2 Lifecycle of a Program
-- 1.3 Data Types
-- 1.4 Variables and Scopes
-- 1.5 Type Casting
-- 1.6 Strings and Methods
-- 1.7 Math Operations
-- 1.8 Arrays
-- 1.9 Conditionals
-- 1.10 Loops
-- 1.11 Basics of OOP
+## [1. Learn the Basics](01-learn-the-basics/01-basic-syntax/junior/)
+- [1.1 Basic Syntax](01-learn-the-basics/01-basic-syntax/junior/)
+- [1.2 Lifecycle of a Program](01-learn-the-basics/02-lifecycle-of-program/junior/)
+- [1.3 Data Types](01-learn-the-basics/03-data-types/junior/)
+- [1.4 Variables and Scopes](01-learn-the-basics/04-variables-and-scopes/junior/)
+- [1.5 Type Casting](01-learn-the-basics/05-type-casting/junior/)
+- [1.6 Strings and Methods](01-learn-the-basics/06-strings-and-methods/junior/)
+- [1.7 Math Operations](01-learn-the-basics/07-math-operations/junior/)
+- [1.8 Arrays](01-learn-the-basics/08-arrays/junior/)
+- [1.9 Conditionals](01-learn-the-basics/09-conditionals/junior/)
+- [1.10 Loops](01-learn-the-basics/10-loops/junior/)
+- [1.11 Basics of OOP](01-learn-the-basics/11-basics-of-oop/junior/)
 
-## 2. Object Oriented Programming
+## [2. Object Oriented Programming](02-object-oriented-programming/01-basics-of-oop/01-classes-and-objects/junior/)
 
-### 2.1 Basics of OOP
-- 2.1.1 Classes and Objects
-- 2.1.2 Attributes and Methods
-- 2.1.3 Access Specifiers
-- 2.1.4 Static Keyword
-- 2.1.5 Final Keyword
-- 2.1.6 Nested Classes
-- 2.1.7 Packages
+### [2.1 Basics of OOP](02-object-oriented-programming/01-basics-of-oop/01-classes-and-objects/junior/)
+- [2.1.1 Classes and Objects](02-object-oriented-programming/01-basics-of-oop/01-classes-and-objects/junior/)
+- [2.1.2 Attributes and Methods](02-object-oriented-programming/01-basics-of-oop/02-attributes-and-methods/junior/)
+- [2.1.3 Access Specifiers](02-object-oriented-programming/01-basics-of-oop/03-access-specifiers/junior/)
+- [2.1.4 Static Keyword](02-object-oriented-programming/01-basics-of-oop/04-static-keyword/junior/)
+- [2.1.5 Final Keyword](02-object-oriented-programming/01-basics-of-oop/05-final-keyword/junior/)
+- [2.1.6 Nested Classes](02-object-oriented-programming/01-basics-of-oop/06-nested-classes/junior/)
+- [2.1.7 Packages](02-object-oriented-programming/01-basics-of-oop/07-packages/junior/)
 
-### 2.2 More about OOP
-- 2.2.1 Object Lifecycle
-- 2.2.2 Inheritance
-- 2.2.3 Abstraction
-- 2.2.4 Method Chaining
-- 2.2.5 Encapsulation
-- 2.2.6 Interfaces
-- 2.2.7 Enums
-- 2.2.8 Record
-- 2.2.9 Method Overloading / Overriding
-- 2.2.10 Initializer Block
-- 2.2.11 Static vs Dynamic Binding
-- 2.2.12 Pass by Value / Pass by Reference
+### [2.2 More about OOP](02-object-oriented-programming/02-more-about-oop/01-object-lifecycle/junior/)
+- [2.2.1 Object Lifecycle](02-object-oriented-programming/02-more-about-oop/01-object-lifecycle/junior/)
+- [2.2.2 Inheritance](02-object-oriented-programming/02-more-about-oop/02-inheritance/junior/)
+- [2.2.3 Abstraction](02-object-oriented-programming/02-more-about-oop/03-abstraction/junior/)
+- [2.2.4 Method Chaining](02-object-oriented-programming/02-more-about-oop/04-method-chaining/junior/)
+- [2.2.5 Encapsulation](02-object-oriented-programming/02-more-about-oop/05-encapsulation/junior/)
+- [2.2.6 Interfaces](02-object-oriented-programming/02-more-about-oop/06-interfaces/junior/)
+- [2.2.7 Enums](02-object-oriented-programming/02-more-about-oop/07-enums/junior/)
+- [2.2.8 Record](02-object-oriented-programming/02-more-about-oop/08-record/junior/)
+- [2.2.9 Method Overloading / Overriding](02-object-oriented-programming/02-more-about-oop/09-method-overloading-overriding/junior/)
+- [2.2.10 Initializer Block](02-object-oriented-programming/02-more-about-oop/10-initializer-block/junior/)
+- [2.2.11 Static vs Dynamic Binding](02-object-oriented-programming/02-more-about-oop/11-static-vs-dynamic-binding/junior/)
+- [2.2.12 Pass by Value / Pass by Reference](02-object-oriented-programming/02-more-about-oop/12-pass-by-value-pass-by-reference/junior/)
 
 ## 3. Exception Handling
 

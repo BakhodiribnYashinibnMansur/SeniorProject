@@ -1,7 +1,6 @@
 # Git and GitHub Roadmap
 
 - Roadmap: https://roadmap.sh/git-github
-- PDF: [git-github.pdf](./git-github.pdf)
 
 ## 1. Learn the Basics
 - 1.1 What is Version Control?

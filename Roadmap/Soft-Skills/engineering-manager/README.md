@@ -1,7 +1,6 @@
 # Engineering Manager Roadmap
 
 - Roadmap: https://roadmap.sh/engineering-manager
-- PDF: [engineering-manager.pdf](./engineering-manager.pdf)
 
 ## 1. What is Engineering Management?
 - 1.1 EM vs Tech Lead vs IC

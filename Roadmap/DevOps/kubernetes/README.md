@@ -1,7 +1,6 @@
 # Kubernetes Roadmap
 
 - Roadmap: https://roadmap.sh/kubernetes
-- PDF: [kubernetes.pdf](./kubernetes.pdf)
 
 ## 1. Introduction
 - Overview of Kubernetes

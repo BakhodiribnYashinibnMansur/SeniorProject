@@ -1,7 +1,6 @@
 # TypeScript Roadmap
 
 - Roadmap: https://roadmap.sh/typescript
-- PDF: [typescript.pdf](./typescript.pdf)
 
 ## 1. Introduction to TypeScript
 - 1.1 TypeScript vs JavaScript

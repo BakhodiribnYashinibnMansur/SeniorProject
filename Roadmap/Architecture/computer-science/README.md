@@ -1,7 +1,6 @@
 # Computer Science Roadmap
 
 - Roadmap: https://roadmap.sh/computer-science
-- PDF: [computer-science.pdf](./computer-science.pdf)
 
 ## 1. Pick a Language
 - 1.1 Python

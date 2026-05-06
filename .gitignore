@@ -44,3 +44,13 @@ env/
 *.log
 .env
 .env.local
+
+# MkDocs build output
+_site/
+.cache/
+
+# PDFs (excluded from repo)
+*.pdf
+
+# Claude session/state
+.claude/

@@ -1,7 +1,6 @@
 # AI Agents Roadmap
 
 - Roadmap: https://roadmap.sh/ai-agents
-- PDF: [ai-agents.pdf](./ai-agents.pdf)
 
 ## 1. Learn the Pre-requisites
 - 1.1 Basic Backend Development

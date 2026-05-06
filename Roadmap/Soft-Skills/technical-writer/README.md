@@ -1,7 +1,6 @@
 # Technical Writer Roadmap
 
 - Roadmap: https://roadmap.sh/technical-writer
-- PDF: [technical-writer.pdf](./technical-writer.pdf)
 
 ## 1. Introduction
 - 1.1 Who is a Technical Writer?

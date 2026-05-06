@@ -1,0 +1,96 @@
+site_name: Senior Project
+site_description: A field guide for senior software engineering — Roadmaps, Leetcode, System Design
+site_author: Bakhodir Yashin Mansur
+site_url: https://senior-stack.uz/
+
+repo_url: https://github.com/BakhodiribnYashinibnMansur/SeniorProject
+repo_name: BakhodiribnYashinibnMansur/SeniorProject
+edit_uri: edit/main/
+
+docs_dir: _docs
+site_dir: _site
+
+exclude_docs: |
+  TEMPLATE.md
+  **/TEMPLATE.md
+  .pages
+  **/.pages
+  Roadmap/**/index.md
+  System Design/**/index.md
+
+theme:
+  name: material
+  custom_dir: overrides
+  language: en
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.instant.prefetch
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.path
+    - navigation.top
+    - navigation.indexes
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - toc.follow
+  palette:
+    scheme: slate
+    primary: custom
+    accent: custom
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
+
+plugins:
+  - search
+  - awesome-pages:
+      strict: false
+      order: asc
+      sort_type: natural
+      order_by: filename
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - def_list
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - toc:
+      permalink: true
+      toc_depth: 3
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/BakhodiribnYashinibnMansur
+
+extra_css:
+  - assets/extra.css

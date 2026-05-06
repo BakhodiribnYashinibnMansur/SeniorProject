@@ -1,7 +1,6 @@
 # Cyber Security Roadmap
 
 - Roadmap: https://roadmap.sh/cyber-security
-- PDF: [cyber-security.pdf](./cyber-security.pdf)
 
 ## 1. Fundamental IT Skills
 - 1.1 Computer Hardware Components

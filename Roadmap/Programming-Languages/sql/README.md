@@ -1,7 +1,6 @@
 # SQL Roadmap
 
 - Roadmap: https://roadmap.sh/sql
-- PDF: [sql.pdf](./sql.pdf)
 
 ## 1. Learn the Basics
 - 1.1 What are Relational Databases?

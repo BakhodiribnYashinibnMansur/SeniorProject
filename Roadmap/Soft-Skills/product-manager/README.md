@@ -1,7 +1,6 @@
 # Product Manager Roadmap
 
 - Roadmap: https://roadmap.sh/product-manager
-- PDF: [product-manager.pdf](./product-manager.pdf)
 
 ## 1. Introduction
 - 1.1 What is Product Management?

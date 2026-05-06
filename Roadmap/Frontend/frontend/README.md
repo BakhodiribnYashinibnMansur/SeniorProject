@@ -1,7 +1,6 @@
 # Frontend Roadmap
 
 - Roadmap: https://roadmap.sh/frontend
-- PDF: [frontend.pdf](./frontend.pdf)
 
 ## 1. Internet
 - 1.1 How does the internet work?

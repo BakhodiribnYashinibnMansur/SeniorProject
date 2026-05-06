@@ -1,7 +1,6 @@
 # Software Architect Roadmap
 
 - Roadmap: https://roadmap.sh/software-architect
-- PDF: [software-architect.pdf](./software-architect.pdf)
 
 ## 1. Understand the Basics
 - 1.1 What is Software Architecture

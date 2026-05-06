@@ -1,7 +1,6 @@
 # API Design Roadmap
 
 - Roadmap: https://roadmap.sh/api-design
-- PDF: [api-design.pdf](./api-design.pdf)
 
 ## 1. Learn the Basics
 - 1.1 What are APIs

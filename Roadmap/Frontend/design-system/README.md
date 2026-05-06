@@ -1,7 +1,6 @@
 # Design System Roadmap
 
 - Roadmap: https://roadmap.sh/design-system
-- PDF: [design-system.pdf](./design-system.pdf)
 
 ## 1. Understand the Basics
 - 1.1 What is a Design System?

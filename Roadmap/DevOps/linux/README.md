@@ -1,7 +1,6 @@
 # Linux Roadmap
 
 - Roadmap: https://roadmap.sh/linux
-- PDF: [linux.pdf](./linux.pdf)
 
 ## 1. Navigation Basics
 - Basic Commands

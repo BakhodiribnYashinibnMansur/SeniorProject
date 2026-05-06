@@ -1,7 +1,6 @@
 # BI Analyst Roadmap
 
 - Roadmap: https://roadmap.sh/bi-analyst
-- PDF: [bi-analyst.pdf](./bi-analyst.pdf)
 
 ## 1. Introduction
 - 1.1 What is BI?

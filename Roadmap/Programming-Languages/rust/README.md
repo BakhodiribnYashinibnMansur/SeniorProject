@@ -1,7 +1,6 @@
 # Rust Roadmap
 
 - Roadmap: https://roadmap.sh/rust
-- PDF: [rust.pdf](./rust.pdf)
 
 ## 1. Introduction
 - 1.1 What is Rust?

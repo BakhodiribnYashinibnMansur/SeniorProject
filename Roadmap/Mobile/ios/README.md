@@ -1,7 +1,6 @@
 # iOS Roadmap
 
 - Roadmap: https://roadmap.sh/ios
-- PDF: [ios.pdf](./ios.pdf)
 
 ## 1. Pick a Language
 

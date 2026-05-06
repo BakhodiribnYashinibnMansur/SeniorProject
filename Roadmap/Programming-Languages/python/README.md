@@ -1,20 +1,19 @@
 # Python Roadmap
 
 - Roadmap: https://roadmap.sh/python
-- PDF: [python.pdf](./python.pdf)
 
-## 1. Learn the Basics
-- 1.1 Basic Syntax
-- 1.2 Variables and Data Types
-- 1.3 Conditionals
-- 1.4 Loops
-- 1.5 Type Casting
-- 1.6 Exceptions
-- 1.7 Functions, Builtin Functions
-- 1.8 Lists
-- 1.9 Tuples
-- 1.10 Sets
-- 1.11 Dictionaries
+## [1. Learn the Basics](01-learn-the-basics/01-basic-syntax/junior/)
+- [1.1 Basic Syntax](01-learn-the-basics/01-basic-syntax/junior/)
+- [1.2 Variables and Data Types](01-learn-the-basics/02-variables-and-data-types/junior/)
+- [1.3 Conditionals](01-learn-the-basics/03-conditionals/junior/)
+- [1.4 Loops](01-learn-the-basics/04-loops/junior/)
+- [1.5 Type Casting](01-learn-the-basics/05-type-casting/junior/)
+- [1.6 Exceptions](01-learn-the-basics/06-exceptions/junior/)
+- [1.7 Functions, Builtin Functions](01-learn-the-basics/07-functions/junior/)
+- [1.8 Lists](01-learn-the-basics/08-lists/junior/)
+- [1.9 Tuples](01-learn-the-basics/09-tuples/junior/)
+- [1.10 Sets](01-learn-the-basics/10-sets/junior/)
+- [1.11 Dictionaries](01-learn-the-basics/11-dictionaries/junior/)
 
 ## 2. Data Structures & Algorithms
 - 2.1 Builtin

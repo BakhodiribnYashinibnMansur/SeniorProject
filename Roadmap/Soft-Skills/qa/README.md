@@ -1,7 +1,6 @@
 # QA Roadmap
 
 - Roadmap: https://roadmap.sh/qa
-- PDF: [qa.pdf](./qa.pdf)
 
 ## 1. Learn the Fundamentals
 - 1.1 What is Quality Assurance?

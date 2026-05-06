@@ -1,589 +1,588 @@
 # Go Roadmap
 
 - Roadmap: https://roadmap.sh/golang
-- PDF: [golang.pdf](./golang.pdf)
 
-## 1. Introduction to Go
-- 1.1 Why use Go
-- 1.2 History of Go
-- 1.3 Setting up the Environment
-- 1.4 Hello World in Go
-- 1.5 `go` command
+## [1. Introduction to Go](01-introduction-to-go/01-why-use-go/junior/)
+- [1.1 Why use Go](01-introduction-to-go/01-why-use-go/junior/)
+- [1.2 History of Go](01-introduction-to-go/02-history-of-go/junior/)
+- [1.3 Setting up the Environment](01-introduction-to-go/03-setting-up-environment/junior/)
+- [1.4 Hello World in Go](01-introduction-to-go/04-hello-world/junior/)
+- [1.5 `go` command](01-introduction-to-go/05-go-command/junior/)
 
-## 2. Language Basics
+## [2. Language Basics](02-language-basics/01-variables-and-constants/01-var-vs-short-declaration/junior/)
 
-### 2.1 Variables & Constants
-- 2.1.1 `var` vs `:=`
-- 2.1.2 Zero Values
-- 2.1.3 `const` and `iota`
-- 2.1.4 Scope and Shadowing
+### [2.1 Variables & Constants](02-language-basics/01-variables-and-constants/01-var-vs-short-declaration/junior/)
+- [2.1.1 `var` vs `:=`](02-language-basics/01-variables-and-constants/01-var-vs-short-declaration/junior/)
+- [2.1.2 Zero Values](02-language-basics/01-variables-and-constants/02-zero-values/junior/)
+- [2.1.3 `const` and `iota`](02-language-basics/01-variables-and-constants/03-const-and-iota/junior/)
+- [2.1.4 Scope and Shadowing](02-language-basics/01-variables-and-constants/04-scope-and-shadowing/junior/)
 
-### 2.2 Data Types
-- 2.2.1 Boolean
-- 2.2.2 Numeric Types
-  - 2.2.2.1 Integers (Signed, Unsigned)
-  - 2.2.2.2 Floating Points
-  - 2.2.2.3 Complex Numbers
-- 2.2.3 Runes
-- 2.2.4 Strings
-  - 2.2.4.1 Raw String Literals
-  - 2.2.4.2 Interpreted String Literals
-- 2.2.5 Type Conversion
-- 2.2.6 Commands & Docs
+### [2.2 Data Types](02-language-basics/02-data-types/01-boolean/junior/)
+- [2.2.1 Boolean](02-language-basics/02-data-types/01-boolean/junior/)
+- [2.2.2 Numeric Types](02-language-basics/02-data-types/02-numeric-types/junior/)
+  - [2.2.2.1 Integers (Signed, Unsigned)](02-language-basics/02-data-types/02-numeric-types/01-integers/junior/)
+  - [2.2.2.2 Floating Points](02-language-basics/02-data-types/02-numeric-types/02-floating-points/junior/)
+  - [2.2.2.3 Complex Numbers](02-language-basics/02-data-types/02-numeric-types/03-complex-numbers/junior/)
+- [2.2.3 Runes](02-language-basics/02-data-types/03-runes/junior/)
+- [2.2.4 Strings](02-language-basics/02-data-types/04-strings/junior/)
+  - [2.2.4.1 Raw String Literals](02-language-basics/02-data-types/04-strings/01-raw-string-literals/junior/)
+  - [2.2.4.2 Interpreted String Literals](02-language-basics/02-data-types/04-strings/02-interpreted-string-literals/junior/)
+- [2.2.5 Type Conversion](02-language-basics/02-data-types/05-type-conversion/junior/)
+- [2.2.6 Commands & Docs](02-language-basics/02-data-types/06-commands-and-docs/junior/)
 
-### 2.3 Composite Types
-- 2.3.1 Arrays
-- 2.3.2 Slices
-  - 2.3.2.1 Capacity and Growth
-  - 2.3.2.2 `make()`
-  - 2.3.2.3 Slice to Array Conversion
-  - 2.3.2.4 Array to Slice Conversion
-- 2.3.3 Strings
-- 2.3.4 Maps
-  - 2.3.4.1 Comma-Ok Idiom
-- 2.3.5 Structs
-  - 2.3.5.1 Struct Tags & JSON
-  - 2.3.5.2 Embedding Structs
+### [2.3 Composite Types](02-language-basics/03-composite-types/01-arrays/junior/)
+- [2.3.1 Arrays](02-language-basics/03-composite-types/01-arrays/junior/)
+- [2.3.2 Slices](02-language-basics/03-composite-types/02-slices/junior/)
+  - [2.3.2.1 Capacity and Growth](02-language-basics/03-composite-types/02-slices/01-capacity-and-growth/junior/)
+  - [2.3.2.2 `make()`](02-language-basics/03-composite-types/02-slices/02-make/junior/)
+  - [2.3.2.3 Slice to Array Conversion](02-language-basics/03-composite-types/02-slices/03-slice-to-array-conversion/junior/)
+  - [2.3.2.4 Array to Slice Conversion](02-language-basics/03-composite-types/02-slices/04-array-to-slice-conversion/junior/)
+- [2.3.3 Strings](02-language-basics/03-composite-types/03-strings/junior/)
+- [2.3.4 Maps](02-language-basics/03-composite-types/04-maps/junior/)
+  - [2.3.4.1 Comma-Ok Idiom](02-language-basics/03-composite-types/04-maps/01-comma-ok-idiom/junior/)
+- [2.3.5 Structs](02-language-basics/03-composite-types/05-structs/junior/)
+  - [2.3.5.1 Struct Tags & JSON](02-language-basics/03-composite-types/05-structs/01-struct-tags-and-json/junior/)
+  - [2.3.5.2 Embedding Structs](02-language-basics/03-composite-types/05-structs/02-embedding-structs/junior/)
 
-### 2.4 Conditionals
-- 2.4.1 `if`
-- 2.4.2 `if-else`
-- 2.4.3 `switch`
+### [2.4 Conditionals](02-language-basics/04-conditionals/01-if/junior/)
+- [2.4.1 `if`](02-language-basics/04-conditionals/01-if/junior/)
+- [2.4.2 `if-else`](02-language-basics/04-conditionals/02-if-else/junior/)
+- [2.4.3 `switch`](02-language-basics/04-conditionals/03-switch/junior/)
 
-### 2.5 Loops
-- 2.5.1 `for` loop
-- 2.5.2 `for range`
-  - 2.5.2.1 Iterating Maps
-  - 2.5.2.2 Iterating Strings
-- 2.5.3 `break`
-- 2.5.4 `continue`
-- 2.5.5 `goto` (discouraged)
+### [2.5 Loops](02-language-basics/05-loops/01-for-loop/junior/)
+- [2.5.1 `for` loop](02-language-basics/05-loops/01-for-loop/junior/)
+- [2.5.2 `for range`](02-language-basics/05-loops/02-for-range/junior/)
+  - [2.5.2.1 Iterating Maps](02-language-basics/05-loops/02-for-range/01-iterating-maps/junior/)
+  - [2.5.2.2 Iterating Strings](02-language-basics/05-loops/02-for-range/02-iterating-strings/junior/)
+- [2.5.3 `break`](02-language-basics/05-loops/03-break/junior/)
+- [2.5.4 `continue`](02-language-basics/05-loops/04-continue/junior/)
+- [2.5.5 `goto` (discouraged)](02-language-basics/05-loops/05-goto/junior/)
 
-### 2.6 Functions
-- 2.6.1 Functions Basics
-- 2.6.2 Variadic Functions
-- 2.6.3 Multiple Return Values
-- 2.6.4 Anonymous Functions
-- 2.6.5 Closures
-- 2.6.6 Named Return Values
-- 2.6.7 Call by Value
+### [2.6 Functions](02-language-basics/06-functions/01-functions-basics/junior/)
+- [2.6.1 Functions Basics](02-language-basics/06-functions/01-functions-basics/junior/)
+- [2.6.2 Variadic Functions](02-language-basics/06-functions/02-variadic-functions/junior/)
+- [2.6.3 Multiple Return Values](02-language-basics/06-functions/03-multiple-return-values/junior/)
+- [2.6.4 Anonymous Functions](02-language-basics/06-functions/04-anonymous-functions/junior/)
+- [2.6.5 Closures](02-language-basics/06-functions/05-closures/junior/)
+- [2.6.6 Named Return Values](02-language-basics/06-functions/06-named-return-values/junior/)
+- [2.6.7 Call by Value](02-language-basics/06-functions/07-call-by-value/junior/)
 
-### 2.7 Pointers
-- 2.7.1 Pointers Basics
-- 2.7.2 Pointers with Structs
-- 2.7.3 With Maps & Slices
-- 2.7.4 Memory Management
-  - 2.7.4.1 Garbage Collection
+### [2.7 Pointers](02-language-basics/07-pointers/01-pointers-basics/junior/)
+- [2.7.1 Pointers Basics](02-language-basics/07-pointers/01-pointers-basics/junior/)
+- [2.7.2 Pointers with Structs](02-language-basics/07-pointers/02-pointers-with-structs/junior/)
+- [2.7.3 With Maps & Slices](02-language-basics/07-pointers/03-with-maps-and-slices/junior/)
+- [2.7.4 Memory Management](02-language-basics/07-pointers/04-memory-management/junior/)
+  - [2.7.4.1 Garbage Collection](02-language-basics/07-pointers/04-memory-management/01-garbage-collection/junior/)
 
-## 3. Methods and Interfaces
-- 3.1 Methods vs Functions
-- 3.2 Pointer Receivers
-- 3.3 Value Receivers
-- 3.4 Interfaces Basics
+## [3. Methods and Interfaces](03-methods-and-interfaces/01-methods-vs-functions/junior/)
+- [3.1 Methods vs Functions](03-methods-and-interfaces/01-methods-vs-functions/junior/)
+- [3.2 Pointer Receivers](03-methods-and-interfaces/02-pointer-receivers/junior/)
+- [3.3 Value Receivers](03-methods-and-interfaces/03-value-receivers/junior/)
+- [3.4 Interfaces Basics](03-methods-and-interfaces/04-interfaces-basics/junior/)
   - 3.4.1 Empty Interfaces
   - 3.4.2 Embedding Interfaces
   - 3.4.3 Type Assertions
   - 3.4.4 Type Switch
-- 3.5 Method Sets Deep
-- 3.6 Interface Internals (`iface`, `eface`, `itab`)
-- 3.7 Method Dispatch
-- 3.8 Common Interfaces (`io.Reader`, `fmt.Stringer`, `error`)
-- 3.9 Interface Best Practices
-- 3.10 Interface Anti-Patterns
+- [3.5 Method Sets Deep](03-methods-and-interfaces/05-empty-interfaces/junior/)
+- [3.6 Interface Internals (`iface`, `eface`, `itab`)](03-methods-and-interfaces/06-embedding-interfaces/junior/)
+- [3.7 Method Dispatch](03-methods-and-interfaces/07-type-assertions/junior/)
+- [3.8 Common Interfaces (`io.Reader`, `fmt.Stringer`, `error`)](03-methods-and-interfaces/08-type-switch/junior/)
+- [3.9 Interface Best Practices](03-methods-and-interfaces/09-method-sets-deep/)
+- [3.10 Interface Anti-Patterns](03-methods-and-interfaces/10-interface-internals/)
 
-## 4. Generics
-- 4.1 Why Generics?
-- 4.2 Generic Functions
-- 4.3 Generic Types / Interfaces
-- 4.4 Type Constraints
-- 4.5 Type Inference
-- 4.6 Generic Constraints Deep
-- 4.7 Generic Performance (monomorphization vs dictionary)
-- 4.8 Generics vs Interfaces
-- 4.9 Generic Data Structures
-- 4.10 Generic Limitations
+## [4. Generics](04-generics/01-why-generics/junior/)
+- [4.1 Why Generics?](04-generics/01-why-generics/junior/)
+- [4.2 Generic Functions](04-generics/02-generic-functions/junior/)
+- [4.3 Generic Types / Interfaces](04-generics/03-generic-types-interfaces/junior/)
+- [4.4 Type Constraints](04-generics/04-type-constraints/junior/)
+- [4.5 Type Inference](04-generics/05-type-inference/junior/)
+- [4.6 Generic Constraints Deep](04-generics/06-generic-constraints-deep/)
+- [4.7 Generic Performance (monomorphization vs dictionary)](04-generics/07-generic-performance/)
+- [4.8 Generics vs Interfaces](04-generics/08-generics-vs-interfaces/)
+- [4.9 Generic Data Structures](04-generics/09-generic-data-structures/)
+- [4.10 Generic Limitations](04-generics/10-generic-limitations/)
 
-## 5. Error Handling
-- 5.1 Error Handling Basics
-- 5.2 `error` interface
-- 5.3 `errors.New`
-- 5.4 `fmt.Errorf`
-- 5.5 Wrapping/Unwrapping Errors
-- 5.6 Sentinel Errors
-- 5.7 `panic` and `recover`
-- 5.8 Stack Traces & Debugging
-- 5.9 `errors.Is` vs `errors.As` Deep
-- 5.10 Custom Error Types
-- 5.11 `errors.Join` (Go 1.20+)
-- 5.12 Error Design Best Practices
-- 5.13 Don't Just Check, Handle
+## [5. Error Handling](05-error-handling/01-error-handling-basics/junior/)
+- [5.1 Error Handling Basics](05-error-handling/01-error-handling-basics/junior/)
+- [5.2 `error` interface](05-error-handling/02-error-interface/junior/)
+- [5.3 `errors.New`](05-error-handling/03-errors-new/junior/)
+- [5.4 `fmt.Errorf`](05-error-handling/04-fmt-errorf/junior/)
+- [5.5 Wrapping/Unwrapping Errors](05-error-handling/05-wrapping-unwrapping-errors/junior/)
+- [5.6 Sentinel Errors](05-error-handling/06-sentinel-errors/junior/)
+- [5.7 `panic` and `recover`](05-error-handling/07-panic-and-recover/junior/)
+- [5.8 Stack Traces & Debugging](05-error-handling/08-stack-traces-debugging/junior/)
+- [5.9 `errors.Is` vs `errors.As` Deep](05-error-handling/09-errors-is-vs-as-deep/)
+- [5.10 Custom Error Types](05-error-handling/10-custom-error-types/)
+- [5.11 `errors.Join` (Go 1.20+)](05-error-handling/11-errors-join/)
+- [5.12 Error Design Best Practices](05-error-handling/12-error-design-best-practices/)
+- [5.13 Don't Just Check, Handle](05-error-handling/13-handle-dont-just-check/)
 
-## 6. Code Organization
+## [6. Code Organization](06-code-organization/01-modules-and-dependencies/01-go-mod-init/junior/)
 
-### 6.1 Modules & Dependencies
-- 6.1.1 `go mod init`
-- 6.1.2 `go mod tidy`
-- 6.1.3 `go mod vendor`
+### [6.1 Modules & Dependencies](06-code-organization/01-modules-and-dependencies/01-go-mod-init/junior/)
+- [6.1.1 `go mod init`](06-code-organization/01-modules-and-dependencies/01-go-mod-init/junior/)
+- [6.1.2 `go mod tidy`](06-code-organization/01-modules-and-dependencies/02-go-mod-tidy/junior/)
+- [6.1.3 `go mod vendor`](06-code-organization/01-modules-and-dependencies/03-go-mod-vendor/junior/)
 
-### 6.2 Packages
-- 6.2.1 Package Import Rules
-- 6.2.2 Using 3rd Party Packages
-- 6.2.3 Publishing Modules
+### [6.2 Packages](06-code-organization/02-packages/01-package-import-rules/junior/)
+- [6.2.1 Package Import Rules](06-code-organization/02-packages/01-package-import-rules/junior/)
+- [6.2.2 Using 3rd Party Packages](06-code-organization/02-packages/02-using-3rd-party-packages/junior/)
+- [6.2.3 Publishing Modules](06-code-organization/02-packages/03-publishing-modules/junior/)
 
-### 6.3 Project Layout
-### 6.4 Internal Packages
-### 6.5 Workspaces (`go.work`)
-### 6.6 Dependency Injection (Wire, fx, manual)
-### 6.7 Architecture Patterns (Clean, Hexagonal, DDD)
-### 6.8 Module Versioning (semver, v2+)
-### 6.9 Private Modules (GOPRIVATE)
+### [6.3 Project Layout](06-code-organization/03-project-layout/)
+### [6.4 Internal Packages](06-code-organization/04-internal-packages/)
+### [6.5 Workspaces (`go.work`)](06-code-organization/05-workspaces/)
+### [6.6 Dependency Injection (Wire, fx, manual)](06-code-organization/06-dependency-injection/)
+### [6.7 Architecture Patterns (Clean, Hexagonal, DDD)](06-code-organization/07-architecture-patterns/)
+### [6.8 Module Versioning (semver, v2+)](06-code-organization/08-module-versioning/)
+### [6.9 Private Modules (GOPRIVATE)](06-code-organization/09-private-modules/)
 
-## 7. Concurrency
+## [7. Concurrency](07-concurrency/01-goroutines/01-overview/junior/)
 
-### 7.0 Introduction
-- 7.0.1 What is Concurrency (Concurrency vs Parallelism)
-- 7.0.2 CSP Model (Communicating Sequential Processes)
-- 7.0.3 Go Runtime & GMP Scheduler
-- 7.0.4 Go Memory Model (happens-before)
-- 7.0.5 When to Use Concurrency (and when not to)
+### [7.0 Introduction](07-concurrency/00-introduction/)
+- [7.0.1 What is Concurrency (Concurrency vs Parallelism)](07-concurrency/00-introduction/01-what-is-concurrency/)
+- [7.0.2 CSP Model (Communicating Sequential Processes)](07-concurrency/00-introduction/02-csp-model/)
+- [7.0.3 Go Runtime & GMP Scheduler](07-concurrency/00-introduction/03-go-runtime-gmp/)
+- [7.0.4 Go Memory Model (happens-before)](07-concurrency/00-introduction/04-memory-model/)
+- [7.0.5 When to Use Concurrency (and when not to)](07-concurrency/00-introduction/05-when-to-use-concurrency/)
 
-### 7.1 Goroutines
-- 7.1.1 Overview (creation & syntax)
-- 7.1.2 Goroutines vs OS Threads
-- 7.1.3 Stack Growth
-- 7.1.4 Runtime Management
-- 7.1.5 Best Practices
-- 7.1.6 Common Pitfalls
+### [7.1 Goroutines](07-concurrency/01-goroutines/01-overview/junior/)
+- [7.1.1 Overview (creation & syntax)](07-concurrency/01-goroutines/01-overview/junior/)
+- [7.1.2 Goroutines vs OS Threads](07-concurrency/01-goroutines/02-vs-os-threads/)
+- [7.1.3 Stack Growth](07-concurrency/01-goroutines/03-stack-growth/)
+- [7.1.4 Runtime Management](07-concurrency/01-goroutines/04-runtime-management/)
+- [7.1.5 Best Practices](07-concurrency/01-goroutines/05-best-practices/)
+- [7.1.6 Common Pitfalls](07-concurrency/01-goroutines/06-common-pitfalls/)
 
-### 7.2 Channels
-- 7.2.1 Buffered vs Unbuffered
-- 7.2.2 Select Statement
-- 7.2.3 Worker Pools
-- 7.2.4 Channel Direction
-- 7.2.5 Nil Channels
-- 7.2.6 Closing Channels
-- 7.2.7 Range over Channels
+### [7.2 Channels](07-concurrency/02-channels/01-buffered-vs-unbuffered/junior/)
+- [7.2.1 Buffered vs Unbuffered](07-concurrency/02-channels/01-buffered-vs-unbuffered/junior/)
+- [7.2.2 Select Statement](07-concurrency/02-channels/02-select-statement/junior/)
+- [7.2.3 Worker Pools](07-concurrency/02-channels/03-worker-pools/junior/)
+- [7.2.4 Channel Direction](07-concurrency/02-channels/04-channel-direction/)
+- [7.2.5 Nil Channels](07-concurrency/02-channels/05-nil-channels/)
+- [7.2.6 Closing Channels](07-concurrency/02-channels/06-closing-channels/)
+- [7.2.7 Range over Channels](07-concurrency/02-channels/07-range-over-channels/)
 
-### 7.3 `sync` Package
-- 7.3.1 Mutexes
-- 7.3.2 WaitGroups
-- 7.3.3 Once
-- 7.3.4 Cond
-- 7.3.5 Pool
-- 7.3.6 Map
-- 7.3.7 Atomic (`sync/atomic`)
+### [7.3 `sync` Package](07-concurrency/03-sync-package/01-mutexes/junior/)
+- [7.3.1 Mutexes](07-concurrency/03-sync-package/01-mutexes/junior/)
+- [7.3.2 WaitGroups](07-concurrency/03-sync-package/02-waitgroups/junior/)
+- [7.3.3 Once](07-concurrency/03-sync-package/03-once/)
+- [7.3.4 Cond](07-concurrency/03-sync-package/04-cond/)
+- [7.3.5 Pool](07-concurrency/03-sync-package/05-pool/)
+- [7.3.6 Map](07-concurrency/03-sync-package/06-map/)
+- [7.3.7 Atomic (`sync/atomic`)](07-concurrency/03-sync-package/07-atomic/)
 
-### 7.4 `context` Package
-- 7.4.1 Deadlines & Cancellations
-- 7.4.2 Common Usecases
-- 7.4.3 Context Values
-- 7.4.4 Context Tree
-- 7.4.5 Context Internals
+### [7.4 `context` Package](07-concurrency/04-context-package/01-deadlines-and-cancellations/junior/)
+- [7.4.1 Deadlines & Cancellations](07-concurrency/04-context-package/01-deadlines-and-cancellations/junior/)
+- [7.4.2 Common Usecases](07-concurrency/04-context-package/02-common-usecases/junior/)
+- [7.4.3 Context Values](07-concurrency/04-context-package/03-context-values/)
+- [7.4.4 Context Tree](07-concurrency/04-context-package/04-context-tree/)
+- [7.4.5 Context Internals](07-concurrency/04-context-package/05-context-internals/)
 
-### 7.5 Concurrency Patterns
-- 7.5.1 fan-in
-- 7.5.2 fan-out
-- 7.5.3 pipeline
-- 7.5.4 Race Detection
-- 7.5.5 Future / Promise
-- 7.5.6 Broadcast Pattern
+### [7.5 Concurrency Patterns](07-concurrency/05-concurrency-patterns/01-fan-in/junior/)
+- [7.5.1 fan-in](07-concurrency/05-concurrency-patterns/01-fan-in/junior/)
+- [7.5.2 fan-out](07-concurrency/05-concurrency-patterns/02-fan-out/junior/)
+- [7.5.3 pipeline](07-concurrency/05-concurrency-patterns/03-pipeline/junior/)
+- [7.5.4 Race Detection](07-concurrency/05-concurrency-patterns/04-race-detection/junior/)
+- [7.5.5 Future / Promise](07-concurrency/05-concurrency-patterns/05-future-promise/)
+- [7.5.6 Broadcast Pattern](07-concurrency/05-concurrency-patterns/06-broadcast-pattern/)
 
-### 7.6 Errgroup & `x/sync`
-- 7.6.1 `errgroup.Group`
-- 7.6.2 `semaphore.Weighted`
-- 7.6.3 `singleflight.Group`
+### [7.6 Errgroup & `x/sync`](07-concurrency/06-errgroup-x-sync/)
+- [7.6.1 `errgroup.Group`](07-concurrency/06-errgroup-x-sync/01-errgroup/)
+- [7.6.2 `semaphore.Weighted`](07-concurrency/06-errgroup-x-sync/02-semaphore/)
+- [7.6.3 `singleflight.Group`](07-concurrency/06-errgroup-x-sync/03-singleflight/)
 
-### 7.7 Goroutine Lifecycle & Leaks
-- 7.7.1 Goroutine Lifecycle
-- 7.7.2 Detecting Leaks (`runtime.NumGoroutine`, `pprof`)
-- 7.7.3 Preventing Leaks
-- 7.7.4 pprof Tools
+### [7.7 Goroutine Lifecycle & Leaks](07-concurrency/07-goroutine-lifecycle-leaks/)
+- [7.7.1 Goroutine Lifecycle](07-concurrency/07-goroutine-lifecycle-leaks/01-lifecycle/)
+- [7.7.2 Detecting Leaks (`runtime.NumGoroutine`, `pprof`)](07-concurrency/07-goroutine-lifecycle-leaks/02-detecting-leaks/)
+- [7.7.3 Preventing Leaks](07-concurrency/07-goroutine-lifecycle-leaks/03-preventing-leaks/)
+- [7.7.4 pprof Tools](07-concurrency/07-goroutine-lifecycle-leaks/04-pprof-tools/)
 
-### 7.8 Deadlock, Livelock, Starvation
-- 7.8.1 Deadlock
-- 7.8.2 Livelock
-- 7.8.3 Starvation
+### [7.8 Deadlock, Livelock, Starvation](07-concurrency/08-deadlock-livelock-starvation/)
+- [7.8.1 Deadlock](07-concurrency/08-deadlock-livelock-starvation/01-deadlock/)
+- [7.8.2 Livelock](07-concurrency/08-deadlock-livelock-starvation/02-livelock/)
+- [7.8.3 Starvation](07-concurrency/08-deadlock-livelock-starvation/03-starvation/)
 
-### 7.9 Channel Internals
-- 7.9.1 `hchan` Struct
-- 7.9.2 Runtime Behavior
-- 7.9.3 Buffer Mechanics
-- 7.9.4 Send / Receive Flow
+### [7.9 Channel Internals](07-concurrency/09-channel-internals/)
+- [7.9.1 `hchan` Struct](07-concurrency/09-channel-internals/01-hchan-struct/)
+- [7.9.2 Runtime Behavior](07-concurrency/09-channel-internals/02-runtime-behavior/)
+- [7.9.3 Buffer Mechanics](07-concurrency/09-channel-internals/03-buffer-mechanics/)
+- [7.9.4 Send / Receive Flow](07-concurrency/09-channel-internals/04-send-receive-flow/)
 
-### 7.10 Scheduler Deep-Dive
-- 7.10.1 GMP Model
-- 7.10.2 Preemption (Go 1.14+)
-- 7.10.3 `GOMAXPROCS` Tuning
-- 7.10.4 Work Stealing
-- 7.10.5 Syscall Handling
+### [7.10 Scheduler Deep-Dive](07-concurrency/10-scheduler-deep-dive/)
+- [7.10.1 GMP Model](07-concurrency/10-scheduler-deep-dive/01-gmp-model/)
+- [7.10.2 Preemption (Go 1.14+)](07-concurrency/10-scheduler-deep-dive/02-preemption/)
+- [7.10.3 `GOMAXPROCS` Tuning](07-concurrency/10-scheduler-deep-dive/03-gomaxprocs-tuning/)
+- [7.10.4 Work Stealing](07-concurrency/10-scheduler-deep-dive/04-work-stealing/)
+- [7.10.5 Syscall Handling](07-concurrency/10-scheduler-deep-dive/05-syscall-handling/)
 
-### 7.11 Advanced Channel Patterns
-- 7.11.1 or-done-channel
-- 7.11.2 tee-channel
-- 7.11.3 bridge-channel
-- 7.11.4 Generator
-- 7.11.5 Rate Limiter
+### [7.11 Advanced Channel Patterns](07-concurrency/11-advanced-channel-patterns/)
+- [7.11.1 or-done-channel](07-concurrency/11-advanced-channel-patterns/01-or-done-channel/)
+- [7.11.2 tee-channel](07-concurrency/11-advanced-channel-patterns/02-tee-channel/)
+- [7.11.3 bridge-channel](07-concurrency/11-advanced-channel-patterns/03-bridge-channel/)
+- [7.11.4 Generator](07-concurrency/11-advanced-channel-patterns/04-generator/)
+- [7.11.5 Rate Limiter](07-concurrency/11-advanced-channel-patterns/05-ratelimiter/)
 
-### 7.12 Lock-Free Programming
-- 7.12.1 CAS-based Algorithms
-- 7.12.2 ABA Problem
-- 7.12.3 Lock-Free Data Structures (queue, stack)
-- 7.12.4 Memory Fences
-- 7.12.5 Lock-Free vs Wait-Free
+### [7.12 Lock-Free Programming](07-concurrency/12-lock-free-programming/)
+- [7.12.1 CAS-based Algorithms](07-concurrency/12-lock-free-programming/01-cas-algorithms/)
+- [7.12.2 ABA Problem](07-concurrency/12-lock-free-programming/02-aba-problem/)
+- [7.12.3 Lock-Free Data Structures (queue, stack)](07-concurrency/12-lock-free-programming/03-lock-free-data-structures/)
+- [7.12.4 Memory Fences](07-concurrency/12-lock-free-programming/04-memory-fences/)
+- [7.12.5 Lock-Free vs Wait-Free](07-concurrency/12-lock-free-programming/05-lock-free-vs-wait-free/)
 
-### 7.13 Testing Concurrent Code
-- 7.13.1 Race Detector Deep-Dive
-- 7.13.2 Deterministic Testing
-- 7.13.3 `sync.WaitGroup` in Tests
-- 7.13.4 Mocking Time
-- 7.13.5 Concurrent Fuzzing
+### [7.13 Testing Concurrent Code](07-concurrency/13-testing-concurrent-code/)
+- [7.13.1 Race Detector Deep-Dive](07-concurrency/13-testing-concurrent-code/01-race-detector-deep/)
+- [7.13.2 Deterministic Testing](07-concurrency/13-testing-concurrent-code/02-deterministic-testing/)
+- [7.13.3 `sync.WaitGroup` in Tests](07-concurrency/13-testing-concurrent-code/03-waitgroup-in-tests/)
+- [7.13.4 Mocking Time](07-concurrency/13-testing-concurrent-code/04-mocking-time/)
+- [7.13.5 Concurrent Fuzzing](07-concurrency/13-testing-concurrent-code/05-concurrent-fuzzing/)
 
-### 7.14 Performance Tuning
-- 7.14.1 `GOMAXPROCS`
-- 7.14.2 `GOGC`
-- 7.14.3 `runtime.LockOSThread`
-- 7.14.4 Profiling Concurrent Code
-- 7.14.5 Scheduler Tracing
+### [7.14 Performance Tuning](07-concurrency/14-performance-tuning/)
+- [7.14.1 `GOMAXPROCS`](07-concurrency/14-performance-tuning/01-gomaxprocs/)
+- [7.14.2 `GOGC`](07-concurrency/14-performance-tuning/02-gogc/)
+- [7.14.3 `runtime.LockOSThread`](07-concurrency/14-performance-tuning/03-lockosthread/)
+- [7.14.4 Profiling Concurrent Code](07-concurrency/14-performance-tuning/04-profiling-concurrent/)
+- [7.14.5 Scheduler Tracing](07-concurrency/14-performance-tuning/05-scheduler-tracing/)
 
-### 7.15 Concurrency Anti-Patterns
-- 7.15.1 Unlimited Goroutines
-- 7.15.2 Mutex Copying
-- 7.15.3 Channel Close Violations
-- 7.15.4 Premature Optimization
-- 7.15.5 Wait-for-Empty-Channel
-- 7.15.6 Sleep-for-Sync
+### [7.15 Concurrency Anti-Patterns](07-concurrency/15-concurrency-anti-patterns/)
+- [7.15.1 Unlimited Goroutines](07-concurrency/15-concurrency-anti-patterns/01-unlimited-goroutines/)
+- [7.15.2 Mutex Copying](07-concurrency/15-concurrency-anti-patterns/02-mutex-copying/)
+- [7.15.3 Channel Close Violations](07-concurrency/15-concurrency-anti-patterns/03-channel-close-violations/)
+- [7.15.4 Premature Optimization](07-concurrency/15-concurrency-anti-patterns/04-premature-optimization/)
+- [7.15.5 Wait-for-Empty-Channel](07-concurrency/15-concurrency-anti-patterns/05-wait-for-empty-channel/)
+- [7.15.6 Sleep-for-Sync](07-concurrency/15-concurrency-anti-patterns/06-sleep-for-sync/)
 
-### 7.16 Time-based Concurrency
-- 7.16.1 `time.Ticker`
-- 7.16.2 `time.AfterFunc`
-- 7.16.3 Timer Leaks
-- 7.16.4 Exponential Backoff
-- 7.16.5 Debounce / Throttle
+### [7.16 Time-based Concurrency](07-concurrency/16-time-based-concurrency/)
+- [7.16.1 `time.Ticker`](07-concurrency/16-time-based-concurrency/01-ticker/)
+- [7.16.2 `time.AfterFunc`](07-concurrency/16-time-based-concurrency/02-afterfunc/)
+- [7.16.3 Timer Leaks](07-concurrency/16-time-based-concurrency/03-timer-leaks/)
+- [7.16.4 Exponential Backoff](07-concurrency/16-time-based-concurrency/04-exponential-backoff/)
+- [7.16.5 Debounce / Throttle](07-concurrency/16-time-based-concurrency/05-debounce-throttle/)
 
-### 7.17 Goroutine Pools (3rd-party)
-- 7.17.1 `ants`
-- 7.17.2 `tunny`
-- 7.17.3 `workerpool`
-- 7.17.4 When to Use Pools
+### [7.17 Goroutine Pools (3rd-party)](07-concurrency/17-goroutine-pools-3rd-party/)
+- [7.17.1 `ants`](07-concurrency/17-goroutine-pools-3rd-party/01-ants/)
+- [7.17.2 `tunny`](07-concurrency/17-goroutine-pools-3rd-party/02-tunny/)
+- [7.17.3 `workerpool`](07-concurrency/17-goroutine-pools-3rd-party/03-workerpool/)
+- [7.17.4 When to Use Pools](07-concurrency/17-goroutine-pools-3rd-party/04-when-to-use/)
 
-### 7.18 Production Patterns
-- 7.18.1 Backpressure
-- 7.18.2 Dynamic Worker Scaling
-- 7.18.3 Batching
-- 7.18.4 Graceful Shutdown
-- 7.18.5 Drain Pattern
+### [7.18 Production Patterns](07-concurrency/18-production-patterns/)
+- [7.18.1 Backpressure](07-concurrency/18-production-patterns/01-backpressure/)
+- [7.18.2 Dynamic Worker Scaling](07-concurrency/18-production-patterns/02-dynamic-worker-scaling/)
+- [7.18.3 Batching](07-concurrency/18-production-patterns/03-batching/)
+- [7.18.4 Graceful Shutdown](07-concurrency/18-production-patterns/04-graceful-shutdown/)
+- [7.18.5 Drain Pattern](07-concurrency/18-production-patterns/05-drain-pattern/)
 
-### 7.19 Pipeline Production Patterns
-- 7.19.1 Error Propagation
-- 7.19.2 Cancellation Propagation
-- 7.19.3 Fan-out within Pipeline
-- 7.19.4 Batching Stages
-- 7.19.5 Fan-in/Fan-out within Pipeline
+### [7.19 Pipeline Production Patterns](07-concurrency/19-pipeline-production-patterns/)
+- [7.19.1 Error Propagation](07-concurrency/19-pipeline-production-patterns/01-error-propagation/)
+- [7.19.2 Cancellation Propagation](07-concurrency/19-pipeline-production-patterns/02-cancellation-propagation/)
+- [7.19.3 Fan-out within Pipeline](07-concurrency/19-pipeline-production-patterns/03-fan-out-within-pipeline/)
+- [7.19.4 Batching Stages](07-concurrency/19-pipeline-production-patterns/04-batching-stages/)
+- [7.19.5 Fan-in/Fan-out within Pipeline](07-concurrency/19-pipeline-production-patterns/05-fan-in-fan-out-within/)
 
-### 7.20 Cancellation Deep
-- 7.20.1 Cooperative vs Force Cancellation
-- 7.20.2 Partial Cancellation
-- 7.20.3 Cleanup Ordering
+### [7.20 Cancellation Deep](07-concurrency/20-cancellation-deep/)
+- [7.20.1 Cooperative vs Force Cancellation](07-concurrency/20-cancellation-deep/01-cooperative-vs-force/)
+- [7.20.2 Partial Cancellation](07-concurrency/20-cancellation-deep/02-partial-cancellation/)
+- [7.20.3 Cleanup Ordering](07-concurrency/20-cancellation-deep/03-cleanup-ordering/)
 
-### 7.21 Concurrent Data Structures
-- 7.21.1 TTL Caches
-- 7.21.2 LRU Concurrent
-- 7.21.3 Concurrent Skip List
-- 7.21.4 Concurrent Trees
-- 7.21.5 Copy-on-Write
-- 7.21.6 Concurrent Counters
-- 7.21.7 Concurrent Bloom Filter
+### [7.21 Concurrent Data Structures](07-concurrency/21-concurrent-data-structures/)
+- [7.21.1 TTL Caches](07-concurrency/21-concurrent-data-structures/01-ttl-caches/)
+- [7.21.2 LRU Concurrent](07-concurrency/21-concurrent-data-structures/02-lru-concurrent/)
+- [7.21.3 Concurrent Skip List](07-concurrency/21-concurrent-data-structures/03-concurrent-skip-list/)
+- [7.21.4 Concurrent Trees](07-concurrency/21-concurrent-data-structures/04-concurrent-trees/)
+- [7.21.5 Copy-on-Write](07-concurrency/21-concurrent-data-structures/05-copy-on-write/)
+- [7.21.6 Concurrent Counters](07-concurrency/21-concurrent-data-structures/06-concurrent-counters/)
+- [7.21.7 Concurrent Bloom Filter](07-concurrency/21-concurrent-data-structures/07-concurrent-bloom-filter/)
 
-### 7.22 Memory Ordering & Barriers
-- 7.22.1 Hardware Memory Barriers
-- 7.22.2 Acquire / Release Semantics
-- 7.22.3 Sequential Consistency
-- 7.22.4 Cache Coherence
-- 7.22.5 False Sharing
+### [7.22 Memory Ordering & Barriers](07-concurrency/22-memory-ordering-barriers/)
+- [7.22.1 Hardware Memory Barriers](07-concurrency/22-memory-ordering-barriers/01-hardware-barriers/)
+- [7.22.2 Acquire / Release Semantics](07-concurrency/22-memory-ordering-barriers/02-acquire-release/)
+- [7.22.3 Sequential Consistency](07-concurrency/22-memory-ordering-barriers/03-sequential-consistency/)
+- [7.22.4 Cache Coherence](07-concurrency/22-memory-ordering-barriers/04-cache-coherence/)
+- [7.22.5 False Sharing](07-concurrency/22-memory-ordering-barriers/05-false-sharing/)
 
-### 7.23 Concurrency in stdlib
-- 7.23.1 `net/http` Server Concurrency
-- 7.23.2 `database/sql` Connection Pool
-- 7.23.3 `sync.Pool` Internals
-- 7.23.4 Runtime Internals
-- 7.23.5 `time` Package Concurrency
+### [7.23 Concurrency in stdlib](07-concurrency/23-concurrency-in-stdlib/)
+- [7.23.1 `net/http` Server Concurrency](07-concurrency/23-concurrency-in-stdlib/01-net-http-server/)
+- [7.23.2 `database/sql` Connection Pool](07-concurrency/23-concurrency-in-stdlib/02-database-sql-pool/)
+- [7.23.3 `sync.Pool` Internals](07-concurrency/23-concurrency-in-stdlib/03-sync-pool-internals/)
+- [7.23.4 Runtime Internals](07-concurrency/23-concurrency-in-stdlib/04-runtime-internals/)
+- [7.23.5 `time` Package Concurrency](07-concurrency/23-concurrency-in-stdlib/05-time-package-concurrency/)
 
-### 7.24 Primitives Decision Guide
-- 7.24.1 Channel vs Mutex
-- 7.24.2 Mutex vs Atomic
-- 7.24.3 When to Use `sync.Cond`
-- 7.24.4 Decision Tree
+### [7.24 Primitives Decision Guide](07-concurrency/24-primitives-decision-guide/)
+- [7.24.1 Channel vs Mutex](07-concurrency/24-primitives-decision-guide/01-channel-vs-mutex/)
+- [7.24.2 Mutex vs Atomic](07-concurrency/24-primitives-decision-guide/02-mutex-vs-atomic/)
+- [7.24.3 When to Use `sync.Cond`](07-concurrency/24-primitives-decision-guide/03-when-to-use-cond/)
+- [7.24.4 Decision Tree](07-concurrency/24-primitives-decision-guide/04-decision-tree/)
 
-### 7.25 Famous Bugs & Postmortems
-- 7.25.1 Cloudflare Incidents
-- 7.25.2 Uber Incidents
-- 7.25.3 Dropbox Incidents
-- 7.25.4 GitHub Incidents
-- 7.25.5 Twitter Incidents
+### [7.25 Famous Bugs & Postmortems](07-concurrency/25-famous-bugs-postmortems/)
+- [7.25.1 Cloudflare Incidents](07-concurrency/25-famous-bugs-postmortems/01-cloudflare-incidents/)
+- [7.25.2 Uber Incidents](07-concurrency/25-famous-bugs-postmortems/02-uber-incidents/)
+- [7.25.3 Dropbox Incidents](07-concurrency/25-famous-bugs-postmortems/03-dropbox-incidents/)
+- [7.25.4 GitHub Incidents](07-concurrency/25-famous-bugs-postmortems/04-github-incidents/)
+- [7.25.5 Twitter Incidents](07-concurrency/25-famous-bugs-postmortems/05-twitter-incidents/)
 
-### 7.26 Modern Features
-- 7.26.1 `sync.OnceFunc` (Go 1.21+)
-- 7.26.2 Structured Concurrency
-- 7.26.3 Future Proposals
+### [7.26 Modern Features](07-concurrency/26-modern-features/)
+- [7.26.1 `sync.OnceFunc` (Go 1.21+)](07-concurrency/26-modern-features/01-sync-oncefunc/)
+- [7.26.2 Structured Concurrency](07-concurrency/26-modern-features/02-structured-concurrency/)
+- [7.26.3 Future Proposals](07-concurrency/26-modern-features/03-future-proposals/)
 
-### 7.27 Real-World Case Studies
-- 7.27.1 Kubernetes Scheduler
-- 7.27.2 etcd Raft
-- 7.27.3 gRPC Stream
-- 7.27.4 Docker Concurrency
-- 7.27.5 Prometheus Concurrency
-- 7.27.6 Postgres Driver
+### [7.27 Real-World Case Studies](07-concurrency/27-real-world-case-studies/)
+- [7.27.1 Kubernetes Scheduler](07-concurrency/27-real-world-case-studies/01-kubernetes-scheduler/)
+- [7.27.2 etcd Raft](07-concurrency/27-real-world-case-studies/02-etcd-raft/)
+- [7.27.3 gRPC Stream](07-concurrency/27-real-world-case-studies/03-grpc-stream/)
+- [7.27.4 Docker Concurrency](07-concurrency/27-real-world-case-studies/04-docker-concurrency/)
+- [7.27.5 Prometheus Concurrency](07-concurrency/27-real-world-case-studies/05-prometheus-concurrency/)
+- [7.27.6 Postgres Driver](07-concurrency/27-real-world-case-studies/06-postgres-driver/)
 
-## 8. Standard Library
-- 8.1 I/O & File Handling
-- 8.2 `flag`
-- 8.3 `time`
-- 8.4 `encoding/json`
-- 8.5 `os`
-- 8.6 `bufio`
-- 8.7 `slog`
-- 8.8 `regexp`
-- 8.9 `go:embed` for embedding
-- 8.10 `net` (TCP/UDP)
-- 8.11 `net/http` Internals
-- 8.12 `encoding/*` (binary, csv, xml, gob)
-- 8.13 `crypto/*` (tls, hmac, aes, rsa)
-- 8.14 `io`, `io/fs`
-- 8.15 `text/template`, `html/template`
-- 8.16 `sort`, `slices`, `maps` (Go 1.21+)
-- 8.17 `container/*` (heap, list, ring)
+## [8. Standard Library](08-standard-library/01-io-and-file-handling/junior/)
+- [8.1 I/O & File Handling](08-standard-library/01-io-and-file-handling/junior/)
+- [8.2 `flag`](08-standard-library/02-flag/junior/)
+- [8.3 `time`](08-standard-library/03-time/junior/)
+- [8.4 `encoding/json`](08-standard-library/04-encoding-json/junior/)
+- [8.5 `os`](08-standard-library/05-os/junior/)
+- [8.6 `bufio`](08-standard-library/06-bufio/junior/)
+- [8.7 `slog`](08-standard-library/07-slog/junior/)
+- [8.8 `regexp`](08-standard-library/08-regexp/junior/)
+- [8.9 `go:embed` for embedding](08-standard-library/09-go-embed/junior/)
+- [8.10 `net` (TCP/UDP)](08-standard-library/10-net/junior/)
+- [8.11 `net/http` Internals](08-standard-library/11-net-http-internals/junior/)
+- [8.12 `encoding/*` (binary, csv, xml, gob)](08-standard-library/12-encoding/junior/)
+- [8.13 `crypto/*` (tls, hmac, aes, rsa)](08-standard-library/13-crypto/junior/)
+- [8.14 `io`, `io/fs`](08-standard-library/14-io-fs/junior/)
+- [8.15 `text/template`, `html/template`](08-standard-library/15-templates/junior/)
+- [8.16 `sort`, `slices`, `maps` (Go 1.21+)](08-standard-library/16-sort-slices-maps/junior/)
+- [8.17 `container/*` (heap, list, ring)](08-standard-library/17-container/junior/)
 
-## 9. Testing & Benchmarking
-- 9.1 `testing` package basics
-- 9.2 Table-driven Tests
-- 9.3 Mocks and Stubs
-- 9.4 `httptest` for HTTP Tests
-- 9.5 Benchmarks
-- 9.6 Coverage
-- 9.7 Subtests (`t.Run`)
-- 9.8 `TestMain`
-- 9.9 Parallel Tests (`t.Parallel`)
-- 9.10 Test Helpers (`t.Helper`)
-- 9.11 Golden Files
-- 9.12 Fuzzing (Go 1.18+)
-- 9.13 Integration Tests (testcontainers-go)
-- 9.14 E2E Tests
-- 9.15 Mocking Libraries (testify, gomock, mockery)
-- 9.16 Property-Based Testing
-- 9.17 Benchmark Deep (`b.RunParallel`, allocs)
+## [9. Testing & Benchmarking](09-testing-and-benchmarking/)
+- [9.1 `testing` package basics](09-testing-and-benchmarking/01-testing-basics/)
+- [9.2 Table-driven Tests](09-testing-and-benchmarking/02-table-driven-tests/)
+- [9.3 Mocks and Stubs](09-testing-and-benchmarking/03-mocks-and-stubs/)
+- [9.4 `httptest` for HTTP Tests](09-testing-and-benchmarking/04-httptest/)
+- [9.5 Benchmarks](09-testing-and-benchmarking/05-benchmarks/)
+- [9.6 Coverage](09-testing-and-benchmarking/06-coverage/)
+- [9.7 Subtests (`t.Run`)](09-testing-and-benchmarking/07-subtests/)
+- [9.8 `TestMain`](09-testing-and-benchmarking/08-testmain/)
+- [9.9 Parallel Tests (`t.Parallel`)](09-testing-and-benchmarking/09-parallel-tests/)
+- [9.10 Test Helpers (`t.Helper`)](09-testing-and-benchmarking/10-test-helpers/)
+- [9.11 Golden Files](09-testing-and-benchmarking/11-golden-files/)
+- [9.12 Fuzzing (Go 1.18+)](09-testing-and-benchmarking/12-fuzzing/)
+- [9.13 Integration Tests (testcontainers-go)](09-testing-and-benchmarking/13-integration-tests/)
+- [9.14 E2E Tests](09-testing-and-benchmarking/14-e2e-tests/)
+- [9.15 Mocking Libraries (testify, gomock, mockery)](09-testing-and-benchmarking/15-mocking-libraries/)
+- [9.16 Property-Based Testing](09-testing-and-benchmarking/16-property-based-testing/)
+- [9.17 Benchmark Deep (`b.RunParallel`, allocs)](09-testing-and-benchmarking/17-benchmark-deep/)
 
-## 10. Ecosystem & Popular Libraries
+## [10. Ecosystem & Popular Libraries](10-ecosystem-and-libraries/)
 
-### 10.1 Building CLIs
-- 10.1.1 Cobra
-- 10.1.2 urfave/cli
-- 10.1.3 bubbletea
+### [10.1 Building CLIs](10-ecosystem-and-libraries/01-building-clis/)
+- [10.1.1 Cobra](10-ecosystem-and-libraries/01-building-clis/01-cobra/)
+- [10.1.2 urfave/cli](10-ecosystem-and-libraries/01-building-clis/02-urfave-cli/)
+- [10.1.3 bubbletea](10-ecosystem-and-libraries/01-building-clis/03-bubbletea/)
 
-### 10.2 Web Development
-- 10.2.1 `net/http` (standard)
-- 10.2.2 Frameworks (Optional)
-  - 10.2.2.1 gin
-  - 10.2.2.2 echo
-  - 10.2.2.3 fiber
-  - 10.2.2.4 beego
-- 10.2.3 gRPC & Protocol Buffers
+### [10.2 Web Development](10-ecosystem-and-libraries/02-web-development/)
+- [10.2.1 `net/http` (standard)](10-ecosystem-and-libraries/02-web-development/01-net-http/)
+- [10.2.2 Frameworks (Optional)](10-ecosystem-and-libraries/02-web-development/02-frameworks/)
+  - [10.2.2.1 gin](10-ecosystem-and-libraries/02-web-development/02-frameworks/01-gin/)
+  - [10.2.2.2 echo](10-ecosystem-and-libraries/02-web-development/02-frameworks/02-echo/)
+  - [10.2.2.3 fiber](10-ecosystem-and-libraries/02-web-development/02-frameworks/03-fiber/)
+  - [10.2.2.4 beego](10-ecosystem-and-libraries/02-web-development/02-frameworks/04-beego/)
+- [10.2.3 gRPC & Protocol Buffers](10-ecosystem-and-libraries/02-web-development/03-grpc-protobuf/)
 
-### 10.3 ORMs & DB Access
-- 10.3.1 pgx
-- 10.3.2 GORM
+### [10.3 ORMs & DB Access](10-ecosystem-and-libraries/03-orms-db-access/)
+- [10.3.1 pgx](10-ecosystem-and-libraries/03-orms-db-access/01-pgx/)
+- [10.3.2 GORM](10-ecosystem-and-libraries/03-orms-db-access/02-gorm/)
 
-### 10.4 Logging
-- 10.4.1 Zerolog
-- 10.4.2 Zap
+### [10.4 Logging](10-ecosystem-and-libraries/04-logging/)
+- [10.4.1 Zerolog](10-ecosystem-and-libraries/04-logging/01-zerolog/)
+- [10.4.2 Zap](10-ecosystem-and-libraries/04-logging/02-zap/)
 
-### 10.5 Realtime Communication
-- 10.5.1 Melody
-- 10.5.2 Centrifugo
+### [10.5 Realtime Communication](10-ecosystem-and-libraries/05-realtime-communication/)
+- [10.5.1 Melody](10-ecosystem-and-libraries/05-realtime-communication/01-melody/)
+- [10.5.2 Centrifugo](10-ecosystem-and-libraries/05-realtime-communication/02-centrifugo/)
 
-### 10.6 Configuration (viper, koanf)
-### 10.7 Validation (go-playground/validator)
-### 10.8 HTTP Client (resty, retryablehttp)
-### 10.9 Migrations (golang-migrate, goose)
-### 10.10 Caching (bigcache, freecache, ristretto)
-### 10.11 Background Jobs (asynq, machinery)
-### 10.12 Message Queues (Sarama, NATS, RabbitMQ)
-### 10.13 Observability (OpenTelemetry, Prometheus)
-### 10.14 Cloud SDKs (AWS, GCP, Azure)
-### 10.15 GraphQL (gqlgen)
-### 10.16 Workflow Engines (Temporal, Cadence)
+### [10.6 Configuration (viper, koanf)](10-ecosystem-and-libraries/06-configuration/)
+### [10.7 Validation (go-playground/validator)](10-ecosystem-and-libraries/07-validation/)
+### [10.8 HTTP Client (resty, retryablehttp)](10-ecosystem-and-libraries/08-http-client/)
+### [10.9 Migrations (golang-migrate, goose)](10-ecosystem-and-libraries/09-migrations/)
+### [10.10 Caching (bigcache, freecache, ristretto)](10-ecosystem-and-libraries/10-caching/)
+### [10.11 Background Jobs (asynq, machinery)](10-ecosystem-and-libraries/11-background-jobs/)
+### [10.12 Message Queues (Sarama, NATS, RabbitMQ)](10-ecosystem-and-libraries/12-message-queues/)
+### [10.13 Observability (OpenTelemetry, Prometheus)](10-ecosystem-and-libraries/13-observability/)
+### [10.14 Cloud SDKs (AWS, GCP, Azure)](10-ecosystem-and-libraries/14-cloud-sdks/)
+### [10.15 GraphQL (gqlgen)](10-ecosystem-and-libraries/15-graphql/)
+### [10.16 Workflow Engines (Temporal, Cadence)](10-ecosystem-and-libraries/16-workflow-engines/)
 
-## 11. Go Toolchain and Tools
+## [11. Go Toolchain and Tools](11-go-toolchain/)
 
-### 11.1 Core Go Commands
-- 11.1.1 `go run`
-- 11.1.2 `go build`
-- 11.1.3 `go install`
-- 11.1.4 `go fmt`
-- 11.1.5 `go mod`
-- 11.1.6 `go test`
-- 11.1.7 `go clean`
-- 11.1.8 `go doc`
-- 11.1.9 `go version`
+### [11.1 Core Go Commands](11-go-toolchain/01-core-go-commands/)
+- [11.1.1 `go run`](11-go-toolchain/01-core-go-commands/01-go-run/)
+- [11.1.2 `go build`](11-go-toolchain/01-core-go-commands/02-go-build/)
+- [11.1.3 `go install`](11-go-toolchain/01-core-go-commands/03-go-install/)
+- [11.1.4 `go fmt`](11-go-toolchain/01-core-go-commands/04-go-fmt/)
+- [11.1.5 `go mod`](11-go-toolchain/01-core-go-commands/05-go-mod/)
+- [11.1.6 `go test`](11-go-toolchain/01-core-go-commands/06-go-test/)
+- [11.1.7 `go clean`](11-go-toolchain/01-core-go-commands/07-go-clean/)
+- [11.1.8 `go doc`](11-go-toolchain/01-core-go-commands/08-go-doc/)
+- [11.1.9 `go version`](11-go-toolchain/01-core-go-commands/09-go-version/)
 
-### 11.2 Code Generation / Build Tags
-- 11.2.1 `go generate`
-- 11.2.2 Build Tags
+### [11.2 Code Generation / Build Tags](11-go-toolchain/02-code-generation-build-tags/)
+- [11.2.1 `go generate`](11-go-toolchain/02-code-generation-build-tags/01-go-generate/)
+- [11.2.2 Build Tags](11-go-toolchain/02-code-generation-build-tags/02-build-tags/)
 
-### 11.3 Code Quality and Analysis
-- 11.3.1 `go vet`
-- 11.3.2 `goimports`
-- 11.3.3 Linters
-  - 11.3.3.1 revive
-  - 11.3.3.2 staticcheck
-  - 11.3.3.3 golangci-lint
+### [11.3 Code Quality and Analysis](11-go-toolchain/03-code-quality-and-analysis/)
+- [11.3.1 `go vet`](11-go-toolchain/03-code-quality-and-analysis/01-go-vet/)
+- [11.3.2 `goimports`](11-go-toolchain/03-code-quality-and-analysis/02-goimports/)
+- [11.3.3 Linters](11-go-toolchain/03-code-quality-and-analysis/03-linters/)
+  - [11.3.3.1 revive](11-go-toolchain/03-code-quality-and-analysis/03-linters/01-revive/)
+  - [11.3.3.2 staticcheck](11-go-toolchain/03-code-quality-and-analysis/03-linters/02-staticcheck/)
+  - [11.3.3.3 golangci-lint](11-go-toolchain/03-code-quality-and-analysis/03-linters/03-golangci-lint/)
 
-### 11.4 Security
-- 11.4.1 govulncheck
+### [11.4 Security](11-go-toolchain/04-security/)
+- [11.4.1 govulncheck](11-go-toolchain/04-security/01-govulncheck/)
 
-### 11.5 Performance and Debugging
-- 11.5.1 pprof
-- 11.5.2 trace
-- 11.5.3 Race Detector
+### [11.5 Performance and Debugging](11-go-toolchain/05-performance-and-debugging/)
+- [11.5.1 pprof](11-go-toolchain/05-performance-and-debugging/01-pprof/)
+- [11.5.2 trace](11-go-toolchain/05-performance-and-debugging/02-trace/)
+- [11.5.3 Race Detector](11-go-toolchain/05-performance-and-debugging/03-race-detector/)
 
-### 11.6 Deployment & Tooling
-- 11.6.1 Cross-compilation
-- 11.6.2 Building Executables
+### [11.6 Deployment & Tooling](11-go-toolchain/06-deployment-and-tooling/)
+- [11.6.1 Cross-compilation](11-go-toolchain/06-deployment-and-tooling/01-cross-compilation/)
+- [11.6.2 Building Executables](11-go-toolchain/06-deployment-and-tooling/02-building-executables/)
 
-### 11.7 `go work` (Workspaces)
-### 11.8 Debugging with Delve (`dlv`)
-### 11.9 `go tool` Suite (objdump, compile, link, nm)
-### 11.10 Live Reload (air, reflex)
-### 11.11 Build Tools (mage, task)
+### [11.7 `go work` (Workspaces)](11-go-toolchain/07-go-work/)
+### [11.8 Debugging with Delve (`dlv`)](11-go-toolchain/08-debugging-with-delve/)
+### [11.9 `go tool` Suite (objdump, compile, link, nm)](11-go-toolchain/09-go-tool-suite/)
+### [11.10 Live Reload (air, reflex)](11-go-toolchain/10-live-reload/)
+### [11.11 Build Tools (mage, task)](11-go-toolchain/11-build-tools/)
 
-## 12. Advanced Topics
-- 12.1 Memory Mgmt. in Depth
-- 12.2 Escape Analysis
-- 12.3 Reflection
-- 12.4 Unsafe Package
-- 12.5 Build Constraints & Tags
-- 12.6 CGO Basics
-- 12.7 Compiler & Linker Flags
-- 12.8 Plugins & Dynamic Loading
-- 12.9 Assembly (Plan9 syntax)
-- 12.10 `linkname` Directive
-- 12.11 PGO (Profile-Guided Optimization, Go 1.21+)
-- 12.12 Runtime Hooks (`runtime/trace`, finalizers)
-- 12.13 `plugin` Package
+## [12. Advanced Topics](12-advanced-topics/)
+- [12.1 Memory Mgmt. in Depth](12-advanced-topics/01-memory-management-in-depth/)
+- [12.2 Escape Analysis](12-advanced-topics/02-escape-analysis/)
+- [12.3 Reflection](12-advanced-topics/03-reflection/)
+- [12.4 Unsafe Package](12-advanced-topics/04-unsafe-package/)
+- [12.5 Build Constraints & Tags](12-advanced-topics/05-build-constraints/)
+- [12.6 CGO Basics](12-advanced-topics/06-cgo-basics/)
+- [12.7 Compiler & Linker Flags](12-advanced-topics/07-compiler-linker-flags/)
+- [12.8 Plugins & Dynamic Loading](12-advanced-topics/08-plugins-dynamic-loading/)
+- [12.9 Assembly (Plan9 syntax)](12-advanced-topics/09-assembly/)
+- [12.10 `linkname` Directive](12-advanced-topics/10-linkname-directive/)
+- [12.11 PGO (Profile-Guided Optimization, Go 1.21+)](12-advanced-topics/11-pgo/)
+- [12.12 Runtime Hooks (`runtime/trace`, finalizers)](12-advanced-topics/12-runtime-hooks/)
+- [12.13 `plugin` Package](12-advanced-topics/13-plugin-package/)
 
-## 13. Performance Engineering
-- 13.1 CPU Profiling
-- 13.2 Memory Profiling
-- 13.3 Mutex / Block Profiling
-- 13.4 Benchmarking Strategy
-- 13.5 Optimization Workflow
-- 13.6 pprof Deep
-- 13.7 trace Tool
+## [13. Performance Engineering](13-performance-engineering/)
+- [13.1 CPU Profiling](13-performance-engineering/01-cpu-profiling/)
+- [13.2 Memory Profiling](13-performance-engineering/02-memory-profiling/)
+- [13.3 Mutex / Block Profiling](13-performance-engineering/03-mutex-block-profiling/)
+- [13.4 Benchmarking Strategy](13-performance-engineering/04-benchmarking-strategy/)
+- [13.5 Optimization Workflow](13-performance-engineering/05-optimization-workflow/)
+- [13.6 pprof Deep](13-performance-engineering/06-pprof-deep/)
+- [13.7 trace Tool](13-performance-engineering/07-trace-tool/)
 
-## 14. Production & Operations
-- 14.1 Graceful Shutdown
-- 14.2 Health Checks
-- 14.3 Readiness / Liveness
-- 14.4 Configuration Management
-- 14.5 Secrets Management
-- 14.6 Feature Flags
-- 14.7 Deployment Strategies
+## [14. Production & Operations](14-production-and-operations/)
+- [14.1 Graceful Shutdown](14-production-and-operations/01-graceful-shutdown/)
+- [14.2 Health Checks](14-production-and-operations/02-health-checks/)
+- [14.3 Readiness / Liveness](14-production-and-operations/03-readiness-liveness/)
+- [14.4 Configuration Management](14-production-and-operations/04-configuration-management/)
+- [14.5 Secrets Management](14-production-and-operations/05-secrets-management/)
+- [14.6 Feature Flags](14-production-and-operations/06-feature-flags/)
+- [14.7 Deployment Strategies](14-production-and-operations/07-deployment-strategies/)
 
-## 15. Observability
-- 15.1 `slog` Deep
-- 15.2 Prometheus Metrics
-- 15.3 OpenTelemetry
-- 15.4 Distributed Tracing
-- 15.5 Correlation IDs
-- 15.6 Structured Logging
-- 15.7 Error Tracking
+## [15. Observability](15-observability/)
+- [15.1 `slog` Deep](15-observability/01-slog-deep/)
+- [15.2 Prometheus Metrics](15-observability/02-prometheus-metrics/)
+- [15.3 OpenTelemetry](15-observability/03-opentelemetry/)
+- [15.4 Distributed Tracing](15-observability/04-distributed-tracing/)
+- [15.5 Correlation IDs](15-observability/05-correlation-ids/)
+- [15.6 Structured Logging](15-observability/06-structured-logging/)
+- [15.7 Error Tracking](15-observability/07-error-tracking/)
 
-## 16. Security in Go
-- 16.1 TLS Config
-- 16.2 JWT
-- 16.3 OAuth
-- 16.4 Secure Headers
-- 16.5 OWASP Go
-- 16.6 govulncheck Deep
-- 16.7 Input Validation
-- 16.8 Crypto Best Practices
+## [16. Security in Go](16-security-in-go/)
+- [16.1 TLS Config](16-security-in-go/01-tls-config/)
+- [16.2 JWT](16-security-in-go/02-jwt/)
+- [16.3 OAuth](16-security-in-go/03-oauth/)
+- [16.4 Secure Headers](16-security-in-go/04-secure-headers/)
+- [16.5 OWASP Go](16-security-in-go/05-owasp-go/)
+- [16.6 govulncheck Deep](16-security-in-go/06-govulncheck-deep/)
+- [16.7 Input Validation](16-security-in-go/07-input-validation/)
+- [16.8 Crypto Best Practices](16-security-in-go/08-crypto-best-practices/)
 
-## 17. Design Patterns in Go
-- 17.1 Functional Options
-- 17.2 Builder Pattern
-- 17.3 Strategy Pattern
-- 17.4 Decorator Pattern
-- 17.5 Adapter Pattern
-- 17.6 Factory Pattern
-- 17.7 Observer Pattern
-- 17.8 Singleton Pattern
-- 17.9 Iterator Pattern
+## [17. Design Patterns in Go](17-design-patterns-in-go/)
+- [17.1 Functional Options](17-design-patterns-in-go/01-functional-options/)
+- [17.2 Builder Pattern](17-design-patterns-in-go/02-builder-pattern/)
+- [17.3 Strategy Pattern](17-design-patterns-in-go/03-strategy-pattern/)
+- [17.4 Decorator Pattern](17-design-patterns-in-go/04-decorator-pattern/)
+- [17.5 Adapter Pattern](17-design-patterns-in-go/05-adapter-pattern/)
+- [17.6 Factory Pattern](17-design-patterns-in-go/06-factory-pattern/)
+- [17.7 Observer Pattern](17-design-patterns-in-go/07-observer-pattern/)
+- [17.8 Singleton Pattern](17-design-patterns-in-go/08-singleton-pattern/)
+- [17.9 Iterator Pattern](17-design-patterns-in-go/09-iterator-pattern/)
 
-## 18. Architecture Patterns
-- 18.1 Clean Architecture
-- 18.2 Hexagonal Architecture
-- 18.3 Domain-Driven Design (DDD)
-- 18.4 CQRS
-- 18.5 Event Sourcing
+## [18. Architecture Patterns](18-oop-design-principles/)
+- [18.1 Clean Architecture](18-oop-design-principles/01-solid-principles/)
+- [18.2 Hexagonal Architecture](18-oop-design-principles/02-composition-over-inheritance/)
+- [18.3 Domain-Driven Design (DDD)](18-oop-design-principles/03-law-of-demeter-tell-dont-ask/)
+- [18.4 CQRS](18-oop-design-principles/04-cohesion-and-coupling/)
+- [18.5 Event Sourcing](18-oop-design-principles/05-dry-kiss-yagni/)
 - 18.6 Onion Architecture
 
-## 19. Microservices
-- 19.1 Service Discovery
-- 19.2 Circuit Breaker
-- 19.3 Retries & Backoff
-- 19.4 Bulkheads
-- 19.5 Saga Pattern
-- 19.6 API Gateway
+## [19. Microservices](19-architecture-patterns/)
+- [19.1 Service Discovery](19-architecture-patterns/01-clean-architecture/)
+- [19.2 Circuit Breaker](19-architecture-patterns/02-hexagonal-architecture/)
+- [19.3 Retries & Backoff](19-architecture-patterns/03-domain-driven-design/)
+- [19.4 Bulkheads](19-architecture-patterns/04-cqrs/)
+- [19.5 Saga Pattern](19-architecture-patterns/05-event-sourcing/)
+- [19.6 API Gateway](19-architecture-patterns/06-onion-architecture/)
 - 19.7 Service Mesh Basics
 
-## 20. Database Patterns
-- 20.1 Connection Pool Tuning
-- 20.2 Transactions
-- 20.3 Prepared Statements
-- 20.4 sqlc
-- 20.5 sqlx
-- 20.6 GORM Deep
-- 20.7 pgx Deep
+## [20. Database Patterns](20-microservices/)
+- [20.1 Connection Pool Tuning](20-microservices/01-service-discovery/)
+- [20.2 Transactions](20-microservices/02-circuit-breaker/)
+- [20.3 Prepared Statements](20-microservices/03-retries-and-backoff/)
+- [20.4 sqlc](20-microservices/04-bulkheads/)
+- [20.5 sqlx](20-microservices/05-saga-pattern/)
+- [20.6 GORM Deep](20-microservices/06-api-gateway/)
+- [20.7 pgx Deep](20-microservices/07-service-mesh-basics/)
 - 20.8 Database Migrations
 
-## 21. API Design
-- 21.1 REST Design
-- 21.2 gRPC Deep
-- 21.3 GraphQL Design
-- 21.4 OpenAPI / Swagger
-- 21.5 Versioning
-- 21.6 Pagination
-- 21.7 Rate Limiting
-- 21.8 Error Responses
+## [21. API Design](21-database-patterns/)
+- [21.1 REST Design](21-database-patterns/01-connection-pool-tuning/)
+- [21.2 gRPC Deep](21-database-patterns/02-transactions/)
+- [21.3 GraphQL Design](21-database-patterns/03-prepared-statements/)
+- [21.4 OpenAPI / Swagger](21-database-patterns/04-sqlc/)
+- [21.5 Versioning](21-database-patterns/05-sqlx/)
+- [21.6 Pagination](21-database-patterns/06-gorm-deep/)
+- [21.7 Rate Limiting](21-database-patterns/07-pgx-deep/)
+- [21.8 Error Responses](21-database-patterns/08-database-migrations/)
 
-## 22. Distributed Systems
-- 22.1 Raft Consensus
-- 22.2 Distributed Locks
-- 22.3 Leader Election
-- 22.4 Eventual Consistency
-- 22.5 Distributed Transactions
-- 22.6 Clock & Time
-- 22.7 Gossip Protocols
+## [22. Distributed Systems](22-api-design/)
+- [22.1 Raft Consensus](22-api-design/01-rest-design/)
+- [22.2 Distributed Locks](22-api-design/02-grpc-deep/)
+- [22.3 Leader Election](22-api-design/03-graphql-design/)
+- [22.4 Eventual Consistency](22-api-design/04-openapi-swagger/)
+- [22.5 Distributed Transactions](22-api-design/05-versioning/)
+- [22.6 Clock & Time](22-api-design/06-pagination/)
+- [22.7 Gossip Protocols](22-api-design/07-rate-limiting/)
 
-## 23. Cloud-Native Go
-- 23.1 Kubernetes Operators
-- 23.2 controller-runtime
-- 23.3 Custom Resources (CRD)
-- 23.4 Helm Charts
-- 23.5 Service Mesh
-- 23.6 Serverless Go
+## [23. Cloud-Native Go](23-distributed-systems/)
+- [23.1 Kubernetes Operators](23-distributed-systems/01-raft-consensus/)
+- [23.2 controller-runtime](23-distributed-systems/02-distributed-locks/)
+- [23.3 Custom Resources (CRD)](23-distributed-systems/03-leader-election/)
+- [23.4 Helm Charts](23-distributed-systems/04-eventual-consistency/)
+- [23.5 Service Mesh](23-distributed-systems/05-distributed-transactions/)
+- [23.6 Serverless Go](23-distributed-systems/06-clock-and-time/)
 
-## 24. Runtime & Internals
-- 24.1 Runtime Source Dive
-- 24.2 Scheduler Source
-- 24.3 GC Source
-- 24.4 Memory Allocator
-- 24.5 `runtime` Package Deep
-- 24.6 Go Runtime Architecture
+## [24. Runtime & Internals](24-cloud-native-go/)
+- [24.1 Runtime Source Dive](24-cloud-native-go/01-kubernetes-operators/)
+- [24.2 Scheduler Source](24-cloud-native-go/02-controller-runtime/)
+- [24.3 GC Source](24-cloud-native-go/03-custom-resources-crd/)
+- [24.4 Memory Allocator](24-cloud-native-go/04-helm-charts/)
+- [24.5 `runtime` Package Deep](24-cloud-native-go/05-service-mesh/)
+- [24.6 Go Runtime Architecture](24-cloud-native-go/06-serverless-go/)
 
-## 25. Go Source Reading
-- 25.1 `net/http` Source
-- 25.2 `sync` Source
-- 25.3 `runtime` Source
-- 25.4 `context` Source
-- 25.5 `database/sql` Source
-- 25.6 `encoding/json` Source
+## [25. Go Source Reading](25-runtime-and-internals/)
+- [25.1 `net/http` Source](25-runtime-and-internals/01-runtime-source-dive/)
+- [25.2 `sync` Source](25-runtime-and-internals/02-scheduler-source/)
+- [25.3 `runtime` Source](25-runtime-and-internals/03-gc-source/)
+- [25.4 `context` Source](25-runtime-and-internals/04-memory-allocator/)
+- [25.5 `database/sql` Source](25-runtime-and-internals/05-runtime-package-deep/)
+- [25.6 `encoding/json` Source](25-runtime-and-internals/06-go-runtime-architecture/)
