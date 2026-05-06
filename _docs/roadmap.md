@@ -14,107 +14,108 @@ hide:
 
     ---
 
-    AI Engineer · ML · AI Agents · Prompt Engineering · Claude Code · Vibe Coding
-
-    [:octicons-arrow-right-24: AI Engineer](Roadmap/AI/ai-engineer/README.md) ·
-    [Machine Learning](Roadmap/AI/machine-learning/README.md) ·
-    [AI Agents](Roadmap/AI/ai-agents/README.md)
+    - AI Engineer · soon
+    - Machine Learning · soon
+    - AI Agents · soon
+    - Prompt Engineering · soon
+    - Claude Code · soon
+    - Vibe Coding · soon
 
 -   :material-sitemap:{ .lg .middle } **Architecture**
 
     ---
 
-    Software Architect · System Design · Computer Science · Blockchain · Refactoring
-
-    [:octicons-arrow-right-24: Software Architect](Roadmap/Architecture/software-architect/README.md) ·
-    [Computer Science](Roadmap/Architecture/computer-science/README.md) ·
-    [Refactoring](Roadmap/Architecture/refactoring-guru/README.md)
+    - Software Architect · soon
+    - Software Design & Architecture · soon
+    - System Design · soon
+    - Computer Science · soon
+    - Blockchain · soon
+    - Refactoring · soon
 
 -   :material-server-network:{ .lg .middle } **Backend**
 
     ---
 
-    Backend · PostgreSQL · MongoDB · Redis · Elasticsearch · API Design · Full-Stack
-
-    [:octicons-arrow-right-24: Backend](Roadmap/Backend/backend/README.md) ·
-    [API Design](Roadmap/Backend/api-design/README.md) ·
-    [PostgreSQL](Roadmap/Backend/postgresql/README.md)
+    - Backend · soon
+    - API Design · soon
+    - Full-Stack · soon
+    - PostgreSQL · soon
+    - MongoDB · soon
+    - Redis · soon
+    - Elasticsearch · soon
 
 -   :material-chart-line:{ .lg .middle } **Data**
 
     ---
 
-    AI Data Scientist · Data Analyst · BI Analyst · DSA
-
-    [:octicons-arrow-right-24: Data Scientist](Roadmap/Data/ai-data-scientist/README.md) ·
-    [Data Analyst](Roadmap/Data/data-analyst/README.md) ·
-    [DSA](Roadmap/Data/datastructures-and-algorithms/README.md)
+    - [Data Structures & Algorithms](Roadmap/Data/datastructures-and-algorithms/README.md)
+    - AI Data Scientist · soon
+    - Data Analyst · soon
+    - BI Analyst · soon
 
 -   :material-cloud-cog:{ .lg .middle } **DevOps**
 
     ---
 
-    DevOps · Docker · Kubernetes · Terraform · AWS · Cloudflare · Linux · MLOps
-
-    [:octicons-arrow-right-24: DevOps](Roadmap/DevOps/devops/README.md) ·
-    [Docker](Roadmap/DevOps/docker/README.md) ·
-    [Kubernetes](Roadmap/DevOps/kubernetes/README.md)
+    - DevOps · soon
+    - Docker · soon
+    - Kubernetes · soon
+    - Terraform · soon
+    - AWS · soon
+    - Cloudflare · soon
+    - Linux · soon
+    - MLOps · soon
 
 -   :material-monitor-dashboard:{ .lg .middle } **Frontend**
 
     ---
 
-    Frontend · React · TypeScript · GraphQL · Design System
-
-    [:octicons-arrow-right-24: Frontend](Roadmap/Frontend/frontend/README.md) ·
-    [React](Roadmap/Frontend/react/README.md) ·
-    [TypeScript](Roadmap/Frontend/typescript/README.md)
+    - Frontend · soon
+    - React · soon
+    - TypeScript · soon
+    - GraphQL · soon
+    - Design System · soon
 
 -   :material-cellphone:{ .lg .middle } **Mobile**
 
     ---
 
-    Android · iOS
-
-    [:octicons-arrow-right-24: Android](Roadmap/Mobile/android/README.md) ·
-    [iOS](Roadmap/Mobile/ios/README.md)
+    - Android · soon
+    - iOS · soon
 
 -   :material-code-tags:{ .lg .middle } **Programming Languages**
 
     ---
 
-    Go · Java · Python · Rust · SQL
-
-    [:octicons-arrow-right-24: Go](Roadmap/Programming-Languages/golang/README.md) ·
-    [Python](Roadmap/Programming-Languages/python/README.md) ·
-    [Rust](Roadmap/Programming-Languages/rust/README.md)
+    - [Go](Roadmap/Programming-Languages/golang/README.md)
+    - [Java](Roadmap/Programming-Languages/java/README.md)
+    - [Python](Roadmap/Programming-Languages/python/README.md)
+    - Rust · soon
+    - SQL · soon
 
 -   :material-shield-lock:{ .lg .middle } **Security**
 
     ---
 
-    Cyber Security · AI Red Teaming
-
-    [:octicons-arrow-right-24: Cyber Security](Roadmap/Security/cyber-security/README.md) ·
-    [AI Red Teaming](Roadmap/Security/ai-red-teaming/README.md)
+    - Cyber Security · soon
+    - AI Red Teaming · soon
 
 -   :material-account-group:{ .lg .middle } **Soft Skills**
 
     ---
 
-    Code Review · DevRel · Engineering Manager · Product Manager · QA · Technical Writer
-
-    [:octicons-arrow-right-24: Code Review](Roadmap/Soft-Skills/code-review/README.md) ·
-    [Engineering Manager](Roadmap/Soft-Skills/engineering-manager/README.md) ·
-    [QA](Roadmap/Soft-Skills/qa/README.md)
+    - Code Review · soon
+    - DevRel · soon
+    - Engineering Manager · soon
+    - Product Manager · soon
+    - QA · soon
+    - Technical Writer · soon
 
 -   :material-tools:{ .lg .middle } **Tools & Platforms**
 
     ---
 
-    AWS · Git & GitHub
-
-    [:octicons-arrow-right-24: AWS](Roadmap/Tools-and-Platforms/aws/README.md) ·
-    [Git & GitHub](Roadmap/Tools-and-Platforms/git-github/README.md)
+    - AWS · soon
+    - Git & GitHub · soon
 
 </div>
