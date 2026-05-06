@@ -117,6 +117,8 @@
       // best-effort path from URL
       location.pathname.replace(/^\//, "").replace(/\/$/, "/index.md");
 
+    const discussUrl = "https://github.com/" + REPO + "/discussions";
+
     const wrap = document.createElement("aside");
     wrap.className = REPORT_CLASS;
     wrap.innerHTML =
@@ -130,6 +132,10 @@
         '<span class="sp-report-sep">·</span>' +
         '<a class="sp-report-link sp-report-link--soft" href="' + editUrl + '" target="_blank" rel="noopener">' +
           '<span class="sp-report-arrow">&gt;</span>&nbsp;edit on github' +
+        '</a>' +
+        '<span class="sp-report-sep">·</span>' +
+        '<a class="sp-report-link sp-report-link--soft" href="' + discussUrl + '" target="_blank" rel="noopener">' +
+          '<span class="sp-report-arrow">&gt;</span>&nbsp;discuss' +
         '</a>' +
       '</div>';
     content.appendChild(wrap);
