@@ -2,27 +2,42 @@
   <h2 id="__comments">Comments</h2>
   <div id="giscus-container"></div>
   <script>
-    document$.subscribe(function() {
-      var container = document.getElementById("giscus-container");
-      if (!container) return;
-      container.innerHTML = "";
-      var s = document.createElement("script");
-      s.src = "https://giscus.app/client.js";
-      s.async = true;
-      s.crossOrigin = "anonymous";
-      s.setAttribute("data-repo", "BakhodiribnYashinibnMansur/SeniorProject");
-      s.setAttribute("data-repo-id", "<FROM_GISCUS_APP>");
-      s.setAttribute("data-category", "Comments");
-      s.setAttribute("data-category-id", "<FROM_GISCUS_APP>");
-      s.setAttribute("data-mapping", "pathname");
-      s.setAttribute("data-strict", "0");
-      s.setAttribute("data-reactions-enabled", "1");
-      s.setAttribute("data-emit-metadata", "0");
-      s.setAttribute("data-input-position", "bottom");
-      s.setAttribute("data-theme", "transparent_dark");
-      s.setAttribute("data-lang", "en");
-      s.setAttribute("data-loading", "lazy");
-      container.appendChild(s);
-    });
+    (function() {
+      function injectGiscus() {
+        var container = document.getElementById("giscus-container");
+        if (!container) return;
+        container.innerHTML = "";
+        var s = document.createElement("script");
+        s.src = "https://giscus.app/client.js";
+        s.async = true;
+        s.crossOrigin = "anonymous";
+        s.setAttribute("data-repo", "BakhodiribnYashinibnMansur/SeniorProject");
+        s.setAttribute("data-repo-id", "<FROM_GISCUS_APP>");
+        s.setAttribute("data-category", "Comments");
+        s.setAttribute("data-category-id", "<FROM_GISCUS_APP>");
+        s.setAttribute("data-mapping", "pathname");
+        s.setAttribute("data-strict", "0");
+        s.setAttribute("data-reactions-enabled", "1");
+        s.setAttribute("data-emit-metadata", "0");
+        s.setAttribute("data-input-position", "bottom");
+        s.setAttribute("data-theme", "transparent_dark");
+        s.setAttribute("data-lang", "en");
+        s.setAttribute("data-loading", "lazy");
+        container.appendChild(s);
+      }
+      // This script re-executes on every Material instant-nav page swap.
+      // Subscribe to document$ only once to avoid accumulating subscribers.
+      // On re-renders, inject directly — the existing subscriber will also
+      // fire for the new navigation; the second call is idempotent
+      // (clear + append).
+      if (window.__giscusSubscribed) {
+        injectGiscus();
+      } else if (typeof document$ !== "undefined" && document$.subscribe) {
+        window.__giscusSubscribed = true;
+        document$.subscribe(injectGiscus);
+      } else {
+        injectGiscus();
+      }
+    })();
   </script>
 {% endif %}
