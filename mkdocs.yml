@@ -53,6 +53,13 @@ theme:
     repo: fontawesome/brands/github
     edit: material/pencil
     view: material/eye
+    status:
+      coming-soon: material/clock-outline
+      new: material/alert-decagram
+      deprecated: material/trash-can
+
+hooks:
+  - hooks/sibling_nav.py
 
 plugins:
   - search
@@ -93,6 +100,10 @@ markdown_extensions:
       toc_depth: 3
 
 extra:
+  status:
+    coming-soon: Coming soon — not published yet
+    new: Recently added
+    deprecated: Deprecated
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/BakhodiribnYashinibnMansur
