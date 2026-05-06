@@ -201,4 +201,4 @@ Comparing the same pattern across all three is a powerful learning device: it sh
 
 ## Project Context
 
-This roadmap is part of the [Senior Project](../../../README.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.
+This roadmap is part of the [Senior Project](../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.

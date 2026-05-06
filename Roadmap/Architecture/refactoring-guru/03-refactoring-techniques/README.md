@@ -221,4 +221,4 @@ graph TD
 
 ## Project Context
 
-This section is part of the [Refactoring.Guru roadmap](../README.md), itself part of the [Senior Project](../../../../README.md).
+This section is part of the [Refactoring.Guru roadmap](../README.md), itself part of the [Senior Project](../../../../index.md).
