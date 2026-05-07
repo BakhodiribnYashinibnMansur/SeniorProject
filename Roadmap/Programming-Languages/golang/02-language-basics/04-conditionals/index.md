@@ -19,5 +19,4 @@ permalink: /roadmap/programming-languages/golang/02-language-basics/04-condition
 | 1 | If | [01-if/](01-if/) |
 | 2 | If-Else | [02-if-else/](02-if-else/) |
 | 3 | Switch | [03-switch/](03-switch/) |
-| 4 | Type Switch | [04-type-switch/](04-type-switch/) |
-| 5 | Short Statement in If | [05-short-statement-in-if/](05-short-statement-in-if/) |
+| 4 | Short Statement in If | [04-short-statement-in-if/](04-short-statement-in-if/) |
