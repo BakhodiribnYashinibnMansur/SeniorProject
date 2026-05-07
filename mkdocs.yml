@@ -26,7 +26,7 @@ exclude_docs: |
 
 theme:
   name: material
-  custom_dir: overrides
+  custom_dir: mkdocs/theme
   language: en
   features:
     - navigation.instant
@@ -60,7 +60,7 @@ theme:
       deprecated: material/trash-can
 
 hooks:
-  - hooks/sibling_nav.py
+  - mkdocs/hooks/sibling_nav.py
 
 plugins:
   - search
