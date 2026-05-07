@@ -25,3 +25,4 @@ permalink: /roadmap/programming-languages/golang/02-language-basics/06-functions
 | 7 | Call By Value | [07-call-by-value/](07-call-by-value/) |
 | 8 | Closure Internals | [08-closure-internals/](08-closure-internals/) |
 | 9 | Defer Basics | [09-defer-basics/](09-defer-basics/) |
+| 10 | Init Function | [10-init-function/](10-init-function/) |
