@@ -21,3 +21,4 @@ permalink: /roadmap/programming-languages/golang/02-language-basics/03-composite
 | 3 | Strings | [03-strings/](03-strings/) |
 | 4 | Maps | [04-maps/](04-maps/) |
 | 5 | Structs | [05-structs/](05-structs/) |
+| 6 | Empty Struct | [06-empty-struct/](06-empty-struct/) |
