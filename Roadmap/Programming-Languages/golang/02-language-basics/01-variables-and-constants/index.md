@@ -18,3 +18,4 @@ permalink: /roadmap/programming-languages/golang/02-language-basics/01-variables
 |---|-------|------|
 | 1 | var vs := | [index.md](01-var-vs-short-declaration/index.md) |
 | 2 | Scope and Shadowing | [index.md](04-scope-and-shadowing/index.md) |
+| 5 | Blank Identifier | [05-blank-identifier/](05-blank-identifier/) |
