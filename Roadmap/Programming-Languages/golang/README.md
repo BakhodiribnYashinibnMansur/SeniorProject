@@ -83,16 +83,21 @@ comments: true
 - [3.2 Pointer Receivers](03-methods-and-interfaces/02-pointer-receivers/junior/)
 - [3.3 Value Receivers](03-methods-and-interfaces/03-value-receivers/junior/)
 - [3.4 Interfaces Basics](03-methods-and-interfaces/04-interfaces-basics/junior/)
-  - 3.4.1 Empty Interfaces
-  - 3.4.2 Embedding Interfaces
-  - 3.4.3 Type Assertions
-  - 3.4.4 Type Switch
-- [3.5 Method Sets Deep](03-methods-and-interfaces/05-empty-interfaces/junior/)
-- [3.6 Interface Internals (`iface`, `eface`, `itab`)](03-methods-and-interfaces/06-embedding-interfaces/junior/)
-- [3.7 Method Dispatch](03-methods-and-interfaces/07-type-assertions/junior/)
-- [3.8 Common Interfaces (`io.Reader`, `fmt.Stringer`, `error`)](03-methods-and-interfaces/08-type-switch/junior/)
-- [3.9 Interface Best Practices](03-methods-and-interfaces/09-method-sets-deep/)
-- [3.10 Interface Anti-Patterns](03-methods-and-interfaces/10-interface-internals/)
+- [3.5 Empty Interfaces](03-methods-and-interfaces/05-empty-interfaces/junior/)
+- [3.6 Embedding Interfaces](03-methods-and-interfaces/06-embedding-interfaces/junior/)
+- [3.7 Type Assertions](03-methods-and-interfaces/07-type-assertions/junior/)
+- [3.8 Type Switch](03-methods-and-interfaces/08-type-switch/junior/)
+- [3.9 Method Sets Deep](03-methods-and-interfaces/09-method-sets-deep/junior/)
+- [3.10 Interface Internals (`iface`, `eface`, `itab`)](03-methods-and-interfaces/10-interface-internals/junior/)
+- [3.11 Method Dispatch](03-methods-and-interfaces/11-method-dispatch/junior/)
+- [3.12 Common Interfaces (`io.Reader`, `fmt.Stringer`, `error`)](03-methods-and-interfaces/12-common-interfaces/junior/)
+- [3.13 Interface Best Practices](03-methods-and-interfaces/13-interface-best-practices/junior/)
+- [3.14 Interface Anti-Patterns](03-methods-and-interfaces/14-interface-anti-patterns/junior/)
+- [3.15 Method Values & Method Expressions](03-methods-and-interfaces/15-method-values-and-expressions/junior/)
+- [3.16 Methods on Defined Types](03-methods-and-interfaces/16-methods-on-defined-types/junior/)
+- [3.17 Sealed Interfaces](03-methods-and-interfaces/17-sealed-interfaces/junior/)
+- [3.18 Cross-Package Methods](03-methods-and-interfaces/18-cross-package-methods/junior/)
+- [3.19 Struct Method Promotion](03-methods-and-interfaces/19-struct-method-promotion/junior/)
 
 ## [4. Generics](04-generics/01-why-generics/junior/)
 - [4.1 Why Generics?](04-generics/01-why-generics/junior/)
