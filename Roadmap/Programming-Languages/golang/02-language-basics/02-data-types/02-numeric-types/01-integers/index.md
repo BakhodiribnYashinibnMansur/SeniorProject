@@ -10,4 +10,4 @@ permalink: /roadmap/programming-languages/golang/02-language-basics/02-data-type
 
 # Integers
 
-[← Orqaga](../)
+[← Back](../)

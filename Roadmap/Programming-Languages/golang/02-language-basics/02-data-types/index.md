@@ -10,10 +10,10 @@ permalink: /roadmap/programming-languages/golang/02-language-basics/02-data-type
 
 # Data Types
 
-[← Orqaga](../)
+[← Back](../)
 
-## Mundarija
+## Contents
 
-| # | Mavzu | Link |
+| # | Topic | Link |
 |---|-------|------|
 | 1 | Numeric Types | [index.md](02-numeric-types/index.md) |

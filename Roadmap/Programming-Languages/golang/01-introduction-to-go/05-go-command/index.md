@@ -10,4 +10,4 @@ permalink: /roadmap/programming-languages/golang/01-introduction-to-go/05-go-com
 
 # go command
 
-[← Orqaga](../)
+[← Back](../)

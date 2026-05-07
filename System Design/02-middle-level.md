@@ -2,10 +2,10 @@
 
 [← Junior](./01-junior-level.md) · [README](./README.md) · [Senior →](./03-senior-level.md)
 
-> **Fokus:** Real-world system designs (Twitter feed, Instagram, Bitly, Yelp), trade-offs, sharding, replication, MQ patterns, caching strategies, microservices communication, basic distributed concepts.
+> **Focus:** Real-world system designs (Twitter feed, Instagram, Bitly, Yelp), trade-offs, sharding, replication, MQ patterns, caching strategies, microservices communication, basic distributed concepts.
 >
-> **Kim uchun:** 2–5 yil tajriba, mid-level engineer.
-> **Vaqt/savol:** 30–45 daqiqa, whiteboard sketch + komponentlar bilan.
+> **For whom:** 2–5 years of experience, mid-level engineer.
+> **Time per question:** 30–45 minutes, whiteboard sketch with components.
 
 ---
 

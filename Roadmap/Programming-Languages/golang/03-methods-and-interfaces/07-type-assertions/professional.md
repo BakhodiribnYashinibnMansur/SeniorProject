@@ -67,7 +67,7 @@ func StartPlugin(p Plugin, cfg map[string]any) error {
 ### 1. Assertion chain in domain logic
 
 ```go
-// Yomon
+// Bad
 func processEntity(e any) {
     switch v := e.(type) {
     case *User:    processUser(v)
@@ -76,7 +76,7 @@ func processEntity(e any) {
     }
 }
 
-// Yaxshi
+// Good
 type Processor interface { Process() error }
 func processEntity(p Processor) error { return p.Process() }
 ```
@@ -84,10 +84,10 @@ func processEntity(p Processor) error { return p.Process() }
 ### 2. Single-value in production
 
 ```go
-// Yomon
-v := i.(T)   // panic xavfi
+// Bad
+v := i.(T)   // panic risk
 
-// Yaxshi
+// Good
 v, ok := i.(T)
 if !ok { return ErrUnexpectedType }
 ```
@@ -95,10 +95,10 @@ if !ok { return ErrUnexpectedType }
 ### 3. Direct assertion on wrapped error
 
 ```go
-// Yomon
+// Bad
 if e, ok := err.(*MyError); ok { ... }
 
-// Yaxshi
+// Good
 var e *MyError
 if errors.As(err, &e) { ... }
 ```
@@ -110,10 +110,10 @@ if errors.As(err, &e) { ... }
 ### Hide assertions behind interface
 
 ```go
-// Yomon — caller assertion qiladi
+// Bad — caller has to do the assertion
 func GetData() any { ... }
 
-// Yaxshi — typed return
+// Good — typed return
 func GetUser() (*User, error) { ... }
 ```
 

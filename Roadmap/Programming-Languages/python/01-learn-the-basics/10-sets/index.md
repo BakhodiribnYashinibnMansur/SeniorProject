@@ -10,4 +10,4 @@ permalink: /roadmap/programming-languages/python/01-learn-the-basics/10-sets/
 
 # Sets
 
-[← Orqaga](../)
+[← Back](../)

@@ -19,7 +19,7 @@ func Sum(xs []any) int {
     return total
 }
 
-// generics — tezroq
+// generics — faster
 func Sum[T int | float64](xs []T) T {
     var total T
     for _, x := range xs { total += x }
@@ -33,10 +33,10 @@ Typical speed difference: 2-5x.
 
 ```go
 v := i.(int)        // ~1-2 ns
-v, ok := i.(int)    // ~1-2 ns (ok bilan)
+v, ok := i.(int)    // ~1-2 ns (with ok)
 ```
 
-Aksariyat hollarda OK. Hot loop-da concrete tip afzal.
+Fine in most cases. In a hot loop a concrete type is preferred.
 
 ## 4. Reflect — sekin
 
@@ -47,38 +47,38 @@ t := reflect.TypeOf(x)   // ~10-50 ns
 v := reflect.ValueOf(x).Field(0)   // ~50-100 ns
 ```
 
-Hot path-da ishlatmang. Cache `reflect.Type` agar mumkin bo'lsa.
+Don't use it in a hot path. Cache `reflect.Type` if possible.
 
 ## 5. Map[any]any vs concrete
 
 ```go
-// Yomon — har put/get-da boxing
+// Bad — boxing on every put/get
 m := map[any]any{}
 
-// Yaxshi — concrete tip
+// Good — concrete type
 m := map[int]string{}
 ```
 
 ## 6. `[]any` vs `[]T`
 
 ```go
-// Yomon
+// Bad
 items := []any{1, 2, 3}
 
-// Yaxshi (homogeneous)
+// Good (homogeneous)
 items := []int{1, 2, 3}
 ```
 
-## 7. Type switch — multi-assertion-dan tezroq
+## 7. Type switch — faster than multi-assertion
 
 ```go
-// Yaxshi
+// Good
 switch v := i.(type) {
 case int:    process(v)
 case string: process(v)
 }
 
-// Yomon (slow)
+// Bad (slow)
 if v, ok := i.(int); ok { process(v) }
 if v, ok := i.(string); ok { process(v) }
 ```
@@ -108,10 +108,10 @@ func processUser(u User) error { ... }   // not any
 ### Don't `any` everywhere
 
 ```go
-// Yomon
+// Bad
 func Pipeline(input any) any { ... }
 
-// Yaxshi
+// Good
 func Pipeline(input Input) (Output, error) { ... }
 ```
 
@@ -149,14 +149,14 @@ gocritic interfaceUsage — overuse
 
 `any` performance:
 - Boxing — heap alloc
-- Generics tezroq (2-5x)
+- Generics are faster (2-5x)
 - Type assertion — ~1-2 ns OK
 - Reflect is slow — cache it
 
 Cleaner code:
 - Boundary OK, domain core concrete
-- Type switch multi-assertion-dan afzal
+- Type switch is preferred over multi-assertion
 - Pointer in any — no boxing
-- Migration any → generics (selektivno)
+- Migration any → generics (selectively)
 
 `any` is a powerful Go feature, but use it selectively to preserve type-safety and performance.

@@ -10,11 +10,11 @@ permalink: /roadmap/programming-languages/golang/02-language-basics/
 
 # Language Basics
 
-[← Orqaga](../)
+[← Back](../)
 
-## Mundarija
+## Contents
 
-| # | Mavzu | Link |
+| # | Topic | Link |
 |---|-------|------|
 | 1 | Variables & Constants | [index.md](01-variables-and-constants/index.md) |
 | 2 | Data Types | [index.md](02-data-types/index.md) |

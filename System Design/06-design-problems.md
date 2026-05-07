@@ -2,16 +2,16 @@
 
 [← README](./README.md) · [Sources →](./05-sources.md)
 
-> **Maqsad:** FAANG/highload intervyularda berilgan klassik **"Design X"** masalalari. Har bir masala uchun: **scale**, **functional requirements**, **non-functional requirements**, va **muhokama qilinadigan qiyin qismlar (hard parts)**.
+> **Goal:** Classic **"Design X"** problems asked in FAANG / highload interviews. For each problem: **scale**, **functional requirements**, **non-functional requirements**, and **the hard parts to discuss**.
 >
-> **Format:** Har bir masala intervyu prompt'i sifatida. 30–60 daqiqalik whiteboard sessiya uchun mo'ljallangan.
-> **Qoida:** Avval **clarifying savollar** bering, keyin **back-of-the-envelope estimation**, keyin **APIs / data model**, **HLD diagram**, **deep dives**.
+> **Format:** Each problem is framed as an interview prompt, sized for a 30–60-minute whiteboard session.
+> **Rule:** Start with **clarifying questions**, then **back-of-the-envelope estimation**, then **APIs / data model**, **HLD diagram**, and **deep dives**.
 
 ---
 
-## 📑 Mundarija (Mavzular bo'yicha)
+## 📑 Contents (by topic)
 
-**Jami: 1000 ta detailed design masalasi + 50 ta OOD masalasi = 1050 ta.**
+**Total: 1000 detailed design problems + 50 OOD problems = 1050.**
 
 ### Birinchi qism — Klassik domenlar (1–202)
 
@@ -6250,10 +6250,10 @@
 
 # 🧱 OOD — Object-Oriented Design Problems
 
-> **Fokus:** Low-Level Design (LLD) / Object-Oriented Design intervyularda klassik 50 ta OOD masalasi. Class diagram, design pattern, SOLID, va concurrency-aware kod yozish.
+> **Focus:** 50 classic Low-Level Design (LLD) / Object-Oriented Design interview problems. Class diagrams, design patterns, SOLID, and concurrency-aware code.
 >
-> **Format:** Har bir masala 30–45 daqiqa whiteboard / IDE sessiyasi uchun.
-> **Talab:** Class diagram, key methods, design patterns, edge cases, thread-safety.
+> **Format:** Each problem is sized for a 30–45-minute whiteboard / IDE session.
+> **Required:** Class diagram, key methods, design patterns, edge cases, thread safety.
 
 ### O1. Design Parking Lot
 - **Class:** ParkingLot, Floor, Slot, Vehicle (Car/Bike/Truck), Ticket, Payment.
@@ -6507,20 +6507,20 @@
 
 ---
 
-## 🎯 Mock Interview o'tkazganda
+## 🎯 Running a mock interview
 
-1. **Random pick:** har domendan 1 ta tanlang.
-2. **Vaqt:** 45–60 daqiqa, framework bo'yicha (yuqorida).
-3. **Yozib oling** va keyin tahlil qiling.
-4. **Doim trade-off** justify qiling — "bunday qildim, chunki..."
-5. **Boshqa variantni** ham aytib o'ting — "alternativa: X, lekin Y sababdan ushbusini tanladim."
+1. **Random pick:** select one problem from each domain.
+2. **Time:** 45–60 minutes, following the framework above.
+3. **Record yourself** and analyze the recording afterwards.
+4. **Always justify the trade-off** — "I went with X, because…"
+5. **Mention the alternatives too** — "alternative: Y, but I picked this because of Z."
 
-## 📚 Qo'shimcha o'qish
+## 📚 Further reading
 
-Bu masalalarni chuqurroq tushunish uchun:
+To go deeper on these problems:
 - *System Design Interview* Vol. 1 & 2 — Alex Xu
 - *Designing Data-Intensive Applications* — Martin Kleppmann
-- ByteByteGo, Hello Interview, System Design School (yuqoridagi sources)
+- ByteByteGo, Hello Interview, System Design School (the sources listed above)
 
 ---
 

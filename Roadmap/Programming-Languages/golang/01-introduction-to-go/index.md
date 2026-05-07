@@ -10,11 +10,11 @@ permalink: /roadmap/programming-languages/golang/01-introduction-to-go/
 
 # Introduction to Go
 
-[← Orqaga](../)
+[← Back](../)
 
-## Mundarija
+## Contents
 
-| # | Mavzu | Link |
+| # | Topic | Link |
 |---|-------|------|
 | 1 | Why Use Go | [index.md](01-why-use-go/index.md) |
 | 2 | History of Go | [index.md](02-history-of-go/index.md) |

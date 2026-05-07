@@ -10,4 +10,4 @@ permalink: /roadmap/programming-languages/python/01-learn-the-basics/02-variable
 
 # Variables & Data Types
 
-[← Orqaga](../)
+[← Back](../)

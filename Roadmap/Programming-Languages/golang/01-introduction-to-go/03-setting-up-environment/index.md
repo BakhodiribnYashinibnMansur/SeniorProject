@@ -10,4 +10,4 @@ permalink: /roadmap/programming-languages/golang/01-introduction-to-go/03-settin
 
 # Setting up the Environment
 
-[← Orqaga](../)
+[← Back](../)

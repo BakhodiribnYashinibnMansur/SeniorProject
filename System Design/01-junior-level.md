@@ -2,10 +2,10 @@
 
 [← README](./README.md) · [Middle →](./02-middle-level.md)
 
-> **Fokus:** Asoslar — HTTP, DNS, REST, oddiy DB, cache, monolith vs microservices, oddiy designs (URL shortener, parking lot). Interviewer **chuqurlikni emas**, mantiqiy fikrlash va asosiy komponentlarni tushunishni kutadi.
+> **Focus:** Fundamentals — HTTP, DNS, REST, simple DBs, cache, monolith vs microservices, basic designs (URL shortener, parking lot). The interviewer is looking for **logical thinking and core-component understanding**, not deep internals.
 >
-> **Kim uchun:** 0–2 yil tajriba, bootcamp/junior level.
-> **Vaqt/savol:** 2–5 daqiqa.
+> **For whom:** 0–2 years of experience, bootcamp / junior level.
+> **Time per question:** 2–5 minutes.
 
 ---
 

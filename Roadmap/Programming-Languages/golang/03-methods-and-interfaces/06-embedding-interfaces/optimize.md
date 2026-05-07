@@ -1,11 +1,11 @@
 # Embedding Interfaces — Optimize
 
-## 1. Embedding o'zi performance ta'sir qilmaydi
+## 1. Embedding itself has no performance impact
 
 Embedding is compile-time syntactic. The method set is identical:
 ```go
 type AB interface { A; B }
-// ekvivalent
+// equivalent
 type AB interface { Method1(); Method2() }
 ```
 
@@ -14,10 +14,10 @@ No runtime difference.
 ## 2. Granular interface — cheaper for callers
 
 ```go
-// Yomon
+// Bad
 func process(rwc io.ReadWriteCloser) { ... }
 
-// Yaxshi
+// Good
 func process(r io.Reader) { ... }
 ```
 
@@ -25,7 +25,7 @@ Callers should depend only on the interface they need — mocks are cheaper and 
 
 ## 3. Interface dispatch overhead
 
-Embed-langan interface ham bir xil dispatch — itab orqali. ~2 ns.
+An embedded interface uses the same dispatch — via the itab. ~2 ns.
 
 ## 4. Decorator overhead
 
@@ -37,11 +37,11 @@ func (lr LoggingReader) Read(p []byte) (int, error) {
 }
 ```
 
-Har Read — log + interface dispatch. Hot path-da o'lchang.
+Each Read carries a log call + an interface dispatch. Measure it on the hot path.
 
 ## 5. Inline opportunity
 
-Embed orqali method promotion — kompilyator inline qilishi mumkin (concrete tip aniq bo'lganda).
+When methods are promoted via embedding, the compiler can inline them (when the concrete type is known).
 
 ## 6. Cleaner code
 
@@ -84,14 +84,14 @@ PERFORMANCE
 ─────────────────────
 Embed → no runtime cost
 Method dispatch → ~2 ns (interface)
-Decorator chain → har dispatch overhead
+Decorator chain → dispatch overhead per layer
 
 DESIGN
 ─────────────────────
 Granular > big
 Caller minimal interface
 -er suffix
-Documentation kontrakti
+Documentation contract
 
 PATTERNS
 ─────────────────────
@@ -105,12 +105,12 @@ Plugin: Configurable + Runnable
 
 Embedding performance:
 - Compile-time syntactic — no runtime overhead
-- Decorator chain — har dispatch ~2 ns
-- Inline opportunity — concrete tip bilan
+- Decorator chain — ~2 ns per dispatch
+- Inline opportunity — with a concrete type
 
 Cleaner code:
 - Granular atomic interfaces
-- Caller minimal so'rasin
+- Caller asks for the minimal interface
 - Decorator pattern — embed + override
 - Compile-time check — `var _ I = (*T)(nil)`
 

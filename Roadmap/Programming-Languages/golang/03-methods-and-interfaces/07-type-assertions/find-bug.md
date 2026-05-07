@@ -67,7 +67,7 @@ type Reader interface { Read([]byte) (int, error) }
 type Closer interface { Close() error }
 
 func handleReader(r Reader) {
-    r.Close()  // Reader-da Close yo'q
+    r.Close()  // Reader has no Close method
 }
 ```
 **Bug:** Compile error.

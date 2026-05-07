@@ -3,26 +3,26 @@
 ## Easy 🟢
 
 ### Task 1
-`Rectangle` ga `Area()` value receiver yozing.
+Write an `Area()` value receiver on `Rectangle`.
 
 ### Task 2
-`Money` immutable — `Add`, `Sub` yangi `Money` qaytarsin.
+`Money` is immutable — `Add` and `Sub` should return a new `Money`.
 
 ### Task 3
-`Color` ga `Brighten(factor float64) Color` qo'shing.
+Add `Brighten(factor float64) Color` to `Color`.
 
 ### Task 4
-`Status int` — `String() string` yozing.
+`Status int` — write `String() string`.
 
 ### Task 5
-`Vec2` ga `Length() float64` qo'shing.
+Add `Length() float64` to `Vec2`.
 
 ---
 
 ## Medium 🟡
 
 ### Task 6
-`Date{year, month, day}` — `Before(o Date) bool`, `Equals(o Date) bool` yozing.
+`Date{year, month, day}` — write `Before(o Date) bool` and `Equals(o Date) bool`.
 
 ### Task 7
 Wither pattern: `Config` — `WithPort`, `WithDebug`.

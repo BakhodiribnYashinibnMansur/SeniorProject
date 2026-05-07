@@ -25,7 +25,7 @@ Create a `MyResource` type that satisfies the `Closer` interface.
 `Shape` interface (`Area`, `Perimeter`). `Circle`, `Rectangle`, and `Triangle` satisfy it.
 
 ### Task 7
-`Logger` interface va 3 ta implementation: `ConsoleLogger`, `FileLogger`, `MultiLogger`.
+`Logger` interface with three implementations: `ConsoleLogger`, `FileLogger`, `MultiLogger`.
 
 ### Task 8
 Custom slice type that satisfies `sort.Interface`.
@@ -34,26 +34,26 @@ Custom slice type that satisfies `sort.Interface`.
 `BufferWriter` type that satisfies `io.Writer`.
 
 ### Task 10
-`Repository` interface, `MockRepo` va `PgRepo` implementations.
+`Repository` interface with `MockRepo` and `PgRepo` implementations.
 
 ---
 
 ## Hard 🔴
 
 ### Task 11
-Decorator pattern: `LoggingRepo`, `CachingRepo` — boshqa Repo-ni decorate qilsin.
+Decorator pattern: `LoggingRepo`, `CachingRepo` — should decorate another Repo.
 
 ### Task 12
-`Specification` pattern — `Spec interface { IsSatisfiedBy(u User) bool }`. `And`, `Or`, `Not` kombinatorlar.
+`Specification` pattern — `Spec interface { IsSatisfiedBy(u User) bool }`. `And`, `Or`, `Not` combinators.
 
 ### Task 13
-Strategy pattern: `Sorter` interface, 3 ta algoritm.
+Strategy pattern: `Sorter` interface with three algorithms.
 
 ### Task 14
 Pipeline: `Stage interface { Process(in any) any }`. Chain the stages together.
 
 ### Task 15
-Plugin system — runtime-da plugin-lar load qilish (interface orqali).
+Plugin system — load plugins at runtime (via an interface).
 
 ---
 
@@ -291,7 +291,7 @@ func (p *Pipeline) Run(in any) any {
 // p.Run("hello")  // ">> HELLO"
 ```
 
-### Solution 15 (qisqartirilgan)
+### Solution 15 (abridged)
 ```go
 type Plugin interface {
     Name() string

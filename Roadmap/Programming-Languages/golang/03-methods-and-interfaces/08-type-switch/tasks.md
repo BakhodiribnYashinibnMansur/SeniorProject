@@ -3,19 +3,19 @@
 ## Easy 🟢
 
 ### Task 1
-`describe(i any) string` — int, string, bool, nil va default.
+`describe(i any) string` — int, string, bool, nil, and a default.
 
 ### Task 2
-`humanReadable(i any)` — sonni "kichik/katta", string-ni "qisqa/uzun".
+`humanReadable(i any)` — number → "small/large", string → "short/long".
 
 ### Task 3
 `isNumeric(i any) bool` — int, int64, float64.
 
 ### Task 4
-JSON dynamic value-ni text-ga aylantirish.
+Convert a dynamic JSON value into text.
 
 ### Task 5
-Error category — sodda type switch.
+Error category — a simple type switch.
 
 ---
 
@@ -31,10 +31,10 @@ JSON deeply walker — map, slice, primitive.
 HTTP request dispatcher — Login, Logout, Refresh.
 
 ### Task 9
-Migration: V1 va V2 format aniqlash.
+Migration: detect V1 vs V2 format.
 
 ### Task 10
-Reflect alternative — type bo'yicha hajmi.
+Reflect alternative — size by type.
 
 ---
 
@@ -44,7 +44,7 @@ Reflect alternative — type bo'yicha hajmi.
 Polymorphism refactor: type switch → interface.
 
 ### Task 12
-Error categorization with `errors.As` aralash.
+Error categorization mixed with `errors.As`.
 
 ### Task 13
 Generic type switch (1.18+).
@@ -74,11 +74,11 @@ func describe(i any) string {
 func humanReadable(i any) string {
     switch v := i.(type) {
     case int:
-        if v > 100 { return "katta" }
-        return "kichik"
+        if v > 100 { return "large" }
+        return "small"
     case string:
-        if len(v) > 10 { return "uzun" }
-        return "qisqa"
+        if len(v) > 10 { return "long" }
+        return "short"
     }
     return "unknown"
 }

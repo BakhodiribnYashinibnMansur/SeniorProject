@@ -2,10 +2,10 @@
 
 [← Middle](./02-middle-level.md) · [README](./README.md) · [Professional →](./04-professional-level.md)
 
-> **Fokus:** Distributed systems chuqurligi, geo-distribution, advanced data modeling, complex system designs (Uber, Netflix-scale), trade-off justification, ambiguous requirements, real-time pipelines, advanced consistency.
+> **Focus:** Distributed systems depth, geo-distribution, advanced data modeling, complex system designs (Uber, Netflix-scale), trade-off justification, ambiguous requirements, real-time pipelines, advanced consistency.
 >
-> **Kim uchun:** 5–8 yil tajriba, senior/L5 darajadagi engineer.
-> **Vaqt/savol:** 45–60 daqiqa, trade-off justification yozing.
+> **For whom:** 5–8 years of experience, senior / L5 engineer.
+> **Time per question:** 45–60 minutes; write a trade-off justification.
 
 ---
 

@@ -10,4 +10,4 @@ permalink: /roadmap/programming-languages/golang/02-language-basics/01-variables
 
 # Scope and Shadowing
 
-[← Orqaga](../)
+[← Back](../)

@@ -10,4 +10,4 @@ permalink: /roadmap/programming-languages/python/01-learn-the-basics/05-type-cas
 
 # Type Casting
 
-[← Orqaga](../)
+[← Back](../)

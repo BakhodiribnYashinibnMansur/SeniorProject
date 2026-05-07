@@ -22,6 +22,6 @@ We explore the difference between **function** and **method** in Go. A method is
 - [professional.md](professional.md) — Domain modelling, encapsulation, package design
 - [specification.md](specification.md) — Formal specification, EBNF, rules
 - [interview.md](interview.md) — Interview questions and answers
-- [tasks.md](tasks.md) — Exercises (oson → og'ir)
+- [tasks.md](tasks.md) — Exercises (easy → hard)
 - [find-bug.md](find-bug.md) — Bug-finding exercises
 - [optimize.md](optimize.md) — Guidelines for performance and cleaner code

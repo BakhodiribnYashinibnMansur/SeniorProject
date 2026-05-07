@@ -2,10 +2,10 @@
 
 [← Senior](./03-senior-level.md) · [README](./README.md) · [Sources →](./05-sources.md)
 
-> **Fokus:** Staff/Principal/Distinguished darajadagi savollar — yillar bo'yicha o'ylash, organizatsion architecture, build-vs-buy, cost optimization, complex migrations, internals of databases & runtimes, technical leadership, RFC processes, cross-team trade-offs.
+> **Focus:** Staff/Principal/Distinguished-level questions — multi-year thinking, organizational architecture, build-vs-buy, cost optimization, complex migrations, internals of databases & runtimes, technical leadership, RFC processes, cross-team trade-offs.
 >
-> **Kim uchun:** Staff/Principal/L6+ engineer.
-> **Vaqt/savol:** 1–2 soat, RFC formatida yozma javob tayyorlang.
+> **For whom:** Staff/Principal/L6+ engineer.
+> **Time per question:** 1–2 hours; produce a written answer in RFC format.
 
 ---
 

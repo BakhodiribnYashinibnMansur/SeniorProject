@@ -2,7 +2,7 @@
 
 ## Library API Design
 
-### Standard library uslubi
+### Standard library style
 
 ```go
 package io
@@ -18,7 +18,7 @@ type ReadWriter interface { Reader; Writer }
 type ReadWriteCloser interface { Reader; Writer; Closer }
 ```
 
-Bu — eng yaxshi misol. Atomic interfaces + convenience composition.
+This is the canonical example. Atomic interfaces + convenience composition.
 
 ### Versioning
 
@@ -35,7 +35,7 @@ Bu — eng yaxshi misol. Atomic interfaces + convenience composition.
 // v1
 type Reader interface { Read(...) ... }
 
-// v1.5 — yangi optional capability
+// v1.5 — new optional capability
 type AvailableReader interface {
     Reader
     Available() int
@@ -76,7 +76,7 @@ type CreateUserUseCase struct{ writer UserWriter }
 type ManageUserUseCase struct{ repo UserRepository }
 ```
 
-Read-only use case — `UserReader` yetarli (mock yozish ham oson).
+For a read-only use case, `UserReader` is enough (and writing a mock is also easy).
 
 ### Service composition
 
@@ -139,7 +139,7 @@ type Middleware interface {
     Wrap(next Handler) Handler
 }
 
-// Middleware decorate qilishi mumkin
+// Middleware can decorate the handler
 type LoggingMiddleware struct{}
 func (LoggingMiddleware) Wrap(next Handler) Handler { ... }
 ```
@@ -154,7 +154,7 @@ type Deletable interface { Delete(id string) error }
 func GuardedAccess[T Readable](store T, allowed []string) Readable { ... }
 ```
 
-User capability-iga ko'ra interface granularity orqali tanlash.
+Choose interface granularity based on user capability.
 
 ### Pattern 3: Phased migration
 
@@ -172,7 +172,7 @@ type V2Service interface {
 
 ## Documentation Standards
 
-### Interface kontrakti
+### Interface contract
 
 ```go
 // Reader is the interface that wraps the basic Read method.
@@ -213,7 +213,7 @@ type AuditedRepo struct {
 ## Linter Rules
 
 ### `revive`
-- **interface-naming** — `-er` suffix tavsiya
+- **interface-naming** — recommends the `-er` suffix
 - **embedding** — finds direct embeds
 
 ### `staticcheck`
@@ -232,16 +232,16 @@ type AuditedRepo struct {
 ```
 LIBRARY DESIGN
 ─────────────────────────
-Atomic interface birinchi
+Atomic interface first
 Convenience composition
 -er suffix
-Documentation kontrakti
+Documentation contract
 
 DDD COMPOSITION
 ─────────────────────────
 Reader + Writer = Repository
-Use case minimal interface so'rasin
-Read-only mock oson
+Use case asks for the minimal interface
+Read-only mocks are easy
 
 MOCKING
 ─────────────────────────
@@ -252,15 +252,15 @@ Real + selective override
 VERSIONING
 ─────────────────────────
 Adding a method to an atomic interface → BREAKING
-Yangi composition → soft
-Soft migration: yangi optional interface
+New composition → soft
+Soft migration: a new optional interface
 
 DOCUMENTATION
 ─────────────────────────
-Kontrakt
+Contract
 Concurrency safety
 Sentinel errors
-Embed sababi
+Reason for embedding
 ```
 
 ---
@@ -271,8 +271,8 @@ Professional embedding:
 - Library: atomic + convenience composition
 - DDD: layered repository, capability-based
 - Mocking: NoOp + override, partial mock
-- Versioning: yangi optional interface, soft migration
-- Documentation: kontrakt + concurrency safety
+- Versioning: a new optional interface, soft migration
+- Documentation: contract + concurrency safety
 - Linters: -er suffix, overuse warning
 
 Embedding is Go's powerful composition mechanism. The standard library style (`io`) is a clear model. Granular atomic interfaces combined with convenience composition produce a stable, extensible design.

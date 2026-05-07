@@ -10,4 +10,4 @@ permalink: /roadmap/programming-languages/golang/01-introduction-to-go/02-histor
 
 # History of Go
 
-[← Orqaga](../)
+[← Back](../)

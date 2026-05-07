@@ -4,43 +4,43 @@ comments: true
 
 # 🏗️ System Design — 1000 Interview Questions
 
-> **Maqsad:** System Design intervyularga to'liq tayyorgarlik. 4 darajada **1000 ta unique savol**, internet va FAANG manbalaridan to'plangan.
+> **Goal:** Comprehensive preparation for System Design interviews. **1000 unique questions** across 4 levels, collected from the internet and FAANG sources.
 >
-> **Sana:** 2026-04-27
-> **Til:** Savollar ingliz tilida (industry standard), bo'limlar uzbek tilida tushuntirilgan.
+> **Date:** 2026-04-27
+> **Language:** Questions and explanations are in English (industry standard).
 
 ---
 
-## 📑 Bo'limlar (Sections)
+## 📑 Sections
 
-| # | Daraja | Fayl | Savollar | Qiyinligi | Kim uchun |
+| # | Level | File | Questions | Difficulty | For whom |
 |---|---|---|---|---|---|
-| 1 | 🟢 **Junior** | [01-junior-level.md](./01-junior-level.md) | 250 | Easy | 0–2 yil tajriba, bootcamp/student |
-| 2 | 🟡 **Middle** | [02-middle-level.md](./02-middle-level.md) | 250 | Medium | 2–5 yil, mid-level engineer |
-| 3 | 🟠 **Senior** | [03-senior-level.md](./03-senior-level.md) | 250 | Hard | 5–8 yil, senior/L5 |
-| 4 | 🔴 **Professional** | [04-professional-level.md](./04-professional-level.md) | 250 | Expert | Staff/Principal/L6+ |
-| 📖 | Manbalar | [05-sources.md](./05-sources.md) | — | — | Web sources & references |
+| 1 | 🟢 **Junior** | [01-junior-level.md](./01-junior-level.md) | 250 | Easy | 0–2 years of experience, bootcamp / student |
+| 2 | 🟡 **Middle** | [02-middle-level.md](./02-middle-level.md) | 250 | Medium | 2–5 years, mid-level engineer |
+| 3 | 🟠 **Senior** | [03-senior-level.md](./03-senior-level.md) | 250 | Hard | 5–8 years, senior / L5 |
+| 4 | 🔴 **Professional** | [04-professional-level.md](./04-professional-level.md) | 250 | Expert | Staff / Principal / L6+ |
+| 📖 | Sources | [05-sources.md](./05-sources.md) | — | — | Web sources & references |
 | 🏗️ | **Design Problems** ("Design X") | [06-design-problems.md](./06-design-problems.md) | 1000 + 50 OOD | Mixed | Real interview prompts |
 
-**Jami:** 1000 ta concept savol + 1000 ta "Design X" masalasi + 50 ta OOD masalasi = **2050 ta**.
+**Total:** 1000 concept questions + 1000 "Design X" problems + 50 OOD problems = **2050**.
 
 ---
 
-## 🧭 Roadmap — Tayyorgarlik
+## 🧭 Roadmap — Preparation
 
 ```
 Junior  ─►  Middle  ─►  Senior  ─►  Professional
-fundament   real apps    distributed   org-wide
+fundamentals  real apps   distributed   org-wide
 ```
 
-- **Junior** — fundamentalini o'rganing: HTTP, DB, cache, LB, basic API, oddiy designs
-- **Middle** — real designs (Twitter, Bitly, Yelp), CAP, sharding, MQ, microservices
+- **Junior** — learn the fundamentals: HTTP, DB, cache, LB, basic APIs, simple designs
+- **Middle** — real-world designs (Twitter, Bitly, Yelp), CAP, sharding, MQ, microservices
 - **Senior** — distributed consensus, geo-replication, complex trade-offs, real-time pipelines
 - **Professional** — org-wide architecture, migrations, build-vs-buy, deep internals, leadership
 
 ---
 
-## 🎯 Har bir bo'limda nima bor
+## 🎯 What's in each section
 
 ### 🟢 Junior (1–250)
 - Networking & Web Basics (1–30)
@@ -86,17 +86,17 @@ fundament   real apps    distributed   org-wide
 
 ---
 
-## 🎓 Foydalanish bo'yicha tavsiyalar
+## 🎓 Usage tips
 
-| Daraja | Vaqt/savol | Format |
+| Level | Time per question | Format |
 |---|---|---|
-| Junior | 2–5 daqiqa | Og'zaki javob, kalit so'zlar |
-| Middle | 30–45 daqiqa | Whiteboard sketch + komponentlar |
-| Senior | 45–60 daqiqa | Trade-off justification |
-| Professional | 1–2 soat | RFC formatida yozma javob |
+| Junior | 2–5 minutes | Verbal answer, key terms |
+| Middle | 30–45 minutes | Whiteboard sketch + components |
+| Senior | 45–60 minutes | Trade-off justification |
+| Professional | 1–2 hours | Written answer in RFC format |
 
-**Mock interview** o'tkazganda har darajadan 3–5 ta savol tanlang, vaqt cheklovi bilan javob bering, keyin yozib oling va critique qiling.
+For a **mock interview**, pick 3–5 questions per level, answer under a time limit, then record yourself and critique the result.
 
 ---
 
-*Yaratilgan sana: 2026-04-27 · Versiya: 1.0 · Total: 1000 unique savol*
+*Created: 2026-04-27 · Version: 1.0 · Total: 1000 unique questions*

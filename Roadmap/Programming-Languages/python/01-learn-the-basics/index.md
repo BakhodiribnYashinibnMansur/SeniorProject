@@ -10,11 +10,11 @@ permalink: /roadmap/programming-languages/python/01-learn-the-basics/
 
 # Learn the Basics
 
-[← Orqaga](../)
+[← Back](../)
 
-## Mundarija
+## Contents
 
-| # | Mavzu | Link |
+| # | Topic | Link |
 |---|-------|------|
 | 1 | Basic Syntax | [index.md](01-basic-syntax/index.md) |
 | 2 | Variables & Data Types | [index.md](02-variables-and-data-types/index.md) |

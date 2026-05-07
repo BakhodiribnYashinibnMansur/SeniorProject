@@ -5,17 +5,17 @@
 ```
 Type switch (jump table): ~1-2 ns
 Assertion chain (3): ~3-4 ns
-If-chain bilan: sekinroq
+With an if-chain: slower
 ```
 
 ## 2. Type switch vs assertion chain
 
 ```go
-// Yomon
+// Bad
 if s, ok := i.(string); ok { ... }
 if n, ok := i.(int); ok    { ... }
 
-// Yaxshi
+// Good
 switch v := i.(type) {
 case string: ...
 case int: ...
@@ -37,26 +37,26 @@ Place specific cases first.
 
 ## 4. Hot path optimization
 
-Multi-million chaqiruvda type switch ham overhead. Concrete tip-ga refactor.
+Across multi-million calls even a type switch adds overhead. Refactor to a concrete type.
 
 ```go
 // Hot path
 for _, x := range items {
-    switch v := x.(type) {  // har iteratsiyada
+    switch v := x.(type) {  // on every iteration
     case int: process(v)
     case string: process(v)
     }
 }
 
-// Yaxshiroq — homogeneous
+// Better — homogeneous
 items := []int{...}
 for _, n := range items { process(n) }
 ```
 
-## 5. Generics afzal
+## 5. Generics are preferred
 
 ```go
-// Yomon
+// Bad
 func Sum(xs []any) int {
     total := 0
     for _, x := range xs {
@@ -67,7 +67,7 @@ func Sum(xs []any) int {
     return total
 }
 
-// Yaxshi
+// Good
 func Sum[T int | float64](xs []T) T {
     var total T
     for _, x := range xs { total += x }
@@ -78,38 +78,38 @@ func Sum[T int | float64](xs []T) T {
 ## 6. Refactor → interface
 
 ```go
-// Type switch domain-da
+// Type switch in the domain
 switch e := entity.(type) {
 case *User: e.Save()
 case *Order: e.Save()
 }
 
-// Interface afzal
+// Interface is preferred
 type Saveable interface { Save() error }
 saveable.Save()
 ```
 
 ## 7. Cleaner code
 
-### Default qoldiring
+### Always include `default`
 ```go
 default:
     log.Warn("unexpected type", "type", fmt.Sprintf("%T", v))
 ```
 
-### `case nil` aniq
+### Make `case nil` explicit
 ```go
 case nil:
     return ErrNoData
 ```
 
-### Multi-case mantiqiy
+### Multi-case when logical
 ```go
 case int, int64, int32:
     // numeric handling
 ```
 
-### errors.As + type switch aralash
+### Mix `errors.As` with a type switch
 ```go
 var nf *NotFound
 if errors.As(err, &nf) { return Status404 }
@@ -127,14 +127,14 @@ PERFORMANCE
 ─────────────────────
 Type switch: ~1-2 ns
 Assertion chain: ~3-4 ns (3 case)
-Hot path → concrete tip
-Generics > switch (boxing yo'q)
+Hot path → concrete type
+Generics > switch (no boxing)
 
 ORDER
 ─────────────────────
-Specific case birinchi
-Interface case keyin
-Default oxirida
+Specific case first
+Interface case after
+Default last
 
 DESIGN
 ─────────────────────
@@ -145,24 +145,24 @@ Open-set → interface
 
 CLEANER CODE
 ─────────────────────
-Default qoldiring
-case nil aniq
-Multi-case mantiqiy
-errors.As aralash
+Always include default
+Make case nil explicit
+Multi-case when logical
+Mix with errors.As
 ```
 
 ## 9. Summary
 
 Performance:
 - Type switch ~1-2 ns — preferred for multi-type cases
-- Assertion chain sekinroq
-- Hot path → concrete tip
-- Generics > switch (boxing yo'q)
+- Assertion chain is slower
+- Hot path → concrete type
+- Generics > switch (no boxing)
 
 Cleaner code:
-- Specific birinchi
-- Default qoldiring
-- Interface domain logikada
-- `errors.As` aralash
+- Specific cases first
+- Always include default
+- Use interfaces in domain logic
+- Mix with `errors.As`
 
-Type switch — Go-ning closed-set polymorphism vositasi. Boundary, plugin, AST — switch OK. Domain entity-lar — interface afzal.
+A type switch is Go's tool for closed-set polymorphism. Boundary, plugin, AST — switch is fine. For domain entities, interfaces are preferred.

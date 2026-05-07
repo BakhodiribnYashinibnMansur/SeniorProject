@@ -1,12 +1,12 @@
-# 📖 Sources & Manbalar
+# 📖 Sources
 
 [← Professional](./04-professional-level.md) · [README](./README.md)
 
-> Bu 1000 ta savol quyidagi internet manbalari, FAANG intervyu hisobotlari, va sanoat blogi/kitoblardan to'plangan va sintez qilingan. Ko'plab savollar bir nechta manbalardan iqtibos qilingan.
+> These 1000 questions were collected and synthesized from the internet sources below, FAANG interview reports, and industry blogs/books. Many questions are cited from multiple sources.
 
 ---
 
-## 🌍 Asosiy intervyu platformalari
+## 🌍 Core interview platforms
 
 - [Hello Interview — System Design in a Hurry](https://www.hellointerview.com/learn/system-design/in-a-hurry/introduction)
 - [Hello Interview — Core Concepts](https://www.hellointerview.com/learn/system-design/in-a-hurry/core-concepts)
@@ -21,7 +21,7 @@
 - [System Design School — Netflix](https://systemdesignschool.io/problems/netflix/solution)
 - [System Design School — Dropbox](https://systemdesignschool.io/problems/dropbox/solution)
 
-## 🎯 Question banks va ranked lists
+## 🎯 Question banks and ranked lists
 
 - [DesignGurus — 50 Advanced System Design Interview Questions](https://www.designgurus.io/blog/50-advanced-system-design-interview-questions)
 - [DesignGurus — 25 Fundamental System Design Concepts](https://www.designgurus.io/blog/system-design-interview-fundamentals)
@@ -42,7 +42,7 @@
 - [Tech Interview Handbook — System Design](https://www.techinterviewhandbook.org/system-design/)
 - [FreeCodeCamp — Systems Design Interview Handbook](https://www.freecodecamp.org/news/systems-design-for-interviews)
 
-## 🏢 FAANG va katta kompaniyalar uchun guides
+## 🏢 FAANG and big-company guides
 
 - [IGotAnOffer — System Design Interviews & Prep](https://igotanoffer.com/blogs/tech/system-design-interviews)
 - [interviewing.io — Senior Engineer's Guide to SD Interview](https://interviewing.io/guides/system-design-interview)
@@ -98,14 +98,14 @@
 - [LastRound AI — 40 Cloud Architect Questions 2026](https://lastroundai.com/blog/cloud-architect-interview-questions)
 - [igmGuru — Top 35+ GCP Questions 2026](https://www.igmguru.com/blog/gcp-interview-questions)
 
-## 📚 Akademik / texnik manbalar
+## 📚 Academic / technical sources
 
 - [Raft paper — In Search of an Understandable Consensus](https://raft.github.io/raft.pdf)
 - [arXiv — Paxos vs Raft (Heidi Howard)](https://arxiv.org/abs/2004.05074)
 - [Cambridge — Paxos vs Raft (Heidi Howard PDF)](https://www.repository.cam.ac.uk/bitstreams/14f1d94c-6022-4ef6-9175-33be465b80c0/download)
 - [Google SRE Book — Managing Critical State](https://sre.google/sre-book/managing-critical-state/)
 
-## 🔗 Boshqa foydali resurslar
+## 🔗 Other useful resources
 
 - [HighScalability — Consistent Hashing Algorithm](https://highscalability.com/consistent-hashing-algorithm/)
 - [Singhajit — How Consistent Hashing Works](https://singhajit.com/consistent-hashing-explained/)
@@ -115,7 +115,7 @@
 
 ---
 
-## 🎓 Tavsiya etiladigan kitoblar
+## 🎓 Recommended books
 
 - *Designing Data-Intensive Applications* — Martin Kleppmann
 - *System Design Interview Vol. 1 & 2* — Alex Xu

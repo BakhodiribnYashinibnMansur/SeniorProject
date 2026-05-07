@@ -36,7 +36,7 @@ type B interface { Foo() int }
 type AB interface { A; B }
 type ABC interface { AB; Bar() }
 ```
-**Bug:** AB-da conflict bor — ABC-gacha kelishdan oldin.
+**Bug:** the conflict already exists in `AB` — before you ever reach `ABC`.
 **Fix:** A and B have Foo with the same signature.
 
 ---
@@ -52,7 +52,7 @@ func (T) M() string { return "x" }   // signature does not match
 var _ AB = T{}
 ```
 **Bug:** Compile error — `T.M()` does not match interface AB's M() signature (`func()`).
-**Fix:** `func (T) M() {}` (return yo'q).
+**Fix:** `func (T) M() {}` (no return value).
 
 ---
 
@@ -86,7 +86,7 @@ type S struct{ A }   // embed interface
 s := S{}
 s.Foo()
 ```
-**Bug:** Runtime panic — `S.A == nil`. Embed-da concrete tip yo'q.
+**Bug:** Runtime panic — `S.A == nil`. The embed has no concrete type.
 **Fix:**
 ```go
 s := S{A: someA}
@@ -101,10 +101,10 @@ type Logger interface { Log(string) }
 type TimestampLogger struct{ Logger }
 func (t TimestampLogger) Log(msg string) {
     fmt.Println(time.Now().Format(time.RFC3339), msg)
-    // Logger.Log(msg) chaqirilmagan
+    // Logger.Log(msg) is never called
 }
 ```
-**Bug:** Asl Logger-ga forwarding yo'q. Faqat console-ga chiqadi.
+**Bug:** No forwarding to the wrapped Logger. Output only goes to the console.
 **Fix:**
 ```go
 func (t TimestampLogger) Log(msg string) {
@@ -119,11 +119,11 @@ func (t TimestampLogger) Log(msg string) {
 type Reader interface { Read([]byte) (int, error) }
 
 type MyReader struct{}
-// Read method-i unutilgan
+// Read method is missing
 
 var r Reader = &MyReader{}   // compile error
 ```
-**Bug:** Compile error qaytadan o'qishda topiladi.
+**Bug:** the compile error is only surfaced on a re-read.
 **Improvement:**
 ```go
 var _ Reader = (*MyReader)(nil)   // immediate compile-time check
