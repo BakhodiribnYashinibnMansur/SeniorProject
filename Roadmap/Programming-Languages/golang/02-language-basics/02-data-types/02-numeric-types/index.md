@@ -17,3 +17,6 @@ permalink: /roadmap/programming-languages/golang/02-language-basics/02-data-type
 | # | Topic | Link |
 |---|-------|------|
 | 1 | Integers | [index.md](01-integers/index.md) |
+| 2 | Floating Points | [02-floating-points/](02-floating-points/) |
+| 3 | Complex Numbers | [03-complex-numbers/](03-complex-numbers/) |
+| 4 | Overflow and Precision | [04-overflow-and-precision/](04-overflow-and-precision/) |
