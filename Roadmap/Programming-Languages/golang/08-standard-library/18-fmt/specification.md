@@ -21,17 +21,14 @@
 ## 2. Definition
 
 The `fmt` package implements formatted I/O with functions analogous
-to C's `printf` and `scanf`. The format directives, called *verbs*,
-derive from C but include extensions specific to Go (struct
-formatting, `%w` for error wrapping, `%T` for types).
+to C's `printf` and `scanf`. Verbs derive from C but include
+Go-specific extensions (struct formatting, `%w` for error wrapping,
+`%T` for types).
 
-The package exposes:
-
-- A printer family (`Print`/`Sprint`/`Fprint` ± `ln`/`f`).
-- An error formatter (`Errorf`).
-- A scanner family (`Scan`/`Sscan`/`Fscan` ± `ln`/`f`).
-- Three customisation interfaces (`Stringer`, `GoStringer`,
-  `Formatter`).
+The package exposes the printer family (`Print`/`Sprint`/`Fprint` ±
+`ln`/`f`), `Errorf`, the scanner family (`Scan`/`Sscan`/`Fscan` ±
+`ln`/`f`), and three customisation interfaces (`Stringer`,
+`GoStringer`, `Formatter`).
 
 ---
 
@@ -188,32 +185,19 @@ fmt.Printf("%*d\n", 5, 42)  //    42
 ## 6. The Stringer Interface
 
 ```go
-// Stringer is implemented by any value that has a String method,
-// which defines the "native" format for that value.
-// The String method is used to print values passed as an operand
-// to any format that accepts a string or to an unformatted printer
-// such as Print.
-type Stringer interface {
-    String() string
-}
+type Stringer interface { String() string }
 ```
 
-Called by verbs `%s` and `%v` (and the `Print*` family without a
-format) when the type implements it. Bypassed by `%T`, `%#v` (when
-`GoStringer` exists), and `%p`.
+Called by `%s`, `%v`, and the unformatted `Print*` family when the
+type implements it. Bypassed by `%T`, `%#v` (when `GoStringer`
+exists), and `%p`.
 
 ---
 
 ## 7. The GoStringer Interface
 
 ```go
-// GoStringer is implemented by any value that has a GoString
-// method, which defines the Go syntax for that value.
-// The GoString method is used to print values passed as an operand
-// to a %#v format.
-type GoStringer interface {
-    GoString() string
-}
+type GoStringer interface { GoString() string }
 ```
 
 Called by `%#v` only. Should return text that compiles back to the
@@ -224,23 +208,8 @@ value in Go syntax.
 ## 8. The Formatter Interface
 
 ```go
-// Formatter is implemented by any value that has a Format method.
-// The implementation controls how State and rune are interpreted,
-// and may call Sprint(f) or Fprint(f) etc. to generate its output.
-type Formatter interface {
-    Format(f State, verb rune)
-}
-```
+type Formatter interface { Format(f State, verb rune) }
 
-A type implementing `Formatter` overrides all default verb
-handling, including `String()` and `Error()`. The `Format` method
-receives:
-
-- `f State` — embeds `io.Writer`, plus `Width()`, `Precision()`,
-  `Flag(c)`.
-- `verb rune` — the verb character.
-
-```go
 type State interface {
     Write(b []byte) (n int, err error)
     Width()     (wid int, ok bool)
@@ -248,6 +217,11 @@ type State interface {
     Flag(c int) bool
 }
 ```
+
+A type implementing `Formatter` overrides all default verb
+handling, including `String()` and `Error()`. `f State` embeds
+`io.Writer` plus `Width()`/`Precision()`/`Flag(c)`. `verb rune` is
+the verb character.
 
 ---
 
@@ -496,38 +470,27 @@ exceeds 64 KiB (to avoid pinning memory).
 ## 18. Acceptance Tests
 
 ```go
-func TestStringerCalled(t *testing.T) {
-    type S struct{ V int }
-    // Doesn't implement Stringer; default format applies.
-    if got := fmt.Sprintf("%v", S{42}); got != "{42}" {
-        t.Fatalf("got %q", got)
-    }
-}
-
 type stringerS struct{ V int }
-
 func (s stringerS) String() string { return "S!" }
 
+func TestStringerCalled(t *testing.T) {
+    type S struct{ V int }
+    if got := fmt.Sprintf("%v", S{42}); got != "{42}" { t.Fatalf("got %q", got) }
+}
+
 func TestStringerOverride(t *testing.T) {
-    if got := fmt.Sprintf("%v", stringerS{42}); got != "S!" {
-        t.Fatalf("got %q", got)
-    }
+    if got := fmt.Sprintf("%v", stringerS{42}); got != "S!" { t.Fatalf("got %q", got) }
 }
 
 func TestErrorfWraps(t *testing.T) {
     inner := errors.New("inner")
     outer := fmt.Errorf("outer: %w", inner)
-    if !errors.Is(outer, inner) {
-        t.Fatal("expected outer to wrap inner")
-    }
+    if !errors.Is(outer, inner) { t.Fatal("expected outer to wrap inner") }
 }
 
 func TestWInSprintfFallback(t *testing.T) {
-    e := errors.New("x")
-    s := fmt.Sprintf("%w", e)
-    if !strings.HasPrefix(s, "%!w(") {
-        t.Fatalf("expected %%!w fallback, got %q", s)
-    }
+    s := fmt.Sprintf("%w", errors.New("x"))
+    if !strings.HasPrefix(s, "%!w(") { t.Fatalf("got %q", s) }
 }
 ```
 

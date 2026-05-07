@@ -2,49 +2,37 @@
 
 ## Instructions
 
-Each exercise contains buggy Go code involving `fmt`. Identify the
-bug, explain why, and provide the corrected code. Difficulty:
-🟢 Easy, 🟡 Medium, 🔴 Hard.
+Each exercise contains buggy Go code. Identify the bug, explain
+why, and provide the corrected code. Difficulty: 🟢 Easy,
+🟡 Medium, 🔴 Hard.
 
 ---
 
 ## Bug 1 🟢 — %d on a String
 
 ```go
-package main
-
-import "fmt"
-
-func main() {
-    name := "Ada"
-    fmt.Printf("Hello, %d\n", name)
-}
+name := "Ada"
+fmt.Printf("Hello, %d\n", name)
 ```
-
-What's the output?
 
 <details>
 <summary>Solution</summary>
 
-**Bug**: `%d` is the integer verb but `name` is a `string`. `fmt`
-substitutes a runtime placeholder:
+`%d` is the integer verb but `name` is a `string`. Output:
 
 ```
 Hello, %!d(string=Ada)
 ```
 
-`go vet` warns:
+`go vet` warns at build time:
 ```
-./main.go:7:13: Printf format %d has arg name of wrong type string
-```
-
-**Fix**: use `%s` (or `%v`):
-```go
-fmt.Printf("Hello, %s\n", name)
+Printf format %d has arg name of wrong type string
 ```
 
-**Key lesson**: `vet` catches verb/argument mismatches at build
-time. Run it in CI; treat warnings as errors.
+Fix: `fmt.Printf("Hello, %s\n", name)` (or `%v`).
+
+`vet` catches verb/argument mismatches. Run it in CI; treat
+warnings as errors.
 </details>
 
 ---
@@ -52,50 +40,29 @@ time. Run it in CI; treat warnings as errors.
 ## Bug 2 🟢 — %s on a Struct With No Stringer
 
 ```go
-package main
-
-import "fmt"
-
-type User struct {
-    Name string
-    Age  int
-}
-
-func main() {
-    u := User{Name: "Ada", Age: 36}
-    fmt.Printf("%s\n", u)
-}
+type User struct{ Name string; Age int }
+u := User{Name: "Ada", Age: 36}
+fmt.Printf("%s\n", u)
 ```
-
-What's the output?
 
 <details>
 <summary>Solution</summary>
 
-**Bug**: `%s` on a struct without `String()` falls back to a default
-format that is **not** the struct's natural `%v` output:
+`%s` on a struct without `String()` falls back to a default format:
 
 ```
 {Ada 36}
 ```
 
-(With Go ≥ 1.20 you may also see `{%!s(string=Ada) %!s(int=36)}`
-depending on the formatter version; the visible behaviour is the
-"no field names" struct dump.)
-
-**Fix** — choose your representation:
+Fix — choose your representation:
 ```go
-// Default
 fmt.Printf("%v\n", u)   // {Ada 36}
-// With field names
 fmt.Printf("%+v\n", u)  // {Name:Ada Age:36}
 // Or implement Stringer
 func (u User) String() string { return u.Name }
-fmt.Printf("%s\n", u)   // Ada
 ```
 
-**Key lesson**: `%s` and `%v` both call `String()` if defined; for
-types you print or log, define `String()`.
+For types you print or log, define `String()`.
 </details>
 
 ---
@@ -103,44 +70,25 @@ types you print or log, define `String()`.
 ## Bug 3 🟢 — %v on a Nil Interface
 
 ```go
-package main
-
-import "fmt"
-
-func main() {
-    var err error
-    fmt.Printf("error: %v\n", err)
-}
+var err error
+fmt.Printf("error: %v\n", err)
 ```
-
-What's the output?
 
 <details>
 <summary>Solution</summary>
 
-**Output**: `error: <nil>`
-
-**Subtle point**: This is **not** the same as a nil pointer holding
-a concrete type. Compare:
+Output: `error: <nil>`. This is **not** the same as a nil pointer
+of a concrete type:
 
 ```go
 var p *MyError      // typed nil
-var e error = p      // wraps typed nil
-
-fmt.Printf("%v\n", e)        // <nil>  (or panics if (*MyError).Error() doesn't nil-check)
-fmt.Println(e == nil)         // false! the interface has a type.
+var e error = p     // wraps typed nil
+fmt.Printf("%v\n", e)   // <nil> or panic if Error() doesn't nil-check
+fmt.Println(e == nil)   // false! the interface has a type
 ```
 
-**Fix**: always check `err != nil` before formatting an error:
-
-```go
-if err != nil {
-    fmt.Printf("error: %v\n", err)
-}
-```
-
-**Key lesson**: `%v` on a nil interface prints `<nil>`. A typed nil
-prints whatever the type's `String()` (or `Error()`) returns — which
+Always check `err != nil` before formatting an error. A typed nil
+prints whatever the type's `String()`/`Error()` returns — which
 might panic if the method dereferences without a nil guard.
 </details>
 
@@ -149,57 +97,28 @@ might panic if the method dereferences without a nil guard.
 ## Bug 4 🟢 — %w in Sprintf
 
 ```go
-package main
-
-import (
-    "errors"
-    "fmt"
-)
-
-func main() {
-    inner := errors.New("inner")
-    msg := fmt.Sprintf("outer: %w", inner)
-    fmt.Println(msg)
-}
+inner := errors.New("inner")
+msg := fmt.Sprintf("outer: %w", inner)
+fmt.Println(msg)
 ```
-
-What's the output, and is the chain queryable?
 
 <details>
 <summary>Solution</summary>
 
-**Output**:
-```
-outer: %!w(*errors.errorString=&{inner})
-```
+Output: `outer: %!w(*errors.errorString=&{inner})`.
 
-**Bug**: `%w` is recognised **only** by `fmt.Errorf`. In `Sprintf`
-it falls back to a malformed-verb placeholder.
+`%w` is recognised **only** by `fmt.Errorf`. In `Sprintf` it falls
+back to a malformed-verb placeholder, and there's no chain — the
+result is a string, not an error.
 
-The "chain" doesn't exist: `Sprintf` returns a string, not an
-error.
-
-**Fix**: use `Errorf` instead:
+Fix:
 ```go
 err := fmt.Errorf("outer: %w", inner)
-fmt.Println(err)             // outer: inner
+fmt.Println(err)                // outer: inner
 fmt.Println(errors.Unwrap(err)) // inner
 ```
 
-If you genuinely want a string with `%v` formatting:
-```go
-msg := fmt.Sprintf("outer: %v", inner)
-```
-
-`go vet` catches this:
-```
-./main.go:9:24: Sprintf call has error-wrapping directive %w
-```
-
-`errorlint` warns even more aggressively.
-
-**Key lesson**: `%w` is the wrap marker; only `Errorf` understands
-it. Anywhere else it is a bug.
+`go vet` and `errorlint` both catch this.
 </details>
 
 ---
@@ -207,47 +126,28 @@ it. Anywhere else it is a bug.
 ## Bug 5 🟡 — Stringer Infinite Recursion
 
 ```go
-package main
-
-import "fmt"
-
-type M struct {
-    X, Y int
-}
-
-func (m M) String() string {
-    return fmt.Sprintf("%v", m)
-}
-
-func main() {
-    fmt.Println(M{1, 2})
-}
+type M struct{ X, Y int }
+func (m M) String() string { return fmt.Sprintf("%v", m) }
+fmt.Println(M{1, 2})
 ```
-
-What happens?
 
 <details>
 <summary>Solution</summary>
 
-**Bug**: `%v` of an `M` value calls `M.String()` (because `M`
-implements `Stringer`). `String()` calls `fmt.Sprintf("%v", m)`,
-which calls `String()` again, ... infinite recursion.
+`%v` of `M` calls `M.String()`, which calls `Sprintf("%v", m)`, which
+calls `String()` again. Stack overflow:
 
-The Go runtime detects stack growth past a limit and crashes with:
 ```
 runtime: goroutine stack exceeds 1000000000-byte limit
-runtime: sp=0x... stack=[0x..., 0x...]
 fatal error: stack overflow
 ```
 
-**Fix 1** — use explicit field references:
+Fix 1 — explicit field references:
 ```go
-func (m M) String() string {
-    return fmt.Sprintf("M{X:%d, Y:%d}", m.X, m.Y)
-}
+func (m M) String() string { return fmt.Sprintf("M{X:%d, Y:%d}", m.X, m.Y) }
 ```
 
-**Fix 2** — alias trick (strips the method from the type):
+Fix 2 — alias trick (strips the method):
 ```go
 func (m M) String() string {
     type alias M
@@ -255,9 +155,7 @@ func (m M) String() string {
 }
 ```
 
-**Key lesson**: `vet` does NOT catch this. Add a unit test that
-calls `String()` and verifies it returns. Or always use explicit
-field references inside `String()`.
+`vet` does NOT catch this. Add a unit test that calls `String()`.
 </details>
 
 ---
@@ -265,54 +163,29 @@ field references inside `String()`.
 ## Bug 6 🟡 — Pointer Receiver Stringer on Value
 
 ```go
-package main
-
-import "fmt"
-
 type T struct{ V int }
+func (t *T) String() string { return fmt.Sprintf("T(%d)", t.V) }
 
-func (t *T) String() string {
-    return fmt.Sprintf("T(%d)", t.V)
-}
-
-func main() {
-    t := T{V: 42}
-    fmt.Println(t)
-    fmt.Println(&t)
-}
+t := T{V: 42}
+fmt.Println(t)  // {42}
+fmt.Println(&t) // T(42)
 ```
-
-What's printed?
 
 <details>
 <summary>Solution</summary>
 
-**Output**:
-```
-{42}
-T(42)
-```
+`String()` has a pointer receiver. `T` (a value) doesn't implement
+`Stringer`; only `*T` does. So `fmt.Println(t)` falls back to the
+default `{42}`.
 
-**Bug**: `String()` has a pointer receiver. `T` (a value) does not
-implement `Stringer`; only `*T` does. So `fmt.Println(t)` falls
-back to the default struct format `{42}`.
-
-**Fix** — value receiver:
+Fix — value receiver:
 ```go
-func (t T) String() string {
-    return fmt.Sprintf("T(%d)", t.V)
-}
+func (t T) String() string { return fmt.Sprintf("T(%d)", t.V) }
 ```
 
-Or, if `T` is large and copying is expensive, always pass the
-pointer:
-```go
-fmt.Println(&t)
-```
-
-**Key lesson**: Define `String()` on the value receiver unless the
-type is meant to be used only by pointer (rare for small structs).
-Same rule applies to `Format` and `GoString`.
+Define `String()` on the value receiver unless the type is meant
+to be used only by pointer (rare for small structs). Same rule
+applies to `Format` and `GoString`.
 </details>
 
 ---
@@ -320,44 +193,23 @@ Same rule applies to `Format` and `GoString`.
 ## Bug 7 🟡 — Width Modifier Misuse
 
 ```go
-package main
-
-import "fmt"
-
-func main() {
-    fmt.Printf("%5d\n", "hello")
-}
+fmt.Printf("%5d\n", "hello")
 ```
-
-What's printed?
 
 <details>
 <summary>Solution</summary>
 
-**Output**:
-```
-%!d(string=hello)
-```
+Output: `%!d(string=hello)`. Width applies only after type-checking.
 
-The width `5` is parsed but the verb mismatches the type. Width
-applies only after type-checking succeeds.
-
-**Subtler case** — width on a string:
+For strings, width is min chars and precision is max chars:
 ```go
-fmt.Printf("%5s\n", "hi")    //    hi
+fmt.Printf("%5s\n", "hi")     //    hi
 fmt.Printf("%.3s\n", "hello") // hel
 fmt.Printf("%5.3s\n", "hello") //   hel
 ```
 
-For strings: width = minimum chars; precision = maximum chars.
-
-**Fix** — choose a verb that matches:
-```go
-fmt.Printf("%5s\n", "hello")
-```
-
-**Key lesson**: Width and precision have different meanings per
-verb. Read the verb table.
+Width and precision have different meanings per verb. Read the
+verb table.
 </details>
 
 ---
@@ -365,40 +217,17 @@ verb. Read the verb table.
 ## Bug 8 🟢 — Forgetting to Escape %
 
 ```go
-package main
-
-import "fmt"
-
-func main() {
-    fmt.Printf("100%\n")
-}
+fmt.Printf("100%\n")
 ```
-
-What's printed?
 
 <details>
 <summary>Solution</summary>
 
-**Output**:
-```
-100%!(NOVERB)
-```
+Output: `100%!(NOVERB)`. `%\n` parses as a malformed verb.
 
-**Bug**: `%\n` is parsed as a malformed verb. The `%` is not
-escaped.
+Fix: double the `%`: `fmt.Printf("100%%\n")` → `100%`.
 
-**Fix**: double the `%`:
-```go
-fmt.Printf("100%%\n") // 100%
-```
-
-`vet` catches this:
-```
-./main.go:6:13: Printf format %\n has unknown verb \n
-```
-
-**Key lesson**: Inside a `Printf` format string, `%` is special.
-Use `%%` for a literal percent sign.
+`vet` catches this.
 </details>
 
 ---
@@ -406,120 +235,69 @@ Use `%%` for a literal percent sign.
 ## Bug 9 🟡 — Println in a Hot Loop
 
 ```go
-package main
-
-import (
-    "fmt"
-    "time"
-)
-
-func main() {
-    items := make([]int, 1_000_000)
-    start := time.Now()
-    for _, v := range items {
-        fmt.Println("item:", v)
-    }
-    fmt.Println("elapsed:", time.Since(start))
+items := make([]int, 1_000_000)
+for _, v := range items {
+    fmt.Println("item:", v)
 }
 ```
-
-What's the cost? What's the fix?
 
 <details>
 <summary>Solution</summary>
 
-**Issue**: `fmt.Println` has three hidden costs in a tight loop:
+`Println` has hidden costs in tight loops:
 1. Allocating an `[]any` for the variadic args.
-2. Boxing `v` into an `any` (allocation if `v` falls outside the
-   small-int interned range, free if inside).
+2. Boxing `v` into an `any` (alloc if outside small-int range).
 3. The `os.Stdout` mutex lock per call.
-4. The kernel write per line (no buffering by default).
+4. Kernel write per line (no buffering by default).
 
-For 1M iterations: ~10 seconds, ~3M allocations, ~200 MB of GC
-pressure.
+For 1M iterations: ~10s, ~3M allocs, ~200 MB of GC pressure.
 
-**Profile**:
-```bash
-go test -bench BenchmarkPrintln -benchmem -run=^$
-go tool pprof cpu.out
-# Top samples in fmt.(*pp).doPrint, runtime.mallocgc, syscall.write.
-```
-
-**Fix 1** — buffer the writer:
+Fix 1 — buffered writer:
 ```go
 bw := bufio.NewWriterSize(os.Stdout, 1<<20)
 defer bw.Flush()
-for _, v := range items {
-    fmt.Fprintln(bw, "item:", v)
-}
+for _, v := range items { fmt.Fprintln(bw, "item:", v) }
 ```
 
-**Fix 2** — switch to `slog`:
-```go
-for _, v := range items {
-    slog.Debug("item", "value", v)
-}
-```
+Fix 2 — `slog.Debug` (zero-alloc handler).
+Fix 3 — don't log in a hot loop. Aggregate first.
 
-**Fix 3** — don't log in a hot loop. Aggregate first.
-
-**Key lesson**: `fmt.Println` is interactive-output speed.
-1M calls/sec is wrong tooling.
+`fmt.Println` is interactive-output speed; 1M/sec is wrong tooling.
 </details>
 
 ---
 
-## Bug 10 🟡 — %q on Bytes vs Strings
+## Bug 10 🟡 — %q / %v on Bytes vs Strings
 
 ```go
-package main
-
-import "fmt"
-
-func main() {
-    s := "hello\nworld"
-    b := []byte("hello\nworld")
-    fmt.Printf("%q\n", s)
-    fmt.Printf("%q\n", b)
-}
+s := "hello\nworld"
+b := []byte("hello\nworld")
+fmt.Printf("%q\n", s)
+fmt.Printf("%q\n", b)
 ```
-
-What's printed?
 
 <details>
 <summary>Solution</summary>
 
-**Output**:
-```
-"hello\nworld"
-"hello\nworld"
-```
+Both produce `"hello\nworld"` — `%q` treats `[]byte` and `string`
+identically (both go through `strconv.Quote`).
 
-Both produce the **same** output — `fmt` treats `%q` on `[]byte`
-and `string` identically (both go through `strconv.Quote`).
-
-**Subtle gotcha**: `%x` on the two **does** differ in style but not
-in content:
-
-```go
-fmt.Printf("%x\n", "Go")     // 476f
-fmt.Printf("%x\n", []byte("Go")) // 476f  (same)
-fmt.Printf("% x\n", "Go")    // 47 6f
-fmt.Printf("%X\n", []byte{0xde, 0xad}) // DEAD
-```
-
-**Subtler gotcha**: `%v` on `[]byte`:
+The actual gotcha is `%v` on `[]byte`:
 ```go
 b := []byte("Go")
-fmt.Printf("%v\n", b)  // [71 111]   ← decimal byte values, NOT the string "Go"
+fmt.Printf("%v\n", b)  // [71 111]   ← decimal byte values
 fmt.Printf("%s\n", b)  // Go         ← string view
 ```
 
-**Bug** in code that does `%v` on `[]byte` expecting the string is
-common. Use `%s` or convert with `string(b)`.
+Code that does `%v` on `[]byte` expecting the string is a common
+bug. Use `%s` or convert with `string(b)`.
 
-**Key lesson**: For `[]byte`, default `%v` is decimal-ints; use
-`%s` for the string view.
+Hex variants:
+```go
+fmt.Printf("%x\n", "Go")               // 476f
+fmt.Printf("% x\n", []byte("Go"))      // 47 6f
+fmt.Printf("%X\n", []byte{0xde, 0xad}) // DEAD
+```
 </details>
 
 ---
@@ -527,63 +305,32 @@ common. Use `%s` or convert with `string(b)`.
 ## Bug 11 🟡 — Custom Error That Loses %w
 
 ```go
-package main
-
-import (
-    "errors"
-    "fmt"
-    "io/fs"
-    "os"
-)
-
-type AppError struct {
-    Op  string
-    Err error
-}
+type AppError struct{ Op string; Err error }
 
 func (e *AppError) Error() string {
     return fmt.Sprintf("%s: %v", e.Op, e.Err)
 }
 
-func main() {
-    _, ioErr := os.Open("/no/such")
-    err := &AppError{Op: "load", Err: ioErr}
-    fmt.Println(err)
-    fmt.Println(errors.Is(err, fs.ErrNotExist))
-}
+_, ioErr := os.Open("/no/such")
+err := &AppError{Op: "load", Err: ioErr}
+fmt.Println(errors.Is(err, fs.ErrNotExist)) // false
 ```
-
-What's printed?
 
 <details>
 <summary>Solution</summary>
 
-**Output**:
-```
-load: open /no/such: no such file or directory
-false
-```
+`AppError` doesn't implement `Unwrap()`. `errors.Is` walks the chain
+via `Unwrap`; without it, the chain ends at `AppError`.
 
-**Bug**: `AppError` does not implement `Unwrap()`. `errors.Is` walks
-the chain by calling `Unwrap`; without it, the chain ends at
-`AppError` and `fs.ErrNotExist` is not found.
-
-**Fix** — add `Unwrap`:
+Fix:
 ```go
 func (e *AppError) Unwrap() error { return e.Err }
 ```
 
-After:
-```
-load: open /no/such: no such file or directory
-true
-```
+After: `errors.Is(err, fs.ErrNotExist)` returns `true`.
 
-`errorlint`'s `wrap` rule and `staticcheck` SA9003 catch this.
-
-**Key lesson**: A custom error that wraps another **must**
-implement `Unwrap()` (or use `fmt.Errorf("...: %w", inner)`).
-Otherwise `errors.Is/As` is broken.
+A custom error that wraps another **must** implement `Unwrap()`,
+or use `fmt.Errorf("...: %w", inner)` directly.
 </details>
 
 ---
@@ -591,51 +338,27 @@ Otherwise `errors.Is/As` is broken.
 ## Bug 12 🔴 — User Input as Format String
 
 ```go
-package main
-
-import (
-    "fmt"
-    "os"
-)
-
-func main() {
-    msg := os.Args[1]
-    fmt.Printf(msg)
-}
+msg := os.Args[1]
+fmt.Printf(msg)
 ```
-
-What's the bug?
 
 <details>
 <summary>Solution</summary>
 
-**Bug**: `msg` is user-controlled. If the user passes `%s %d %x %v`,
-`fmt` interprets these as verbs and looks for arguments. Since
-there are none, it prints `%!s(MISSING)` etc.
+`msg` is user-controlled. Passing `%s %d %x %v` causes `fmt` to
+look for arguments and emit `%!s(MISSING)` etc. Not memory-unsafe
+in Go (unlike C), but:
+- Leaks verbose output the developer didn't intend.
+- User-controlled formatting in logs.
+- Confuses log parsers.
 
-In Go this is mostly a *correctness* bug, not a memory-safety bug
-(unlike C's `printf`), but it can:
-- Leak verbose output the developer didn't intend.
-- Cause user-controlled formatting in logs.
-- Confuse log parsers.
-
-**Fix** — use `Print` for literal output, or `%s` to constrain the
-verb:
+Fix — `Print` for literal output, or `%s` to constrain:
 ```go
 fmt.Print(msg)
-// or
 fmt.Printf("%s", msg)
 ```
 
-`staticcheck SA1006` catches this:
-```
-SA1006: Printf with non-constant format string
-```
-
-`go vet` with `-printf` also flags non-constant formats when given
-the right configuration.
-
-**Key lesson**: Format strings must be constants. Always.
+`staticcheck SA1006` catches this. Format strings must be constants.
 </details>
 
 ---
@@ -643,39 +366,21 @@ the right configuration.
 ## Bug 13 🟡 — Missing Argument Silent
 
 ```go
-package main
-
-import "fmt"
-
-func main() {
-    fmt.Printf("user=%s id=%d\n", "ada")
-}
+fmt.Printf("user=%s id=%d\n", "ada")
 ```
-
-What's printed?
 
 <details>
 <summary>Solution</summary>
 
-**Output**:
+Output: `user=ada id=%!d(MISSING)`. `fmt` doesn't error — it
+inserts a placeholder and continues, so the bug may slip into logs.
+
+`vet` catches it at compile time:
 ```
-user=ada id=%!d(MISSING)
+Printf format %d reads arg #2, but call has 1 arg
 ```
 
-`fmt` does not error — it inserts a `MISSING` placeholder and
-continues. This may end up in logs unnoticed.
-
-`vet` catches this at compile time:
-```
-./main.go:6:13: Printf format %d reads arg #2, but call has 1 arg
-```
-
-**Fix**:
-```go
-fmt.Printf("user=%s id=%d\n", "ada", 7)
-```
-
-**Key lesson**: Always run `vet`. Always fix its `printf` warnings.
+Always run `vet`; always fix `printf` warnings.
 </details>
 
 ---
@@ -683,52 +388,33 @@ fmt.Printf("user=%s id=%d\n", "ada", 7)
 ## Bug 14 🔴 — fmt.Errorf With Multiple %w and Nil
 
 ```go
-package main
-
-import (
-    "errors"
-    "fmt"
-)
-
-func main() {
-    var cleanupErr error // nil
-    primary := errors.New("primary")
-    err := fmt.Errorf("step: %w; cleanup: %w", primary, cleanupErr)
-    fmt.Println(err)
-}
+var cleanupErr error // nil
+primary := errors.New("primary")
+err := fmt.Errorf("step: %w; cleanup: %w", primary, cleanupErr)
 ```
-
-What happens?
 
 <details>
 <summary>Solution</summary>
 
-**Bug**: Since Go 1.20, `fmt.Errorf` panics if any argument bound
-to `%w` is `nil`:
-
+Since Go 1.20, `Errorf` panics if any argument bound to `%w` is
+`nil`:
 ```
 panic: %w error operand cannot be nil
-
-goroutine 1 [running]:
-fmt.errorBufp.printf...
 ```
 
-**Fix** — guard against nil:
+Fix — guard, or use `errors.Join` (silently ignores nil):
 ```go
 if cleanupErr != nil {
     err = fmt.Errorf("step: %w; cleanup: %w", primary, cleanupErr)
 } else {
     err = fmt.Errorf("step: %w", primary)
 }
-```
-
-Or use `errors.Join`, which silently ignores `nil`:
-```go
+// or
 err = errors.Join(primary, cleanupErr)
 ```
 
-**Key lesson**: Multiple `%w` requires non-nil errors. `errors.Join`
-is safer for collected errors.
+Multiple `%w` requires non-nil errors. `errors.Join` is safer for
+collected errors.
 </details>
 
 ---
@@ -736,52 +422,25 @@ is safer for collected errors.
 ## Bug 15 🟡 — Println Adds Spaces Where You Don't Want
 
 ```go
-package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("price=", 99)
-}
+fmt.Println("price=", 99) // price= 99   ← extra space
 ```
-
-What's printed?
 
 <details>
 <summary>Solution</summary>
 
-**Output**:
-```
-price= 99
-```
+`Println` always adds a space between operands.
 
-Note the space between `=` and `99`. `Println` always adds a space
-between operands.
-
-**Fix 1** — use `Printf`:
+Fix — `Printf` for control:
 ```go
 fmt.Printf("price=%d\n", 99)
 ```
 
-**Fix 2** — use `Print` with concatenation:
-```go
-fmt.Print("price=", 99, "\n")
-// price=99   (Print adds space only between non-strings)
-```
-
-Wait — that prints `price=99` because `"price="` is a string and
-`99` is not, so no space.
-
-**Subtle**: `Print(1, 2)` prints `1 2` (both non-strings). Test it:
+Subtle: `Print` only adds spaces between two non-string args:
 ```go
 fmt.Print("a", 1)   // a1
 fmt.Print(1, 2)     // 1 2
 fmt.Print("a", "b") // ab
 ```
-
-**Key lesson**: `Println` always adds spaces. `Print` adds them
-only between two non-string args. Use `Printf` when you want
-control.
 </details>
 
 ---
@@ -789,46 +448,25 @@ control.
 ## Bug 16 🔴 — Format That Panics on nil
 
 ```go
-package main
-
-import "fmt"
-
 type N struct{ V int }
+func (n *N) String() string { return fmt.Sprintf("N(%d)", n.V) }
 
-func (n *N) String() string {
-    return fmt.Sprintf("N(%d)", n.V)
-}
-
-func main() {
-    var p *N
-    fmt.Println(p)
-}
+var p *N
+fmt.Println(p)
 ```
-
-What happens?
 
 <details>
 <summary>Solution</summary>
 
-**Output**: panics inside `String()`:
-```
-panic: runtime error: invalid memory address or nil pointer dereference
-```
+`String()` dereferences `n.V` without nil-checking. `fmt.Println(p)`
+with `p == nil` calls `(*N)(nil).String()`, which nil-derefs.
 
-**Bug**: `String()` dereferences `n.V` without checking if `n` is
-nil. `fmt.Println(p)` with `p == nil` calls `(*N)(nil).String()`,
-which then nil-deref's.
-
-`fmt` itself recovers from panics inside `String()` and prints
-something like:
+`fmt` recovers from panics inside `String()` and prints:
 ```
-%!v(PANIC=String method: runtime error: invalid memory address or nil pointer dereference)
+%!v(PANIC=String method: runtime error: invalid memory address...)
 ```
 
-(but only because `fmt` defends against this — relying on it is
-poor form.)
-
-**Fix** — nil-check inside `String()`:
+Don't rely on this. Nil-check inside `String()`:
 ```go
 func (n *N) String() string {
     if n == nil { return "<nil N>" }
@@ -836,16 +474,15 @@ func (n *N) String() string {
 }
 ```
 
-**Key lesson**: Pointer-receiver methods that may be called on a
-nil receiver must nil-check. Otherwise `fmt.Println(nilP)` panics.
+Pointer-receiver methods that may be called on nil must nil-check.
 </details>
 
 ---
 
 ## Summary: 10 Mandated Bugs Coverage
 
-| # | Bug | Where covered |
-|---|-----|---------------|
+| # | Bug | Where |
+|---|-----|-------|
 | 1 | `%d` on string | Bug 1 |
 | 2 | `%s` on non-Stringer struct | Bug 2 |
 | 3 | `%v` on nil interface | Bug 3 |
@@ -855,12 +492,12 @@ nil receiver must nil-check. Otherwise `fmt.Println(nilP)` panics.
 | 7 | Width modifier misuse | Bug 7 |
 | 8 | Forgetting to escape `%` | Bug 8 |
 | 9 | Println in hot loop | Bug 9 |
-| 10 | `%q` on bytes vs strings | Bug 10 |
+| 10 | `%q`/`%v` on bytes vs strings | Bug 10 |
 
-Plus 6 bonus production traps: Unwrap missing, format-string
-injection, missing argument, multiple `%w` with nil, Println
+Plus 6 bonus production traps: missing `Unwrap`, format-string
+injection, missing argument, multiple `%w` with nil, `Println`
 spacing, nil-receiver String panic.
 
-The first line of defense is `go vet`. The second is `errorlint`
-and `staticcheck`. The third is a habit of running every new
-`String()` method through a `fmt.Println` test before shipping.
+First line of defense: `go vet`. Second: `errorlint` and
+`staticcheck`. Third: a habit of running every new `String()`
+through a `fmt.Println` test before shipping.

@@ -5,16 +5,12 @@
 Senior-level mastery of `fmt` means precise understanding of the
 three customisation interfaces (`Stringer`, `GoStringer`,
 `Formatter`), the dispatch order in `src/fmt/print.go`, the cost of
-the reflection-based fallback, the `pp` printer-state pool that
-amortises that cost, and the rules `vet`'s `printf` analyzer applies
-at compile time.
+reflection-based fallback, the `pp` printer-state pool that
+amortises that cost, and the rules `vet`'s `printf` analyzer applies.
 
 This level is what distinguishes someone who uses `fmt` from someone
 who designs types that `fmt` formats correctly under every verb,
-including the edge cases that bite in code review: pointer vs value
-receivers, `error` beating `Stringer`, `%w` only in `Errorf`,
-`Format(f State, verb rune)` for full control, and the recursion
-trap inside a `String()` method.
+including the edge cases that bite in code review.
 
 ---
 
@@ -23,24 +19,15 @@ trap inside a `String()` method.
 ### 2.1 Stringer
 
 ```go
-type Stringer interface {
-    String() string
-}
+type Stringer interface { String() string }
 ```
 
-Implemented by any type whose `%s` and `%v` representation should
-not be the default. Roughly half the types in the standard library
-implement it: `time.Time`, `time.Duration`, `net.IP`, `bytes.Buffer`,
-`*os.File`, all enums in `time` (`Weekday`, `Month`).
+Used by `%s` and `%v`. Half the stdlib implements it: `time.Time`,
+`time.Duration`, `net.IP`, `bytes.Buffer`, `*os.File`, `time.Weekday`.
 
 ```go
 type Color int
-
-const (
-    Red Color = iota
-    Green
-    Blue
-)
+const (Red Color = iota; Green; Blue)
 
 func (c Color) String() string {
     return [...]string{"Red", "Green", "Blue"}[c]
@@ -50,38 +37,25 @@ func (c Color) String() string {
 ### 2.2 GoStringer
 
 ```go
-type GoStringer interface {
-    GoString() string
-}
+type GoStringer interface { GoString() string }
 ```
 
 Called by `%#v`. Should return Go syntax that recreates the value.
-Useful for types whose default Go-syntax form is unhelpful (raw byte
-slices, opaque IDs).
 
 ```go
 type ID [16]byte
-
-func (id ID) GoString() string {
-    return fmt.Sprintf("ID{%#x}", id[:])
-}
+func (id ID) GoString() string { return fmt.Sprintf("ID{%#x}", id[:]) }
 ```
 
 ### 2.3 Formatter
 
 ```go
-type Formatter interface {
-    Format(f State, verb rune)
-}
+type Formatter interface { Format(f State, verb rune) }
 ```
 
-`Formatter` overrides everything: when a value implements
-`Formatter`, neither `String()` nor `GoString()` is consulted. The
-`Format` method receives:
-
-- `f State` — embeds `io.Writer`, plus `Width()`, `Precision()`, and
-  `Flag(c int)` (for `+`, `-`, `#`, `0`, ` `).
-- `verb rune` — the verb (`v`, `s`, `d`, ...).
+`Formatter` overrides everything: when implemented, neither
+`String()` nor `GoString()` is consulted. `State` embeds `io.Writer`
+plus `Width()`, `Precision()`, `Flag(c int)`.
 
 ```go
 type Q struct{ Op, Key string; Err error }
@@ -102,28 +76,21 @@ func (q *Q) Format(f fmt.State, verb rune) {
 }
 ```
 
-`fmt.Fprintf(f, ...)` writes through the `State`. **Never** call
-`fmt.Sprintf("%v", q)` inside `Format` — that re-enters `Format` and
-recurses.
+`fmt.Fprintf(f, ...)` writes through the `State`. Never call
+`fmt.Sprintf("%v", q)` inside `Format` — it re-enters and recurses.
 
 ### 2.4 Dispatch Order
 
-Inside `printArg` and `printValue` (`src/fmt/print.go`):
+Inside `printArg`/`printValue` (`src/fmt/print.go`):
 
-1. If the value implements `Formatter` → call `Format(f, verb)`.
-2. If the verb is `v` or `s` and the value implements `error` → use
-   `Error()`.
-3. If the verb is `v` or `s` and the value implements `Stringer` →
-   use `String()`.
-4. If the verb is `#v` and the value implements `GoStringer` → use
-   `GoString()`.
-5. Otherwise, fall back to reflection-based default formatting.
+1. `Formatter` → call `Format(f, verb)`.
+2. Verb `v`/`s` and value implements `error` → use `Error()`.
+3. Verb `v`/`s` and value implements `Stringer` → use `String()`.
+4. Verb `#v` and value implements `GoStringer` → use `GoString()`.
+5. Otherwise reflection-based default formatting.
 
-Two consequences:
-
-- `error` is checked **before** `Stringer`. If your type implements
-  both, `%s` and `%v` show `Error()`.
-- `Formatter` overrides *all* others, including `error`.
+Two consequences: `error` is checked **before** `Stringer`;
+`Formatter` overrides everything, including `error`.
 
 ---
 
@@ -136,22 +103,17 @@ func (t T) String() string {
 }
 ```
 
-`fmt.Sprintf("%v", t)` re-enters the `String()` method because
-`Stringer` dispatch is the rule. The fix:
+Fix with explicit fields, or the alias trick (a local type that
+does not inherit the `String()` method):
 
 ```go
-func (t T) String() string {
-    return fmt.Sprintf("T{X:%d}", t.X) // explicit verbs
-}
+func (t T) String() string { return fmt.Sprintf("T{X:%d}", t.X) }
 // or
 func (t T) String() string {
-    type alias T // strip the method
+    type alias T
     return fmt.Sprintf("%+v", alias(t))
 }
 ```
-
-The alias trick is a common idiom: define a local type that does
-**not** inherit the `String()` method, then format it with `%+v`.
 
 ---
 
@@ -166,39 +128,27 @@ fmt.Println(t)  // {0}   — value, no String() called
 fmt.Println(&t) // T     — pointer, String() called
 ```
 
-Reason: a `*T` has the method set of `*T`, which includes pointer
-methods. A `T` has the method set of `T`, which does **not** include
-pointer methods.
+`*T`'s method set includes pointer methods; `T`'s does not.
 
-Rule of thumb: define `String()` on the **value** receiver unless
-the type is meant to be used only by pointer (e.g. `*os.File`).
-
-```go
-func (t T) String() string { return "T" }   // both work
-func (t *T) String() string { return "T" }  // only *T works
-```
-
-The same rule applies to `Format` and `GoString`.
+Rule: define `String()` on the **value** receiver unless the type
+is meant to be used only by pointer (`*os.File`). Same for `Format`
+and `GoString`.
 
 ---
 
 ## 5. The pp Printer State
 
-`fmt`'s formatting goes through a `pp` (printer) struct that holds
-the output buffer, the verb state, and a few flags. To avoid one
-`pp` allocation per call, the package keeps a `sync.Pool`:
+`fmt`'s formatting goes through a `pp` (printer) struct holding the
+output buffer, verb state, and flags. To avoid one allocation per
+call, the package keeps a `sync.Pool`:
 
 ```go
 // src/fmt/print.go
-var ppFree = sync.Pool{
-    New: func() any { return new(pp) },
-}
+var ppFree = sync.Pool{ New: func() any { return new(pp) } }
 
 func newPrinter() *pp {
     p := ppFree.Get().(*pp)
-    p.panicking = false
-    p.erroring = false
-    p.wrapErrs = false
+    p.panicking, p.erroring, p.wrapErrs = false, false, false
     p.fmt.init(&p.buf)
     return p
 }
@@ -213,32 +163,18 @@ func (p *pp) free() {
 }
 ```
 
-Two consequences:
-
-- The first call after a long pause may allocate; subsequent calls
-  do not (for the `pp` itself).
-- A single big format — say a 1 MB struct dump — drops the buffer
-  back to GC instead of pooling, to avoid pinning memory.
-
-The result: `fmt.Sprintf` allocates a small result string and
-sometimes a `[]any` for variadics, but not a `pp` per call.
+Consequences: subsequent calls don't allocate the `pp`; a 1 MB
+struct dump drops the buffer to GC instead of pinning it.
+`fmt.Sprintf` still allocates the result string and sometimes a
+`[]any` for variadics.
 
 ---
 
 ## 6. Reflection Cost
 
-Without a `Formatter`/`Stringer`, `fmt` falls back to reflection.
-The path is roughly:
-
-1. `reflect.ValueOf(arg)` (free — `reflect.Value` is a struct, not
-   an allocation, when `arg` is a non-pointer interface).
-2. `printArg` switches on `v.Kind()`.
-3. For composite kinds (struct, slice, map), recursively walk fields
-   / elements.
-4. For each leaf, write into `pp.buf` via `strconv.AppendInt`,
-   `strconv.AppendFloat`, etc.
-
-Cost vs `strconv` directly:
+Without `Formatter`/`Stringer`, `fmt` falls back to reflection:
+`reflect.ValueOf(arg)` → switch on `Kind()` → recurse for
+struct/slice/map → write leaves with `strconv.AppendInt`/`AppendFloat`.
 
 ```
 BenchmarkSprintfInt-8       30000000   45 ns/op   16 B/op   2 allocs/op
@@ -246,74 +182,46 @@ BenchmarkSprintfStruct-8     5000000  240 ns/op  144 B/op   5 allocs/op
 BenchmarkStrconvItoa-8     200000000    7 ns/op    0 B/op   0 allocs/op
 ```
 
-The struct case is dominated by the per-field reflect calls. For a
-struct of N fields, expect roughly `O(N)` allocations from the
-recursive walk if the fields are not fast-path types.
+A struct of N fields costs roughly `O(N)` allocations through the
+recursive walk.
 
 ---
 
 ## 7. The %w Verb in Errorf
 
 `fmt.Errorf` is the only entry point that recognises `%w`. Inside
-`pp.doPrintf`, when the verb is `w`:
+`pp.doPrintf`, when verb is `w`:
 
-1. The argument must implement `error`. If not, you get
-   `%!w(<type>=<value>)`.
-2. The error is appended to `pp.wrappedErrs`.
-3. After formatting, if `wrappedErrs` is non-empty, the result is a
-   `*wrapError` (one `%w`) or `*wrapErrors` (two or more).
-4. `wrapError.Unwrap()` returns the single underlying error;
+1. Argument must implement `error`; else `%!w(<type>=<value>)`.
+2. Error is appended to `pp.wrappedErrs`.
+3. After formatting, the result is `*wrapError` (one) or
+   `*wrapErrors` (two or more).
+4. `wrapError.Unwrap()` returns the single error;
    `wrapErrors.Unwrap()` returns `[]error`.
 
-`errors.Is`/`As` walk both forms.
-
 ```go
-// Two %w (Go 1.20+)
 err := fmt.Errorf("primary: %w; cleanup: %w", e1, e2)
 errors.Is(err, e1) // true
 errors.Is(err, e2) // true
 ```
 
-In any other call (`Sprintf`, `Printf`, `Fprintf`), `wrappedErrs` is
-ignored and `%w` falls back to a malformed-verb placeholder.
+In any other call, `wrappedErrs` is ignored and `%w` becomes a
+malformed-verb placeholder.
 
 ---
 
 ## 8. The vet printf Analyzer
 
-`go vet` runs an analyzer that:
+`go vet` parses literal format strings at compile time and flags:
 
-1. Recognises a list of `printf`-like functions, both stdlib and via
-   `// vet:printf` annotations.
-2. Parses every literal format string at compile time.
-3. Checks each verb against the type of the corresponding
-   argument.
-4. Flags:
-   - Wrong type: `Printf format %d has arg "x" of wrong type string`.
-   - Missing argument: `Printf format %s reads arg #2, but call has 1 arg`.
-   - Extra argument: `Printf call has arguments but no formatting directives`.
-   - `%w` outside `Errorf`.
-   - Non-constant format strings (with `--printfuncs`).
+- Wrong type: `Printf format %d has arg "x" of wrong type string`.
+- Missing/extra arguments.
+- `%w` outside `Errorf`.
+- Non-constant format strings (with `--printfuncs`).
 
 The analyzer is in `golang.org/x/tools/go/analysis/passes/printf`.
-You can register your own `Printf`-like functions:
-
-```go
-// log/log.go
-//go:build vet
-// +build vet
-
-// Printf-like signatures: vet recognises stdlib ones; for custom
-// helpers add a "//go:vet -printfuncs=..." comment or use
-// staticcheck's check.
-
-// staticcheck.conf:
-checks = ["SA1006", "SA9006"]
-initialisms = ["ID", "URL"]
-```
-
-Treat `vet` warnings as build errors. The cost is one minute per
-team-month, and saves dozens of `%!d(string=...)` outages.
+Treat `vet` warnings as build errors — the cost is one minute per
+team-month, the savings dozens of `%!d(string=...)` outages.
 
 ---
 
@@ -325,24 +233,14 @@ constant blocks:
 ```go
 //go:generate stringer -type=Status
 type Status int
-
-const (
-    StatusPending Status = iota
-    StatusRunning
-    StatusDone
-)
+const (StatusPending Status = iota; StatusRunning; StatusDone)
 ```
 
-After `go generate`, a sibling file `status_string.go` contains:
+After `go generate`, `status_string.go` contains:
 
 ```go
 // Code generated by "stringer -type=Status"; DO NOT EDIT.
-package main
-
-import "strconv"
-
 const _Status_name = "StatusPendingStatusRunningStatusDone"
-
 var _Status_index = [...]uint8{0, 13, 26, 36}
 
 func (i Status) String() string {
@@ -354,17 +252,15 @@ func (i Status) String() string {
 ```
 
 Real-world consumers: `time.Weekday`, `time.Month`, every
-Kubernetes `apimachinery` enum.
-
-The generator handles non-iota and non-contiguous values too,
-producing a `map[T]string` lookup.
+Kubernetes `apimachinery` enum. The generator handles
+non-contiguous values via `map[T]string` lookup.
 
 ---
 
 ## 10. Custom Formatter for Stack Traces
 
-The `pkg/errors` and `cockroachdb/errors` packages use `Formatter`
-to expose stack traces under `%+v`:
+`pkg/errors` and `cockroachdb/errors` use `Formatter` to expose
+stack traces under `%+v`:
 
 ```go
 type withStack struct {
@@ -393,13 +289,9 @@ func (w *withStack) Format(s fmt.State, verb rune) {
 }
 ```
 
-Three observations:
-
-1. `s.Flag('+')` switches between short and verbose.
-2. `Fprintf(s, ...)` writes through the `State` — no double
-   formatting.
-3. The `Format` method must handle `s`, `v`, and `q` — the standard
-   trio for error-like values.
+Three observations: `s.Flag('+')` switches between short and
+verbose; `Fprintf(s, ...)` writes through the `State`; you must
+handle `s`, `v`, and `q` for error-like values.
 
 ---
 
@@ -413,19 +305,15 @@ switch f := arg.(type) {
 case bool:    p.fmtBool(f, verb)
 case float32: p.fmtFloat(float64(f), 32, verb)
 case float64: p.fmtFloat(f, 64, verb)
-case complex64, complex128: ...
 case int:     p.fmtInteger(uint64(f), signed, verb)
-case int8, int16, int32, int64, uint, uintptr, ...
 case string:  p.fmtString(f, verb)
 case []byte:  p.fmtBytes(f, verb, "[]byte")
 default:      p.printValue(reflect.ValueOf(arg), verb, 0)
 }
 ```
 
-The type switch avoids reflection for primitives; the recursion-
-based `printValue` handles everything else. The implication is that
-formatting `int` is ~5x cheaper than formatting a struct of one
-`int`.
+The type switch avoids reflection for primitives; formatting `int`
+is ~5x cheaper than formatting a struct of one `int`.
 
 ---
 
@@ -440,53 +328,31 @@ type State interface {
 }
 ```
 
-- `Width()` and `Precision()` return `(value, true)` if explicitly
-  set in the format directive; `(0, false)` otherwise.
-- `Flag(c)` checks for one of `'+', '-', '#', '0', ' '`.
-- `Write` accepts the formatted bytes; `fmt.Fprintf(s, ...)` is the
-  usual writer.
-
-A `Format` method that respects width and precision:
+A `Format` that respects width:
 
 ```go
 func (q Q) Format(f fmt.State, verb rune) {
     s := q.string()
     if w, ok := f.Width(); ok && len(s) < w {
         pad := strings.Repeat(" ", w-len(s))
-        if f.Flag('-') {
-            s = s + pad
-        } else {
-            s = pad + s
-        }
+        if f.Flag('-') { s = s + pad } else { s = pad + s }
     }
     fmt.Fprint(f, s)
 }
 ```
 
-Most custom `Format` methods ignore width/precision; consider that
-when documenting your type.
+Most custom `Format` methods ignore width/precision; document this.
 
 ---
 
-## 13. Buffer Sharing and Reuse
+## 13. Buffer Sharing
 
-The `pp.buf` is a `[]byte` reused via the pool. Two implications:
+The `pp.buf` is reused via the pool. Implications:
 
 1. The output of `Sprintf` is a freshly allocated string; the buffer
    is recycled.
-2. Inside `Format`, you write into a state whose underlying buffer
-   is shared with whoever called `Sprintf` / `Printf`. Do not retain
-   it.
-
-```go
-func (q Q) Format(f fmt.State, verb rune) {
-    bs, _ := f.(io.Writer).(interface{ Bytes() []byte }) // do NOT do this
-    _ = bs
-    fmt.Fprint(f, q.S)
-}
-```
-
-If you need the formatted bytes, format into a new buffer:
+2. Inside `Format`, the underlying buffer is shared — do not retain
+   it. If you need formatted bytes:
 
 ```go
 var sb strings.Builder
@@ -498,10 +364,10 @@ text := sb.String()
 
 ## 14. The Errors Chain Today
 
-Go 1.13: `errors.Is`, `errors.As`, `errors.Unwrap`, plus `%w`.
+- Go 1.13: `errors.Is`, `errors.As`, `errors.Unwrap`, `%w`.
+- Go 1.20: multiple `%w` per call, `errors.Join`.
 
-Go 1.20: multiple `%w` per call, `errors.Join`. After Go 1.20, the
-canonical multi-error pattern is:
+Canonical multi-error pattern:
 
 ```go
 var errs []error
@@ -513,14 +379,14 @@ for _, x := range items {
 return errors.Join(errs...)
 ```
 
-`fmt.Errorf("...: %w...; %w", a, b)` is functionally similar but
-`errors.Join` is clearer for collected errors.
+`errors.Join` is clearer than `Errorf("...; %w; %w", a, b)` for
+collected errors.
 
 ---
 
 ## 15. Custom Verbs
 
-`fmt` does not support **defining new verbs**, but `Format` lets you
+`fmt` doesn't support **defining new verbs**, but `Format` lets you
 respond to any rune:
 
 ```go
@@ -528,22 +394,15 @@ type Color struct{ R, G, B uint8 }
 
 func (c Color) Format(f fmt.State, verb rune) {
     switch verb {
-    case 'h': // hex
-        fmt.Fprintf(f, "#%02x%02x%02x", c.R, c.G, c.B)
-    case 'r': // rgb()
-        fmt.Fprintf(f, "rgb(%d,%d,%d)", c.R, c.G, c.B)
-    default:
-        fmt.Fprintf(f, "(%d,%d,%d)", c.R, c.G, c.B)
+    case 'h': fmt.Fprintf(f, "#%02x%02x%02x", c.R, c.G, c.B)
+    case 'r': fmt.Fprintf(f, "rgb(%d,%d,%d)", c.R, c.G, c.B)
+    default:  fmt.Fprintf(f, "(%d,%d,%d)", c.R, c.G, c.B)
     }
 }
-
 fmt.Printf("%h\n", Color{255, 128, 0}) // #ff8000
-fmt.Printf("%r\n", Color{255, 128, 0}) // rgb(255,128,0)
 ```
 
-`vet` will complain about unknown verbs unless you tag the call site
-with a custom `printfuncs` annotation, since it cannot infer your
-custom verbs.
+`vet` will warn about unknown verbs unless you tag the call site.
 
 ---
 
@@ -551,13 +410,12 @@ custom verbs.
 
 | Anti-pattern | Why it's bad |
 |--------------|--------------|
-| `fmt.Errorf("...: %v", err)` | Cause is unrecoverable via `errors.Is` |
-| Format string built from variables | `vet` cannot check; runtime placeholders |
+| `fmt.Errorf("...: %v", err)` | Cause unrecoverable via `errors.Is` |
+| Format string built from variables | `vet` cannot check |
 | `Printf(userInput)` | Verb-injection bug |
-| `Sprintf("%v", obj)` for hot path | Reflection cost; use `Stringer` or `strconv` |
-| `String()` method calling `%v` of self | Infinite recursion |
-| `Format` method calling `Sprintf` of self | Same |
-| Pointer-receiver `String()` on value-formatted type | `String()` never fires |
+| `Sprintf("%v", obj)` for hot path | Use `Stringer` or `strconv` |
+| `String()` calling `%v` of self | Infinite recursion |
+| Pointer-receiver `String()` on value-formatted type | Never fires |
 
 ---
 
@@ -565,18 +423,11 @@ custom verbs.
 
 ```
 src/fmt/
-  doc.go         package doc — verb table is here
-  print.go       printer state (pp), Sprintf/Printf/Fprintf entry points
-  format.go      verb-by-verb byte writers (fmtInteger, fmtFloat, ...)
-  scan.go        scanner state (ss), Scan/Sscan/Fscan
-  errors.go      Errorf, wrapError, wrapErrors
-
-  print.go ::
-    type pp struct { buf, arg, value, fmt fmtState ... }
-    func (p *pp) doPrintf(format string, a []any)
-    func (p *pp) printArg(arg any, verb rune)
-    func (p *pp) printValue(v reflect.Value, verb rune, depth int)
-    func (p *pp) handleMethods(verb rune) (handled bool)
+  doc.go      package doc — verb table is here
+  print.go    printer state (pp), Sprintf/Printf/Fprintf entry points
+  format.go   verb-by-verb byte writers (fmtInteger, fmtFloat, ...)
+  scan.go     scanner state (ss), Scan/Sscan/Fscan
+  errors.go   Errorf, wrapError, wrapErrors
 ```
 
 The hot loop in `doPrintf` walks the format string, decodes each
@@ -587,55 +438,27 @@ appends literal text in between.
 
 ## 18. Edge Cases & Pitfalls
 
-### 18.1 Format that Calls fmt on Self
-
 ```go
+// 18.1 Format calling fmt on self → recursion
 func (q Q) Format(f fmt.State, verb rune) {
-    fmt.Fprintf(f, "%v", q) // ← recursion
+    fmt.Fprintf(f, "%v", q) // ← bad
 }
-```
 
-Use a typed alias or write fields directly.
+// 18.2 Stringer returning Sprintf("%v", self) → same trap
 
-### 18.2 fmt.Stringer Returning a fmt.Sprintf("%v", self)
+// 18.3 Custom verb (e.g. %h) unknown to vet → document supported verbs
 
-Same trap. `String()` is dispatched on `%s` and `%v`; recursing
-into `%v` hits the same method.
+// 18.4 Multiple %w with nil — panics in Go 1.20+
+fmt.Errorf("a: %w; b: %w", e1, nil) // panics
 
-### 18.3 fmt.Formatter With Wrong Verb
+// 18.5 GoString recursion — same trap
+func (id ID) GoString() string { return fmt.Sprintf("%#v", id) } // bad
 
-If the verb is a custom rune like `%h` and your `Format` switches
-on `verb`, `vet` may not warn about `%h` being unknown — but
-adopters of your type may. Document the supported verbs.
-
-### 18.4 Multiple %w With nil
-
-```go
-err := fmt.Errorf("a: %w; b: %w", e1, nil) // panics
-```
-
-`Errorf` panics when an argument bound to `%w` is `nil` (Go 1.20+
-behaviour). Filter `nil`s before calling.
-
-### 18.5 GoString Recursion
-
-```go
-func (id ID) GoString() string {
-    return fmt.Sprintf("%#v", id) // recursion
-}
-```
-
-Same trap; use explicit field references.
-
-### 18.6 fmt.Sprintf With Reflect Type
-
-```go
+// 18.6 reflect.Type and %T
 t := reflect.TypeOf(42)
-fmt.Printf("%v\n", t) // int  — Type implements Stringer
+fmt.Printf("%v\n", t) // int
 fmt.Printf("%T\n", t) // *reflect.rtype  — internal type leak
 ```
-
-`%T` exposes implementation types; prefer `%v` for Type and Value.
 
 ---
 
@@ -643,53 +466,44 @@ fmt.Printf("%T\n", t) // *reflect.rtype  — internal type leak
 
 | Mistake | Fix |
 |---------|-----|
-| `String()` calling `%v` of self | Use explicit fields or alias |
+| `String()` calling `%v` of self | Explicit fields or alias |
 | `Format` writing to `os.Stdout` | Use the `State` |
 | Pointer-only `String()` | Promote to value receiver |
 | Multiple `%w` with nil | Filter or use `errors.Join` |
 | Custom verbs without `vet` exemption | Document; expect warnings |
-| Implementing `Stringer` and `error` and expecting both | `error` wins for `%v` |
+| Implementing `Stringer` and `error` and expecting both | `error` wins |
 
 ---
 
 ## 20. Common Misconceptions
 
-**Misconception 1**: "Defining `String()` is enough for both `%v`
-and `%+v`."
-**Truth**: `String()` is called for `%v` and `%s`; for `%+v` it is
-also called when defined. For `%#v`, `GoString()` is preferred.
+**"`String()` is enough for `%v` and `%+v`."** Yes for `%v`/`%s`/`%+v`;
+`%#v` prefers `GoString()`.
 
-**Misconception 2**: "`Format` overrides `error`."
-**Truth**: Yes — `Formatter` beats `error`. If you want both, your
-`Format` should call `q.Err.Error()` itself.
+**"`Format` overrides `error`."** Yes — `Formatter` beats `error`. If
+you want both, your `Format` must call `q.Err.Error()` itself.
 
-**Misconception 3**: "The `pp` pool means `Sprintf` is allocation-
-free."
-**Truth**: The `pp` is pooled, but the result string is freshly
-allocated per call.
+**"The `pp` pool means `Sprintf` is alloc-free."** The `pp` is
+pooled, but the result string is freshly allocated.
 
-**Misconception 4**: "Width and precision can do anything to a
-struct."
-**Truth**: `fmt`'s default formatting ignores width/precision on
-composite kinds; they only apply to the leaf primitives unless you
+**"Width/precision apply to structs."** Default formatting ignores
+them on composites; they only apply to leaf primitives unless you
 implement `Format`.
 
-**Misconception 5**: "`%w` is just `%v` plus magic."
-**Truth**: `%w` formats like `%v` AND records the wrapped error.
-Outside `Errorf`, the recording is dropped and you see a `%!w`
-placeholder.
+**"`%w` is just `%v` plus magic."** `%w` formats like `%v` AND
+records the wrapped error. Outside `Errorf`, the recording is
+dropped.
 
 ---
 
 ## 21. Tricky Points
 
 1. `error` beats `Stringer`; `Formatter` beats both.
-2. `%v` of a typed nil pointer is `<nil>` only if the type has a
-   nil-aware `String()`; otherwise it dereferences and panics.
+2. `%v` of a typed nil pointer is `<nil>` only with a nil-aware
+   `String()`; otherwise it dereferences and panics.
 3. Width/precision flow into `Format` via `State.Width()`/
-   `Precision()`; you have to implement them yourself.
-4. The `pp.wrappedErrs` slice is reused via the pool; do not retain
-   pointers to it after `Errorf` returns.
+   `Precision()`; you have to implement them.
+4. The `pp.wrappedErrs` slice is reused via the pool; do not retain.
 5. `vet` recognises a fixed list of `printf`-likes; for custom
    wrappers, add a comment or staticcheck rule.
 
@@ -698,37 +512,21 @@ placeholder.
 ## 22. Test
 
 ```go
-package fmt_test
-
-import (
-    "errors"
-    "fmt"
-    "testing"
-)
-
 type ec struct{ Op string; Err error }
 
 func (e *ec) Error() string  { return fmt.Sprintf("%s: %v", e.Op, e.Err) }
 func (e *ec) Unwrap() error  { return e.Err }
 func (e *ec) Format(f fmt.State, verb rune) {
-    switch verb {
-    case 'v':
-        if f.Flag('+') {
-            fmt.Fprintf(f, "%s\n  cause: %+v", e.Op, e.Err)
-            return
-        }
-        fmt.Fprint(f, e.Error())
-    default:
-        fmt.Fprint(f, e.Error())
+    if verb == 'v' && f.Flag('+') {
+        fmt.Fprintf(f, "%s\n  cause: %+v", e.Op, e.Err)
+        return
     }
+    fmt.Fprint(f, e.Error())
 }
 
 func TestFormatterFlag(t *testing.T) {
-    inner := errors.New("inner")
-    e := &ec{Op: "load", Err: inner}
-    short := fmt.Sprintf("%v", e)
-    long := fmt.Sprintf("%+v", e)
-    if short == long {
+    e := &ec{Op: "load", Err: errors.New("inner")}
+    if fmt.Sprintf("%v", e) == fmt.Sprintf("%+v", e) {
         t.Fatal("expected %v and %+v to differ")
     }
 }
@@ -750,32 +548,25 @@ func (t *T) String() string {
     return t.s
 }
 ```
-Otherwise you nil-pointer panic.
 
 **Q3**: Why does `fmt.Errorf("a: %w", nil)` panic?
-**A**: Because `nil` cannot be unwrapped; Go 1.20 added a runtime
-panic instead of silently producing a non-wrapping error.
+**A**: `nil` cannot be unwrapped; Go 1.20 added a runtime panic
+instead of silently producing a non-wrapping error.
 
 **Q4**: What does `%T` print for `nil`?
-**A**: `<nil>`. It prints the type name, and `nil` has no type.
+**A**: `<nil>` — `nil` has no type.
 
 ---
 
 ## 24. Cheat Sheet
 
 ```go
-// Stringer
+// Stringer / GoStringer / Formatter
 func (T) String() string { return "..." }
-
-// GoStringer (for %#v)
 func (T) GoString() string { return "..." }
+func (T) Format(f fmt.State, verb rune) { fmt.Fprintf(f, "...", ...) }
 
-// Formatter
-func (T) Format(f fmt.State, verb rune) {
-    fmt.Fprintf(f, "...", ...)
-}
-
-// Stringer recursion fix
+// Stringer recursion fix (alias trick)
 func (t T) String() string {
     type alias T
     return fmt.Sprintf("%+v", alias(t))
@@ -783,7 +574,7 @@ func (t T) String() string {
 
 // Pointer vs value
 func (t T)  String() string { ... } // works for both T and *T
-func (t *T) String() string { ... } // works only for *T
+func (t *T) String() string { ... } // only *T
 
 // stringer codegen
 //go:generate stringer -type=MyEnum
@@ -815,21 +606,18 @@ must speak: `Stringer` for the common case, `GoStringer` for
 debugging, `Formatter` for full control. You know the dispatch
 order, the recursion trap, the pointer-vs-value rule, and the cost
 of reflection vs the fast paths. You read the `pp` source when an
-allocation profile demands it, and you trust `stringer` and `vet`
-to take care of the rest.
+allocation profile demands it, and trust `stringer` and `vet` for
+the rest.
 
 ---
 
 ## 27. Further Reading
 
-- [pkg.go.dev/fmt](https://pkg.go.dev/fmt) — verb table,
-  `Stringer`/`GoStringer`/`Formatter` interfaces.
-- [src/fmt/print.go](https://github.com/golang/go/blob/master/src/fmt/print.go)
-  — printer state, dispatch, pool.
-- [golang.org/x/tools/cmd/stringer](https://pkg.go.dev/golang.org/x/tools/cmd/stringer)
-  — code generator.
-- [Errors are values — Go blog](https://go.dev/blog/errors-are-values)
-- [Working with Errors in Go 1.13](https://go.dev/blog/go1.13-errors)
+- [pkg.go.dev/fmt](https://pkg.go.dev/fmt).
+- [src/fmt/print.go](https://github.com/golang/go/blob/master/src/fmt/print.go).
+- [golang.org/x/tools/cmd/stringer](https://pkg.go.dev/golang.org/x/tools/cmd/stringer).
+- [Errors are values — Go blog](https://go.dev/blog/errors-are-values).
+- [Working with Errors in Go 1.13](https://go.dev/blog/go1.13-errors).
 
 ---
 
@@ -844,22 +632,18 @@ to take care of the rest.
 
 ## 29. Diagrams & Visual Aids
 
-### Dispatch order
-
 ```mermaid
 flowchart TD
     A[printArg verb=v] --> B{Formatter?}
     B -- yes --> C[Format f verb]
     B -- no --> D{verb is v or s}
-    D -- yes --> E{error interface?}
+    D -- yes --> E{error?}
     E -- yes --> F[call Error]
     E -- no --> G{Stringer?}
     G -- yes --> H[call String]
     G -- no --> I[reflect-based default]
     D -- no --> I
 ```
-
-### pp lifecycle
 
 ```
 caller -> Sprintf
@@ -876,7 +660,4 @@ caller -> Sprintf
          │
          ▼
        p.free (Pool.Put if buf small)
-         │
-         ▼
-       caller gets result
 ```
