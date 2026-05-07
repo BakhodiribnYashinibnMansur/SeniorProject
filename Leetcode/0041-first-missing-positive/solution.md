@@ -4,7 +4,7 @@
 
 1. [Problem](#problem)
 2. [Problem Breakdown](#problem-breakdown)
-3. [Approach 1: Cyclic Sort / Index Mapping](#approach-1-cyclic-sort--index-mapping)
+3. [Approach 1: Cyclic Sort / Index Mapping](#approach-1-cyclic-sort-index-mapping)
 4. [Approach 2: Hash Set](#approach-2-hash-set)
 5. [Complexity Comparison](#complexity-comparison)
 6. [Edge Cases](#edge-cases)

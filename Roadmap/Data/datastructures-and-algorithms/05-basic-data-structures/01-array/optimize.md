@@ -4,18 +4,18 @@ Each exercise starts with a correct but slow implementation. Your goal is to opt
 
 ## Table of Contents
 
-- [Exercise 1: Contains Duplicate -- O(n^2) to O(n)](#exercise-1-contains-duplicate--on2-to-on)
-- [Exercise 2: Two Sum -- O(n^2) to O(n)](#exercise-2-two-sum--on2-to-on)
-- [Exercise 3: Max Subarray Sum -- O(n^3) to O(n)](#exercise-3-max-subarray-sum--on3-to-on)
-- [Exercise 4: Range Sum Queries -- O(n) to O(1) per query](#exercise-4-range-sum-queries--on-to-o1-per-query)
-- [Exercise 5: Remove Duplicates -- O(n^2) to O(n)](#exercise-5-remove-duplicates--on2-to-on)
-- [Exercise 6: Matrix Row-Column Sum -- Fix Cache Performance](#exercise-6-matrix-row-column-sum--fix-cache-performance)
-- [Exercise 7: Intersection of Two Arrays -- O(n*m) to O(n+m)](#exercise-7-intersection-of-two-arrays--onm-to-onm)
-- [Exercise 8: Frequent Resize -- Eliminate Unnecessary Allocation](#exercise-8-frequent-resize--eliminate-unnecessary-allocation)
-- [Exercise 9: Find Pair With Difference K -- O(n^2) to O(n)](#exercise-9-find-pair-with-difference-k--on2-to-on)
-- [Exercise 10: Rotate Array -- O(n*k) to O(n)](#exercise-10-rotate-array--onk-to-on)
-- [Exercise 11: Count Inversions -- O(n^2) to O(n log n)](#exercise-11-count-inversions--on2-to-on-log-n)
-- [Exercise 12: Majority Element -- O(n) Space to O(1) Space](#exercise-12-majority-element--on-space-to-o1-space)
+- [Exercise 1: Contains Duplicate -- O(n^2) to O(n)](#exercise-1-contains-duplicate-on2-to-on)
+- [Exercise 2: Two Sum -- O(n^2) to O(n)](#exercise-2-two-sum-on2-to-on)
+- [Exercise 3: Max Subarray Sum -- O(n^3) to O(n)](#exercise-3-max-subarray-sum-on3-to-on)
+- [Exercise 4: Range Sum Queries -- O(n) to O(1) per query](#exercise-4-range-sum-queries-on-to-o1-per-query)
+- [Exercise 5: Remove Duplicates -- O(n^2) to O(n)](#exercise-5-remove-duplicates-on2-to-on)
+- [Exercise 6: Matrix Row-Column Sum -- Fix Cache Performance](#exercise-6-matrix-row-column-sum-fix-cache-performance)
+- [Exercise 7: Intersection of Two Arrays -- O(n*m) to O(n+m)](#exercise-7-intersection-of-two-arrays-onm-to-onm)
+- [Exercise 8: Frequent Resize -- Eliminate Unnecessary Allocation](#exercise-8-frequent-resize-eliminate-unnecessary-allocation)
+- [Exercise 9: Find Pair With Difference K -- O(n^2) to O(n)](#exercise-9-find-pair-with-difference-k-on2-to-on)
+- [Exercise 10: Rotate Array -- O(n*k) to O(n)](#exercise-10-rotate-array-onk-to-on)
+- [Exercise 11: Count Inversions -- O(n^2) to O(n log n)](#exercise-11-count-inversions-on2-to-on-log-n)
+- [Exercise 12: Majority Element -- O(n) Space to O(1) Space](#exercise-12-majority-element-on-space-to-o1-space)
 
 ---
 

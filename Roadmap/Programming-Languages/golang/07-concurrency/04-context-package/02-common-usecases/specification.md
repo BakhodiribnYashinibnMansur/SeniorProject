@@ -1,6 +1,6 @@
 # Common Usecases — Specification
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 This document specifies the formal rules around the *application* of `context.Context`: value lookup semantics, request-scoped data conventions, and the cross-process propagation contract.
 
@@ -245,4 +245,4 @@ The behaviors above reflect Go 1.24+. Notable evolution:
 
 Code targeting older Go versions must polyfill or omit the corresponding patterns.
 
-[← Back to index](index.md)
+[← Back to index](junior.md)

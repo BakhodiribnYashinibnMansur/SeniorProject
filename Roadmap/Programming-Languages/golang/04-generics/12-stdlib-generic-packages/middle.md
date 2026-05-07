@@ -1,12 +1,12 @@
 # Stdlib Generic Packages — Middle Level
 
 ## Table of Contents
-1. [The `*Func` family — why it exists](#the-func-family--why-it-exists)
+1. [The `*Func` family — why it exists](#the-func-family-why-it-exists)
 2. [`SortFunc`, `SortStableFunc`, `IsSortedFunc`](#sortfunc-sortstablefunc-issortedfunc)
 3. [`BinarySearchFunc`](#binarysearchfunc)
 4. [`ContainsFunc` and `IndexFunc`](#containsfunc-and-indexfunc)
 5. [`CompactFunc`](#compactfunc)
-6. [`Collect` and friends — building from iterators](#collect-and-friends--building-from-iterators)
+6. [`Collect` and friends — building from iterators](#collect-and-friends-building-from-iterators)
 7. [Integrating `slices.SortStableFunc(s, cmp.Compare)`](#integrating-slicessortstablefuncs-cmpcompare)
 8. [Multi-key sorting with `cmp.Or`](#multi-key-sorting-with-cmpor)
 9. [Summary](#summary)

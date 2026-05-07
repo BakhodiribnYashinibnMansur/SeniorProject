@@ -6,7 +6,7 @@
 2. [Problem Breakdown](#problem-breakdown)
 3. [Approach 1: Convert to Integer (Naive)](#approach-1-convert-to-integer-naive)
 4. [Approach 2: Walk Both From End With Carry](#approach-2-walk-both-from-end-with-carry)
-5. [Approach 3: Bit Manipulation (XOR + AND)](#approach-3-bit-manipulation-xor--and)
+5. [Approach 3: Bit Manipulation (XOR + AND)](#approach-3-bit-manipulation-xor-and)
 6. [Complexity Comparison](#complexity-comparison)
 7. [Edge Cases](#edge-cases)
 8. [Common Mistakes](#common-mistakes)

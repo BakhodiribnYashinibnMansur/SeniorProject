@@ -667,10 +667,10 @@ result, peer cert, conn-id).
 
 - [`../10-net/senior.md`](../10-net/senior.md) — `net.Conn` deadlines
   that drive every HTTP timeout.
-- [`../03-time/`](../03-time/) — the timer wheel behind deadlines.
+- [`../03-time/`](../03-time/junior.md) — the timer wheel behind deadlines.
 - [`../05-os/senior.md`](../05-os/senior.md) — `signal.NotifyContext`
   for shutdown, fd limits.
-- [`../13-crypto/`](../13-crypto/) — `tls.Config` for the server, ALPN
+- [`../13-crypto/`](../13-crypto/junior.md) — `tls.Config` for the server, ALPN
   negotiation, certificate reload.
 - [`../01-io-and-file-handling/senior.md`](../01-io-and-file-handling/senior.md) —
   body draining, `Close` semantics that apply to `r.Body` and

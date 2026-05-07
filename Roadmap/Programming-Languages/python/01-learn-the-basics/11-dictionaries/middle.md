@@ -4,8 +4,8 @@
 
 1. [Introduction](#introduction)
 2. [Core Concepts](#core-concepts)
-3. [Evolution & Historical Context](#evolution--historical-context)
-4. [Pros & Cons](#pros--cons)
+3. [Evolution & Historical Context](#evolution-historical-context)
+4. [Pros & Cons](#pros-cons)
 5. [Alternative Approaches](#alternative-approaches)
 6. [Use Cases](#use-cases)
 7. [Code Examples](#code-examples)
@@ -14,9 +14,9 @@
 10. [Comparison with Other Languages](#comparison-with-other-languages)
 11. [Debugging Guide](#debugging-guide)
 12. [Best Practices](#best-practices)
-13. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+13. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 14. [Test](#test)
-15. [Diagrams & Visual Aids](#diagrams--visual-aids)
+15. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

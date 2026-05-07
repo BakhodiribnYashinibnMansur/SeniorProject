@@ -2,18 +2,18 @@
 
 ## Table of Contents
 
-- [Exercise 1: Classic Binary Search — Infinite Loop](#exercise-1-classic-binary-search--infinite-loop)
-- [Exercise 2: Binary Search — Off-by-One](#exercise-2-binary-search--off-by-one)
+- [Exercise 1: Classic Binary Search — Infinite Loop](#exercise-1-classic-binary-search-infinite-loop)
+- [Exercise 2: Binary Search — Off-by-One](#exercise-2-binary-search-off-by-one)
 - [Exercise 3: Integer Overflow in Midpoint](#exercise-3-integer-overflow-in-midpoint)
-- [Exercise 4: Lower Bound — Wrong Boundary Update](#exercise-4-lower-bound--wrong-boundary-update)
-- [Exercise 5: BST Search — Missing Base Case](#exercise-5-bst-search--missing-base-case)
-- [Exercise 6: BST Insert — Lost Subtrees](#exercise-6-bst-insert--lost-subtrees)
-- [Exercise 7: Exponentiation — Wrong Order of Operations](#exercise-7-exponentiation--wrong-order-of-operations)
-- [Exercise 8: Search in Rotated Array — Wrong Comparison](#exercise-8-search-in-rotated-array--wrong-comparison)
-- [Exercise 9: Find Minimum in Rotated Array — Off-by-One](#exercise-9-find-minimum-in-rotated-array--off-by-one)
+- [Exercise 4: Lower Bound — Wrong Boundary Update](#exercise-4-lower-bound-wrong-boundary-update)
+- [Exercise 5: BST Search — Missing Base Case](#exercise-5-bst-search-missing-base-case)
+- [Exercise 6: BST Insert — Lost Subtrees](#exercise-6-bst-insert-lost-subtrees)
+- [Exercise 7: Exponentiation — Wrong Order of Operations](#exercise-7-exponentiation-wrong-order-of-operations)
+- [Exercise 8: Search in Rotated Array — Wrong Comparison](#exercise-8-search-in-rotated-array-wrong-comparison)
+- [Exercise 9: Find Minimum in Rotated Array — Off-by-One](#exercise-9-find-minimum-in-rotated-array-off-by-one)
 - [Exercise 10: Binary Search on Floating Point](#exercise-10-binary-search-on-floating-point)
-- [Exercise 11: Upper Bound — Incorrect Operator](#exercise-11-upper-bound--incorrect-operator)
-- [Exercise 12: Power Mod — Missing Modulo](#exercise-12-power-mod--missing-modulo)
+- [Exercise 11: Upper Bound — Incorrect Operator](#exercise-11-upper-bound-incorrect-operator)
+- [Exercise 12: Power Mod — Missing Modulo](#exercise-12-power-mod-missing-modulo)
 
 ---
 

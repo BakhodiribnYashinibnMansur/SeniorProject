@@ -11,7 +11,7 @@
 3. [Extract Class and object headers](#extract-class-and-object-headers)
 4. [Hide Delegate: free at runtime](#hide-delegate-free-at-runtime)
 5. [Inline Class and Project Valhalla](#inline-class-and-project-valhalla)
-6. [Foreign Method / Local Extension and devirtualization](#foreign-method--local-extension-and-devirtualization)
+6. [Foreign Method / Local Extension and devirtualization](#foreign-method-local-extension-and-devirtualization)
 7. [Go: composition, embedding, struct layout](#go-composition-embedding-struct-layout)
 8. [Python: method resolution order and dispatch overhead](#python-method-resolution-order-and-dispatch-overhead)
 9. [Profile-guided moves](#profile-guided-moves)

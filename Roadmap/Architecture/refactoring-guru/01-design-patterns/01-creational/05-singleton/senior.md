@@ -14,9 +14,9 @@
 4. [Concurrency Deep Dive](#concurrency-deep-dive)
 5. [Testability Strategies](#testability-strategies)
 6. [When Singleton Becomes a Bottleneck](#when-singleton-becomes-a-bottleneck)
-7. [Code Examples — Advanced](#code-examples--advanced)
+7. [Code Examples — Advanced](#code-examples-advanced)
 8. [Real-World Architectures](#real-world-architectures)
-9. [Pros & Cons at Scale](#pros--cons-at-scale)
+9. [Pros & Cons at Scale](#pros-cons-at-scale)
 10. [Trade-off Analysis Matrix](#trade-off-analysis-matrix)
 11. [Migration Patterns](#migration-patterns)
 12. [Diagrams](#diagrams)
@@ -735,6 +735,6 @@ flowchart LR
 
 ---
 
-[← Back to Singleton folder](.) · [↑ Creational Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Singleton folder · [↑ Creational Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Previous:** [Singleton — Middle](middle.md) | **Next:** [Singleton — Professional](professional.md)

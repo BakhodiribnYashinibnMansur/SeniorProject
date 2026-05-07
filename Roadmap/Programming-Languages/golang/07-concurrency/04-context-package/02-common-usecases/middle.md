@@ -1,6 +1,6 @@
 # Common Usecases — Middle
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 The junior file showed you how `r.Context()`, `http.NewRequestWithContext`, and `db.QueryContext` plug together. The middle level is about the *machinery around* those calls: graceful shutdown, middleware that decorates the context, production-grade key patterns, server timeouts, and the new `t.Context()` API.
 
@@ -560,4 +560,4 @@ You are ready for the senior file when you can:
 
 Senior takes us across services: deadline budgeting (when ctx has 500ms left, what does each downstream call get?), gRPC's role in metadata propagation, and observability (OpenTelemetry's role in injecting/extracting span context).
 
-[← Back to index](index.md)
+[← Back to index](junior.md)

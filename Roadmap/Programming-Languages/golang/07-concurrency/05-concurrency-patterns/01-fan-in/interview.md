@@ -5,7 +5,7 @@
 2. [Mid-Level](#mid-level)
 3. [Senior](#senior)
 4. [Staff](#staff)
-5. [Whiteboard / Coding](#whiteboard--coding)
+5. [Whiteboard / Coding](#whiteboard-coding)
 6. [Debugging](#debugging)
 7. [System Design](#system-design)
 

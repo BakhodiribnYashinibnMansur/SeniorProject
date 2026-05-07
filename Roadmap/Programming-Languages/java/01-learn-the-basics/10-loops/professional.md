@@ -14,7 +14,7 @@
 10. [Edge Cases at the Lowest Level](#edge-cases-at-the-lowest-level)
 11. [Test](#test)
 12. [Summary](#summary)
-13. [Diagrams & Visual Aids](#diagrams--visual-aids)
+13. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

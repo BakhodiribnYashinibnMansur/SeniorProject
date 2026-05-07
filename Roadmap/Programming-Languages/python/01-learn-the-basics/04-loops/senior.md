@@ -3,7 +3,7 @@
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Architecture & Design](#architecture--design)
+2. [Architecture & Design](#architecture-design)
 3. [Advanced Iteration Patterns](#advanced-iteration-patterns)
 4. [Performance Benchmarks](#performance-benchmarks)
 5. [Async Iteration](#async-iteration)
@@ -13,7 +13,7 @@
 9. [Loop Optimization Techniques](#loop-optimization-techniques)
 10. [Testing Loop-Heavy Code](#testing-loop-heavy-code)
 11. [Test](#test)
-12. [Diagrams & Visual Aids](#diagrams--visual-aids)
+12. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

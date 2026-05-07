@@ -3,9 +3,9 @@
 ## Table of Contents
 1. [Scope](#scope)
 2. [Type parameters in the Go specification](#type-parameters-in-the-go-specification)
-3. [Grammar — type declarations with parameters](#grammar--type-declarations-with-parameters)
-4. [Grammar — type parameter list](#grammar--type-parameter-list)
-5. [Grammar — type constraints and type sets](#grammar--type-constraints-and-type-sets)
+3. [Grammar — type declarations with parameters](#grammar-type-declarations-with-parameters)
+4. [Grammar — type parameter list](#grammar-type-parameter-list)
+5. [Grammar — type constraints and type sets](#grammar-type-constraints-and-type-sets)
 6. [Instantiation](#instantiation)
 7. [Method declarations on generic types](#method-declarations-on-generic-types)
 8. [Type identity rules](#type-identity-rules)

@@ -2,8 +2,8 @@
 
 ## Table of Contents
 1. [The performance question](#the-performance-question)
-2. [Generics vs `interface{}` — when generics win](#generics-vs-interface--when-generics-win)
-3. [Generics vs hand-written code — when generics lose](#generics-vs-hand-written-code--when-generics-lose)
+2. [Generics vs `interface{}` — when generics win](#generics-vs-interface-when-generics-win)
+3. [Generics vs hand-written code — when generics lose](#generics-vs-hand-written-code-when-generics-lose)
 4. [GC shape stenciling, in practice](#gc-shape-stenciling-in-practice)
 5. [Escape analysis impact](#escape-analysis-impact)
 6. [Inlining and devirtualization](#inlining-and-devirtualization)

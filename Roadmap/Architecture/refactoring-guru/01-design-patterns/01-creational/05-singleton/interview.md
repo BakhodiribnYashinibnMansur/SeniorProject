@@ -14,7 +14,7 @@
 4. [Professional Questions (10)](#professional-questions)
 5. [Coding Tasks (5)](#coding-tasks)
 6. [Trick Questions (5)](#trick-questions)
-7. [Behavioral / Architectural Questions (5)](#behavioral--architectural-questions)
+7. [Behavioral / Architectural Questions (5)](#behavioral-architectural-questions)
 8. [Tips for Answering](#tips-for-answering)
 
 ---
@@ -668,6 +668,6 @@ The friction is between *static* Singleton (`Class.getInstance()`) and DI: stati
 
 ---
 
-[← Back to Singleton folder](.) · [↑ Creational Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Singleton folder · [↑ Creational Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Previous:** [Singleton — Professional](professional.md) | **Next:** [Singleton — Tasks](tasks.md)

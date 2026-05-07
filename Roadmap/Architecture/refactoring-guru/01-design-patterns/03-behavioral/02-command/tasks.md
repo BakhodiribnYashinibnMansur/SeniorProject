@@ -9,7 +9,7 @@ Each task includes a brief and a reference solution. Try first; check after.
 ## Table of Contents
 
 1. [Task 1: Counter with undo](#task-1-counter-with-undo)
-2. [Task 2: Editor with undo / redo](#task-2-editor-with-undo--redo)
+2. [Task 2: Editor with undo / redo](#task-2-editor-with-undo-redo)
 3. [Task 3: Macro Command](#task-3-macro-command)
 4. [Task 4: Idempotent task queue](#task-4-idempotent-task-queue)
 5. [Task 5: Transactional macro with rollback](#task-5-transactional-macro-with-rollback)

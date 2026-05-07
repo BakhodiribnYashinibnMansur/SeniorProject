@@ -6,7 +6,7 @@
 - [What Is a Logarithm?](#what-is-a-logarithm)
 - [The Halving Intuition](#the-halving-intuition)
 - [Real-World Analogies](#real-world-analogies)
-- [Binary Search — The Classic O(log n) Algorithm](#binary-search--the-classic-olog-n-algorithm)
+- [Binary Search — The Classic O(log n) Algorithm](#binary-search-the-classic-olog-n-algorithm)
 - [Binary Search Tree (BST) Search](#binary-search-tree-bst-search)
 - [Exponentiation by Squaring](#exponentiation-by-squaring)
 - [Why O(log n) Is So Fast](#why-olog-n-is-so-fast)

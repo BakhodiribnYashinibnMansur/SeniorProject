@@ -7,7 +7,7 @@
 3. [Average-Case Analysis](#average-case-analysis)
 4. [Randomized Quick Sort Probability Bounds](#randomized-quick-sort)
 5. [Quickselect (Median in Linear Time)](#quickselect-linear)
-6. [Cache-Oblivious Analysis](#cache-oblivious)
+6. Cache-Oblivious Analysis
 7. [Parallel Complexity](#parallel-complexity)
 8. [Comparison](#comparison)
 9. [Summary](#summary)

@@ -3,18 +3,18 @@
 Twelve broken Go snippets. For each one, identify the bug, explain why it happens, and propose a fix. The bugs cover the most common `select` mistakes seen in real production code.
 
 ## Table of Contents
-1. [Bug 1 — `time.After` leak in tight loop](#bug-1--timeafter-leak-in-tight-loop)
-2. [Bug 2 — Goroutine leak from missing cancellation](#bug-2--goroutine-leak-from-missing-cancellation)
-3. [Bug 3 — `default` in the wrong place causing busy-wait](#bug-3--default-in-the-wrong-place-causing-busy-wait)
-4. [Bug 4 — Send on closed channel inside select](#bug-4--send-on-closed-channel-inside-select)
-5. [Bug 5 — Closed-receive spin in for-select](#bug-5--closed-receive-spin-in-for-select)
-6. [Bug 6 — Strict-priority starvation](#bug-6--strict-priority-starvation)
-7. [Bug 7 — Producer leak after timeout](#bug-7--producer-leak-after-timeout)
-8. [Bug 8 — Missing nil-channel handling in fan-in](#bug-8--missing-nil-channel-handling-in-fan-in)
-9. [Bug 9 — `ctx.Done` not selected](#bug-9--ctxdone-not-selected)
-10. [Bug 10 — `time.Tick` leak across subscriptions](#bug-10--timetick-leak-across-subscriptions)
-11. [Bug 11 — Closing channel from receiver side](#bug-11--closing-channel-from-receiver-side)
-12. [Bug 12 — Incorrect `Stop`/`Reset` dance](#bug-12--incorrect-stopreset-dance)
+1. [Bug 1 — `time.After` leak in tight loop](#bug-1-timeafter-leak-in-tight-loop)
+2. [Bug 2 — Goroutine leak from missing cancellation](#bug-2-goroutine-leak-from-missing-cancellation)
+3. [Bug 3 — `default` in the wrong place causing busy-wait](#bug-3-default-in-the-wrong-place-causing-busy-wait)
+4. [Bug 4 — Send on closed channel inside select](#bug-4-send-on-closed-channel-inside-select)
+5. [Bug 5 — Closed-receive spin in for-select](#bug-5-closed-receive-spin-in-for-select)
+6. [Bug 6 — Strict-priority starvation](#bug-6-strict-priority-starvation)
+7. [Bug 7 — Producer leak after timeout](#bug-7-producer-leak-after-timeout)
+8. [Bug 8 — Missing nil-channel handling in fan-in](#bug-8-missing-nil-channel-handling-in-fan-in)
+9. [Bug 9 — `ctx.Done` not selected](#bug-9-ctxdone-not-selected)
+10. [Bug 10 — `time.Tick` leak across subscriptions](#bug-10-timetick-leak-across-subscriptions)
+11. [Bug 11 — Closing channel from receiver side](#bug-11-closing-channel-from-receiver-side)
+12. [Bug 12 — Incorrect `Stop`/`Reset` dance](#bug-12-incorrect-stopreset-dance)
 13. [How to Use This File](#how-to-use-this-file)
 
 ---

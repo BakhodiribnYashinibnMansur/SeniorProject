@@ -12,7 +12,7 @@
 4. [Professional Questions](#professional-questions)
 5. [Coding Tasks](#coding-tasks)
 6. [Trick Questions](#trick-questions)
-7. [Behavioral / Architectural Questions](#behavioral--architectural-questions)
+7. [Behavioral / Architectural Questions](#behavioral-architectural-questions)
 8. [Tips for Answering](#tips-for-answering)
 
 ---
@@ -360,6 +360,6 @@ class MobileBff {
 
 ---
 
-[← Back to Facade folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Facade folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Facade — Hands-On Tasks](tasks.md)

@@ -158,12 +158,12 @@ graph TD
 
 ## Pattern Files
 
-- [01-adapter/](01-adapter/) — Adapter
-- [02-bridge/](02-bridge/) — Bridge
-- [03-composite/](03-composite/) — Composite
-- [04-decorator/](04-decorator/) — Decorator
-- [05-facade/](05-facade/) — Facade
-- [06-flyweight/](06-flyweight/) — Flyweight
-- [07-proxy/](07-proxy/) — Proxy
+- 01-adapter/ — Adapter
+- 02-bridge/ — Bridge
+- 03-composite/ — Composite
+- 04-decorator/ — Decorator
+- 05-facade/ — Facade
+- 06-flyweight/ — Flyweight
+- 07-proxy/ — Proxy
 
 [← Back to Design Patterns](../README.md) · [↑ Roadmap Home](../../README.md)

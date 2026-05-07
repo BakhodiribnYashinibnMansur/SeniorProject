@@ -17,7 +17,7 @@ Each task includes a brief and a reference solution. Try first; check after.
 7. [Task 7: Single-flight caching proxy](#task-7-single-flight-caching-proxy)
 8. [Task 8: Lazy init with double-checked locking](#task-8-lazy-init-with-double-checked-locking)
 9. [Task 9: Refactor inline auth into Proxy](#task-9-refactor-inline-auth-into-proxy)
-10. [Task 10: Stack of proxies (cache + auth + log)](#task-10-stack-of-proxies-cache--auth--log)
+10. [Task 10: Stack of proxies (cache + auth + log)](#task-10-stack-of-proxies-cache-auth-log)
 11. [How to Practice](#how-to-practice)
 
 ---
@@ -389,6 +389,6 @@ Order matters: logging outermost catches denied-by-auth attempts; caching innerm
 
 ---
 
-[← Back to Proxy folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Proxy folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Proxy — Find the Bug](find-bug.md)

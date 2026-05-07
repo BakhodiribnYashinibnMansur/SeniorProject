@@ -6,7 +6,7 @@
 2. [Problem Breakdown](#problem-breakdown)
 3. [Approach 1: Brute Force (Pairwise Merge)](#approach-1-brute-force-pairwise-merge)
 4. [Approach 2: Sort and Merge](#approach-2-sort-and-merge)
-5. [Approach 3: Sweep Line / Boundary Counting](#approach-3-sweep-line--boundary-counting)
+5. [Approach 3: Sweep Line / Boundary Counting](#approach-3-sweep-line-boundary-counting)
 6. [Complexity Comparison](#complexity-comparison)
 7. [Edge Cases](#edge-cases)
 8. [Common Mistakes](#common-mistakes)

@@ -10,7 +10,7 @@
 6. [Error Handling](#error-handling)
 7. [Performance Analysis](#performance-analysis)
 8. [Best Practices](#best-practices)
-9. [Visual Animation](#visual-animation)
+9. Visual Animation
 10. [Summary](#summary)
 
 ---

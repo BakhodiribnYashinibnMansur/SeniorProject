@@ -4,8 +4,8 @@
 - [Junior Level (Q1–Q7)](#junior-level)
 - [Middle Level (Q8–Q14)](#middle-level)
 - [Senior Level (Q15–Q19)](#senior-level)
-- [Scenario / Code Review (Q20–Q24)](#scenario--code-review)
-- [FAQ / Tricky Questions (Q25–Q28)](#faq--tricky-questions)
+- [Scenario / Code Review (Q20–Q24)](#scenario-code-review)
+- [FAQ / Tricky Questions (Q25–Q28)](#faq-tricky-questions)
 
 ---
 

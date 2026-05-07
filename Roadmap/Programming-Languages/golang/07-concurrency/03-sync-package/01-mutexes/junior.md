@@ -7,17 +7,17 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Clean Code](#clean-code)
-12. [Product Use / Feature](#product-use--feature)
+12. [Product Use / Feature](#product-use-feature)
 13. [Error Handling](#error-handling)
 14. [Security Considerations](#security-considerations)
 15. [Performance Tips](#performance-tips)
 16. [Best Practices](#best-practices)
-17. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+17. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 18. [Common Mistakes](#common-mistakes)
 19. [Common Misconceptions](#common-misconceptions)
 20. [Tricky Points](#tricky-points)
@@ -29,7 +29,7 @@
 26. [What You Can Build](#what-you-can-build)
 27. [Further Reading](#further-reading)
 28. [Related Topics](#related-topics)
-29. [Diagrams & Visual Aids](#diagrams--visual-aids)
+29. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -780,11 +780,11 @@ A mutex is the simplest, oldest tool for making concurrent code correct. In Go i
 
 ## Related Topics
 
-- [Goroutines](../../01-goroutines/)
-- [Channels](../../02-channels/)
-- [WaitGroups](../02-waitgroups/)
-- [`sync.Once`](../) (later sub-page)
-- [`sync/atomic`](../../04-atomic-package/) (when you need single-word atomicity)
+- [Goroutines](../../01-goroutines/01-overview/junior.md)
+- [Channels](../../02-channels/01-buffered-vs-unbuffered/junior.md)
+- [WaitGroups](../02-waitgroups/junior.md)
+- [`sync.Once`](../01-mutexes/junior.md) (later sub-page)
+- `sync/atomic` (when you need single-word atomicity)
 
 ---
 

@@ -12,7 +12,7 @@
 9. [Errors Across API Boundaries](#errors-across-api-boundaries)
 10. [Logging vs Returning](#logging-vs-returning)
 11. [Performance at the Middle Tier](#performance-at-the-middle-tier)
-12. [Defer + Error](#defer--error)
+12. [Defer + Error](#defer-error)
 13. [Tests for Error Paths](#tests-for-error-paths)
 14. [Refactoring Error-Heavy Code](#refactoring-error-heavy-code)
 15. [Common Anti-Patterns](#common-anti-patterns)

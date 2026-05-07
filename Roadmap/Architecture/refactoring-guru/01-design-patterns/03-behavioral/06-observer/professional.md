@@ -10,7 +10,7 @@
 1. [Introduction](#introduction)
 2. [LMAX Disruptor Internals](#lmax-disruptor-internals)
 3. [Reactive Streams Spec](#reactive-streams-spec)
-4. [Concurrency Internals — CopyOnWriteArrayList](#concurrency-internals--copyonwritearraylist)
+4. [Concurrency Internals — CopyOnWriteArrayList](#concurrency-internals-copyonwritearraylist)
 5. [Memory Model and Visibility](#memory-model-and-visibility)
 6. [Async Bus Performance](#async-bus-performance)
 7. [Backpressure Strategies in Practice](#backpressure-strategies-in-practice)

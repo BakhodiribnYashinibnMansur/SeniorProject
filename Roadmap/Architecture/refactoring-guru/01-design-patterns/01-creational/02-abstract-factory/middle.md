@@ -11,7 +11,7 @@
 2. [When to Use](#when-to-use)
 3. [When NOT to Use](#when-not-to-use)
 4. [Real-World Cases](#real-world-cases)
-5. [Code Examples — Production-Grade](#code-examples--production-grade)
+5. [Code Examples — Production-Grade](#code-examples-production-grade)
 6. [Trade-offs](#trade-offs)
 7. [Alternatives Comparison](#alternatives-comparison)
 8. [The "Abstract Factory Dilemma"](#the-abstract-factory-dilemma)

@@ -9,7 +9,7 @@
 1. [Virtual dispatch and vtables](#virtual-dispatch-and-vtables)
 2. [Inline caches and polymorphic dispatch](#inline-caches-and-polymorphic-dispatch)
 3. [Devirtualization](#devirtualization)
-4. [Pull Up / Push Down: dispatch effects](#pull-up--push-down-dispatch-effects)
+4. [Pull Up / Push Down: dispatch effects](#pull-up-push-down-dispatch-effects)
 5. [Form Template Method: inlining limits](#form-template-method-inlining-limits)
 6. [Replace Inheritance with Delegation: extra indirection](#replace-inheritance-with-delegation-extra-indirection)
 7. [Interface dispatch in Go](#interface-dispatch-in-go)

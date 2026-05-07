@@ -5,13 +5,13 @@
 1. [Introduction](#introduction)
 2. [Architecture Patterns](#architecture-patterns)
 3. [Advanced Dict Techniques](#advanced-dict-techniques)
-4. [Benchmarks & Profiling](#benchmarks--profiling)
+4. [Benchmarks & Profiling](#benchmarks-profiling)
 5. [Best Practices for Production](#best-practices-for-production)
 6. [Memory Optimization](#memory-optimization)
-7. [Concurrency & Thread Safety](#concurrency--thread-safety)
+7. [Concurrency & Thread Safety](#concurrency-thread-safety)
 8. [Testing Strategies](#testing-strategies)
 9. [Test](#test)
-10. [Diagrams & Visual Aids](#diagrams--visual-aids)
+10. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

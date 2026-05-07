@@ -7,7 +7,7 @@
 4. [Choosing Between Interfaces and Concrete Types in Public APIs](#choosing-between-interfaces-and-concrete-types-in-public-apis)
 5. [Hot-Path Refactor Patterns](#hot-path-refactor-patterns)
 6. [Observability for Dispatch Hot Spots](#observability-for-dispatch-hot-spots)
-7. [Multi-Impl Call Sites — Megamorphic Mitigation](#multi-impl-call-sitesmegamorphic-mitigation)
+7. [Multi-Impl Call Sites — Megamorphic Mitigation](#multi-impl-call-sites-megamorphic-mitigation)
 8. [Code-Generation Alternatives](#code-generation-alternatives)
 9. [Generics Adoption Strategy](#generics-adoption-strategy)
 10. [Versioning and ABI Stability](#versioning-and-abi-stability)

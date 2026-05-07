@@ -11,13 +11,13 @@
 2. [When to Use Strategy](#when-to-use-strategy)
 3. [When NOT to Use Strategy](#when-not-to-use-strategy)
 4. [Real-World Cases](#real-world-cases)
-5. [Code Examples — Production-Grade](#code-examples--production-grade)
+5. [Code Examples — Production-Grade](#code-examples-production-grade)
 6. [Strategy via Functions vs Classes](#strategy-via-functions-vs-classes)
-7. [Strategy + Factory + Registry](#strategy--factory--registry)
+7. [Strategy + Factory + Registry](#strategy-factory-registry)
 8. [Trade-offs](#trade-offs)
 9. [Alternatives Comparison](#alternatives-comparison)
 10. [Refactoring to Strategy](#refactoring-to-strategy)
-11. [Pros & Cons (Deeper)](#pros--cons-deeper)
+11. [Pros & Cons (Deeper)](#pros-cons-deeper)
 12. [Edge Cases](#edge-cases)
 13. [Tricky Points](#tricky-points)
 14. [Best Practices](#best-practices)
@@ -466,7 +466,7 @@ The real win isn't fewer lines; it's **contract clarity**. Every strategy is a s
 - [State](../07-state/middle.md) — sibling pattern
 - [Template Method](../09-template-method/middle.md) — inheritance-based variation
 - [Command](../02-command/middle.md) — actions as objects
-- [Factory Method / Abstract Factory](../../01-creational/) — creating strategies cleanly
+- [Factory Method / Abstract Factory](../../01-creational/README.md) — creating strategies cleanly
 - Dependency Injection — wiring strategies into Contexts
 
 ---

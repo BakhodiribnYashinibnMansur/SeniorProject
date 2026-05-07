@@ -2,7 +2,7 @@
 
 ## Table of Contents
 1. [Recap](#recap)
-2. [When to Choose Which — A Decision Framework](#when-to-choose-which--a-decision-framework)
+2. [When to Choose Which — A Decision Framework](#when-to-choose-which-a-decision-framework)
 3. [Channel Direction in API Design](#channel-direction-in-api-design)
 4. [Real-World Patterns](#real-world-patterns)
 5. [Closing Strategies](#closing-strategies)

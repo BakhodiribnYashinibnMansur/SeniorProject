@@ -5,15 +5,15 @@
 2. [Prerequisites](#prerequisites)
 3. [Glossary](#glossary)
 4. [Core Concepts](#core-concepts)
-5. [Evolution & Historical Context](#evolution--historical-context)
+5. [Evolution & Historical Context](#evolution-historical-context)
 6. [Real-World Analogies](#real-world-analogies)
 7. [Mental Models](#mental-models)
-8. [Pros & Cons](#pros--cons)
+8. [Pros & Cons](#pros-cons)
 9. [Use Cases](#use-cases)
 10. [Code Examples](#code-examples)
 11. [Coding Patterns](#coding-patterns)
 12. [Clean Code](#clean-code)
-13. [Product Use / Feature](#product-use--feature)
+13. [Product Use / Feature](#product-use-feature)
 14. [Error Handling](#error-handling)
 15. [Security](#security)
 16. [Performance Tips](#performance-tips)
@@ -35,7 +35,7 @@
 32. [What You Can Build](#what-you-can-build)
 33. [Further Reading](#further-reading)
 34. [Related Topics](#related-topics)
-35. [Diagrams & Visual Aids](#diagrams--visual-aids)
+35. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

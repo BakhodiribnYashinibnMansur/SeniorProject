@@ -13,60 +13,60 @@
 - 1.7 Rust
 - 1.8 Ruby
 
-## [2. Programming Fundamentals](02-programming-fundamentals/01-language-syntax/junior/)
+## [2. Programming Fundamentals](02-programming-fundamentals/01-language-syntax/junior.md)
 
-- [2.1 Language Syntax](02-programming-fundamentals/01-language-syntax/junior/)
-- [2.2 Pseudo Code](02-programming-fundamentals/02-pseudo-code/junior/)
-- [2.3 Control Structures](02-programming-fundamentals/03-control-structures/junior/)
-- [2.4 Functions](02-programming-fundamentals/04-functions/junior/)
-- [2.5 OOP Basics](02-programming-fundamentals/05-oop-basics/junior/)
+- [2.1 Language Syntax](02-programming-fundamentals/01-language-syntax/junior.md)
+- [2.2 Pseudo Code](02-programming-fundamentals/02-pseudo-code/junior.md)
+- [2.3 Control Structures](02-programming-fundamentals/03-control-structures/junior.md)
+- [2.4 Functions](02-programming-fundamentals/04-functions/junior.md)
+- [2.5 OOP Basics](02-programming-fundamentals/05-oop-basics/junior.md)
 
-## [3. What are Data Structures?](03-what-are-data-structures/junior/)
+## [3. What are Data Structures?](03-what-are-data-structures/junior.md)
 
-## [4. Why are Data Structures Important?](04-why-are-data-structures-important/junior/)
+## [4. Why are Data Structures Important?](04-why-are-data-structures-important/junior.md)
 
-## [5. Basic Data Structures](05-basic-data-structures/01-array/junior/)
+## [5. Basic Data Structures](05-basic-data-structures/01-array/junior.md)
 
-- [5.1 Array](05-basic-data-structures/01-array/junior/)
-- [5.2 Linked Lists](05-basic-data-structures/02-linked-lists/junior/)
-- [5.3 Queues](05-basic-data-structures/03-queues/junior/)
-- [5.4 Stacks](05-basic-data-structures/04-stacks/junior/)
-- [5.5 Hash Tables](05-basic-data-structures/05-hash-tables/junior/)
+- [5.1 Array](05-basic-data-structures/01-array/junior.md)
+- [5.2 Linked Lists](05-basic-data-structures/02-linked-lists/junior.md)
+- [5.3 Queues](05-basic-data-structures/03-queues/junior.md)
+- [5.4 Stacks](05-basic-data-structures/04-stacks/junior.md)
+- [5.5 Hash Tables](05-basic-data-structures/05-hash-tables/junior.md)
 
-## [6. Algorithmic Complexity](06-algorithmic-complexity/01-time-vs-space-complexity/junior/)
+## [6. Algorithmic Complexity](06-algorithmic-complexity/01-time-vs-space-complexity/junior.md)
 
-### [6.1 Time vs Space Complexity](06-algorithmic-complexity/01-time-vs-space-complexity/junior/)
+### [6.1 Time vs Space Complexity](06-algorithmic-complexity/01-time-vs-space-complexity/junior.md)
 
-### [6.2 How to Calculate Complexity?](06-algorithmic-complexity/02-how-to-calculate-complexity/junior/)
+### [6.2 How to Calculate Complexity?](06-algorithmic-complexity/02-how-to-calculate-complexity/junior.md)
 
-### [6.3 Common Runtimes](06-algorithmic-complexity/03-common-runtimes/01-constant/junior/)
+### [6.3 Common Runtimes](06-algorithmic-complexity/03-common-runtimes/01-constant/junior.md)
 
-- [6.3.1 Constant](06-algorithmic-complexity/03-common-runtimes/01-constant/junior/)
-- [6.3.2 Logarithmic](06-algorithmic-complexity/03-common-runtimes/02-logarithmic/junior/)
-- [6.3.3 Linear](06-algorithmic-complexity/03-common-runtimes/03-linear/junior/)
-- [6.3.4 Polynomial](06-algorithmic-complexity/03-common-runtimes/04-polynomial/junior/)
-- [6.3.5 Exponential](06-algorithmic-complexity/03-common-runtimes/05-exponential/junior/)
-- [6.3.6 Factorial](06-algorithmic-complexity/03-common-runtimes/06-factorial/junior/)
+- [6.3.1 Constant](06-algorithmic-complexity/03-common-runtimes/01-constant/junior.md)
+- [6.3.2 Logarithmic](06-algorithmic-complexity/03-common-runtimes/02-logarithmic/junior.md)
+- [6.3.3 Linear](06-algorithmic-complexity/03-common-runtimes/03-linear/junior.md)
+- [6.3.4 Polynomial](06-algorithmic-complexity/03-common-runtimes/04-polynomial/junior.md)
+- [6.3.5 Exponential](06-algorithmic-complexity/03-common-runtimes/05-exponential/junior.md)
+- [6.3.6 Factorial](06-algorithmic-complexity/03-common-runtimes/06-factorial/junior.md)
 
-### [6.4 Asymptotic Notation](06-algorithmic-complexity/04-asymptotic-notation/01-big-o-notation/junior/)
+### [6.4 Asymptotic Notation](06-algorithmic-complexity/04-asymptotic-notation/01-big-o-notation/junior.md)
 
-- [6.4.1 Big-O Notation](06-algorithmic-complexity/04-asymptotic-notation/01-big-o-notation/junior/)
-- [6.4.2 Big-θ Notation](06-algorithmic-complexity/04-asymptotic-notation/02-big-theta-notation/junior/)
-- [6.4.3 Big-Ω Notation](06-algorithmic-complexity/04-asymptotic-notation/03-big-omega-notation/junior/)
+- [6.4.1 Big-O Notation](06-algorithmic-complexity/04-asymptotic-notation/01-big-o-notation/junior.md)
+- [6.4.2 Big-θ Notation](06-algorithmic-complexity/04-asymptotic-notation/02-big-theta-notation/junior.md)
+- [6.4.3 Big-Ω Notation](06-algorithmic-complexity/04-asymptotic-notation/03-big-omega-notation/junior.md)
 
-## [7. Sorting Algorithms](07-sorting-algorithms/01-bubble-sort/junior/)
+## [7. Sorting Algorithms](07-sorting-algorithms/01-bubble-sort/junior.md)
 
-- [7.1 Bubble Sort](07-sorting-algorithms/01-bubble-sort/junior/)
-- [7.2 Merge Sort](07-sorting-algorithms/02-merge-sort/junior/)
-- [7.3 Insertion Sort](07-sorting-algorithms/03-insertion-sort/junior/)
-- [7.4 Quick Sort](07-sorting-algorithms/04-quick-sort/junior/)
-- [7.5 Selection Sort](07-sorting-algorithms/05-selection-sort/junior/)
-- [7.6 Heap Sort](07-sorting-algorithms/06-heap-sort/junior/)
+- [7.1 Bubble Sort](07-sorting-algorithms/01-bubble-sort/junior.md)
+- [7.2 Merge Sort](07-sorting-algorithms/02-merge-sort/junior.md)
+- [7.3 Insertion Sort](07-sorting-algorithms/03-insertion-sort/junior.md)
+- [7.4 Quick Sort](07-sorting-algorithms/04-quick-sort/junior.md)
+- [7.5 Selection Sort](07-sorting-algorithms/05-selection-sort/junior.md)
+- [7.6 Heap Sort](07-sorting-algorithms/06-heap-sort/junior.md)
 
-## [8. Search Algorithms](08-search-algorithms/01-linear-search/junior/)
+## [8. Search Algorithms](08-search-algorithms/01-linear-search/junior.md)
 
-- [8.1 Linear Search](08-search-algorithms/01-linear-search/junior/)
-- [8.2 Binary Search](08-search-algorithms/02-binary-search/junior/)
+- [8.1 Linear Search](08-search-algorithms/01-linear-search/junior.md)
+- [8.2 Binary Search](08-search-algorithms/02-binary-search/junior.md)
 
 ## 9. Tree Data Structures
 

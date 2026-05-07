@@ -2,8 +2,8 @@
 
 ## Table of Contents
 1. [Introduction](#introduction)
-2. [Composition Over Inheritance — Architectural View](#composition-over-inheritance--architectural-view)
-3. [Library API Design — The Public Surface](#library-api-design--the-public-surface)
+2. [Composition Over Inheritance — Architectural View](#composition-over-inheritance-architectural-view)
+3. [Library API Design — The Public Surface](#library-api-design-the-public-surface)
 4. [Generic Constraints vs Traditional Interfaces](#generic-constraints-vs-traditional-interfaces)
 5. [Interface Stability and Backward Compatibility](#interface-stability-and-backward-compatibility)
 6. [The "Single Method Family" Pattern](#the-single-method-family-pattern)

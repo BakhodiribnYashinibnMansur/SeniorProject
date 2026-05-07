@@ -1,6 +1,6 @@
 # Deadlines and Cancellations — Specification
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 This document is the formal description of the contract: what every implementation of `context.Context` must do, what the constructors guarantee, and the rules governing the cancellation tree.
 

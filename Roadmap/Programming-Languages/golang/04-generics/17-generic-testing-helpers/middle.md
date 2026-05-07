@@ -1,11 +1,11 @@
 # Generic Testing Helpers — Middle Level
 
 ## Table of Contents
-1. [Beyond `comparable` — slices, maps, errors](#beyond-comparable--slices-maps-errors)
+1. [Beyond `comparable` — slices, maps, errors](#beyond-comparable-slices-maps-errors)
 2. [`AssertSliceEqual[T comparable]`](#assertsliceequalt-comparable)
 3. [`AssertMapEqual[K, V comparable]`](#assertmapequalk-v-comparable)
 4. [`AssertNoError` and `AssertErrorIs`](#assertnoerror-and-asserterroris)
-5. [Composition — building bigger helpers from small ones](#composition--building-bigger-helpers-from-small-ones)
+5. [Composition — building bigger helpers from small ones](#composition-building-bigger-helpers-from-small-ones)
 6. [Separating fixtures from logic](#separating-fixtures-from-logic)
 7. [Subtests with typed table data](#subtests-with-typed-table-data)
 8. [Order-insensitive equality](#order-insensitive-equality)

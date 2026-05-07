@@ -6,7 +6,7 @@
 - [Log Bases Do Not Matter in Big-O](#log-bases-do-not-matter-in-big-o)
 - [Balanced BST Operations](#balanced-bst-operations)
 - [B-Trees and O(log_B n)](#b-trees-and-olog_b-n)
-- [Jump Search — O(sqrt n) as a Comparison](#jump-search--osqrt-n-as-a-comparison)
+- [Jump Search — O(sqrt n) as a Comparison](#jump-search-osqrt-n-as-a-comparison)
 - [Interpolation Search](#interpolation-search)
 - [Logarithmic Factor in Divide and Conquer](#logarithmic-factor-in-divide-and-conquer)
 - [Binary Search Variants](#binary-search-variants)

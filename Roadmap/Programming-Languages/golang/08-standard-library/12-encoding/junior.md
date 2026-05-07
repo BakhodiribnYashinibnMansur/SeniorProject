@@ -8,7 +8,7 @@
 > handful of traps that bite everyone exactly once.
 
 This leaf does **not** cover `encoding/json` — it has its own leaf at
-[`../04-encoding-json/`](../04-encoding-json/). Treat what follows as
+[`../04-encoding-json/`](../04-encoding-json/junior.md). Treat what follows as
 "the rest of the family."
 
 ## 1. The two interfaces that connect everything
@@ -534,7 +534,7 @@ err := pem.Encode(w, &pem.Block{
 
 PEM is just an envelope. The interesting work always happens
 afterward, in `crypto/x509`, `crypto/rsa`, `crypto/ecdsa`, etc. See
-[`../13-crypto/`](../13-crypto/) for the crypto side.
+[`../13-crypto/`](../13-crypto/junior.md) for the crypto side.
 
 ## 9. `encoding/ascii85` — base85 for the rare cases
 
@@ -583,7 +583,7 @@ Every package offers two shapes: a buffer form (`EncodeToString`,
 `Marshal`) for small payloads, and a streaming form
 (`NewEncoder(w)`, `Encode`) for anything large or already on a
 socket/file. The streaming forms compose with everything from
-[`io` and File Handling](../01-io-and-file-handling/).
+[`io` and File Handling](../01-io-and-file-handling/junior.md).
 
 Two streaming encoders in the family **must** be closed before
 their output is valid:

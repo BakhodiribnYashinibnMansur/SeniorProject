@@ -9,9 +9,9 @@
 
 1. [Spec Reference](#1-spec-reference)
 2. [Formal Grammar (EBNF)](#2-formal-grammar-ebnf)
-3. [Core Rules & Constraints](#3-core-rules--constraints)
+3. [Core Rules & Constraints](#3-core-rules-constraints)
 4. [Type Rules](#4-type-rules)
-5. [Method Sets — Formal Definition](#5-method-sets--formal-definition)
+5. [Method Sets — Formal Definition](#5-method-sets-formal-definition)
 6. [Behavioral Specification](#6-behavioral-specification)
 7. [Defined vs Undefined Behavior](#7-defined-vs-undefined-behavior)
 8. [Edge Cases from Spec](#8-edge-cases-from-spec)

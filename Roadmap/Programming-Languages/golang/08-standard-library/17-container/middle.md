@@ -585,6 +585,6 @@ and use the heap only on the consumer side.
 - [professional.md](professional.md) — production patterns: timer
   wheels at scale, replacement decisions, observability.
 - [optimize.md](optimize.md) — when the constant factors dominate.
-- Cross-link: [`../16-sort-slices-maps/`](../16-sort-slices-maps/) for
+- Cross-link: [`../16-sort-slices-maps/`](../16-sort-slices-maps/junior.md) for
   the `slices` package, which often replaces a list of values
   outright.

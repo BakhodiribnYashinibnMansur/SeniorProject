@@ -11,14 +11,14 @@
 2. [When to Use Composite](#when-to-use-composite)
 3. [When NOT to Use Composite](#when-not-to-use-composite)
 4. [Real-World Cases](#real-world-cases)
-5. [Code Examples — Production-Grade](#code-examples--production-grade)
+5. [Code Examples — Production-Grade](#code-examples-production-grade)
 6. [Parent Pointers](#parent-pointers)
 7. [Cycle Detection](#cycle-detection)
 8. [Immutable Trees](#immutable-trees)
 9. [Trade-offs](#trade-offs)
 10. [Alternatives Comparison](#alternatives-comparison)
 11. [Refactoring to Composite](#refactoring-to-composite)
-12. [Pros & Cons (Deeper)](#pros--cons-deeper)
+12. [Pros & Cons (Deeper)](#pros-cons-deeper)
 13. [Edge Cases](#edge-cases)
 14. [Tricky Points](#tricky-points)
 15. [Best Practices](#best-practices)
@@ -574,6 +574,6 @@ flowchart LR
 
 ---
 
-[← Back to Composite folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Composite folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Composite — Senior Level](senior.md)

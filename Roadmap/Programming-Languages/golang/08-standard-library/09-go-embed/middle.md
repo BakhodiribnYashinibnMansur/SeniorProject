@@ -569,5 +569,5 @@ the package, no recompile needed.
 - [professional.md](professional.md) — production patterns: versioning,
   large-asset strategies, build IDs, deployment with embedded assets.
 - [find-bug.md](find-bug.md) — drills based on the bugs in this file.
-- [`../15-templates/`](../15-templates/) — `text/template` and
+- [`../15-templates/`](../15-templates/junior.md) — `text/template` and
   `html/template` in depth.

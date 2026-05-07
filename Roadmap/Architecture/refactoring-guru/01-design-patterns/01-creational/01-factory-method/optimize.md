@@ -607,4 +607,4 @@ c = Color.RED   # zero overhead
 
 **Factory Method roadmap complete.** All 8 files: [junior](junior.md) · [middle](middle.md) · [senior](senior.md) · [professional](professional.md) · [interview](interview.md) · [tasks](tasks.md) · [find-bug](find-bug.md) · [optimize](optimize.md).
 
-**Next pattern:** [Abstract Factory](../02-abstract-factory/) (pending).
+**Next pattern:** Abstract Factory (pending).

@@ -4,18 +4,18 @@ Each exercise starts with a correct but slow implementation. Your goal is to opt
 
 ## Table of Contents
 
-- [Exercise 1: Queue Dequeue -- O(n) to O(1)](#exercise-1-queue-dequeue--on-to-o1)
-- [Exercise 2: Sliding Window Maximum -- O(n*k) to O(n)](#exercise-2-sliding-window-maximum--onk-to-on)
-- [Exercise 3: BFS Shortest Path -- Reduce Queue Size](#exercise-3-bfs-shortest-path--reduce-queue-size)
-- [Exercise 4: Moving Average -- O(n) to O(1) per Query](#exercise-4-moving-average--on-to-o1-per-query)
-- [Exercise 5: Task Scheduler -- O(n*m) to O(n)](#exercise-5-task-scheduler--onm-to-on)
-- [Exercise 6: First Non-Repeating -- O(n^2) to O(n)](#exercise-6-first-non-repeating--on2-to-on)
-- [Exercise 7: Priority Queue -- O(n) Extract to O(log n)](#exercise-7-priority-queue--on-extract-to-olog-n)
-- [Exercise 8: Queue Memory Leak -- Fix Unbounded Growth](#exercise-8-queue-memory-leak--fix-unbounded-growth)
-- [Exercise 9: Multi-Queue Merge -- O(n*k) to O(n*log k)](#exercise-9-multi-queue-merge--onk-to-onlog-k)
-- [Exercise 10: Rate Limiter -- O(n) Cleanup to O(1) Amortized](#exercise-10-rate-limiter--on-cleanup-to-o1-amortized)
-- [Exercise 11: BFS on Matrix -- Reduce Allocations](#exercise-11-bfs-on-matrix--reduce-allocations)
-- [Exercise 12: Circular Buffer -- Branching to Branchless](#exercise-12-circular-buffer--branching-to-branchless)
+- [Exercise 1: Queue Dequeue -- O(n) to O(1)](#exercise-1-queue-dequeue-on-to-o1)
+- [Exercise 2: Sliding Window Maximum -- O(n*k) to O(n)](#exercise-2-sliding-window-maximum-onk-to-on)
+- [Exercise 3: BFS Shortest Path -- Reduce Queue Size](#exercise-3-bfs-shortest-path-reduce-queue-size)
+- [Exercise 4: Moving Average -- O(n) to O(1) per Query](#exercise-4-moving-average-on-to-o1-per-query)
+- [Exercise 5: Task Scheduler -- O(n*m) to O(n)](#exercise-5-task-scheduler-onm-to-on)
+- [Exercise 6: First Non-Repeating -- O(n^2) to O(n)](#exercise-6-first-non-repeating-on2-to-on)
+- [Exercise 7: Priority Queue -- O(n) Extract to O(log n)](#exercise-7-priority-queue-on-extract-to-olog-n)
+- [Exercise 8: Queue Memory Leak -- Fix Unbounded Growth](#exercise-8-queue-memory-leak-fix-unbounded-growth)
+- [Exercise 9: Multi-Queue Merge -- O(n*k) to O(n*log k)](#exercise-9-multi-queue-merge-onk-to-onlog-k)
+- [Exercise 10: Rate Limiter -- O(n) Cleanup to O(1) Amortized](#exercise-10-rate-limiter-on-cleanup-to-o1-amortized)
+- [Exercise 11: BFS on Matrix -- Reduce Allocations](#exercise-11-bfs-on-matrix-reduce-allocations)
+- [Exercise 12: Circular Buffer -- Branching to Branchless](#exercise-12-circular-buffer-branching-to-branchless)
 
 ---
 

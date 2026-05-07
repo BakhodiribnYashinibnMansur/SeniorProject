@@ -4,7 +4,7 @@
 
 1. [Problem](#problem)
 2. [Problem Breakdown](#problem-breakdown)
-3. [Approach 1: Split + Stack](#approach-1-split--stack)
+3. [Approach 1: Split + Stack](#approach-1-split-stack)
 4. [Approach 2: Manual Single-Pass Parser](#approach-2-manual-single-pass-parser)
 5. [Complexity Comparison](#complexity-comparison)
 6. [Edge Cases](#edge-cases)

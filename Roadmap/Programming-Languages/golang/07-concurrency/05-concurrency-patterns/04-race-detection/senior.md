@@ -12,7 +12,7 @@
 9. [Atomics in Depth](#atomics-in-depth)
 10. [Sharded Counters](#sharded-counters)
 11. [Lock-Free Patterns](#lock-free-patterns)
-12. [Tooling Around `-race`](#tooling-around--race)
+12. [Tooling Around `-race`](#tooling-around-race)
 13. [Cheat Sheet](#cheat-sheet)
 14. [Summary](#summary)
 

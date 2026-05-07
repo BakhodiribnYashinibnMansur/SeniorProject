@@ -360,7 +360,7 @@ production, swap for `fstest.MapFS` in tests.
 
 ## 11. `embed.FS`: the binary's own filesystem
 
-Covered in detail in [`../09-go-embed/`](../09-go-embed/). The
+Covered in detail in [`../09-go-embed/`](../09-go-embed/junior.md). The
 short version:
 
 ```go
@@ -580,7 +580,7 @@ pays.
   own `fs.FS`, `fstest.TestFS`, layered FS.
 - [senior.md](senior.md) — exact contract, `ValidPath` semantics,
   symlink support, `os.DirFS` vs `os.Root`.
-- [`../09-go-embed/`](../09-go-embed/) — the go-to concrete `fs.FS`.
-- [`../15-templates/`](../15-templates/) — `template.ParseFS` in
+- [`../09-go-embed/`](../09-go-embed/junior.md) — the go-to concrete `fs.FS`.
+- [`../15-templates/`](../15-templates/junior.md) — `template.ParseFS` in
   detail.
 - The official package docs: [`io/fs`](https://pkg.go.dev/io/fs).

@@ -7,7 +7,7 @@
 4. [Code generation vs generics](#code-generation-vs-generics)
 5. [Comparison with other languages](#comparison-with-other-languages)
 6. [Implementation strategy: monomorphization vs dictionary](#implementation-strategy-monomorphization-vs-dictionary)
-7. [GC shape stenciling — Go's hybrid](#gc-shape-stenciling--gos-hybrid)
+7. [GC shape stenciling — Go's hybrid](#gc-shape-stenciling-gos-hybrid)
 8. [Performance implications](#performance-implications)
 9. [Summary](#summary)
 

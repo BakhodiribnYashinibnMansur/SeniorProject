@@ -16,7 +16,7 @@
 12. [Tricky Questions](#tricky-questions)
 13. [Summary](#summary)
 14. [Further Reading](#further-reading)
-15. [Diagrams & Visual Aids](#diagrams--visual-aids)
+15. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

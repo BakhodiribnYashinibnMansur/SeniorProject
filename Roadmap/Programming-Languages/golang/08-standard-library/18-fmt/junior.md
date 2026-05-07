@@ -221,7 +221,7 @@ fmt.Scan(&name, &age)
 ```
 
 For text-mode applications prefer
-[`bufio.Scanner`](../06-bufio/) — `fmt.Scan` is whitespace tokenized
+[`bufio.Scanner`](../06-bufio/junior.md) — `fmt.Scan` is whitespace tokenized
 and easy to misuse.
 
 ---
@@ -278,7 +278,7 @@ Print family
 
 - Reflection-based; slower than `strconv` for hot paths.
 - Easy to misuse: wrong verb, missing argument, forgotten `\n`.
-- For structured logging, prefer [`slog`](../07-slog/).
+- For structured logging, prefer [`slog`](../07-slog/junior.md).
 - Format strings are not type-checked at compile time (only `vet`
   catches them).
 
@@ -503,7 +503,7 @@ if _, err := fmt.Fprintln(w, "ok"); err != nil {
    `fmt.Sprintf("%d", n)`.
 3. For building strings from many parts, use `strings.Builder` and
    `fmt.Fprintf(&b, ...)`.
-4. For long-lived services, prefer [`slog`](../07-slog/) — it
+4. For long-lived services, prefer [`slog`](../07-slog/junior.md) — it
    batches and structures.
 
 ---

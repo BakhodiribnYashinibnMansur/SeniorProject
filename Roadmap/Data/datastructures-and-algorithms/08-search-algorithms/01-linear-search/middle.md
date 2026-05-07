@@ -8,7 +8,7 @@
 4. [Linear vs Binary Search](#linear-vs-binary-search)
 5. [When Linear Beats Binary](#when-linear-beats-binary)
 6. [Parallel Linear Search](#parallel-linear-search)
-7. [SIMD / Vectorized Linear Search](#simd--vectorized-linear-search)
+7. [SIMD / Vectorized Linear Search](#simd-vectorized-linear-search)
 8. [Self-Organizing Linear Search](#self-organizing-linear-search)
 9. [Comparison Reduction Tricks](#comparison-reduction-tricks)
 10. [Summary](#summary)

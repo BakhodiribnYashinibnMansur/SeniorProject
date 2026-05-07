@@ -13,7 +13,7 @@
 4. [Information-Theoretic Limits](#4-information-theoretic-limits)
 5. [Cell Probe Model](#5-cell-probe-model)
 6. [Succinct Data Structures](#6-succinct-data-structures)
-7. [Comparison with Alternatives — Formal Table](#7-comparison-with-alternatives--formal-table)
+7. [Comparison with Alternatives — Formal Table](#7-comparison-with-alternatives-formal-table)
 8. [Summary](#8-summary)
 
 ---

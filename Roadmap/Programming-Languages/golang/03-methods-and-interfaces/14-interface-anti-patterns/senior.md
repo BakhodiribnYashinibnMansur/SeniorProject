@@ -9,7 +9,7 @@
 6. [Performance Cost of Bad Interface Design](#performance-cost-of-bad-interface-design)
 7. [Itab Cache and Method-Set Bloat](#itab-cache-and-method-set-bloat)
 8. [Allocation Cost of Boxing into Interface](#allocation-cost-of-boxing-into-interface)
-9. [Stringer That Allocates / Panics](#stringer-that-allocates--panics)
+9. [Stringer That Allocates / Panics](#stringer-that-allocates-panics)
 10. [Errors Boxed Into Different Interfaces](#errors-boxed-into-different-interfaces)
 11. [Generics vs Interface Cost](#generics-vs-interface-cost)
 12. [Decision Matrix for Senior Reviewers](#decision-matrix-for-senior-reviewers)

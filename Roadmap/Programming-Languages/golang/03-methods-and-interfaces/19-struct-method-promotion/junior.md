@@ -10,7 +10,7 @@
 7. [Mental Models](#mental-models)
 8. [Code Examples](#code-examples)
 9. [Anonymous Field Naming](#anonymous-field-naming)
-10. [Pros & Cons](#pros--cons)
+10. [Pros & Cons](#pros-cons)
 11. [Use Cases](#use-cases)
 12. [Coding Patterns](#coding-patterns)
 13. [Best Practices](#best-practices)

@@ -6,7 +6,7 @@
 2. [Middle-Level Questions](#middle-level-questions)
 3. [Senior-Level Questions](#senior-level-questions)
 4. [Typed-Nil Deep Dive](#typed-nil-deep-dive)
-5. [Tricky / Curveball Questions](#tricky--curveball-questions)
+5. [Tricky / Curveball Questions](#tricky-curveball-questions)
 6. [Coding Tasks](#coding-tasks)
 7. [System Design Style](#system-design-style)
 8. [What Interviewers Look For](#what-interviewers-look-for)

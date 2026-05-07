@@ -8,18 +8,18 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Clean Code](#clean-code)
-12. [Product Use / Feature](#product-use--feature)
+12. [Product Use / Feature](#product-use-feature)
 13. [Error Handling](#error-handling)
 14. [Security Considerations](#security-considerations)
 15. [Performance Tips](#performance-tips)
-16. [Metrics & Analytics](#metrics--analytics)
+16. [Metrics & Analytics](#metrics-analytics)
 17. [Best Practices](#best-practices)
-18. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+18. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 19. [Common Mistakes](#common-mistakes)
 20. [Common Misconceptions](#common-misconceptions)
 21. [Tricky Points](#tricky-points)
@@ -31,7 +31,7 @@
 27. [What You Can Build](#what-you-can-build)
 28. [Further Reading](#further-reading)
 29. [Related Topics](#related-topics)
-30. [Diagrams & Visual Aids](#diagrams--visual-aids)
+30. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -1009,10 +1009,10 @@ flowchart LR
 
 Topics to explore next or that connect to this one:
 
-- **[Basic Syntax](../01-basic-syntax/)** — the syntax rules that `javac` enforces during compilation
-- **[Data Types](../03-data-types/)** — how the JVM represents data in memory during execution
-- **[Variables and Scopes](../04-variables-and-scopes/)** — how variables live on the stack during program execution
-- **[Basics of OOP](../11-basics-of-oop/)** — classes and objects are the core units the ClassLoader loads and the GC manages
+- **[Basic Syntax](../01-basic-syntax/junior.md)** — the syntax rules that `javac` enforces during compilation
+- **[Data Types](../03-data-types/junior.md)** — how the JVM represents data in memory during execution
+- **[Variables and Scopes](../04-variables-and-scopes/junior.md)** — how variables live on the stack during program execution
+- **[Basics of OOP](../11-basics-of-oop/junior.md)** — classes and objects are the core units the ClassLoader loads and the GC manages
 
 ---
 

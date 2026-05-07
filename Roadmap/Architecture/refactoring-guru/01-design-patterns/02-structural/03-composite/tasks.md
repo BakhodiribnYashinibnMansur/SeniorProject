@@ -8,7 +8,7 @@ Each task includes a brief, the structure, and a reference solution. Try first; 
 
 ## Table of Contents
 
-1. [Task 1: File System (size + print)](#task-1-file-system-size--print)
+1. [Task 1: File System (size + print)](#task-1-file-system-size-print)
 2. [Task 2: Document Outline (word count)](#task-2-document-outline-word-count)
 3. [Task 3: Expression Tree (evaluator)](#task-3-expression-tree-evaluator)
 4. [Task 4: Bundle Pricing](#task-4-bundle-pricing)
@@ -389,6 +389,6 @@ print(engine_v8.cost())   # 2000
 
 ---
 
-[← Back to Composite folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Composite folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Composite — Find the Bug](find-bug.md)

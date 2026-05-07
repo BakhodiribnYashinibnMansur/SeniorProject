@@ -10,7 +10,7 @@
 - [Task 6: BST Insert and Search](#task-6-bst-insert-and-search)
 - [Task 7: Exponentiation by Squaring](#task-7-exponentiation-by-squaring)
 - [Task 8: Find Minimum in Rotated Sorted Array](#task-8-find-minimum-in-rotated-sorted-array)
-- [Task 9: Binary Search on Answer — Koko Eating Bananas](#task-9-binary-search-on-answer--koko-eating-bananas)
+- [Task 9: Binary Search on Answer — Koko Eating Bananas](#task-9-binary-search-on-answer-koko-eating-bananas)
 - [Task 10: Lower Bound and Upper Bound](#task-10-lower-bound-and-upper-bound)
 - [Task 11: Search a 2D Sorted Matrix](#task-11-search-a-2d-sorted-matrix)
 - [Task 12: Find First Bad Version](#task-12-find-first-bad-version)

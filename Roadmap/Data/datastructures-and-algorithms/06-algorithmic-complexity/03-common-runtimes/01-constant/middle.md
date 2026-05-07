@@ -3,12 +3,12 @@
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Amortized O(1) -- Dynamic Arrays](#amortized-o1--dynamic-arrays)
+2. [Amortized O(1) -- Dynamic Arrays](#amortized-o1-dynamic-arrays)
    - [How Dynamic Arrays Grow](#how-dynamic-arrays-grow)
    - [Amortized Analysis: Aggregate Method](#amortized-analysis-aggregate-method)
    - [Amortized Analysis: Banker's Method](#amortized-analysis-bankers-method)
    - [Implementation Examples](#implementation-examples)
-3. [Expected O(1) -- Hash Tables](#expected-o1--hash-tables)
+3. [Expected O(1) -- Hash Tables](#expected-o1-hash-tables)
    - [Average vs Worst Case](#average-vs-worst-case)
    - [Load Factor and Rehashing](#load-factor-and-rehashing)
    - [Collision Resolution Strategies](#collision-resolution-strategies)
@@ -19,7 +19,7 @@
    - [Memory Overhead](#memory-overhead)
    - [Practical Crossover Points](#practical-crossover-points)
 7. [Hash Function Design for O(1)](#hash-function-design-for-o1)
-8. [Code Examples](#code-examples)
+8. Code Examples
 9. [Key Takeaways](#key-takeaways)
 
 ---

@@ -3,10 +3,10 @@
 ## Table of Contents
 1. [Overview](#overview)
 2. [Type Sets in Depth](#type-sets-in-depth)
-3. [The Union Operator (`|`)](#the-union-operator-)
+3. [The Union Operator (`|`)](#the-union-operator)
 4. [Intersection (Embedding)](#intersection-embedding)
-5. [The Approximation Operator (`~`)](#the-approximation-operator-)
-6. [The `constraints` Package — Full Tour](#the-constraints-package--full-tour)
+5. [The Approximation Operator (`~`)](#the-approximation-operator)
+6. [The `constraints` Package — Full Tour](#the-constraints-package-full-tour)
 7. [Custom Constraint Design](#custom-constraint-design)
 8. [Method Elements vs Type Elements](#method-elements-vs-type-elements)
 9. [Core Types and Allowed Operations](#core-types-and-allowed-operations)

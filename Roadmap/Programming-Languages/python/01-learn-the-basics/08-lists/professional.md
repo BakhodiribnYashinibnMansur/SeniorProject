@@ -7,7 +7,7 @@
 3. [CPython Bytecode](#cpython-bytecode)
 4. [PyListObject Structure](#pylistobject-structure)
 5. [Over-Allocation Strategy](#over-allocation-strategy)
-6. [Memory Management & Reference Counting](#memory-management--reference-counting)
+6. [Memory Management & Reference Counting](#memory-management-reference-counting)
 7. [GIL Internals](#gil-internals)
 8. [CPython Source Walkthrough](#cpython-source-walkthrough)
 9. [Performance Internals](#performance-internals)
@@ -15,7 +15,7 @@
 11. [Test](#test)
 12. [Summary](#summary)
 13. [Further Reading](#further-reading)
-14. [Diagrams & Visual Aids](#diagrams--visual-aids)
+14. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

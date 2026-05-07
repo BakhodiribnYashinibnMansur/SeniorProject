@@ -8,17 +8,17 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Clean Code](#clean-code)
-11. [Product Use / Feature](#product-use--feature)
+11. [Product Use / Feature](#product-use-feature)
 12. [Error Handling](#error-handling)
 13. [Security Considerations](#security-considerations)
 14. [Performance Tips](#performance-tips)
-15. [Metrics & Analytics](#metrics--analytics)
+15. [Metrics & Analytics](#metrics-analytics)
 16. [Best Practices](#best-practices)
-17. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+17. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 18. [Common Mistakes](#common-mistakes)
 19. [Common Misconceptions](#common-misconceptions)
 20. [Tricky Points](#tricky-points)
@@ -29,7 +29,7 @@
 25. [What You Can Build](#what-you-can-build)
 26. [Further Reading](#further-reading)
 27. [Related Topics](#related-topics)
-28. [Diagrams & Visual Aids](#diagrams--visual-aids)
+28. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -1047,9 +1047,9 @@ flowchart LR
 
 ## Related Topics
 
-- **[Tuples](../09-tuples/)** — immutable version of lists
-- **[Dictionaries](../11-dictionaries/)** — key-value mapping data structure
-- **[Sets](../10-sets/)** — unordered collection of unique elements
+- **[Tuples](../09-tuples/junior.md)** — immutable version of lists
+- **[Dictionaries](../11-dictionaries/junior.md)** — key-value mapping data structure
+- **[Sets](../10-sets/junior.md)** — unordered collection of unique elements
 - **List Comprehensions** — advanced list creation patterns
 
 ---

@@ -6,7 +6,7 @@
 3. [Version Selectors](#version-selectors)
 4. [Pseudo-Version Format](#pseudo-version-format)
 5. [Major Version Suffixes Recap](#major-version-suffixes-recap)
-6. [The `-u` and `-u=patch` Flags](#the--u-and--upatch-flags)
+6. [The `-u` and `-u=patch` Flags](#the-u-and-upatch-flags)
 7. [Module Proxy Protocol](#module-proxy-protocol)
 8. [Checksum Database Interaction](#checksum-database-interaction)
 9. [GOPROXY, GOPRIVATE, GONOPROXY, GONOSUMCHECK, GOSUMDB](#goproxy-goprivate-gonoproxy-gonosumcheck-gosumdb)

@@ -9,7 +9,7 @@
 6. [Refactoring with Embedding](#refactoring-with-embedding)
 7. [Embedding and Concurrency](#embedding-and-concurrency)
 8. [Encapsulation Strategy](#encapsulation-strategy)
-9. [Generics + Embedding](#generics--embedding)
+9. [Generics + Embedding](#generics-embedding)
 10. [Embedded Interfaces vs Embedded Structs](#embedded-interfaces-vs-embedded-structs)
 11. [Pitfalls in Real Code](#pitfalls-in-real-code)
 12. [Library Design Decisions](#library-design-decisions)

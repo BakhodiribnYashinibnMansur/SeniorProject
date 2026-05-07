@@ -2,18 +2,18 @@
 
 ## Table of Contents
 
-1. [Bug 1: Linear Search Off-by-One](#bug-1)
-2. [Bug 2: Find Maximum with Wrong Initial Value](#bug-2)
-3. [Bug 3: Counting Even Numbers — Wrong Operator](#bug-3)
-4. [Bug 4: Two Sum Missing Complement Check](#bug-4)
-5. [Bug 5: Kadane's Algorithm Wrong Initialization](#bug-5)
-6. [Bug 6: Sliding Window Wrong Update](#bug-6)
-7. [Bug 7: Remove Duplicates Skipping Elements](#bug-7)
-8. [Bug 8: Move Zeroes Losing Order](#bug-8)
-9. [Bug 9: Prefix Sum Off-by-One](#bug-9)
-10. [Bug 10: Merge Sorted Arrays Missing Remainder](#bug-10)
-11. [Bug 11: Reverse Array Overshooting](#bug-11)
-12. [Bug 12: Anagram Check Missing Length Check](#bug-12)
+1. Bug 1: Linear Search Off-by-One
+2. Bug 2: Find Maximum with Wrong Initial Value
+3. Bug 3: Counting Even Numbers — Wrong Operator
+4. Bug 4: Two Sum Missing Complement Check
+5. Bug 5: Kadane's Algorithm Wrong Initialization
+6. Bug 6: Sliding Window Wrong Update
+7. Bug 7: Remove Duplicates Skipping Elements
+8. Bug 8: Move Zeroes Losing Order
+9. Bug 9: Prefix Sum Off-by-One
+10. Bug 10: Merge Sorted Arrays Missing Remainder
+11. Bug 11: Reverse Array Overshooting
+12. Bug 12: Anagram Check Missing Length Check
 
 ---
 

@@ -592,11 +592,11 @@ covered in professional.md.
 
 - [`../10-net/middle.md`](../10-net/middle.md) — `Listener`, `Conn`,
   deadlines that the HTTP server uses.
-- [`../03-time/`](../03-time/) — `time.AfterFunc` and the timer wheel
+- [`../03-time/`](../03-time/junior.md) — `time.AfterFunc` and the timer wheel
   that powers HTTP server timeouts.
-- [`../04-encoding-json/`](../04-encoding-json/) — `json.Decoder` and
+- [`../04-encoding-json/`](../04-encoding-json/junior.md) — `json.Decoder` and
   `Encoder` for streaming bodies.
-- [`../05-os/`](../05-os/) — `signal.NotifyContext` for graceful
+- [`../05-os/`](../05-os/junior.md) — `signal.NotifyContext` for graceful
   shutdown.
 - [`../01-io-and-file-handling/middle.md`](../01-io-and-file-handling/middle.md) —
   `io.Pipe` for streaming uploads, body draining patterns.

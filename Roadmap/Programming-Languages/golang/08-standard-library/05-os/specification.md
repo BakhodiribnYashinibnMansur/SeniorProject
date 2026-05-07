@@ -310,5 +310,5 @@ may write to them.
 
 - [`io` and File Handling`](../01-io-and-file-handling/specification.md)
   for `*os.File` operations and `fs.FileMode` semantics.
-- [`flag`](../02-flag/) for `os.Args` parsing.
-- [`time`](../03-time/) for `context.WithTimeout` shutdown bounds.
+- [`flag`](../02-flag/junior.md) for `os.Args` parsing.
+- [`time`](../03-time/junior.md) for `context.WithTimeout` shutdown bounds.

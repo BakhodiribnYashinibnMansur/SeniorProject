@@ -7,17 +7,17 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Clean Code](#clean-code)
-12. [Product Use / Feature](#product-use--feature)
+12. [Product Use / Feature](#product-use-feature)
 13. [Error Handling](#error-handling)
 14. [Security Considerations](#security-considerations)
 15. [Performance Tips](#performance-tips)
 16. [Best Practices](#best-practices)
-17. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+17. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 18. [Common Mistakes](#common-mistakes)
 19. [Common Misconceptions](#common-misconceptions)
 20. [Tricky Points](#tricky-points)
@@ -29,7 +29,7 @@
 26. [What You Can Build](#what-you-can-build)
 27. [Further Reading](#further-reading)
 28. [Related Topics](#related-topics)
-29. [Diagrams & Visual Aids](#diagrams--visual-aids)
+29. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -682,10 +682,10 @@ You cannot yet:
 
 ## Related Topics
 
-- [6.1.2 `go mod tidy`](../02-go-mod-tidy/) — what to run after you start using imports
-- [6.1.3 `go mod vendor`](../03-go-mod-vendor/) — offline-friendly dependency copies
-- [6.2.1 Package Import Rules](../../02-packages/01-package-import-rules/) — how imports inside a module are resolved
-- [6.2.3 Publishing Modules](../../02-packages/03-publishing-modules/) — sharing your module with the world
+- [6.1.2 `go mod tidy`](../02-go-mod-tidy/junior.md) — what to run after you start using imports
+- [6.1.3 `go mod vendor`](../03-go-mod-vendor/junior.md) — offline-friendly dependency copies
+- [6.2.1 Package Import Rules](../../02-packages/01-package-import-rules/junior.md) — how imports inside a module are resolved
+- [6.2.3 Publishing Modules](../../02-packages/03-publishing-modules/junior.md) — sharing your module with the world
 - 11.1.5 `go mod` — the full `go mod` subcommand reference
 
 ---

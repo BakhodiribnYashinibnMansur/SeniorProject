@@ -2,11 +2,11 @@
 
 ## Table of Contents
 1. [Beyond stacks and sets](#beyond-stacks-and-sets)
-2. [Queue — slice-backed implementation](#queue--slice-backed-implementation)
-3. [Queue — ring buffer implementation](#queue--ring-buffer-implementation)
+2. [Queue — slice-backed implementation](#queue-slice-backed-implementation)
+3. [Queue — ring buffer implementation](#queue-ring-buffer-implementation)
 4. [LinkedList[T] with pointer receivers](#linkedlistt-with-pointer-receivers)
-5. [Pair[K, V] — a small but useful tuple](#pairk-v--a-small-but-useful-tuple)
-6. [Optional[T] / Maybe[T]](#optionalt--maybet)
+5. [Pair[K, V] — a small but useful tuple](#pairk-v-a-small-but-useful-tuple)
+6. [Optional[T] / Maybe[T]](#optionalt-maybet)
 7. [Method-set choices](#method-set-choices)
 8. [Iteration over generic containers](#iteration-over-generic-containers)
 9. [Summary](#summary)

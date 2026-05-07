@@ -6,8 +6,8 @@
 2. [How It Works Internally](#how-it-works-internally)
 3. [CPython Bytecode](#cpython-bytecode)
 4. [PyTupleObject Structure](#pytupleobject-structure)
-5. [Tuple Free List & Caching](#tuple-free-list--caching)
-6. [Memory Management & Reference Counting](#memory-management--reference-counting)
+5. [Tuple Free List & Caching](#tuple-free-list-caching)
+6. [Memory Management & Reference Counting](#memory-management-reference-counting)
 7. [GIL Internals](#gil-internals)
 8. [CPython Source Walkthrough](#cpython-source-walkthrough)
 9. [Hashing Internals](#hashing-internals)
@@ -16,7 +16,7 @@
 12. [Test](#test)
 13. [Summary](#summary)
 14. [Further Reading](#further-reading)
-15. [Diagrams & Visual Aids](#diagrams--visual-aids)
+15. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

@@ -4,8 +4,8 @@
 
 1. [Formal Notation Definitions](#formal-notation-definitions)
 2. [Asymptotic Notation Rules](#asymptotic-notation-rules)
-3. [Master Theorem -- Formal Statement](#master-theorem--formal-statement)
-4. [Akra-Bazzi Theorem -- Formal Statement](#akra-bazzi-theorem--formal-statement)
+3. [Master Theorem -- Formal Statement](#master-theorem-formal-statement)
+4. [Akra-Bazzi Theorem -- Formal Statement](#akra-bazzi-theorem-formal-statement)
 5. [Profiling Tool References](#profiling-tool-references)
    - [Go Profiling](#go-profiling)
    - [Java Profiling](#java-profiling)

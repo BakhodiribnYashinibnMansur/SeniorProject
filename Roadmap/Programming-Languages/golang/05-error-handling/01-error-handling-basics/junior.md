@@ -7,17 +7,17 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Clean Code](#clean-code)
-12. [Product Use / Feature](#product-use--feature)
+12. [Product Use / Feature](#product-use-feature)
 13. [Error Handling](#error-handling)
 14. [Security Considerations](#security-considerations)
 15. [Performance Tips](#performance-tips)
 16. [Best Practices](#best-practices)
-17. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+17. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 18. [Common Mistakes](#common-mistakes)
 19. [Common Misconceptions](#common-misconceptions)
 20. [Tricky Points](#tricky-points)
@@ -29,7 +29,7 @@
 26. [What You Can Build](#what-you-can-build)
 27. [Further Reading](#further-reading)
 28. [Related Topics](#related-topics)
-29. [Diagrams & Visual Aids](#diagrams--visual-aids)
+29. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -115,7 +115,7 @@ type error interface {
 }
 ```
 
-That is the entire definition. Any value that has an `Error() string` method satisfies the interface and counts as an error. We will go very deep on this in [02-error-interface](../02-error-interface/index.md). For now: an `error` is just a thing that knows how to describe itself as a string.
+That is the entire definition. Any value that has an `Error() string` method satisfies the interface and counts as an error. We will go very deep on this in [02-error-interface](../02-error-interface/junior.md). For now: an `error` is just a thing that knows how to describe itself as a string.
 
 ### Concept 3: The "second return value" convention
 
@@ -407,7 +407,7 @@ if err != nil {
 }
 ```
 
-`%w` is for *wrapping*. We will go deep on this in [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/index.md). For now: it adds context.
+`%w` is for *wrapping*. We will go deep on this in [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/junior.md). For now: it adds context.
 
 ### Pattern 3: Sentinel comparison (preview)
 
@@ -417,7 +417,7 @@ if errors.Is(err, io.EOF) {
 }
 ```
 
-We will cover this in [06-sentinel-errors](../06-sentinel-errors/index.md). It is the *only* correct way to compare wrapped errors.
+We will cover this in [06-sentinel-errors](../06-sentinel-errors/junior.md). It is the *only* correct way to compare wrapped errors.
 
 ### Pattern 4: Error logging then early return
 
@@ -541,7 +541,7 @@ Yes — this whole topic *is* error handling. But here are some meta-rules about
 
 ## Edge Cases & Pitfalls
 
-- **A non-nil error wrapping a nil concrete pointer.** `var e *MyError = nil; var err error = e; err != nil` is **true** because the interface header is non-nil even though the pointer inside is nil. Classic Go trap. (See [02-error-interface](../02-error-interface/index.md).)
+- **A non-nil error wrapping a nil concrete pointer.** `var e *MyError = nil; var err error = e; err != nil` is **true** because the interface header is non-nil even though the pointer inside is nil. Classic Go trap. (See [02-error-interface](../02-error-interface/junior.md).)
 - **`if err == nil` *and using the value anyway*.** Always check error first. Some library functions return a partial value with an error.
 - **Forgetting `:=` vs `=`.** `n, err := f()` declares `err`. A second `n, err := g()` in the same scope is a compile error if `n` and `err` already exist (use `=`) — unless at least one variable is new (`n2, err := ...`). This trips up beginners.
 
@@ -704,10 +704,10 @@ Errors in Go are **values**: ordinary returns from functions that can fail. The 
 
 ## Related Topics
 
-- [02-error-interface](../02-error-interface/index.md) — the formal `error` interface
-- [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/index.md) — `%w`, `errors.Is`, `errors.As`
-- [06-sentinel-errors](../06-sentinel-errors/index.md) — named error values like `io.EOF`
-- [07-panic-and-recover](../07-panic-and-recover/index.md) — for unrecoverable cases
+- [02-error-interface](../02-error-interface/junior.md) — the formal `error` interface
+- [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/junior.md) — `%w`, `errors.Is`, `errors.As`
+- [06-sentinel-errors](../06-sentinel-errors/junior.md) — named error values like `io.EOF`
+- [07-panic-and-recover](../07-panic-and-recover/junior.md) — for unrecoverable cases
 
 ---
 

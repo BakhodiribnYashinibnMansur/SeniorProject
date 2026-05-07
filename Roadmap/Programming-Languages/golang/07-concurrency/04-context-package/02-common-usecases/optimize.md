@@ -1,6 +1,6 @@
 # Common Usecases — Optimize
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 Each section presents a working but suboptimal use of `context.Context` and a refactor that improves performance, allocations, or maintainability. The goal is to internalize the small habits that keep ctx use cheap and readable at scale.
 
@@ -479,4 +479,4 @@ Run with `-cpuprofile=cpu.out` and inspect `runtime.(*valueCtx).Value`. If it do
 5. **Use `AfterFunc`** for cleanup instead of bespoke goroutines.
 6. **Pick budgets explicitly**, not by accident.
 
-[← Back to index](index.md)
+[← Back to index](junior.md)

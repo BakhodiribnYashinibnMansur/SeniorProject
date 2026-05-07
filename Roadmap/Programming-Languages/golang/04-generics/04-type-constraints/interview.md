@@ -4,7 +4,7 @@
 1. [Junior Questions (1-10)](#junior-questions-1-10)
 2. [Middle Questions (11-20)](#middle-questions-11-20)
 3. [Senior Questions (21-30)](#senior-questions-21-30)
-4. [Tricky / Edge Cases (31-35)](#tricky--edge-cases-31-35)
+4. [Tricky / Edge Cases (31-35)](#tricky-edge-cases-31-35)
 5. [Coding Tasks](#coding-tasks)
 
 ---

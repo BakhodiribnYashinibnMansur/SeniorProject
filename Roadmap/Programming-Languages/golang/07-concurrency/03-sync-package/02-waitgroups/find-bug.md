@@ -9,7 +9,7 @@ permalink: /roadmap/programming-languages/golang/07-concurrency/03-sync-package/
 
 # WaitGroups — Find the Bug
 
-[← Back to WaitGroups](./)
+← Back to WaitGroups
 
 Each exercise contains buggy code, a hint, and a discussion. Try to spot the bug before reading the discussion.
 

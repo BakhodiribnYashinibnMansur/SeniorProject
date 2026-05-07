@@ -168,7 +168,7 @@ Two things to know:
    set whose default-named entry is `"a.html"`.
 
 For embedded assets, the `ParseFS` form is the modern default. See
-[`../09-go-embed/`](../09-go-embed/) for the full embed story.
+[`../09-go-embed/`](../09-go-embed/junior.md) for the full embed story.
 
 ## 6. Executing: `Execute` vs `ExecuteTemplate`
 
@@ -695,6 +695,6 @@ at the same time. They are **not** safe to mutate (`Funcs`, `Parse`,
   range-over-map order, etc.
 
 For the file-loading mechanics (`embed.FS`, `io/fs`), see
-[`../09-go-embed/`](../09-go-embed/) and [`../14-io-fs/`](../14-io-fs/).
+[`../09-go-embed/`](../09-go-embed/junior.md) and [`../14-io-fs/`](../14-io-fs/junior.md).
 For the HTTP serving side, see
-[`../11-net-http-internals/`](../11-net-http-internals/).
+[`../11-net-http-internals/`](../11-net-http-internals/junior.md).

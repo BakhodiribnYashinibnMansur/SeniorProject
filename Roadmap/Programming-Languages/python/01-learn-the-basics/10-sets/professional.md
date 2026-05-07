@@ -5,15 +5,15 @@
 1. [Introduction](#introduction)
 2. [CPython Set Implementation](#cpython-set-implementation)
 3. [Hash Table Internals](#hash-table-internals)
-4. [Open Addressing & Probing](#open-addressing--probing)
+4. [Open Addressing & Probing](#open-addressing-probing)
 5. [Hash Function Internals](#hash-function-internals)
-6. [Memory Layout & Allocation](#memory-layout--allocation)
+6. [Memory Layout & Allocation](#memory-layout-allocation)
 7. [Resize Strategy](#resize-strategy)
 8. [Bytecode Analysis](#bytecode-analysis)
 9. [Performance at the C Level](#performance-at-the-c-level)
 10. [Frozenset Optimizations](#frozenset-optimizations)
-11. [GIL & Thread Safety Internals](#gil--thread-safety-internals)
-12. [Diagrams & Visual Aids](#diagrams--visual-aids)
+11. [GIL & Thread Safety Internals](#gil-thread-safety-internals)
+12. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

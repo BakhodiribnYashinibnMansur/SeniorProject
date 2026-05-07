@@ -12,7 +12,7 @@ Each task includes a brief and a reference solution. Try first; check after.
 2. [Task 2: Typed event bus](#task-2-typed-event-bus)
 3. [Task 3: Async dispatch with error isolation](#task-3-async-dispatch-with-error-isolation)
 4. [Task 4: Weak-ref subject](#task-4-weak-ref-subject)
-5. [Task 5: Disposable / unsubscribe function](#task-5-disposable--unsubscribe-function)
+5. [Task 5: Disposable / unsubscribe function](#task-5-disposable-unsubscribe-function)
 6. [Task 6: Cycle detection](#task-6-cycle-detection)
 7. [Task 7: SSE-style live stream](#task-7-sse-style-live-stream)
 8. [Task 8: Backpressure with bounded buffer](#task-8-backpressure-with-bounded-buffer)

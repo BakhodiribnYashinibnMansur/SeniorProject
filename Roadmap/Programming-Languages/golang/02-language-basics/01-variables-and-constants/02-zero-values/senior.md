@@ -2,7 +2,7 @@
 
 ## Table of Contents
 1. [Introduction](#introduction)
-2. [Core Concepts — Architectural View](#core-concepts--architectural-view)
+2. [Core Concepts — Architectural View](#core-concepts-architectural-view)
 3. [Zero Value Pattern in Standard Library](#zero-value-pattern-in-standard-library)
 4. [Designing APIs with Usable Zero Values](#designing-apis-with-usable-zero-values)
 5. [Performance of Zero Initialization](#performance-of-zero-initialization)
@@ -26,7 +26,7 @@
 23. [Summary](#summary)
 24. [What You Can Build](#what-you-can-build)
 25. [Further Reading](#further-reading)
-26. [Diagrams & Visual Aids](#diagrams--visual-aids)
+26. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

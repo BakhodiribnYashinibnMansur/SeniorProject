@@ -15,7 +15,7 @@
 7. [Encapsulate Collection: defensive copy cost](#encapsulate-collection-defensive-copy-cost)
 8. [Reference vs. value: GC and equality cost](#reference-vs-value-gc-and-equality-cost)
 9. [Field alignment in Go and Rust](#field-alignment-in-go-and-rust)
-10. [Python: dict-based attributes vs. __slots__](#python-dict-based-attributes-vs-__slots__)
+10. Python: dict-based attributes vs. __slots__
 11. [Review questions](#review-questions)
 
 ---

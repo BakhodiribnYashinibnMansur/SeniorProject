@@ -1,6 +1,6 @@
 # Common Usecases — Find the Bug
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 Each section presents broken production code, asks you to find the bug, then offers a fix. Read carefully before peeking at the answer; these are the bugs you will see in real code review.
 
@@ -730,4 +730,4 @@ Recurring themes:
 - **Background goroutines need detached context.**
 - **String keys collide; use struct keys.**
 
-[← Back to index](index.md)
+[← Back to index](junior.md)

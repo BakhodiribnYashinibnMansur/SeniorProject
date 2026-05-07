@@ -190,15 +190,15 @@ graph TD
 
 ## Pattern Files
 
-- [01-chain-of-responsibility/](01-chain-of-responsibility/) — Chain of Responsibility
-- [02-command/](02-command/) — Command
-- [03-iterator/](03-iterator/) — Iterator
-- [04-mediator/](04-mediator/) — Mediator
-- [05-memento/](05-memento/) — Memento
-- [06-observer/](06-observer/) — Observer
-- [07-state/](07-state/) — State
-- [08-strategy/](08-strategy/) — Strategy
-- [09-template-method/](09-template-method/) — Template Method
-- [10-visitor/](10-visitor/) — Visitor
+- 01-chain-of-responsibility/ — Chain of Responsibility
+- 02-command/ — Command
+- 03-iterator/ — Iterator
+- 04-mediator/ — Mediator
+- 05-memento/ — Memento
+- 06-observer/ — Observer
+- 07-state/ — State
+- 08-strategy/ — Strategy
+- 09-template-method/ — Template Method
+- 10-visitor/ — Visitor
 
 [← Back to Design Patterns](../README.md) · [↑ Roadmap Home](../../README.md)

@@ -4,7 +4,7 @@
 1. [Introduction](#introduction)
 2. [The Predeclared error Interface](#the-predeclared-error-interface)
 3. [Spec Text on Interface Types](#spec-text-on-interface-types)
-4. [Method Sets — Spec Rules](#method-sets--spec-rules)
+4. [Method Sets — Spec Rules](#method-sets-spec-rules)
 5. [Pointer vs Value Receivers in the Spec](#pointer-vs-value-receivers-in-the-spec)
 6. [Interface Satisfaction](#interface-satisfaction)
 7. [Conversion to Interface Type](#conversion-to-interface-type)

@@ -7,14 +7,14 @@
 3. [Advanced Internals](#advanced-internals)
 4. [Benchmarks](#benchmarks)
 5. [Production Patterns](#production-patterns)
-6. [Thread Safety & Concurrency](#thread-safety--concurrency)
+6. [Thread Safety & Concurrency](#thread-safety-concurrency)
 7. [Memory Profiling](#memory-profiling)
 8. [Best Practices](#best-practices)
 9. [Edge Cases at Scale](#edge-cases-at-scale)
 10. [Test](#test)
 11. [Summary](#summary)
 12. [Further Reading](#further-reading)
-13. [Diagrams & Visual Aids](#diagrams--visual-aids)
+13. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

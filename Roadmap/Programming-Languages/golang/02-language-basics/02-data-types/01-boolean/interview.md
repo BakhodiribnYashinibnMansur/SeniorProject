@@ -5,7 +5,7 @@
 2. [Middle Level Questions](#middle-level-questions)
 3. [Senior Level Questions](#senior-level-questions)
 4. [Scenario-Based Questions](#scenario-based-questions)
-5. [FAQ — Common Interview Topics](#faq--common-interview-topics)
+5. [FAQ — Common Interview Topics](#faq-common-interview-topics)
 
 ---
 

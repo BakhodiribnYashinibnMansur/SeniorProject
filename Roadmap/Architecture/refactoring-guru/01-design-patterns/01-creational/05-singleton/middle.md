@@ -12,11 +12,11 @@
 2. [When to Use Singleton](#when-to-use-singleton)
 3. [When NOT to Use Singleton](#when-not-to-use-singleton)
 4. [Real-World Cases](#real-world-cases)
-5. [Code Examples — Production-Grade](#code-examples--production-grade)
+5. [Code Examples — Production-Grade](#code-examples-production-grade)
 6. [Trade-offs](#trade-offs)
 7. [Alternatives Comparison](#alternatives-comparison)
 8. [Refactoring from Singleton](#refactoring-from-singleton)
-9. [Pros & Cons (Deeper)](#pros--cons-deeper)
+9. [Pros & Cons (Deeper)](#pros-cons-deeper)
 10. [Edge Cases](#edge-cases)
 11. [Tricky Points](#tricky-points)
 12. [Best Practices](#best-practices)
@@ -767,6 +767,6 @@ graph TD
 
 ---
 
-[← Back to Singleton folder](.) · [↑ Creational Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Singleton folder · [↑ Creational Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Previous:** [Singleton — Junior Level](junior.md) | **Next:** [Singleton — Senior Level](senior.md)

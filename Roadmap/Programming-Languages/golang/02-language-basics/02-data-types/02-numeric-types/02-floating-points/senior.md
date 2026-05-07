@@ -3,7 +3,7 @@
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Core Concepts](#core-concepts)
-3. [Pros & Cons](#pros--cons)
+3. [Pros & Cons](#pros-cons)
 4. [Use Cases](#use-cases)
 5. [Code Examples](#code-examples)
 6. [Coding Patterns](#coding-patterns)

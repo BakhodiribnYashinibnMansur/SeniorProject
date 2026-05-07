@@ -199,7 +199,7 @@ The result is `O(n log k)` time and `O(k)` memory — far better than
 `O(n log n)` from sorting the whole slice and slicing the top K. There
 is no generic `heap` in stdlib, so you implement the legacy
 `heap.Interface` (Len/Less/Swap/Push/Pop). Cross-link:
-[`../17-container/`](../17-container/) covers this in depth.
+[`../17-container/`](../17-container/junior.md) covers this in depth.
 
 ## Q20. What changes in `slices.Delete` between Go 1.21 and 1.22?
 

@@ -5,7 +5,7 @@
 1. [Problem](#problem)
 2. [Problem Breakdown](#problem-breakdown)
 3. [Approach 1: Brute Force (Collect All Values, Sort)](#approach-1-brute-force-collect-all-values-sort)
-4. [Approach 2: Min Heap / Priority Queue](#approach-2-min-heap--priority-queue)
+4. [Approach 2: Min Heap / Priority Queue](#approach-2-min-heap-priority-queue)
 5. [Approach 3: Divide and Conquer (Merge Sort Style)](#approach-3-divide-and-conquer-merge-sort-style)
 6. [Complexity Comparison](#complexity-comparison)
 7. [Edge Cases](#edge-cases)

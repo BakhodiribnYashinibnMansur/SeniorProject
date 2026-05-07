@@ -9,7 +9,7 @@ Each task includes a brief and a reference solution. Try first; check after.
 ## Table of Contents
 
 1. [Task 1: Counter with undo](#task-1-counter-with-undo)
-2. [Task 2: Editor with undo / redo](#task-2-editor-with-undo--redo)
+2. [Task 2: Editor with undo / redo](#task-2-editor-with-undo-redo)
 3. [Task 3: Diff-based Memento](#task-3-diff-based-memento)
 4. [Task 4: Persistent draft autosave](#task-4-persistent-draft-autosave)
 5. [Task 5: Bounded undo history](#task-5-bounded-undo-history)
@@ -17,7 +17,7 @@ Each task includes a brief and a reference solution. Try first; check after.
 7. [Task 7: Sensitive data redaction](#task-7-sensitive-data-redaction)
 8. [Task 8: Concurrent snapshot via AtomicReference](#task-8-concurrent-snapshot-via-atomicreference)
 9. [Task 9: Schema-versioned Memento](#task-9-schema-versioned-memento)
-10. [Task 10: Memento + Command for undo](#task-10-memento--command-for-undo)
+10. [Task 10: Memento + Command for undo](#task-10-memento-command-for-undo)
 11. [How to Practice](#how-to-practice)
 
 ---

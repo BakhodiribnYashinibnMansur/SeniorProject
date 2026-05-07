@@ -369,6 +369,6 @@ public class RetryablePaymentServiceDecorator implements PaymentService {
 
 ---
 
-[← Back to Decorator folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Decorator folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **You've completed the Decorator pattern suite.** Continue to: [Facade](../05-facade/junior.md) · [Flyweight](../06-flyweight/junior.md) · [Proxy](../07-proxy/junior.md)

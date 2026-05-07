@@ -271,9 +271,9 @@ Identify the desired refactoring; attempt it; record everything that breaks; rev
 |---|---|---|
 | Long Method | [Switch Statements](../02-oo-abusers/junior.md), [Comments](../04-dispensables/junior.md) | If the long method is mostly a switch, the smell is Switch Statements. If it's mostly compensatory comments, the smell is Comments. |
 | Large Class | [Divergent Change](../03-change-preventers/junior.md) | A Large Class that's changed for many reasons is also Divergent Change. The cures (Extract Class) are the same. |
-| Primitive Obsession | [Data Clumps](#data-clumps), [Switch Statements](../02-oo-abusers/junior.md) | Type codes (`int RED = 0`) are both Primitive Obsession AND a switch statement waiting to happen. |
-| Long Parameter List | [Data Clumps](#data-clumps), [Feature Envy](../05-couplers/junior.md) | If three of the parameters are always passed together from one object, it's Data Clumps + Feature Envy — caller should send the whole object. |
-| Data Clumps | [Primitive Obsession](#primitive-obsession) | Both signal a missing concept; Data Clumps emphasizes grouping, Primitive Obsession emphasizes type. |
+| Primitive Obsession | Data Clumps, [Switch Statements](../02-oo-abusers/junior.md) | Type codes (`int RED = 0`) are both Primitive Obsession AND a switch statement waiting to happen. |
+| Long Parameter List | Data Clumps, [Feature Envy](../05-couplers/junior.md) | If three of the parameters are always passed together from one object, it's Data Clumps + Feature Envy — caller should send the whole object. |
+| Data Clumps | Primitive Obsession | Both signal a missing concept; Data Clumps emphasizes grouping, Primitive Obsession emphasizes type. |
 
 ---
 

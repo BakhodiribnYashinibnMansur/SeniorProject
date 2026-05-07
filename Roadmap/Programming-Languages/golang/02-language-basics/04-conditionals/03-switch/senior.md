@@ -6,7 +6,7 @@
 3. [Compiler Internals](#compiler-internals)
 4. [Type Switch Deep Dive](#type-switch-deep-dive)
 5. [Large-Scale Patterns](#large-scale-patterns)
-6. [Postmortems & Real Failures](#postmortems--real-failures)
+6. [Postmortems & Real Failures](#postmortems-real-failures)
 7. [Performance Benchmarks](#performance-benchmarks)
 8. [Advanced Testing](#advanced-testing)
 9. [Concurrency Considerations](#concurrency-considerations)

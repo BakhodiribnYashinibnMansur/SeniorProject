@@ -8,7 +8,7 @@
 5. [Your First Custom Error](#your-first-custom-error)
 6. [Why an Interface and Not a Struct](#why-an-interface-and-not-a-struct)
 7. [Code Examples](#code-examples)
-8. [Pros & Cons](#pros--cons)
+8. [Pros & Cons](#pros-cons)
 9. [Use Cases](#use-cases)
 10. [Coding Patterns](#coding-patterns)
 11. [Clean Code](#clean-code)
@@ -26,7 +26,7 @@
 ## Introduction
 > Focus: "What is the error interface?" and "How do I make my own error type?"
 
-In [01-error-handling-basics](../01-error-handling-basics/index.md) you learned that an error is a *value* you return from functions. But what *is* an error, exactly?
+In [01-error-handling-basics](../01-error-handling-basics/junior.md) you learned that an error is a *value* you return from functions. But what *is* an error, exactly?
 
 Go answers: **an error is anything with an `Error() string` method.**
 
@@ -47,7 +47,7 @@ This file is about the rules, mechanics, and idioms of writing your own error ty
 - **Required:** You can write and call functions that return `error`.
 - **Required:** You understand structs and methods.
 - **Required:** You know what an interface is at a high level.
-- **Helpful:** You've read [01-error-handling-basics](../01-error-handling-basics/index.md).
+- **Helpful:** You've read [01-error-handling-basics](../01-error-handling-basics/junior.md).
 
 ---
 
@@ -252,7 +252,7 @@ func (e *RetryableError) Error() string { return "retryable: " + e.Inner.Error()
 func (e *RetryableError) Unwrap() error { return e.Inner }
 ```
 
-Here we add a second method, `Unwrap()`. This makes `errors.Is` and `errors.As` look through the wrapper. Detail in [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/index.md).
+Here we add a second method, `Unwrap()`. This makes `errors.Is` and `errors.As` look through the wrapper. Detail in [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/junior.md).
 
 ---
 

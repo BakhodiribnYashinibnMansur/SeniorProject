@@ -9,7 +9,7 @@ permalink: /roadmap/programming-languages/golang/07-concurrency/03-sync-package/
 
 # WaitGroups — Professional
 
-[← Back to WaitGroups](./)
+← Back to WaitGroups
 
 Time to look under the hood. We dissect the actual `sync.WaitGroup` source, the runtime semaphore that backs `Wait`, the race-detector hooks that catch `Add`-after-`Wait` bugs, and the cost of every operation.
 

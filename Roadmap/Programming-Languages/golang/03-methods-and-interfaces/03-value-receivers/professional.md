@@ -3,7 +3,7 @@
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Domain-Driven Design with Value Objects](#domain-driven-design-with-value-objects)
-3. [API Design — Value vs Pointer](#api-design--value-vs-pointer)
+3. [API Design — Value vs Pointer](#api-design-value-vs-pointer)
 4. [Library Design Conventions](#library-design-conventions)
 5. [Testing Value-Receiver Methods](#testing-value-receiver-methods)
 6. [Production Patterns](#production-patterns)

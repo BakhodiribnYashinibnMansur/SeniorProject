@@ -90,7 +90,7 @@ Each category folder contains an **8-file suite**, identical to the [Design Patt
 
 **Recommended order:** `junior.md` → `middle.md` → `senior.md` → `professional.md` → practice files → `interview.md` for review.
 
-Each file in a category covers **all smells in that category collectively** — for example, [01-bloaters/middle.md](01-bloaters/) discusses Long Method, Large Class, Primitive Obsession, Long Parameter List, and Data Clumps together, drawing comparisons and showing how they often appear in concert.
+Each file in a category covers **all smells in that category collectively** — for example, [01-bloaters/middle.md](01-bloaters/junior.md) discusses Long Method, Large Class, Primitive Obsession, Long Parameter List, and Data Clumps together, drawing comparisons and showing how they often appear in concert.
 
 ---
 

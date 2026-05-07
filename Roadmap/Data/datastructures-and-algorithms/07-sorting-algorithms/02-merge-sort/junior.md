@@ -8,14 +8,14 @@
 4. [Core Concepts](#core-concepts)
 5. [Big-O Summary](#big-o-summary)
 6. [Real-World Analogies](#real-world-analogies)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Step-by-Step Walkthrough](#step-by-step-walkthrough)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Error Handling](#error-handling)
 12. [Performance Tips](#performance-tips)
 13. [Best Practices](#best-practices)
-14. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+14. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 15. [Common Mistakes](#common-mistakes)
 16. [Cheat Sheet](#cheat-sheet)
 17. [Visual Animation](#visual-animation)
@@ -47,7 +47,7 @@ The trade-off: standard array Merge Sort uses **O(n) auxiliary space** for the m
 - **Required:** Recursion fundamentals — base case, recursive call, returning values
 - **Required:** Arrays/slices/lists — indexing, slicing, length
 - **Required:** Function calls and the call stack — what happens when a function calls itself
-- **Helpful:** Understanding of `O(n)` and `O(n log n)` — see [`06-algorithmic-complexity/`](../../06-algorithmic-complexity/)
+- **Helpful:** Understanding of `O(n)` and `O(n log n)` — see [`06-algorithmic-complexity/`](../../06-algorithmic-complexity/01-time-vs-space-complexity/junior.md)
 - **Helpful:** Familiarity with **Bubble Sort** or **Insertion Sort** to appreciate the speedup
 - **Helpful:** Understanding of "divide and conquer" as a problem-solving strategy
 

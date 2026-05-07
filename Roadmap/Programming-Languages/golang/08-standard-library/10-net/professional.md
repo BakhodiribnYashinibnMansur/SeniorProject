@@ -228,7 +228,7 @@ The `*tls.Conn` inherits its deadline semantics from the underlying
 `net.Conn` — `SetReadDeadline` covers the whole TLS state machine
 including any internal handshake messages.
 
-For TLS specifics see [`../13-crypto/`](../13-crypto/).
+For TLS specifics see [`../13-crypto/`](../13-crypto/junior.md).
 
 ## 6. Zero-downtime restart with fd handover
 
@@ -463,6 +463,6 @@ incident, not during testing.
 ## 15. Cross-references
 
 - [`../01-io-and-file-handling/professional.md`](../01-io-and-file-handling/professional.md) — cancellable I/O patterns, instrumented readers/writers.
-- [`../05-os/`](../05-os/) — `signal.NotifyContext`, fd inheritance, process management.
-- [`../11-net-http-internals/`](../11-net-http-internals/) — how `net/http.Server` implements every pattern in this file.
-- [`../13-crypto/`](../13-crypto/) — `tls.Conn` integration.
+- [`../05-os/`](../05-os/junior.md) — `signal.NotifyContext`, fd inheritance, process management.
+- [`../11-net-http-internals/`](../11-net-http-internals/junior.md) — how `net/http.Server` implements every pattern in this file.
+- [`../13-crypto/`](../13-crypto/junior.md) — `tls.Conn` integration.

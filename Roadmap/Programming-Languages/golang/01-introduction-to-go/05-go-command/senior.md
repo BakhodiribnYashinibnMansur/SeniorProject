@@ -4,20 +4,20 @@
 
 1. [Introduction](#introduction)
 2. [Core Concepts](#core-concepts)
-3. [Pros & Cons](#pros--cons)
+3. [Pros & Cons](#pros-cons)
 4. [Use Cases](#use-cases)
 5. [Code Examples](#code-examples)
 6. [Coding Patterns](#coding-patterns)
 7. [Clean Code](#clean-code)
 8. [Best Practices](#best-practices)
-9. [Product Use / Feature](#product-use--feature)
+9. [Product Use / Feature](#product-use-feature)
 10. [Error Handling](#error-handling)
 11. [Security Considerations](#security-considerations)
 12. [Performance Optimization](#performance-optimization)
-13. [Metrics & Analytics](#metrics--analytics)
+13. Metrics & Analytics
 14. [Debugging Guide](#debugging-guide)
-15. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
-16. [Postmortems & System Failures](#postmortems--system-failures)
+15. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
+16. [Postmortems & System Failures](#postmortems-system-failures)
 17. [Common Mistakes](#common-mistakes)
 18. [Tricky Points](#tricky-points)
 19. [Comparison with Other Languages](#comparison-with-other-languages)
@@ -28,7 +28,7 @@
 24. [What You Can Build](#what-you-can-build)
 25. [Further Reading](#further-reading)
 26. [Related Topics](#related-topics)
-27. [Diagrams & Visual Aids](#diagrams--visual-aids)
+27. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

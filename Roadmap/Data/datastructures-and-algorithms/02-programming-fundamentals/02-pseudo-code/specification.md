@@ -10,13 +10,13 @@
 ## Table of Contents
 
 1. [Reference](#1-reference)
-2. [Formal Definition / Grammar](#2-formal-definition--grammar)
-3. [Core Rules & Constraints](#3-core-rules--constraints)
-4. [Type / Category Rules](#4-type--category-rules)
+2. [Formal Definition / Grammar](#2-formal-definition-grammar)
+3. [Core Rules & Constraints](#3-core-rules-constraints)
+4. [Type / Category Rules](#4-type-category-rules)
 5. [Behavioral Specification](#5-behavioral-specification)
 6. [Defined vs Undefined Behavior](#6-defined-vs-undefined-behavior)
 7. [Edge Cases](#7-edge-cases)
-8. [Version / Evolution History](#8-version--evolution-history)
+8. [Version / Evolution History](#8-version-evolution-history)
 9. [Implementation Notes](#9-implementation-notes)
 10. [Compliance Checklist](#10-compliance-checklist)
 11. [Official Examples](#11-official-examples)

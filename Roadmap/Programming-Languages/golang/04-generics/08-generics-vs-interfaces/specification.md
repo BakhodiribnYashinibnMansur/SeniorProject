@@ -2,7 +2,7 @@
 
 ## Table of Contents
 1. [Source of truth](#source-of-truth)
-2. [Type sets — the unifying idea](#type-sets--the-unifying-idea)
+2. [Type sets — the unifying idea](#type-sets-the-unifying-idea)
 3. [Interfaces as type sets](#interfaces-as-type-sets)
 4. [Type parameters as named members of a type set](#type-parameters-as-named-members-of-a-type-set)
 5. [Constraints are interfaces](#constraints-are-interfaces)

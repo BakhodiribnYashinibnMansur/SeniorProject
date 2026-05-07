@@ -1,6 +1,6 @@
 # Deadlines and Cancellations — Interview
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 A graduated set of interview questions on Go's `context` package, with model answers. Junior questions test mechanics; staff questions test taste.
 

@@ -8,7 +8,7 @@
 
 1. [The "is-a" test](#the-is-a-test)
 2. [Liskov Substitution Principle](#liskov-substitution-principle)
-3. [Composition over inheritance — but not always](#composition-over-inheritance--but-not-always)
+3. [Composition over inheritance — but not always](#composition-over-inheritance-but-not-always)
 4. [The fragile base class problem](#the-fragile-base-class-problem)
 5. [Form Template Method vs. Strategy](#form-template-method-vs-strategy)
 6. [Extract Interface vs. Extract Superclass](#extract-interface-vs-extract-superclass)

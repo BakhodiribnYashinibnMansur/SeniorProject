@@ -8,23 +8,23 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
-11. [Product Use / Feature](#product-use--feature)
+11. [Product Use / Feature](#product-use-feature)
 12. [Error Handling](#error-handling)
 13. [Security Considerations](#security-considerations)
 14. [Performance Tips](#performance-tips)
 15. [Best Practices](#best-practices)
-16. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+16. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 17. [Common Mistakes](#common-mistakes)
 18. [Tricky Points](#tricky-points)
 19. [Test](#test)
 20. [Tricky Questions](#tricky-questions)
 21. [Cheat Sheet](#cheat-sheet)
 22. [Summary](#summary)
-23. [Diagrams & Visual Aids](#diagrams--visual-aids)
+23. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -858,10 +858,10 @@ flowchart LR
 
 Topics to explore next or that connect to this one:
 
-- **[Data Types](../03-data-types/)** — understanding numeric type ranges and precision
-- **[Type Casting](../05-type-casting/)** — converting between numeric types in expressions
-- **[Arrays](../08-arrays/)** — storing and processing collections of numbers
-- **[Loops](../10-loops/)** — iterating over numbers for calculations
+- **[Data Types](../03-data-types/junior.md)** — understanding numeric type ranges and precision
+- **[Type Casting](../05-type-casting/junior.md)** — converting between numeric types in expressions
+- **[Arrays](../08-arrays/junior.md)** — storing and processing collections of numbers
+- **[Loops](../10-loops/junior.md)** — iterating over numbers for calculations
 
 ---
 

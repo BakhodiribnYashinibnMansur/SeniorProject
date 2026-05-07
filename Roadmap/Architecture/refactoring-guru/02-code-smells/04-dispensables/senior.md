@@ -8,7 +8,7 @@
 
 1. [Architectural Dispensables](#architectural-dispensables)
 2. [Detection tools](#detection-tools)
-3. [The DRY / WET trade-off](#the-dry--wet-trade-off)
+3. [The DRY / WET trade-off](#the-dry-wet-trade-off)
 4. [Code-review heuristics](#code-review-heuristics)
 5. [Removing dead microservices](#removing-dead-microservices)
 6. [Architectural fitness functions](#architectural-fitness-functions)

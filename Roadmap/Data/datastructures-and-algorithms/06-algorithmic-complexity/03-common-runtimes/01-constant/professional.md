@@ -8,7 +8,7 @@
    - [Hash Table Expected O(1) Proof](#hash-table-expected-o1-proof)
    - [Amortized O(1) Proof via Potential Method](#amortized-o1-proof-via-potential-method)
 3. [The Word-RAM Model](#the-word-ram-model)
-4. [Perfect Hashing -- O(1) Worst Case](#perfect-hashing--o1-worst-case)
+4. [Perfect Hashing -- O(1) Worst Case](#perfect-hashing-o1-worst-case)
    - [Static Perfect Hashing](#static-perfect-hashing)
    - [FKS Hashing Scheme](#fks-hashing-scheme)
    - [Cuckoo Hashing](#cuckoo-hashing)

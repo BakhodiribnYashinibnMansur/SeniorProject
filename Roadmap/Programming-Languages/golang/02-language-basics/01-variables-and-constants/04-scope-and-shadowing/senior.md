@@ -18,7 +18,7 @@
 15. [Mentoring Junior Developers](#mentoring-junior-developers)
 16. [Performance Implications](#performance-implications)
 17. [Best Practices at Scale](#best-practices-at-scale)
-18. [Diagrams & Visual Aids](#diagrams--visual-aids)
+18. [Diagrams & Visual Aids](#diagrams-visual-aids)
 19. [Self-Assessment Checklist](#self-assessment-checklist)
 20. [Summary](#summary)
 

@@ -3,11 +3,11 @@
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Compiler Pipeline for a Method Call](#compiler-pipeline-for-a-method-call)
-3. [Devirtualization Pass — `cmd/compile/internal/devirtualize`](#devirtualization-pass--cmdcompileinternaldevirtualize)
+3. [Devirtualization Pass — `cmd/compile/internal/devirtualize`](#devirtualization-pass-cmdcompileinternaldevirtualize)
 4. [PGO Devirtualization (Go 1.21+)](#pgo-devirtualization-go-121)
 5. [Reading PGO Profiles](#reading-pgo-profiles)
 6. [Inliner Internals](#inliner-internals)
-7. [Generics Dispatch — GCShape Stenciling](#generics-dispatch--gcshape-stenciling)
+7. [Generics Dispatch — GCShape Stenciling](#generics-dispatch-gcshape-stenciling)
 8. [Tail-Call Optimization Absence](#tail-call-optimization-absence)
 9. [Itab Allocation and the Hash Map](#itab-allocation-and-the-hash-map)
 10. [Cross-Function Devirtualization Limits](#cross-function-devirtualization-limits)

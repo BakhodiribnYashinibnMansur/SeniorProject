@@ -10,10 +10,10 @@
 2. [JIT devirtualization](#jit-devirtualization)
 3. [Inline caches: monomorphic, bimorphic, megamorphic](#inline-caches-monomorphic-bimorphic-megamorphic)
 4. [Pattern matching at the bytecode level](#pattern-matching-at-the-bytecode-level)
-5. [Sealed types — what the JVM actually checks](#sealed-types--what-the-jvm-actually-checks)
+5. [Sealed types — what the JVM actually checks](#sealed-types-what-the-jvm-actually-checks)
 6. [Switch optimizations: tableswitch vs lookupswitch](#switch-optimizations-tableswitch-vs-lookupswitch)
 7. [Go interfaces and itable cost](#go-interfaces-and-itable-cost)
-8. [Composition vs inheritance — runtime costs](#composition-vs-inheritance--runtime-costs)
+8. [Composition vs inheritance — runtime costs](#composition-vs-inheritance-runtime-costs)
 9. [Profiling polymorphic code](#profiling-polymorphic-code)
 10. [Review questions](#review-questions)
 

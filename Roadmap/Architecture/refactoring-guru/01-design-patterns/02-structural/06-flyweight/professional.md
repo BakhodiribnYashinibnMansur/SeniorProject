@@ -356,6 +356,6 @@ flowchart TD
 
 ---
 
-[← Back to Flyweight folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Flyweight folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Flyweight — Interview Preparation](interview.md)

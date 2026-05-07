@@ -9,8 +9,8 @@
 1. [Formal Definitions](#formal-definitions)
 2. [Correctness Proof of `siftDown`](#correctness-proof-of-siftdown)
 3. [Correctness Proof of Heap Sort](#correctness-proof-of-heap-sort)
-4. [Build-Heap Is Θ(n) — Tight Proof](#build-heap-is-θn--tight-proof)
-5. [Comparison Count: Exact ~2n log₂ n](#comparison-count-exact-2n-log-n)
+4. [Build-Heap Is Θ(n) — Tight Proof](#build-heap-is-n-tight-proof)
+5. Comparison Count: Exact ~2n log₂ n
 6. [Cache Complexity: Why It's Slow in Practice](#cache-complexity-why-its-slow-in-practice)
 7. [Parallel Heap Sort Is Hard](#parallel-heap-sort-is-hard)
 8. [Lower Bound for Comparison Sorting](#lower-bound-for-comparison-sorting)

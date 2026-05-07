@@ -4,17 +4,17 @@
 
 1. [Introduction](#introduction)
 2. [Core Concepts](#core-concepts)
-3. [Pros & Cons](#pros--cons)
+3. [Pros & Cons](#pros-cons)
 4. [Code Examples](#code-examples)
 5. [Coding Patterns](#coding-patterns)
 6. [Performance Optimization](#performance-optimization)
 7. [Debugging Guide](#debugging-guide)
 8. [Best Practices](#best-practices)
-9. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+9. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 10. [Comparison with Other Languages](#comparison-with-other-languages)
 11. [Test](#test)
 12. [Summary](#summary)
-13. [Diagrams & Visual Aids](#diagrams--visual-aids)
+13. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

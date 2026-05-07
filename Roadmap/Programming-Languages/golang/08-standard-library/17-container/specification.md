@@ -268,4 +268,4 @@ for {
 - [`container/list`](https://pkg.go.dev/container/list)
 - [`container/ring`](https://pkg.go.dev/container/ring)
 - Source: `$GOROOT/src/container/{heap,list,ring}/`
-- Cross-link: [`../16-sort-slices-maps/`](../16-sort-slices-maps/)
+- Cross-link: [`../16-sort-slices-maps/`](../16-sort-slices-maps/junior.md)

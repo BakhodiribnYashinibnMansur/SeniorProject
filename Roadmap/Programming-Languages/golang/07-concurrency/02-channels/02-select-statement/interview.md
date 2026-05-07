@@ -6,7 +6,7 @@ This file collects the questions an interviewer typically asks about Go's `selec
 1. [Junior Questions](#junior-questions)
 2. [Middle Questions](#middle-questions)
 3. [Senior Questions](#senior-questions)
-4. [Staff / Architecture Questions](#staff--architecture-questions)
+4. [Staff / Architecture Questions](#staff-architecture-questions)
 5. [Code-Read Questions](#code-read-questions)
 6. [Live-Coding Prompts](#live-coding-prompts)
 

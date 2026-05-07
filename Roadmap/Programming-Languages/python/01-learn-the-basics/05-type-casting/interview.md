@@ -9,7 +9,7 @@
 5. [Coding Challenges](#coding-challenges)
 6. [System Design Questions](#system-design-questions)
 7. [Quick-Fire Round](#quick-fire-round)
-8. [Diagrams & Visual Aids](#diagrams--visual-aids)
+8. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

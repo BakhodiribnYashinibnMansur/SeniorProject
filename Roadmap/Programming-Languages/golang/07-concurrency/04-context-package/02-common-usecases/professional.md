@@ -1,6 +1,6 @@
 # Common Usecases — Professional
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 This page is about production patterns: complete designs you would ship in a SaaS API, a payment processor, a file upload service, a stream consumer, or a scheduled job runner. Less narration than earlier files, more code, more attention to error paths.
 
@@ -512,4 +512,4 @@ This is the shape of a production Go service. Every long-lived component takes t
 
 Specification dives into the formal contract for value lookup, propagation rules, and the documented anti-patterns. After that, interview tests your taste; tasks build muscle memory; find-bug stress-tests your eye for the bugs that actually slip into production.
 
-[← Back to index](index.md)
+[← Back to index](junior.md)

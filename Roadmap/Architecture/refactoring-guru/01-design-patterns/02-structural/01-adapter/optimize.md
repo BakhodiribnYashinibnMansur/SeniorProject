@@ -545,6 +545,6 @@ public class PaymentRouter {
 
 ---
 
-[← Back to Adapter folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Adapter folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **You've completed the Adapter pattern suite.** Continue to: [Bridge](../02-bridge/junior.md) · [Composite](../03-composite/junior.md) · [Decorator](../04-decorator/junior.md)

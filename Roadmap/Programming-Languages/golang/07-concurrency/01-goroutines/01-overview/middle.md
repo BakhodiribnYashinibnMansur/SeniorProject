@@ -8,7 +8,7 @@
 5. [Cancellation with `context.Context`](#cancellation-with-contextcontext)
 6. [Goroutine Leaks: Detection and Prevention](#goroutine-leaks-detection-and-prevention)
 7. [Worker Pools](#worker-pools)
-8. [Fan-Out / Fan-In](#fan-out--fan-in)
+8. [Fan-Out / Fan-In](#fan-out-fan-in)
 9. [Pipelines](#pipelines)
 10. [`errgroup` and Structured Coordination](#errgroup-and-structured-coordination)
 11. [Goroutine-Safe APIs](#goroutine-safe-apis)

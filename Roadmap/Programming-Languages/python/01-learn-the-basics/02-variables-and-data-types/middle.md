@@ -4,19 +4,19 @@
 
 1. [Introduction](#introduction)
 2. [Core Concepts](#core-concepts)
-3. [Evolution & Historical Context](#evolution--historical-context)
-4. [Pros & Cons](#pros--cons)
+3. [Evolution & Historical Context](#evolution-historical-context)
+4. [Pros & Cons](#pros-cons)
 5. [Alternative Approaches](#alternative-approaches)
 6. [Use Cases](#use-cases)
 7. [Code Examples](#code-examples)
 8. [Clean Code](#clean-code)
-9. [Product Use / Feature](#product-use--feature)
+9. [Product Use / Feature](#product-use-feature)
 10. [Error Handling](#error-handling)
 11. [Security Considerations](#security-considerations)
 12. [Performance Optimization](#performance-optimization)
 13. [Debugging Guide](#debugging-guide)
 14. [Best Practices](#best-practices)
-15. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+15. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 16. [Common Mistakes](#common-mistakes)
 17. [Tricky Points](#tricky-points)
 18. [Comparison with Other Languages](#comparison-with-other-languages)
@@ -27,7 +27,7 @@
 23. [What You Can Build](#what-you-can-build)
 24. [Further Reading](#further-reading)
 25. [Related Topics](#related-topics)
-26. [Diagrams & Visual Aids](#diagrams--visual-aids)
+26. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -1036,10 +1036,10 @@ flowchart LR
 
 ## Related Topics
 
-- **[Basic Syntax](../01-basic-syntax/)** — foundational syntax and naming conventions
-- **[Type Casting](../05-type-casting/)** — converting between types safely
-- **[Functions](../07-functions/)** — closures, scope, and type-hinted signatures
-- **[Dictionaries](../11-dictionaries/)** — understanding hash, `__eq__`, and key types
+- **[Basic Syntax](../01-basic-syntax/junior.md)** — foundational syntax and naming conventions
+- **[Type Casting](../05-type-casting/junior.md)** — converting between types safely
+- **[Functions](../07-functions/junior.md)** — closures, scope, and type-hinted signatures
+- **[Dictionaries](../11-dictionaries/junior.md)** — understanding hash, `__eq__`, and key types
 
 ---
 

@@ -4,7 +4,7 @@
 
 1. [Formal Definition](#formal-definition)
 2. [Correctness Proof](#correctness-proof)
-3. [Expected Comparisons — Probabilistic Analysis](#expected-comparisons--probabilistic-analysis)
+3. [Expected Comparisons — Probabilistic Analysis](#expected-comparisons-probabilistic-analysis)
 4. [Lower Bound for Unordered Search](#lower-bound-for-unordered-search)
 5. [Cache-Aware Complexity (External Memory Model)](#cache-aware-complexity-external-memory-model)
 6. [Parallel Complexity (PRAM)](#parallel-complexity-pram)

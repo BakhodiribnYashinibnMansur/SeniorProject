@@ -2,18 +2,18 @@
 
 ## Table of Contents
 
-- [Exercise 1: Fibonacci — Recursion to Memoization](#exercise-1-fibonacci--recursion-to-memoization)
-- [Exercise 2: Fibonacci — Memoization to Iterative](#exercise-2-fibonacci--memoization-to-iterative)
-- [Exercise 3: Climbing Stairs — Exponential to Linear](#exercise-3-climbing-stairs--exponential-to-linear)
-- [Exercise 4: Subset Sum — Brute Force to DP](#exercise-4-subset-sum--brute-force-to-dp)
-- [Exercise 5: Subset Sum — DP to Meet-in-the-Middle](#exercise-5-subset-sum--dp-to-meet-in-the-middle)
-- [Exercise 6: Coin Change — Exponential to DP](#exercise-6-coin-change--exponential-to-dp)
-- [Exercise 7: Word Break — Recursion to DP](#exercise-7-word-break--recursion-to-dp)
-- [Exercise 8: Longest Common Subsequence — Exponential to DP](#exercise-8-longest-common-subsequence--exponential-to-dp)
-- [Exercise 9: 0/1 Knapsack — Brute Force to DP](#exercise-9-01-knapsack--brute-force-to-dp)
-- [Exercise 10: Edit Distance — Exponential to DP](#exercise-10-edit-distance--exponential-to-dp)
+- [Exercise 1: Fibonacci — Recursion to Memoization](#exercise-1-fibonacci-recursion-to-memoization)
+- [Exercise 2: Fibonacci — Memoization to Iterative](#exercise-2-fibonacci-memoization-to-iterative)
+- [Exercise 3: Climbing Stairs — Exponential to Linear](#exercise-3-climbing-stairs-exponential-to-linear)
+- [Exercise 4: Subset Sum — Brute Force to DP](#exercise-4-subset-sum-brute-force-to-dp)
+- [Exercise 5: Subset Sum — DP to Meet-in-the-Middle](#exercise-5-subset-sum-dp-to-meet-in-the-middle)
+- [Exercise 6: Coin Change — Exponential to DP](#exercise-6-coin-change-exponential-to-dp)
+- [Exercise 7: Word Break — Recursion to DP](#exercise-7-word-break-recursion-to-dp)
+- [Exercise 8: Longest Common Subsequence — Exponential to DP](#exercise-8-longest-common-subsequence-exponential-to-dp)
+- [Exercise 9: 0/1 Knapsack — Brute Force to DP](#exercise-9-01-knapsack-brute-force-to-dp)
+- [Exercise 10: Edit Distance — Exponential to DP](#exercise-10-edit-distance-exponential-to-dp)
 - [Exercise 11: Matrix Chain Multiplication](#exercise-11-matrix-chain-multiplication)
-- [Exercise 12: Traveling Salesman — Factorial to Bitmask DP](#exercise-12-traveling-salesman--factorial-to-bitmask-dp)
+- [Exercise 12: Traveling Salesman — Factorial to Bitmask DP](#exercise-12-traveling-salesman-factorial-to-bitmask-dp)
 
 ---
 

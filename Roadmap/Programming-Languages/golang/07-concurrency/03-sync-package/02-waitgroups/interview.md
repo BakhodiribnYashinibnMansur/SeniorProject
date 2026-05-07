@@ -9,7 +9,7 @@ permalink: /roadmap/programming-languages/golang/07-concurrency/03-sync-package/
 
 # WaitGroups — Interview
 
-[← Back to WaitGroups](./)
+← Back to WaitGroups
 
 A graduated set of WaitGroup interview questions, junior to staff. Each comes with a model answer and follow-ups.
 

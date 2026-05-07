@@ -314,9 +314,9 @@ Three things to note:
    basename clobber each other — so don't put `pages/home.html` and
    `partials/home.html` in the same set.
 
-For more on `embed`, see [`../09-go-embed/`](../09-go-embed/). For
+For more on `embed`, see [`../09-go-embed/`](../09-go-embed/junior.md). For
 the `io/fs` interface itself,
-[`../14-io-fs/`](../14-io-fs/).
+[`../14-io-fs/`](../14-io-fs/junior.md).
 
 ## 8. Hot reload during development
 

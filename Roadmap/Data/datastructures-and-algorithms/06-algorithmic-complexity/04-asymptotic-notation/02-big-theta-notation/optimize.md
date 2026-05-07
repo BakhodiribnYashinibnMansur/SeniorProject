@@ -2,18 +2,18 @@
 
 ## Table of Contents
 
-1. [Exercise 1: Reduce Theta(n^2) to Theta(n)](#exercise-1)
-2. [Exercise 2: Reduce Theta(n^2) to Theta(n log n)](#exercise-2)
-3. [Exercise 3: Reduce Theta(n^3) to Theta(n^2)](#exercise-3)
-4. [Exercise 4: Reduce Theta(n) to Theta(log n)](#exercise-4)
-5. [Exercise 5: Redundant Recomputation](#exercise-5)
-6. [Exercise 6: Optimize String Building](#exercise-6)
-7. [Exercise 7: Matrix Search Optimization](#exercise-7)
-8. [Exercise 8: Reduce Theta(2^n) to Theta(n)](#exercise-8)
-9. [Exercise 9: Hash Map vs Nested Loop](#exercise-9)
-10. [Exercise 10: Sliding Window](#exercise-10)
-11. [Exercise 11: Prefix Sum Optimization](#exercise-11)
-12. [Exercise 12: Sorting-Based Optimization](#exercise-12)
+1. Exercise 1: Reduce Theta(n^2) to Theta(n)
+2. Exercise 2: Reduce Theta(n^2) to Theta(n log n)
+3. Exercise 3: Reduce Theta(n^3) to Theta(n^2)
+4. Exercise 4: Reduce Theta(n) to Theta(log n)
+5. Exercise 5: Redundant Recomputation
+6. Exercise 6: Optimize String Building
+7. Exercise 7: Matrix Search Optimization
+8. Exercise 8: Reduce Theta(2^n) to Theta(n)
+9. Exercise 9: Hash Map vs Nested Loop
+10. Exercise 10: Sliding Window
+11. Exercise 11: Prefix Sum Optimization
+12. Exercise 12: Sorting-Based Optimization
 
 ---
 

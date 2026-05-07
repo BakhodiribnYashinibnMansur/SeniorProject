@@ -296,6 +296,6 @@ large alternation can produce thousands.
   [senior.md](senior.md), [professional.md](professional.md).
 - For drills: [find-bug.md](find-bug.md), [tasks.md](tasks.md).
 - For tuning: [optimize.md](optimize.md).
-- Adjacent leaves: [`../01-io-and-file-handling/`](../01-io-and-file-handling/index.md),
-  [`../02-strings-and-bytes/`](../02-strings-and-bytes/),
-  [`../14-unicode/`](../14-unicode/).
+- Adjacent leaves: [`../01-io-and-file-handling/`](../01-io-and-file-handling/junior.md),
+  `../02-strings-and-bytes/`,
+  `../14-unicode/`.

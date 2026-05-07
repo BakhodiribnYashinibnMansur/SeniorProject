@@ -388,5 +388,5 @@ Verify:
 
 - [find-bug.md](find-bug.md) — broken implementations to diagnose.
 - [optimize.md](optimize.md) — push the constant factor lower.
-- [`../16-sort-slices-maps/`](../16-sort-slices-maps/) — the modern
+- [`../16-sort-slices-maps/`](../16-sort-slices-maps/junior.md) — the modern
   packages your generic wrappers should compose with.

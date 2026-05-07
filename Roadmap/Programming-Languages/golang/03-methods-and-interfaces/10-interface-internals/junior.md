@@ -7,7 +7,7 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Common Patterns](#common-patterns)
@@ -16,14 +16,14 @@
 13. [Comparing Interfaces](#comparing-interfaces)
 14. [Performance Tips](#performance-tips)
 15. [Best Practices](#best-practices)
-16. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+16. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 17. [Common Misconceptions](#common-misconceptions)
 18. [Test](#test)
 19. [Cheat Sheet](#cheat-sheet)
 20. [Self-Assessment Checklist](#self-assessment-checklist)
 21. [Summary](#summary)
 22. [Further Reading](#further-reading)
-23. [Diagrams & Visual Aids](#diagrams--visual-aids)
+23. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

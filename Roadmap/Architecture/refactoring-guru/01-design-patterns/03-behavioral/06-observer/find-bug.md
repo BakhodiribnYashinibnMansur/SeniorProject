@@ -19,7 +19,7 @@ Each section presents an Observer that *looks* fine but is broken. Find the bug 
 9. [Bug 9: Order dependency between observers](#bug-9-order-dependency-between-observers)
 10. [Bug 10: Subscribe inside a constructor](#bug-10-subscribe-inside-a-constructor)
 11. [Bug 11: Missing per-handler exception isolation in async](#bug-11-missing-per-handler-exception-isolation-in-async)
-12. [Bug 12: SSE / WebSocket leak on disconnect](#bug-12-sse--websocket-leak-on-disconnect)
+12. [Bug 12: SSE / WebSocket leak on disconnect](#bug-12-sse-websocket-leak-on-disconnect)
 13. [Practice Tips](#practice-tips)
 
 ---

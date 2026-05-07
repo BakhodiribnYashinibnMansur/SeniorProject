@@ -11,7 +11,7 @@
 3. [Divergent Change](#divergent-change)
 4. [Shotgun Surgery](#shotgun-surgery)
 5. [Parallel Inheritance Hierarchies](#parallel-inheritance-hierarchies)
-6. [Divergent Change vs Shotgun Surgery — opposites](#divergent-change-vs-shotgun-surgery--opposites)
+6. [Divergent Change vs Shotgun Surgery — opposites](#divergent-change-vs-shotgun-surgery-opposites)
 7. [Common cures (cross-links)](#common-cures-cross-links)
 8. [Diagrams](#diagrams)
 9. [Mini Glossary](#mini-glossary)

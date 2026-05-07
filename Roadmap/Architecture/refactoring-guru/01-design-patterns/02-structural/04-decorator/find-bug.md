@@ -8,7 +8,7 @@ Each section presents a Decorator that *looks* fine but is broken. Find the bug 
 
 ## Table of Contents
 
-1. [Bug 1: Wrong order — caching above logging hides hits](#bug-1-wrong-order--caching-above-logging-hides-hits)
+1. [Bug 1: Wrong order — caching above logging hides hits](#bug-1-wrong-order-caching-above-logging-hides-hits)
 2. [Bug 2: Retry without idempotency key](#bug-2-retry-without-idempotency-key)
 3. [Bug 3: Decorator throws, breaks the call](#bug-3-decorator-throws-breaks-the-call)
 4. [Bug 4: Stateful decorator without thread-safety](#bug-4-stateful-decorator-without-thread-safety)
@@ -487,6 +487,6 @@ async def call(self, req):
 
 ---
 
-[← Back to Decorator folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Decorator folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Decorator — Optimize](optimize.md)

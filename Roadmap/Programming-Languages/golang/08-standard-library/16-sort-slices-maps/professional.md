@@ -34,7 +34,7 @@ The cheapest sort is the one you don't run. Three strategies:
    sorting the entire slice and slicing. Stdlib has no partial sort;
    `container/heap` is the workaround.
 
-Cross-link: [`../17-container/`](../17-container/) covers `heap`,
+Cross-link: [`../17-container/`](../17-container/junior.md) covers `heap`,
 `list`, and `ring`.
 
 ## 3. Heap-based top-K
@@ -291,7 +291,7 @@ func deterministicJSON(v map[string]any) ([]byte, error) {
 
 For nested maps, recurse. Struct fields are already deterministic
 under `encoding/json`. Cross-link:
-[`../04-encoding-json/`](../04-encoding-json/).
+[`../04-encoding-json/`](../04-encoding-json/junior.md).
 
 ## 15. Operational: panicking comparators
 

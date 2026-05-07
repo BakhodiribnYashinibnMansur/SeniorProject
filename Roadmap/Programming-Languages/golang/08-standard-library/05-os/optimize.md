@@ -392,7 +392,7 @@ millions of `clone`s, you're forking too much. If you see seconds in
 - [`01-io-and-file-handling/optimize.md`](../01-io-and-file-handling/optimize.md)
   for file-related optimizations: `bufio` sizes, `sendfile`,
   `copy_file_range`.
-- [`03-time/optimize.md`](../03-time/) for context cancellation
+- [`03-time/optimize.md`](../03-time/junior.md) for context cancellation
   cost in detail.
 - [senior.md](senior.md) for the correctness flip side of fast
   exec: `WaitDelay`, `Pdeathsig`, process groups.

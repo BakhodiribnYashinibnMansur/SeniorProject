@@ -6,7 +6,7 @@
 3. [Implementing `io.WriterTo` and `io.ReaderFrom`](#implementing-iowriterto-and-ioreaderfrom)
 4. [`io.Copy` Source Walkthrough](#iocopy-source-walkthrough)
 5. [itab Caching and Interface Conversion Cost](#itab-caching-and-interface-conversion-cost)
-6. [Optional Interfaces — the "Type Assertion Probe" Pattern](#optional-interfaces--the-type-assertion-probe-pattern)
+6. [Optional Interfaces — the "Type Assertion Probe" Pattern](#optional-interfaces-the-type-assertion-probe-pattern)
 7. [`iter.Seq` and `iter.Seq2` Internals (Go 1.23+)](#iterseq-and-iterseq2-internals-go-123)
 8. [`driver.Valuer` and `sql.Scanner`](#drivervaluer-and-sqlscanner)
 9. [Contract Enforcement Tools](#contract-enforcement-tools)

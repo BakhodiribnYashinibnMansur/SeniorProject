@@ -481,6 +481,6 @@ public class TwoWayAdapter implements Host, Plugin {
 
 ---
 
-[← Back to Adapter folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Adapter folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Adapter — Optimize](optimize.md)

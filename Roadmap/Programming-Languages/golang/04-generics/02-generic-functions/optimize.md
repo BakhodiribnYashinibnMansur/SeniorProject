@@ -385,4 +385,4 @@ Specialize when:
 
 Generic functions in Go usually match hand-specialized performance and beat `interface{}`-based code by a healthy margin. The handful of cases where they hurt — hot inner loops, missed inlining, or generics over interfaces — are easy to spot in a profile and easy to fix by specializing the hot path. Don't pre-emptively specialize; let profilers tell you when to.
 
-[← find-bug.md](./find-bug.md) · [↑ index.md](./index.md)
+[← find-bug.md](./find-bug.md) · [↑ index.md](./junior.md)

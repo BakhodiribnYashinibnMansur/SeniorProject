@@ -233,4 +233,4 @@ If you finish the above, try these:
 - [middle.md](middle.md) for `signal.NotifyContext` and `Cmd.Cancel`.
 - [senior.md](senior.md) for `Setpgid`, deadlock avoidance, reaping.
 - [professional.md](professional.md) for HUP-reload and PID 1.
-- [`02-flag`](../02-flag/) for parsing the argv each task takes.
+- [`02-flag`](../02-flag/junior.md) for parsing the argv each task takes.

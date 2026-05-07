@@ -8,9 +8,9 @@ Each task includes a brief and a reference solution. Try first; check after.
 
 ## Table of Contents
 
-1. [Task 1: Shape area + perimeter](#task-1-shape-area--perimeter)
+1. [Task 1: Shape area + perimeter](#task-1-shape-area-perimeter)
 2. [Task 2: Expression evaluator](#task-2-expression-evaluator)
-3. [Task 3: File system size + count](#task-3-file-system-size--count)
+3. [Task 3: File system size + count](#task-3-file-system-size-count)
 4. [Task 4: AST pretty printer](#task-4-ast-pretty-printer)
 5. [Task 5: Constant folding](#task-5-constant-folding)
 6. [Task 6: HTML sanitizer](#task-6-html-sanitizer)

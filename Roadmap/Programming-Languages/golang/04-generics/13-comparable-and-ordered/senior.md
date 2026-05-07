@@ -3,8 +3,8 @@
 ## Table of Contents
 1. [Why `cmp.Ordered` exists](#why-cmpordered-exists)
 2. [The exact definition](#the-exact-definition)
-3. [Why `~int` and friends — domain types matter](#why-int-and-friends--domain-types-matter)
-4. [Floating-point semantics — NaN and the strict-weak-order trap](#floating-point-semantics--nan-and-the-strict-weak-order-trap)
+3. [Why `~int` and friends — domain types matter](#why-int-and-friends-domain-types-matter)
+4. [Floating-point semantics — NaN and the strict-weak-order trap](#floating-point-semantics-nan-and-the-strict-weak-order-trap)
 5. [`cmp.Compare` vs `cmp.Less` vs the operators](#cmpcompare-vs-cmpless-vs-the-operators)
 6. [User-defined types satisfying `Ordered`](#user-defined-types-satisfying-ordered)
 7. [Building generic ordered data structures](#building-generic-ordered-data-structures)

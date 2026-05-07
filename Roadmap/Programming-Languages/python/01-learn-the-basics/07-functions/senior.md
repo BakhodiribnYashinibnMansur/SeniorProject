@@ -12,14 +12,14 @@
 8. [Security Hardening](#security-hardening)
 9. [Testing Strategies](#testing-strategies)
 10. [Performance Optimization](#performance-optimization)
-11. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+11. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 12. [Tricky Points](#tricky-points)
 13. [Test](#test)
 14. [Tricky Questions](#tricky-questions)
 15. [Cheat Sheet](#cheat-sheet)
 16. [Summary](#summary)
 17. [Further Reading](#further-reading)
-18. [Diagrams & Visual Aids](#diagrams--visual-aids)
+18. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

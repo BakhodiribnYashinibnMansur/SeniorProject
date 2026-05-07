@@ -11,13 +11,13 @@
 2. [When to Use Flyweight](#when-to-use-flyweight)
 3. [When NOT to Use Flyweight](#when-not-to-use-flyweight)
 4. [Real-World Cases](#real-world-cases)
-5. [Code Examples — Production-Grade](#code-examples--production-grade)
+5. [Code Examples — Production-Grade](#code-examples-production-grade)
 6. [Bounding the Cache](#bounding-the-cache)
 7. [Weak References and Cleanup](#weak-references-and-cleanup)
 8. [Trade-offs](#trade-offs)
 9. [Alternatives Comparison](#alternatives-comparison)
 10. [Refactoring to Flyweight](#refactoring-to-flyweight)
-11. [Pros & Cons (Deeper)](#pros--cons-deeper)
+11. [Pros & Cons (Deeper)](#pros-cons-deeper)
 12. [Edge Cases](#edge-cases)
 13. [Tricky Points](#tricky-points)
 14. [Best Practices](#best-practices)
@@ -475,6 +475,6 @@ flowchart TD
 
 ---
 
-[← Back to Flyweight folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Flyweight folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Flyweight — Senior Level](senior.md)

@@ -8,7 +8,7 @@
 4. [Professional Level Questions](#professional-level-questions)
 5. [Coding Challenges](#coding-challenges)
 6. [System Design Questions](#system-design-questions)
-7. [Behavioral / Scenario Questions](#behavioral--scenario-questions)
+7. [Behavioral / Scenario Questions](#behavioral-scenario-questions)
 
 ---
 

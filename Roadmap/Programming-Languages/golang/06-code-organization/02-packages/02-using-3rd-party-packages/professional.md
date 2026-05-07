@@ -9,7 +9,7 @@
 6. [The Module Cache and Concurrency](#the-module-cache-and-concurrency)
 7. [Dependency Resolution at Scale](#dependency-resolution-at-scale)
 8. [Running a Private Module Proxy](#running-a-private-module-proxy)
-9. [Operating GOPRIVATE / GONOSUMCHECK / GOSUMDB](#operating-goprivate--gonosumcheck--gosumdb)
+9. [Operating GOPRIVATE / GONOSUMCHECK / GOSUMDB](#operating-goprivate-gonosumcheck-gosumdb)
 10. [SBOM Generation and Compliance](#sbom-generation-and-compliance)
 11. [Vulnerability Scanning Integration](#vulnerability-scanning-integration)
 12. [License Compliance](#license-compliance)

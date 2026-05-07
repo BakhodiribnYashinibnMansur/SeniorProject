@@ -6,7 +6,7 @@
 2. [Control Flow Graph Analysis](#control-flow-graph-analysis)
 3. [Loop Invariants and Termination](#loop-invariants-and-termination)
 4. [Halting Problem](#halting-problem)
-5. [Branch Prediction and CPU Pipeline](#branch-prediction)
+5. Branch Prediction and CPU Pipeline
 6. [Summary](#summary)
 
 ---

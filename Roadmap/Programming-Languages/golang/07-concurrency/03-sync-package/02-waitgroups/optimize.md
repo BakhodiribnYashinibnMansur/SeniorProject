@@ -9,7 +9,7 @@ permalink: /roadmap/programming-languages/golang/07-concurrency/03-sync-package/
 
 # WaitGroups — Optimize
 
-[← Back to WaitGroups](./)
+← Back to WaitGroups
 
 The WaitGroup is cheap, but using it in the wrong place is a common source of inefficiency and complexity. This page collects refactors: cases where the WaitGroup should be replaced with something else.
 

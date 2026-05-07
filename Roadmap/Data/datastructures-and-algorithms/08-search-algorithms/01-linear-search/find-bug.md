@@ -4,18 +4,18 @@
 
 ## Table of Contents
 
-1. [Bug 1 — Off-by-One Loop Bound](#bug-1--off-by-one-loop-bound)
-2. [Bug 2 — Returning bool Instead of Index](#bug-2--returning-bool-instead-of-index)
-3. [Bug 3 — Missing Not-Found Case](#bug-3--missing-not-found-case)
-4. [Bug 4 — NaN Silent Failure](#bug-4--nan-silent-failure)
-5. [Bug 5 — Mutation During Iteration](#bug-5--mutation-during-iteration)
-6. [Bug 6 — Recursive Stack Overflow](#bug-6--recursive-stack-overflow)
-7. [Bug 7 — Parallel Race Condition](#bug-7--parallel-race-condition)
-8. [Bug 8 — Comparator Symmetry Violation](#bug-8--comparator-symmetry-violation)
-9. [Bug 9 — Returns Last Instead of First](#bug-9--returns-last-instead-of-first)
-10. [Bug 10 — Case-Sensitive String Search](#bug-10--case-sensitive-string-search)
-11. [Bug 11 — Integer Overflow in Counter](#bug-11--integer-overflow-in-counter)
-12. [Bug 12 — Generic Type Bounds](#bug-12--generic-type-bounds)
+1. [Bug 1 — Off-by-One Loop Bound](#bug-1-off-by-one-loop-bound)
+2. [Bug 2 — Returning bool Instead of Index](#bug-2-returning-bool-instead-of-index)
+3. [Bug 3 — Missing Not-Found Case](#bug-3-missing-not-found-case)
+4. [Bug 4 — NaN Silent Failure](#bug-4-nan-silent-failure)
+5. [Bug 5 — Mutation During Iteration](#bug-5-mutation-during-iteration)
+6. [Bug 6 — Recursive Stack Overflow](#bug-6-recursive-stack-overflow)
+7. [Bug 7 — Parallel Race Condition](#bug-7-parallel-race-condition)
+8. [Bug 8 — Comparator Symmetry Violation](#bug-8-comparator-symmetry-violation)
+9. [Bug 9 — Returns Last Instead of First](#bug-9-returns-last-instead-of-first)
+10. [Bug 10 — Case-Sensitive String Search](#bug-10-case-sensitive-string-search)
+11. [Bug 11 — Integer Overflow in Counter](#bug-11-integer-overflow-in-counter)
+12. [Bug 12 — Generic Type Bounds](#bug-12-generic-type-bounds)
 
 ---
 

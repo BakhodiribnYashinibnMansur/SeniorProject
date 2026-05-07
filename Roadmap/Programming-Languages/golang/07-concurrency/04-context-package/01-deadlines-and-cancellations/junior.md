@@ -1,6 +1,6 @@
 # Deadlines and Cancellations — Junior
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 ## Why Context Exists
 

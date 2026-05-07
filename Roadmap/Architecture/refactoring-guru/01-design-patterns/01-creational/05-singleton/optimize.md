@@ -680,7 +680,7 @@ This is the most expensive Singleton anti-pattern in real production systems —
 
 ---
 
-[← Back to Singleton folder](.) · [↑ Creational Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Singleton folder · [↑ Creational Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Previous:** [Singleton — Find-Bug](find-bug.md)
 

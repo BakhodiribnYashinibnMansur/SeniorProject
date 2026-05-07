@@ -8,7 +8,7 @@
 5. [Errors in Pipelines](#errors-in-pipelines)
 6. [Done-Channel Pattern (Pre-context Era)](#done-channel-pattern-pre-context-era)
 7. [Bounded vs Unbounded Stages](#bounded-vs-unbounded-stages)
-8. [Splitting and Joining (Fan-Out + Fan-In)](#splitting-and-joining-fan-out--fan-in)
+8. [Splitting and Joining (Fan-Out + Fan-In)](#splitting-and-joining-fan-out-fan-in)
 9. [Real-World Patterns](#real-world-patterns)
 10. [Idiomatic Code](#idiomatic-code)
 11. [Anti-Patterns](#anti-patterns)

@@ -10,7 +10,7 @@
 7. [Method sets of type parameters](#method-sets-of-type-parameters)
 8. [Type inference rules](#type-inference-rules)
 9. [Composite literal restrictions](#composite-literal-restrictions)
-10. [Why each pitfall happens — quick map](#why-each-pitfall-happens--quick-map)
+10. [Why each pitfall happens — quick map](#why-each-pitfall-happens-quick-map)
 11. [Summary](#summary)
 
 ---

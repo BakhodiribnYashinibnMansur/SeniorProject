@@ -7,13 +7,13 @@
 3. [Architecture Patterns](#architecture-patterns)
 4. [Performance Optimization](#performance-optimization)
 5. [Best Practices](#best-practices)
-6. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
-7. [Postmortems & System Failures](#postmortems--system-failures)
+6. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
+7. [Postmortems & System Failures](#postmortems-system-failures)
 8. [Comparison with Other Languages](#comparison-with-other-languages)
 9. [Test](#test)
 10. [Summary](#summary)
 11. [Further Reading](#further-reading)
-12. [Diagrams & Visual Aids](#diagrams--visual-aids)
+12. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

@@ -291,7 +291,7 @@ Open `levels/A1.md` (or whichever level matches your exam) and walk every entry 
 
 ## How each entry is structured
 
-Every grammar point — at every level, in every sub-topic file — uses the same block (full spec in [`TEMPLATE.md`](TEMPLATE.md)):
+Every grammar point — at every level, in every sub-topic file — uses the same block (full spec in `TEMPLATE.md`):
 
 ```markdown
 ### {LEVEL}.{i} — {short title in Sentence case}
@@ -354,8 +354,8 @@ EGP gives the *map* — which structure belongs to which level, with one canonic
 ## Status
 
 - [x] **Phase 0 ·** top-level `README.md` *(this file)*
-- [x] **Phase 0 ·** [`TEMPLATE.md`](TEMPLATE.md)
-- [x] **Phase B ·** sub-topic 1.1 — [`01-tenses/01-present-simple.md`](01-tenses/01-present-simple.md) *(24 entries · A1 → C1)*
+- [x] **Phase 0 ·** `TEMPLATE.md`
+- [x] **Phase B ·** sub-topic 1.1 — [`01-tenses/01-present/01-present-simple/A1.md`](01-tenses/01-present/01-present-simple/A1.md) *(24 entries · A1 → C1)*
 - [ ] **Phase A ·** scaffolding script ingests the apkg and emits skeleton markdown for the remaining 86 sub-topics
 - [ ] **Phase B ·** enrichment, sub-topic by sub-topic — order: 1.2 Present continuous → 1.3 Past simple → … *(continue with chapter 1, then chapter 9 Modality, then chapter 14 Clauses)*
 - [ ] **Phase C ·** cross-reference layer: `levels/*.md` + each chapter `README.md` + `cheatsheet.md`

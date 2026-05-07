@@ -9,7 +9,7 @@ Each section presents a CoR that *works* but is wasteful. Profile, optimize, mea
 ## Table of Contents
 
 1. [Optimization 1: Inline static chain for JIT](#optimization-1-inline-static-chain-for-jit)
-2. [Optimization 2: Iterative runner — avoid stack frames](#optimization-2-iterative-runner--avoid-stack-frames)
+2. [Optimization 2: Iterative runner — avoid stack frames](#optimization-2-iterative-runner-avoid-stack-frames)
 3. [Optimization 3: Batch processing in chain](#optimization-3-batch-processing-in-chain)
 4. [Optimization 4: Cache expensive handler results](#optimization-4-cache-expensive-handler-results)
 5. [Optimization 5: Skip handlers that don't apply](#optimization-5-skip-handlers-that-dont-apply)

@@ -12,7 +12,7 @@
 1. [Spec Reference](#1-spec-reference)
 2. [Formal Grammar (EBNF)](#2-formal-grammar-ebnf)
 3. [Core Rules and Constraints](#3-core-rules-and-constraints)
-4. [Identifier Visibility — Foundation of Sealing](#4-identifier-visibility--foundation-of-sealing)
+4. [Identifier Visibility — Foundation of Sealing](#4-identifier-visibility-foundation-of-sealing)
 5. [Method Sets and Interface Satisfaction](#5-method-sets-and-interface-satisfaction)
 6. [Behavioral Specification of Sealed Interfaces](#6-behavioral-specification-of-sealed-interfaces)
 7. [Defined vs Undefined Behavior](#7-defined-vs-undefined-behavior)

@@ -8,18 +8,18 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Clean Code](#clean-code)
-12. [Product Use / Feature](#product-use--feature)
+12. [Product Use / Feature](#product-use-feature)
 13. [Error Handling](#error-handling)
 14. [Security Considerations](#security-considerations)
 15. [Performance Tips](#performance-tips)
-16. [Metrics & Analytics](#metrics--analytics)
+16. [Metrics & Analytics](#metrics-analytics)
 17. [Best Practices](#best-practices)
-18. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+18. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 19. [Common Mistakes](#common-mistakes)
 20. [Common Misconceptions](#common-misconceptions)
 21. [Tricky Points](#tricky-points)
@@ -31,7 +31,7 @@
 27. [What You Can Build](#what-you-can-build)
 28. [Further Reading](#further-reading)
 29. [Related Topics](#related-topics)
-30. [Diagrams & Visual Aids](#diagrams--visual-aids)
+30. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -986,9 +986,9 @@ flowchart LR
 
 ## Related Topics
 
-- **[Arrays](../08-arrays/)** — loops are most commonly used to iterate over arrays
-- **[Conditionals](../09-conditionals/)** — loop conditions use the same boolean logic
-- **[Variables and Scopes](../04-variables-and-scopes/)** — loop variables have specific scoping rules
+- **[Arrays](../08-arrays/junior.md)** — loops are most commonly used to iterate over arrays
+- **[Conditionals](../09-conditionals/junior.md)** — loop conditions use the same boolean logic
+- **[Variables and Scopes](../04-variables-and-scopes/junior.md)** — loop variables have specific scoping rules
 - **Stream API** — the modern alternative to many loop patterns
 
 ---

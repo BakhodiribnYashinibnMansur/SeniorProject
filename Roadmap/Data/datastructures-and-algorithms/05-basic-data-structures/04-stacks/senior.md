@@ -8,7 +8,7 @@
 4. [Coroutines, Goroutines, and Stack Management](#coroutines-goroutines-and-stack-management)
 5. [Stack-Based Virtual Machines](#stack-based-virtual-machines)
 6. [Undo/Redo Systems in Production](#undoredo-systems-in-production)
-7. [Concurrent Stack -- Treiber Stack](#concurrent-stack----treiber-stack)
+7. [Concurrent Stack -- Treiber Stack](#concurrent-stack-treiber-stack)
 8. [Summary](#summary)
 
 ---

@@ -2,13 +2,13 @@
 
 ## Table of Contents
 1. [Source of truth](#source-of-truth)
-2. [Predeclared identifiers — `comparable`](#predeclared-identifiers--comparable)
-3. [Type sets — the `comparable` redefinition](#type-sets--the-comparable-redefinition)
+2. [Predeclared identifiers — `comparable`](#predeclared-identifiers-comparable)
+3. [Type sets — the `comparable` redefinition](#type-sets-the-comparable-redefinition)
 4. [Comparison operators](#comparison-operators)
 5. [The Go 1.20 release-notes change](#the-go-120-release-notes-change)
-6. [`cmp.Ordered` — package documentation](#cmpordered--package-documentation)
+6. [`cmp.Ordered` — package documentation](#cmpordered-package-documentation)
 7. [`cmp.Compare`, `cmp.Less`, `cmp.Or`](#cmpcompare-cmpless-cmpor)
-8. [Strictly comparable — the formal definition](#strictly-comparable--the-formal-definition)
+8. [Strictly comparable — the formal definition](#strictly-comparable-the-formal-definition)
 9. [Embedding rules](#embedding-rules)
 10. [What the spec forbids](#what-the-spec-forbids)
 11. [Summary](#summary)

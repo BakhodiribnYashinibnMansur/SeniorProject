@@ -8,7 +8,7 @@
 
 1. [From local moves to architecture](#from-local-moves-to-architecture)
 2. [Move Method as a service-extraction precursor](#move-method-as-a-service-extraction-precursor)
-3. [Extract Class → Extract Module → Extract Service](#extract-class--extract-module--extract-service)
+3. [Extract Class → Extract Module → Extract Service](#extract-class-extract-module-extract-service)
 4. [Tooling: IntelliJ, Eclipse, OpenRewrite, and ast-grep](#tooling-intellij-eclipse-openrewrite-and-ast-grep)
 5. [Cross-module refactoring with Bazel and Maven multi-module](#cross-module-refactoring-with-bazel-and-maven-multi-module)
 6. [Strangler Fig at the class boundary](#strangler-fig-at-the-class-boundary)

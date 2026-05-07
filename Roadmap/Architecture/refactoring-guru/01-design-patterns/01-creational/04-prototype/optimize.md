@@ -326,10 +326,10 @@ For most application code, deep clone via copy constructor is fast enough. Reach
 ## Creational Patterns Complete
 
 All 5 Creational patterns now have full 8-file TEMPLATE.md coverage:
-- ✅ [Factory Method](../01-factory-method/)
-- ✅ [Abstract Factory](../02-abstract-factory/)
-- ✅ [Builder](../03-builder/)
-- ✅ [Prototype](.)
-- ✅ [Singleton](../05-singleton/)
+- ✅ Factory Method
+- ✅ Abstract Factory
+- ✅ Builder
+- ✅ Prototype
+- ✅ Singleton
 
 **Next:** Structural Patterns (pending future phases).

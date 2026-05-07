@@ -1,6 +1,6 @@
 # Deadlines and Cancellations — Professional
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 ## When Context Is the Bottleneck
 

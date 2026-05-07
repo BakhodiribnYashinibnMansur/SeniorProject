@@ -4,7 +4,7 @@
 1. [Introduction](#introduction)
 2. [Architecture Decisions](#architecture-decisions)
 3. [Performance Benchmarks](#performance-benchmarks)
-4. [Memory Layout & Internals](#memory-layout--internals)
+4. [Memory Layout & Internals](#memory-layout-internals)
 5. [Concurrency Deep Dive](#concurrency-deep-dive)
 6. [Compiler Optimizations](#compiler-optimizations)
 7. [Boolean in System Design](#boolean-in-system-design)
@@ -26,7 +26,7 @@
 23. [Self-Assessment Checklist](#self-assessment-checklist)
 24. [Summary](#summary)
 25. [Further Reading](#further-reading)
-26. [Diagrams & Visual Aids](#diagrams--visual-aids)
+26. [Diagrams & Visual Aids](#diagrams-visual-aids)
 27. [What You Can Build](#what-you-can-build)
 
 ---

@@ -2,7 +2,7 @@
 
 ## Table of Contents
 1. [F-bounded polymorphism explained](#f-bounded-polymorphism-explained)
-2. [The simple alternative — interface returning interface](#the-simple-alternative--interface-returning-interface)
+2. [The simple alternative — interface returning interface](#the-simple-alternative-interface-returning-interface)
 3. [Why the simple alternative is not enough](#why-the-simple-alternative-is-not-enough)
 4. [Fluent builders with recursive bounds](#fluent-builders-with-recursive-bounds)
 5. [Two-step builders and intermediate states](#two-step-builders-and-intermediate-states)

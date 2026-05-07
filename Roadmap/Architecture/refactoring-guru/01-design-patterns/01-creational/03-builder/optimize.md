@@ -356,4 +356,4 @@ Builder optimizations are mostly about **cutting boilerplate** and **avoiding un
 
 **Builder roadmap complete.** All 8 files: [junior](junior.md) · [middle](middle.md) · [senior](senior.md) · [professional](professional.md) · [interview](interview.md) · [tasks](tasks.md) · [find-bug](find-bug.md) · [optimize](optimize.md).
 
-**Next:** [Prototype](../04-prototype/) (last Creational pattern).
+**Next:** Prototype (last Creational pattern).

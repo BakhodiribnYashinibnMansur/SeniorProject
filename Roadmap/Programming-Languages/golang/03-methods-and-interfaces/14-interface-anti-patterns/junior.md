@@ -9,7 +9,7 @@
 6. [Premature Abstraction](#premature-abstraction)
 7. [Interface for a Single Implementation](#interface-for-a-single-implementation)
 8. [Returning Interface When Struct Is Sufficient](#returning-interface-when-struct-is-sufficient)
-9. [The "Animal" Interface — Pseudo-OOP](#the-animal-interface--pseudo-oop)
+9. [The "Animal" Interface — Pseudo-OOP](#the-animal-interface-pseudo-oop)
 10. [Setter/Getter Interfaces](#settergetter-interfaces)
 11. [Common Mistakes Beginners Make](#common-mistakes-beginners-make)
 12. [Symptoms of an Anti-Pattern](#symptoms-of-an-anti-pattern)

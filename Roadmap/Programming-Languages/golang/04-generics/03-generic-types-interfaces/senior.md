@@ -8,7 +8,7 @@
 5. [Generic types at package boundaries](#generic-types-at-package-boundaries)
 6. [Concurrency-safe generic types](#concurrency-safe-generic-types)
 7. [The cost of methods on generic types](#the-cost-of-methods-on-generic-types)
-8. [API design — generic vs interface](#api-design--generic-vs-interface)
+8. [API design — generic vs interface](#api-design-generic-vs-interface)
 9. [Versioning and evolution](#versioning-and-evolution)
 10. [Refactoring legacy `interface{}` code](#refactoring-legacy-interface-code)
 11. [Testing strategies](#testing-strategies)

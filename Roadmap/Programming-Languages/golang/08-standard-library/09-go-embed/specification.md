@@ -223,9 +223,9 @@ check for missing files.
 
 ## 17. Cross-references
 
-- [`io/fs`](../14-io-fs/) — the interface set `embed.FS` implements.
-- [`text/template` and `html/template`](../15-templates/) —
+- [`io/fs`](../14-io-fs/junior.md) — the interface set `embed.FS` implements.
+- [`text/template` and `html/template`](../15-templates/junior.md) —
   `ParseFS(fsys, patterns...)`.
-- [`net/http`](../../09-net-http/) — `http.FS(fsys)` adapter.
-- [`testing/fstest`](../../09-testing/) — `MapFS` for tests, `TestFS`
+- `net/http` — `http.FS(fsys)` adapter.
+- `testing/fstest` — `MapFS` for tests, `TestFS`
   for FS conformance.

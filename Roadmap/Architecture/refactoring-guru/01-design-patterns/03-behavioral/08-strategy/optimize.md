@@ -17,7 +17,7 @@ Each section presents a Strategy that *works* but is wasteful. Profile, optimize
 7. [Optimization 7: Use `final` to enable JIT inlining](#optimization-7-use-final-to-enable-jit-inlining)
 8. [Optimization 8: Snapshot reference once per request](#optimization-8-snapshot-reference-once-per-request)
 9. [Optimization 9: Drop premature Strategy](#optimization-9-drop-premature-strategy)
-10. [Optimization 10: Static dispatch via generics (Rust / C++)](#optimization-10-static-dispatch-via-generics-rust--c)
+10. [Optimization 10: Static dispatch via generics (Rust / C++)](#optimization-10-static-dispatch-via-generics-rust-c)
 11. [Optimization Tips](#optimization-tips)
 
 ---

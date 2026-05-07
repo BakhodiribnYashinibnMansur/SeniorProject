@@ -11,7 +11,7 @@
 2. [Memory Layout of a Bridge](#memory-layout-of-a-bridge)
 3. [JVM: Two-Hop Dispatch and Inlining](#jvm-two-hop-dispatch-and-inlining)
 4. [JVM: Polymorphic Inline Caches and Megamorphism](#jvm-polymorphic-inline-caches-and-megamorphism)
-5. [Go: Interface Field + Indirect Call](#go-interface-field--indirect-call)
+5. [Go: Interface Field + Indirect Call](#go-interface-field-indirect-call)
 6. [CPython: Attribute Lookup Through the Bridge](#cpython-attribute-lookup-through-the-bridge)
 7. [GC and Object Lifetime](#gc-and-object-lifetime)
 8. [Cache-line Behavior Across the Bridge](#cache-line-behavior-across-the-bridge)
@@ -333,6 +333,6 @@ Three potential misses per sprite if memory is scattered.
 
 ---
 
-[← Back to Bridge folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Bridge folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Bridge — Interview Preparation](interview.md)

@@ -8,16 +8,16 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
-10. [Product Use / Feature](#product-use--feature)
+10. [Product Use / Feature](#product-use-feature)
 11. [Error Handling](#error-handling)
 12. [Security Considerations](#security-considerations)
 13. [Performance Tips](#performance-tips)
-14. [Metrics & Analytics](#metrics--analytics)
+14. [Metrics & Analytics](#metrics-analytics)
 15. [Best Practices](#best-practices)
-16. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+16. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 17. [Common Mistakes](#common-mistakes)
 18. [Tricky Points](#tricky-points)
 19. [Test](#test)
@@ -26,7 +26,7 @@
 22. [Summary](#summary)
 23. [What You Can Build](#what-you-can-build)
 24. [Further Reading](#further-reading)
-25. [Diagrams & Visual Aids](#diagrams--visual-aids)
+25. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -854,8 +854,8 @@ flowchart LR
 
 ## Related Topics
 
-- **[Variables and Data Types](../02-variables-and-data-types/)** — deeper dive into Python's type system
-- **[Conditionals](../03-conditionals/)** — control flow with if/elif/else
+- **[Variables and Data Types](../02-variables-and-data-types/junior.md)** — deeper dive into Python's type system
+- **[Conditionals](../03-conditionals/junior.md)** — control flow with if/elif/else
 
 ---
 

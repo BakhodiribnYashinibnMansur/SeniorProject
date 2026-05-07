@@ -3,7 +3,7 @@
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Prerequisites](#prerequisites)
-3. [Evolution & Historical Context](#evolution--historical-context)
+3. [Evolution & Historical Context](#evolution-historical-context)
 4. [Core Concepts (Deep Dive)](#core-concepts-deep-dive)
 5. [Alternative Approaches](#alternative-approaches)
 6. [Anti-Patterns](#anti-patterns)
@@ -12,7 +12,7 @@
 9. [Production Bugs from Shadowing](#production-bugs-from-shadowing)
 10. [Linter Configuration](#linter-configuration)
 11. [Closures and Scope](#closures-and-scope)
-12. [Goroutine Loop Variable Bug](#goroutine-loop-variable-bug)
+12. Goroutine Loop Variable Bug
 13. [Advanced Patterns](#advanced-patterns)
 14. [Code Review Guide](#code-review-guide)
 15. [Testing Scope-Related Bugs](#testing-scope-related-bugs)
@@ -21,7 +21,7 @@
 18. [Cheat Sheet](#cheat-sheet)
 19. [Self-Assessment Checklist](#self-assessment-checklist)
 20. [Summary](#summary)
-21. [Diagrams & Visual Aids](#diagrams--visual-aids)
+21. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

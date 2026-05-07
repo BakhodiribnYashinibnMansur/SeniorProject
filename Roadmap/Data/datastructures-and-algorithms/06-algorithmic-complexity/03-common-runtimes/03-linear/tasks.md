@@ -4,18 +4,18 @@
 
 1. [Task 1: Linear Search](#task-1-linear-search)
 2. [Task 2: Find Maximum Element](#task-2-find-maximum-element)
-3. [Task 3: Count Elements Matching Condition](#task-3-count-elements)
-4. [Task 4: Reverse an Array In-Place](#task-4-reverse-array)
-5. [Task 5: Two Sum with Hash Map](#task-5-two-sum)
-6. [Task 6: Remove Duplicates from Sorted Array](#task-6-remove-duplicates)
-7. [Task 7: Move Zeroes to End](#task-7-move-zeroes)
-8. [Task 8: Maximum Subarray Sum (Kadane's)](#task-8-kadane)
-9. [Task 9: Fixed-Size Sliding Window Maximum Sum](#task-9-sliding-window)
-10. [Task 10: Check Anagram](#task-10-anagram)
-11. [Task 11: Prefix Sum Array](#task-11-prefix-sum)
-12. [Task 12: Merge Two Sorted Arrays](#task-12-merge-sorted)
-13. [Task 13: First Non-Repeating Character](#task-13-first-unique)
-14. [Task 14: Product of Array Except Self](#task-14-product-except-self)
+3. Task 3: Count Elements Matching Condition
+4. Task 4: Reverse an Array In-Place
+5. Task 5: Two Sum with Hash Map
+6. Task 6: Remove Duplicates from Sorted Array
+7. Task 7: Move Zeroes to End
+8. Task 8: Maximum Subarray Sum (Kadane's)
+9. Task 9: Fixed-Size Sliding Window Maximum Sum
+10. Task 10: Check Anagram
+11. Task 11: Prefix Sum Array
+12. Task 12: Merge Two Sorted Arrays
+13. Task 13: First Non-Repeating Character
+14. Task 14: Product of Array Except Self
 15. [Task 15: Counting Sort](#task-15-counting-sort)
 16. [Benchmark Task](#benchmark-task)
 

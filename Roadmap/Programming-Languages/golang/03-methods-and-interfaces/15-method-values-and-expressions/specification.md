@@ -9,7 +9,7 @@
 
 1. [Spec Reference](#1-spec-reference)
 2. [Formal Grammar (EBNF)](#2-formal-grammar-ebnf)
-3. [Core Rules & Constraints](#3-core-rules--constraints)
+3. [Core Rules & Constraints](#3-core-rules-constraints)
 4. [Type Rules](#4-type-rules)
 5. [Binding Semantics](#5-binding-semantics)
 6. [Behavioral Specification](#6-behavioral-specification)

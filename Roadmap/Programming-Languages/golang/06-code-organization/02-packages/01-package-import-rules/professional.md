@@ -5,7 +5,7 @@
 2. [The Import Path Resolution Algorithm in Detail](#the-import-path-resolution-algorithm-in-detail)
 3. [The `go/build` and `golang.org/x/tools/go/packages` APIs](#the-gobuild-and-golangorgxtoolsgopackages-apis)
 4. [The Type-Checker's View of Imports](#the-type-checkers-view-of-imports)
-5. [Dependency-Graph Walking with `go list -deps`](#dependency-graph-walking-with-go-list--deps)
+5. [Dependency-Graph Walking with `go list -deps`](#dependency-graph-walking-with-go-list-deps)
 6. [Init-Function Ordering: The Real Algorithm](#init-function-ordering-the-real-algorithm)
 7. [Plugin Architecture: How Blank Imports Drive Registries](#plugin-architecture-how-blank-imports-drive-registries)
 8. [The Compile Cache and Imports](#the-compile-cache-and-imports)

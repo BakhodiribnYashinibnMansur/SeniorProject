@@ -8,7 +8,7 @@
 5. [Constraint vs value interface](#constraint-vs-value-interface)
 6. [Embedding generic interfaces](#embedding-generic-interfaces)
 7. [Method sets of instantiated types](#method-sets-of-instantiated-types)
-8. [Type-set syntax: `|`, `~`, `comparable`](#type-set-syntax---comparable)
+8. [Type-set syntax: `|`, `~`, `comparable`](#type-set-syntax-comparable)
 9. [The structural rules of `any`](#the-structural-rules-of-any)
 10. [Self-referential generic types](#self-referential-generic-types)
 11. [Mutual references between generic types](#mutual-references-between-generic-types)

@@ -9,7 +9,7 @@ permalink: /roadmap/programming-languages/golang/07-concurrency/03-sync-package/
 
 # WaitGroups — Middle
 
-[← Back to WaitGroups](./)
+← Back to WaitGroups
 
 You know the API. Now we look at the real problems: when `Add` and `Wait` race, when `WaitGroup` lives inside a struct, how to combine it with errors, how to spawn a dynamic number of workers, and the often-misunderstood rule about reusing a WaitGroup.
 

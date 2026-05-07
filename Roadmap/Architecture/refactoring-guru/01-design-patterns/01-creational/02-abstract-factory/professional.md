@@ -10,7 +10,7 @@
 
 1. [Introduction](#introduction)
 2. [JVM Dispatch on Multiple Methods](#jvm-dispatch-on-multiple-methods)
-3. [Generics & Erasure](#generics--erasure)
+3. [Generics & Erasure](#generics-erasure)
 4. [Module Boundaries (JPMS)](#module-boundaries-jpms)
 5. [GraalVM Native Image](#graalvm-native-image)
 6. [Go Interface Tables for Multi-Method Factories](#go-interface-tables-for-multi-method-factories)

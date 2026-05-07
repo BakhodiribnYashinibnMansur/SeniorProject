@@ -4,21 +4,21 @@
 
 ## Table of Contents
 
-1. [Task 1 — Basic Linear Search](#task-1--basic-linear-search)
-2. [Task 2 — Find All Occurrences](#task-2--find-all-occurrences)
-3. [Task 3 — Count Occurrences](#task-3--count-occurrences)
-4. [Task 4 — Find First and Last Index](#task-4--find-first-and-last-index)
-5. [Task 5 — Substring Search (Naive)](#task-5--substring-search-naive)
-6. [Task 6 — 2D Matrix Search](#task-6--2d-matrix-search)
-7. [Task 7 — Find Majority Element](#task-7--find-majority-element)
-8. [Task 8 — Search in Rotated Array](#task-8--search-in-rotated-array)
-9. [Task 9 — Parallel Linear Search](#task-9--parallel-linear-search)
-10. [Task 10 — SIMD Linear Search](#task-10--simd-linear-search)
-11. [Task 11 — Sentinel Linear Search](#task-11--sentinel-linear-search)
-12. [Task 12 — Recursive Linear Search](#task-12--recursive-linear-search)
-13. [Task 13 — Search Linked List](#task-13--search-linked-list)
-14. [Task 14 — Search with Custom Predicate](#task-14--search-with-custom-predicate)
-15. [Task 15 — Benchmark vs Binary Search](#task-15--benchmark-vs-binary-search)
+1. [Task 1 — Basic Linear Search](#task-1-basic-linear-search)
+2. [Task 2 — Find All Occurrences](#task-2-find-all-occurrences)
+3. [Task 3 — Count Occurrences](#task-3-count-occurrences)
+4. [Task 4 — Find First and Last Index](#task-4-find-first-and-last-index)
+5. [Task 5 — Substring Search (Naive)](#task-5-substring-search-naive)
+6. [Task 6 — 2D Matrix Search](#task-6-2d-matrix-search)
+7. [Task 7 — Find Majority Element](#task-7-find-majority-element)
+8. [Task 8 — Search in Rotated Array](#task-8-search-in-rotated-array)
+9. [Task 9 — Parallel Linear Search](#task-9-parallel-linear-search)
+10. [Task 10 — SIMD Linear Search](#task-10-simd-linear-search)
+11. [Task 11 — Sentinel Linear Search](#task-11-sentinel-linear-search)
+12. [Task 12 — Recursive Linear Search](#task-12-recursive-linear-search)
+13. [Task 13 — Search Linked List](#task-13-search-linked-list)
+14. [Task 14 — Search with Custom Predicate](#task-14-search-with-custom-predicate)
+15. [Task 15 — Benchmark vs Binary Search](#task-15-benchmark-vs-binary-search)
 
 ---
 

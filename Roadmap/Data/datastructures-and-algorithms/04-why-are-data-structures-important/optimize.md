@@ -3,17 +3,17 @@
 ## Table of Contents
 
 1. [How to Use This File](#how-to-use-this-file)
-2. [Exercise 1: List Membership to Set — O(n) to O(1)](#exercise-1-list-membership-to-set--on-to-o1)
-3. [Exercise 2: Nested Duplicate Check to Hash Set — O(n^2) to O(n)](#exercise-2-nested-duplicate-check-to-hash-set--on2-to-on)
-4. [Exercise 3: Array Queue to Deque — O(n) to O(1) Dequeue](#exercise-3-array-queue-to-deque--on-to-o1-dequeue)
-5. [Exercise 4: Nested Loop Frequency to Hash Map — O(n^2) to O(n)](#exercise-4-nested-loop-frequency-to-hash-map--on2-to-on)
-6. [Exercise 5: Linear Search to Binary Search — O(n) to O(log n)](#exercise-5-linear-search-to-binary-search--on-to-olog-n)
-7. [Exercise 6: Repeated Min to Heap — O(n*k) to O(n + k log n)](#exercise-6-repeated-min-to-heap--onk-to-on--k-log-n)
-8. [Exercise 7: String Concatenation to Builder — O(n^2) to O(n)](#exercise-7-string-concatenation-to-builder--on2-to-on)
-9. [Exercise 8: Array Insert-at-Front to Deque — O(n^2) to O(n)](#exercise-8-array-insert-at-front-to-deque--on2-to-on)
-10. [Exercise 9: Brute Force Intersection to Set — O(n*m) to O(n+m)](#exercise-9-brute-force-intersection-to-set--onm-to-onm)
-11. [Exercise 10: Linear Search for Range to BST — O(n) to O(log n + k)](#exercise-10-linear-search-for-range-to-bst--on-to-olog-n--k)
-12. [Exercise 11: Brute Force Anagram Check to Hash Map — O(n log n) to O(n)](#exercise-11-brute-force-anagram-check-to-hash-map--on-log-n-to-on)
+2. [Exercise 1: List Membership to Set — O(n) to O(1)](#exercise-1-list-membership-to-set-on-to-o1)
+3. [Exercise 2: Nested Duplicate Check to Hash Set — O(n^2) to O(n)](#exercise-2-nested-duplicate-check-to-hash-set-on2-to-on)
+4. [Exercise 3: Array Queue to Deque — O(n) to O(1) Dequeue](#exercise-3-array-queue-to-deque-on-to-o1-dequeue)
+5. [Exercise 4: Nested Loop Frequency to Hash Map — O(n^2) to O(n)](#exercise-4-nested-loop-frequency-to-hash-map-on2-to-on)
+6. [Exercise 5: Linear Search to Binary Search — O(n) to O(log n)](#exercise-5-linear-search-to-binary-search-on-to-olog-n)
+7. [Exercise 6: Repeated Min to Heap — O(n*k) to O(n + k log n)](#exercise-6-repeated-min-to-heap-onk-to-on-k-log-n)
+8. [Exercise 7: String Concatenation to Builder — O(n^2) to O(n)](#exercise-7-string-concatenation-to-builder-on2-to-on)
+9. [Exercise 8: Array Insert-at-Front to Deque — O(n^2) to O(n)](#exercise-8-array-insert-at-front-to-deque-on2-to-on)
+10. [Exercise 9: Brute Force Intersection to Set — O(n*m) to O(n+m)](#exercise-9-brute-force-intersection-to-set-onm-to-onm)
+11. [Exercise 10: Linear Search for Range to BST — O(n) to O(log n + k)](#exercise-10-linear-search-for-range-to-bst-on-to-olog-n-k)
+12. [Exercise 11: Brute Force Anagram Check to Hash Map — O(n log n) to O(n)](#exercise-11-brute-force-anagram-check-to-hash-map-on-log-n-to-on)
 
 ---
 

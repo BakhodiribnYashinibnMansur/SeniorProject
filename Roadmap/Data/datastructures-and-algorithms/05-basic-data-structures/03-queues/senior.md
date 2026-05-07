@@ -17,7 +17,7 @@
   - [Java: Token Bucket](#java-token-bucket)
   - [Python: Token Bucket](#python-token-bucket)
 - [Task Scheduling with Queues](#task-scheduling-with-queues)
-  - [Delayed Queue / Scheduled Tasks](#delayed-queue--scheduled-tasks)
+  - [Delayed Queue / Scheduled Tasks](#delayed-queue-scheduled-tasks)
   - [Work Stealing](#work-stealing)
 - [Back-Pressure](#back-pressure)
   - [What Is Back-Pressure?](#what-is-back-pressure)

@@ -7,17 +7,17 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Clean Code](#clean-code)
-12. [Product Use / Feature](#product-use--feature)
+12. [Product Use / Feature](#product-use-feature)
 13. [Error Handling](#error-handling)
 14. [Security Considerations](#security-considerations)
 15. [Performance Tips](#performance-tips)
 16. [Best Practices](#best-practices)
-17. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+17. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 18. [Common Mistakes](#common-mistakes)
 19. [Common Misconceptions](#common-misconceptions)
 20. [Tricky Points](#tricky-points)
@@ -29,7 +29,7 @@
 26. [What You Can Build](#what-you-can-build)
 27. [Further Reading](#further-reading)
 28. [Related Topics](#related-topics)
-29. [Diagrams & Visual Aids](#diagrams--visual-aids)
+29. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -491,7 +491,7 @@ If `GOPROXY=off` (or you are simply offline), tidy fails when it needs a module 
 - **Warm cache wins.** First run after a fresh clone is slow; subsequent runs are fast. The module cache lives in `$GOMODCACHE` (usually `$HOME/go/pkg/mod`).
 - **Use a corporate proxy** if your team shares dependencies. `GOPROXY=https://corp-proxy,...` cuts internet round-trips dramatically.
 - **Don't run `go mod tidy` in a tight loop in CI.** It is idempotent — once is enough per build.
-- **Vendor for the build hot path.** If your CI runs many builds per minute, `go mod vendor` (see [03-go-mod-vendor](../03-go-mod-vendor/)) makes builds fully offline and fast. Run tidy beforehand, then vendor.
+- **Vendor for the build hot path.** If your CI runs many builds per minute, `go mod vendor` (see [03-go-mod-vendor](../03-go-mod-vendor/junior.md)) makes builds fully offline and fast. Run tidy beforehand, then vendor.
 - **Keep `go.mod` minimal.** Tidy already does this for you; the point is, do not manually pad it.
 - **Use `-e` only when you need it.** It does extra work. The default fail-fast mode is faster on healthy modules.
 
@@ -805,12 +805,12 @@ You cannot yet:
 
 ## Related Topics
 
-- [6.1.1 `go mod init`](../01-go-mod-init/) — the prerequisite step
-- [6.1.3 `go mod vendor`](../03-go-mod-vendor/) — capture the tidy graph as a folder
+- [6.1.1 `go mod init`](../01-go-mod-init/junior.md) — the prerequisite step
+- [6.1.3 `go mod vendor`](../03-go-mod-vendor/junior.md) — capture the tidy graph as a folder
 - 6.1.4 `replace` directives — overriding what tidy sees
 - 6.1.5 Multi-module workspaces (`go work`) — tidy across multiple modules
-- [6.2.1 Package import rules](../../02-packages/01-package-import-rules/) — how imports become module references
-- [6.2.3 Publishing modules](../../02-packages/03-publishing-modules/) — making *your* module tidyable by others
+- [6.2.1 Package import rules](../../02-packages/01-package-import-rules/junior.md) — how imports become module references
+- [6.2.3 Publishing modules](../../02-packages/03-publishing-modules/junior.md) — making *your* module tidyable by others
 - 11.1.5 `go mod` subcommand reference — every `go mod` flag
 
 ---

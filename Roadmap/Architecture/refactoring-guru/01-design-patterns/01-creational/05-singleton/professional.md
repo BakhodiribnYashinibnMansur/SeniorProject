@@ -18,7 +18,7 @@
 8. [Garbage Collection Implications](#garbage-collection-implications)
 9. [Process Lifecycle](#process-lifecycle)
 10. [OS-Level Concerns](#os-level-concerns)
-11. [Distributed Singleton — FLP Reality](#distributed-singleton--flp-reality)
+11. [Distributed Singleton — FLP Reality](#distributed-singleton-flp-reality)
 12. [Benchmarks](#benchmarks)
 13. [Diagrams](#diagrams)
 14. [Related Topics](#related-topics)
@@ -683,6 +683,6 @@ sequenceDiagram
 
 ---
 
-[← Back to Singleton folder](.) · [↑ Creational Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Singleton folder · [↑ Creational Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Previous:** [Singleton — Senior](senior.md) | **Next:** [Singleton — Interview](interview.md)

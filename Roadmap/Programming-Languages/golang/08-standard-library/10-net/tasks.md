@@ -450,7 +450,7 @@ cfg := &tls.Config{Certificates: []tls.Certificate{cert}}
 ln, _ := tls.Listen("tcp", ":8080", cfg)
 ```
 
-For cert generation, see [`../13-crypto/`](../13-crypto/).
+For cert generation, see [`../13-crypto/`](../13-crypto/junior.md).
 
 ## Cross-references
 

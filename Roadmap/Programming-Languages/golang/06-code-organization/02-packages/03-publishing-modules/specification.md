@@ -4,7 +4,7 @@
 1. [Introduction](#introduction)
 2. [Semver Reference for Go Modules](#semver-reference-for-go-modules)
 3. [Tag Format](#tag-format)
-4. [The Major Version Suffix Rule (`/vN` for N >= 2)](#the-major-version-suffix-rule-vn-for-n--2)
+4. [The Major Version Suffix Rule (`/vN` for N >= 2)](#the-major-version-suffix-rule-vn-for-n-2)
 5. [Pseudo-Version Format](#pseudo-version-format)
 6. [Multi-Module Repos: Tag Prefixes](#multi-module-repos-tag-prefixes)
 7. [The `retract` Directive](#the-retract-directive)

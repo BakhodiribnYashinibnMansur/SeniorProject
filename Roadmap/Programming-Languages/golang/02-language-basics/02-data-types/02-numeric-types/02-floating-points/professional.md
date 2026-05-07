@@ -6,7 +6,7 @@
 3. [Runtime Deep Dive](#runtime-deep-dive)
 4. [Compiler Perspective](#compiler-perspective)
 5. [Memory Layout](#memory-layout)
-6. [OS / Syscall Level](#os--syscall-level)
+6. [OS / Syscall Level](#os-syscall-level)
 7. [Source Code Walkthrough](#source-code-walkthrough)
 8. [Assembly Output Analysis](#assembly-output-analysis)
 9. [Performance Internals](#performance-internals)

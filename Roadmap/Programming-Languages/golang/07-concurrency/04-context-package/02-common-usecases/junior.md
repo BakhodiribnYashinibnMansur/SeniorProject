@@ -1,6 +1,6 @@
 # Common Usecases — Junior
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 ## What This Page Is About
 
@@ -639,4 +639,4 @@ The day you decide "this one time it's fine to skip ctx" is the day a future on-
 
 Welcome to context-aware Go. The middle file is where the patterns become production-grade.
 
-[← Back to index](index.md)
+[← Back to index](junior.md)

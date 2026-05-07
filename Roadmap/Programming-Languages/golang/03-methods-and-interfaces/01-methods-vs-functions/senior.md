@@ -10,7 +10,7 @@
 7. [Composition Over Inheritance](#composition-over-inheritance)
 8. [Testing Strategies](#testing-strategies)
 9. [Concurrency and Receiver Choice](#concurrency-and-receiver-choice)
-10. [Generics + Methods](#generics--methods)
+10. [Generics + Methods](#generics-methods)
 11. [Real-World Refactoring](#real-world-refactoring)
 12. [Library Design Decisions](#library-design-decisions)
 13. [Cheat Sheet](#cheat-sheet)

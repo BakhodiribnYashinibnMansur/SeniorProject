@@ -3,7 +3,7 @@
 ## Table of Contents
 
 1. [Formal Definition](#formal-definition)
-2. [Correctness Proof — Loop Invariants](#correctness-proof)
+2. Correctness Proof — Loop Invariants
 3. [Master Theorem Application](#master-theorem-application)
 4. [Tight Comparison Bound](#tight-comparison-bound)
 5. [Lower Bound Match — Comparison Sort Optimality](#lower-bound-match)

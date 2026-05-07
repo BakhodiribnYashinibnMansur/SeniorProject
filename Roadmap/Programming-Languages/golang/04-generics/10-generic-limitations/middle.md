@@ -201,7 +201,7 @@ type Vec[T any] = []T // 1.24+: OK
 func Sum[T int | float64](v Vec[T]) T { /* ... */ }
 ```
 
-For the full story of why it took so long and what changed, see [`14-generic-type-aliases`](../14-generic-type-aliases/).
+For the full story of why it took so long and what changed, see [`14-generic-type-aliases`](../14-generic-type-aliases/junior.md).
 
 ### What this section is NOT about
 
@@ -335,7 +335,7 @@ Pre-1.20 you could not use `comparable` as a regular interface value. Go 1.20 re
 
 ### Cross-link
 
-For the full story on `comparable`'s evolution, see [`13-comparable-and-ordered`](../13-comparable-and-ordered/).
+For the full story on `comparable`'s evolution, see [`13-comparable-and-ordered`](../13-comparable-and-ordered/junior.md).
 
 ---
 

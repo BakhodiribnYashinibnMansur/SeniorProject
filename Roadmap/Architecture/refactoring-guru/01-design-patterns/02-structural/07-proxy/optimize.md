@@ -355,8 +355,8 @@ Application code simplifies dramatically.
 
 ---
 
-[← Back to Proxy folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Proxy folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **You've completed the Proxy pattern suite.**
 
-**Structural Patterns are complete (7/7).** Continue to: [Behavioral Patterns](../../03-behavioral/) →
+**Structural Patterns are complete (7/7).** Continue to: [Behavioral Patterns](../../03-behavioral/README.md) →

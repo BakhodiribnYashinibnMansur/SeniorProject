@@ -12,11 +12,11 @@ set realistic performance targets, and know when further optimization is futile.
 
 1. [Lower Bounds in System Design](#lower-bounds-in-system-design)
 2. [Minimum Latency and Network Round Trips](#minimum-latency-and-network-round-trips)
-3. [Information-Theoretic Lower Bounds in Practice](#information-theoretic-lower-bounds)
+3. Information-Theoretic Lower Bounds in Practice
 4. [When You Cannot Do Better](#when-you-cannot-do-better)
-5. [Capacity Planning and Minimum Requirements](#capacity-planning)
-6. [Applying Lower Bound Thinking to Architecture](#architecture-decisions)
-7. [Code Examples: Measuring Against Lower Bounds](#code-examples)
+5. Capacity Planning and Minimum Requirements
+6. Applying Lower Bound Thinking to Architecture
+7. Code Examples: Measuring Against Lower Bounds
 8. [Key Takeaways](#key-takeaways)
 
 ---

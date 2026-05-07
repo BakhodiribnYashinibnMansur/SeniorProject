@@ -2,7 +2,7 @@
 
 ## Table of Contents
 
-1. [Universal Hashing — Formal Treatment](#universal-hashing--formal-treatment)
+1. [Universal Hashing — Formal Treatment](#universal-hashing-formal-treatment)
 2. [Perfect Hashing (FKS Scheme)](#perfect-hashing-fks-scheme)
 3. [Expected Chain Length Analysis](#expected-chain-length-analysis)
 4. [Amortized Rehashing Analysis](#amortized-rehashing-analysis)

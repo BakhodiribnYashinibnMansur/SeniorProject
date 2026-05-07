@@ -8,14 +8,14 @@
 4. [Core Concepts](#core-concepts)
 5. [Big-O Summary](#big-o-summary)
 6. [Real-World Analogies](#real-world-analogies)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Step-by-Step Walkthrough](#step-by-step-walkthrough)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Error Handling](#error-handling)
 12. [Performance Tips](#performance-tips)
 13. [Best Practices](#best-practices)
-14. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+14. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 15. [Common Mistakes](#common-mistakes)
 16. [Cheat Sheet](#cheat-sheet)
 17. [Visual Animation](#visual-animation)
@@ -41,7 +41,7 @@ Bubble Sort is rarely used in production for large datasets, but it shines in th
 - **Required:** Basic programming — variables, loops (`for`, `while`), functions, arrays
 - **Required:** Understanding of how to swap two variables (using a temporary variable or tuple unpacking)
 - **Required:** Basic comparison operators (`<`, `>`, `<=`, `>=`, `==`)
-- **Helpful:** Familiarity with Big-O notation (O(n), O(n²)) — see [`06-algorithmic-complexity/`](../../06-algorithmic-complexity/)
+- **Helpful:** Familiarity with Big-O notation (O(n), O(n²)) — see [`06-algorithmic-complexity/`](../../06-algorithmic-complexity/01-time-vs-space-complexity/junior.md)
 - **Helpful:** Knowing what "in-place" and "stable" mean for sorting algorithms
 
 ---

@@ -7,12 +7,12 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Clean Code](#clean-code)
-12. [Product Use / Feature](#product-use--feature)
+12. [Product Use / Feature](#product-use-feature)
 13. [Error Handling](#error-handling)
 14. [Security](#security)
 15. [Performance Tips](#performance-tips)
@@ -30,7 +30,7 @@
 27. [What You Can Build](#what-you-can-build)
 28. [Further Reading](#further-reading)
 29. [Related Topics](#related-topics)
-30. [Diagrams & Visual Aids](#diagrams--visual-aids)
+30. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

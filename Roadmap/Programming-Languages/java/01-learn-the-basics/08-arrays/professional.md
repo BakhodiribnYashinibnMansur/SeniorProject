@@ -10,7 +10,7 @@
 6. [Garbage Collection Impact](#garbage-collection-impact)
 7. [Unsafe and Off-Heap Arrays](#unsafe-and-off-heap-arrays)
 8. [Project Valhalla and Future](#project-valhalla-and-future)
-9. [Diagrams & Visual Aids](#diagrams--visual-aids)
+9. [Diagrams & Visual Aids](#diagrams-visual-aids)
 10. [Summary](#summary)
 11. [Further Reading](#further-reading)
 

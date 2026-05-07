@@ -21,7 +21,7 @@ the language spec defines what is **possible**, this document defines what is
 2. [The Postel Principle: Accept Interfaces, Return Concrete Types](#2-the-postel-principle-accept-interfaces-return-concrete-types)
 3. [Define Interfaces at the Consumer Site](#3-define-interfaces-at-the-consumer-site)
 4. [Interface Size: Smaller Is Better](#4-interface-size-smaller-is-better)
-5. [Naming Conventions: The `-er` Suffix](#5-naming-conventions-the--er-suffix)
+5. [Naming Conventions: The `-er` Suffix](#5-naming-conventions-the-er-suffix)
 6. [Compile-Time Satisfaction Checks](#6-compile-time-satisfaction-checks)
 7. [Interface Composition over Inheritance](#7-interface-composition-over-inheritance)
 8. [Optional Interfaces and Capability Detection](#8-optional-interfaces-and-capability-detection)

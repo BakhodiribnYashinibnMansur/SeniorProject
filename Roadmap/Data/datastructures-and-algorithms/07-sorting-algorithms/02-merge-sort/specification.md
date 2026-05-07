@@ -11,14 +11,14 @@
 ## Table of Contents
 
 1. [Algorithm Reference](#1-algorithm-reference)
-2. [API / Interface Reference](#2-api--interface-reference)
+2. [API / Interface Reference](#2-api-interface-reference)
 3. [Core Rules and Behavioral Specification](#3-core-rules-and-behavioral-specification)
-4. [Schema / Parameters Reference](#4-schema--parameters-reference)
+4. [Schema / Parameters Reference](#4-schema-parameters-reference)
 5. [Behavioral Specification](#5-behavioral-specification)
 6. [Edge Cases](#6-edge-cases)
 7. [Complexity Compatibility Matrix](#7-complexity-compatibility-matrix)
 8. [Reference Implementations](#8-reference-implementations)
-9. [Compliance & Best Practices Checklist](#9-compliance--best-practices-checklist)
+9. [Compliance & Best Practices Checklist](#9-compliance-best-practices-checklist)
 10. [Related Documentation](#10-related-documentation)
 
 ---

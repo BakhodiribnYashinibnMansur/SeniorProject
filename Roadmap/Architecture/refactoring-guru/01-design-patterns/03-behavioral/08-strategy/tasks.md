@@ -14,7 +14,7 @@ Each task includes a brief and a reference solution. Try first; check after.
 4. [Task 4: Compression context](#task-4-compression-context)
 5. [Task 5: Function-as-strategy discount](#task-5-function-as-strategy-discount)
 6. [Task 6: Hot-swap with `volatile`](#task-6-hot-swap-with-volatile)
-7. [Task 7: Strategy + factory by enum](#task-7-strategy--factory-by-enum)
+7. [Task 7: Strategy + factory by enum](#task-7-strategy-factory-by-enum)
 8. [Task 8: Refactor `if/else` chain to Strategy](#task-8-refactor-ifelse-chain-to-strategy)
 9. [Task 9: Per-tenant Strategy](#task-9-per-tenant-strategy)
 10. [Task 10: Stack of fallback strategies](#task-10-stack-of-fallback-strategies)

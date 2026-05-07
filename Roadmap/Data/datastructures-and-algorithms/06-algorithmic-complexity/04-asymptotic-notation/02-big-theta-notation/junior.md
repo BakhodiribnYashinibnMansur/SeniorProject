@@ -4,12 +4,12 @@
 
 1. [Introduction](#introduction)
 2. [What Is Big-Theta?](#what-is-big-theta)
-3. [Big-O vs Big-Theta: The Key Difference](#big-o-vs-big-theta)
+3. Big-O vs Big-Theta: The Key Difference
 4. [Real-World Analogies](#real-world-analogies)
 5. [Common Big-Theta Examples](#common-big-theta-examples)
 6. [Simple Loop Analysis](#simple-loop-analysis)
 7. [Linear Search Worst Case](#linear-search-worst-case)
-8. [Merge Sort: Always Theta(n log n)](#merge-sort-always-theta-n-log-n)
+8. [Merge Sort: Always Theta(n log n)](#merge-sort-always-thetan-log-n)
 9. [When to Use Theta vs O](#when-to-use-theta-vs-o)
 10. [Code Examples](#code-examples)
 11. [Common Misconceptions](#common-misconceptions)

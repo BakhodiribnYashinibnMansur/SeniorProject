@@ -17,7 +17,7 @@ Each section presents an Observer that *works* but is wasteful. Profile, optimiz
 7. [Optimization 7: Replace synchronous bus with Disruptor](#optimization-7-replace-synchronous-bus-with-disruptor)
 8. [Optimization 8: Backpressure with bounded queues](#optimization-8-backpressure-with-bounded-queues)
 9. [Optimization 9: Avoid allocation in event payloads](#optimization-9-avoid-allocation-in-event-payloads)
-10. [Optimization 10: Outbox + dispatcher pulls in batches](#optimization-10-outbox--dispatcher-pulls-in-batches)
+10. [Optimization 10: Outbox + dispatcher pulls in batches](#optimization-10-outbox-dispatcher-pulls-in-batches)
 11. [Optimization Tips](#optimization-tips)
 
 ---

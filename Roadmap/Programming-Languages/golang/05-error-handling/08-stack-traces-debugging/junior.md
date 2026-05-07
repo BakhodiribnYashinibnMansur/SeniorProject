@@ -7,17 +7,17 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Clean Code](#clean-code)
-12. [Product Use / Feature](#product-use--feature)
+12. [Product Use / Feature](#product-use-feature)
 13. [Error Handling](#error-handling)
 14. [Security Considerations](#security-considerations)
 15. [Performance Tips](#performance-tips)
 16. [Best Practices](#best-practices)
-17. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+17. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 18. [Common Mistakes](#common-mistakes)
 19. [Common Misconceptions](#common-misconceptions)
 20. [Tricky Points](#tricky-points)
@@ -29,7 +29,7 @@
 26. [What You Can Build](#what-you-can-build)
 27. [Further Reading](#further-reading)
 28. [Related Topics](#related-topics)
-29. [Diagrams & Visual Aids](#diagrams--visual-aids)
+29. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -671,8 +671,8 @@ Stack traces are how Go tells you *where* code was running when something intere
 
 ## Related Topics
 
-- [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/index.md) — `%w` does *not* capture a stack
-- [07-panic-and-recover](../07-panic-and-recover/index.md) — panic is the most common source of a trace
+- [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/junior.md) — `%w` does *not* capture a stack
+- [07-panic-and-recover](../07-panic-and-recover/junior.md) — panic is the most common source of a trace
 - 04-custom-error-types — adding a stack field to an error
 - 03-error-vs-panic — when to escalate to panic so a trace gets printed
 

@@ -1,8 +1,8 @@
 # Generic Constraints Deep Dive — Middle Level
 
 ## Table of Contents
-1. [The `~` operator in depth](#the--operator-in-depth)
-2. [Union elements `A \| B`](#union-elements-a--b)
+1. [The `~` operator in depth](#the-operator-in-depth)
+2. [Union elements `A \| B`](#union-elements-a-b)
 3. [Method-set constraints](#method-set-constraints)
 4. [Mixing types and methods](#mixing-types-and-methods)
 5. [Constraints with multiple terms](#constraints-with-multiple-terms)

@@ -8,7 +8,7 @@ Each section presents a Visitor that *works* but is wasteful. Profile, optimize,
 
 ## Table of Contents
 
-1. [Optimization 1: Replace with sealed types + switch](#optimization-1-replace-with-sealed-types--switch)
+1. [Optimization 1: Replace with sealed types + switch](#optimization-1-replace-with-sealed-types-switch)
 2. [Optimization 2: Structural sharing on rewrite](#optimization-2-structural-sharing-on-rewrite)
 3. [Optimization 3: Hash-cons identical subtrees](#optimization-3-hash-cons-identical-subtrees)
 4. [Optimization 4: Iterative traversal for deep trees](#optimization-4-iterative-traversal-for-deep-trees)

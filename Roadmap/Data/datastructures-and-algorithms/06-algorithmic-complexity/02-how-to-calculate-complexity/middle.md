@@ -22,7 +22,7 @@
 5. [Amortized Analysis Introduction](#amortized-analysis-introduction)
    - [Aggregate Method](#aggregate-method)
    - [Dynamic Array Example](#dynamic-array-example)
-6. [Multiple Variables -- O(nm)](#multiple-variables--onm)
+6. [Multiple Variables -- O(nm)](#multiple-variables-onm)
 7. [Comparison of Analysis Approaches](#comparison-of-analysis-approaches)
 8. [Key Takeaways](#key-takeaways)
 

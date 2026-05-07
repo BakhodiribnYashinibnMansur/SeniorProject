@@ -459,4 +459,4 @@ Abstract Factory's overhead is dispatch + product construction. Both are amenabl
 
 **Abstract Factory roadmap complete.** All 8 files: [junior](junior.md) · [middle](middle.md) · [senior](senior.md) · [professional](professional.md) · [interview](interview.md) · [tasks](tasks.md) · [find-bug](find-bug.md) · [optimize](optimize.md).
 
-**Next pattern:** [Builder](../03-builder/) (pending).
+**Next pattern:** Builder (pending).

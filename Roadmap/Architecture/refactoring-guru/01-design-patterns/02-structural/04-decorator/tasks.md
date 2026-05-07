@@ -9,12 +9,12 @@ Each task includes a brief, the interface, and a reference solution. Try first; 
 ## Table of Contents
 
 1. [Task 1: Coffee with toppings](#task-1-coffee-with-toppings)
-2. [Task 2: Logging + Caching repository](#task-2-logging--caching-repository)
+2. [Task 2: Logging + Caching repository](#task-2-logging-caching-repository)
 3. [Task 3: HTTP middleware chain](#task-3-http-middleware-chain)
 4. [Task 4: Retry with idempotency](#task-4-retry-with-idempotency)
 5. [Task 5: Circuit breaker decorator](#task-5-circuit-breaker-decorator)
 6. [Task 6: Rate limiter decorator](#task-6-rate-limiter-decorator)
-7. [Task 7: Stream pipeline (compress + buffer + write)](#task-7-stream-pipeline-compress--buffer--write)
+7. [Task 7: Stream pipeline (compress + buffer + write)](#task-7-stream-pipeline-compress-buffer-write)
 8. [Task 8: Conditional decoration by config](#task-8-conditional-decoration-by-config)
 9. [Task 9: Trace context propagation](#task-9-trace-context-propagation)
 10. [Task 10: Refactor inline logging into Decorator](#task-10-refactor-inline-logging-into-decorator)
@@ -395,6 +395,6 @@ UserService svc = new LoggingUserService(new RealUserService(repo), logger);
 
 ---
 
-[← Back to Decorator folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Decorator folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Decorator — Find the Bug](find-bug.md)

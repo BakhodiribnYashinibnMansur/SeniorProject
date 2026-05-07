@@ -343,6 +343,6 @@ flowchart TD
 
 ---
 
-[← Back to Composite folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Composite folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Composite — Interview Preparation](interview.md)

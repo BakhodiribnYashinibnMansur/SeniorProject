@@ -112,10 +112,10 @@ graph TD
 
 Each pattern below has 8 files: `junior.md`, `middle.md`, `senior.md`, `professional.md`, `interview.md`, `tasks.md`, `find-bug.md`, `optimize.md`.
 
-- [01-factory-method/](01-factory-method/) — Factory Method
-- [02-abstract-factory/](02-abstract-factory/) — Abstract Factory
-- [03-builder/](03-builder/) — Builder
-- [04-prototype/](04-prototype/) — Prototype
-- [05-singleton/](05-singleton/) — Singleton
+- 01-factory-method/ — Factory Method
+- 02-abstract-factory/ — Abstract Factory
+- 03-builder/ — Builder
+- 04-prototype/ — Prototype
+- 05-singleton/ — Singleton
 
 [← Back to Design Patterns](../README.md) · [↑ Roadmap Home](../../README.md)

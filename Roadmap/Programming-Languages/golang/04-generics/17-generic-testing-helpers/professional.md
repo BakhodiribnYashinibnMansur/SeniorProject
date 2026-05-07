@@ -3,9 +3,9 @@
 ## Table of Contents
 1. [The landscape of Go test libraries](#the-landscape-of-go-test-libraries)
 2. [Stdlib `testing` as the default](#stdlib-testing-as-the-default)
-3. [`stretchr/testify` — the dominant fluent library](#stretchrtestify--the-dominant-fluent-library)
-4. [`gotest.tools/v3` — middle-ground assertions](#gotesttoolsv3--middle-ground-assertions)
-5. [`google/go-cmp` — diffs, not assertions](#googlego-cmp--diffs-not-assertions)
+3. [`stretchr/testify` — the dominant fluent library](#stretchrtestify-the-dominant-fluent-library)
+4. [`gotest.tools/v3` — middle-ground assertions](#gotesttoolsv3-middle-ground-assertions)
+5. [`google/go-cmp` — diffs, not assertions](#googlego-cmp-diffs-not-assertions)
 6. [Other generic test helpers in the ecosystem](#other-generic-test-helpers-in-the-ecosystem)
 7. [Picking a library for a new project](#picking-a-library-for-a-new-project)
 8. [Migration tips](#migration-tips)

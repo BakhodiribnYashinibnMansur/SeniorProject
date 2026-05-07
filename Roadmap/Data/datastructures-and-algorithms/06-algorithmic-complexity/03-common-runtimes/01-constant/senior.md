@@ -12,13 +12,13 @@
    - [Lock-Free Stack](#lock-free-stack)
    - [Atomic Counters](#atomic-counters)
 4. [O(1) Memory Allocation Strategies](#o1-memory-allocation-strategies)
-   - [Slab Allocation](#slab-allocation)
+   - Slab Allocation
    - [Free List Allocation](#free-list-allocation)
    - [Arena Allocation](#arena-allocation)
 5. [System Design with O(1) Lookups](#system-design-with-o1-lookups)
    - [LRU Cache](#lru-cache)
-   - [Rate Limiter](#rate-limiter)
-   - [URL Shortener](#url-shortener)
+   - Rate Limiter
+   - URL Shortener
 6. [Key Takeaways](#key-takeaways)
 
 ---

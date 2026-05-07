@@ -10,7 +10,7 @@
 6. [Theta for Common Recurrences](#theta-for-common-recurrences)
 7. [Advanced Proof Examples](#advanced-proof-examples)
 8. [Theta and Polynomial Hierarchy](#theta-and-polynomial-hierarchy)
-9. [Code: Verifying Proofs Computationally](#code-verification)
+9. Code: Verifying Proofs Computationally
 10. [Summary](#summary)
 
 ---

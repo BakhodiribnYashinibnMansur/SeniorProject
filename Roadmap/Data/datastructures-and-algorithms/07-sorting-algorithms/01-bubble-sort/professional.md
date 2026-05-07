@@ -3,7 +3,7 @@
 ## Table of Contents
 
 1. [Formal Definition](#formal-definition)
-2. [Correctness Proof — Loop Invariants](#correctness-proof)
+2. Correctness Proof — Loop Invariants
 3. [Lower Bound for Comparison Sorts](#lower-bound-for-comparison-sorts)
 4. [Inversion Counting and Optimality of Adjacent-Swap Sorts](#inversion-counting-and-optimality)
 5. [Amortized Analysis (Why It Doesn't Help Here)](#amortized-analysis)
@@ -11,7 +11,7 @@
 7. [Sorting Networks: 0–1 Principle](#sorting-networks-01-principle)
 8. [Cache-Oblivious Analysis](#cache-oblivious-analysis)
 9. [Parallel Complexity](#parallel-complexity)
-10. [Comparison with Alternatives](#comparison)
+10. Comparison with Alternatives
 11. [Summary](#summary)
 
 ---

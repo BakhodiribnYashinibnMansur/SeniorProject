@@ -4,31 +4,31 @@
 
 1. [Introduction](#introduction)
 2. [Core Concepts](#core-concepts)
-3. [Pros & Cons](#pros--cons)
+3. [Pros & Cons](#pros-cons)
 4. [Use Cases](#use-cases)
 5. [Code Examples](#code-examples)
 6. [Coding Patterns](#coding-patterns)
 7. [Clean Code](#clean-code)
-8. [Product Use / Feature](#product-use--feature)
+8. [Product Use / Feature](#product-use-feature)
 9. [Error Handling](#error-handling)
 10. [Security Considerations](#security-considerations)
 11. [Performance Optimization](#performance-optimization)
-12. [Metrics & Analytics](#metrics--analytics)
+12. [Metrics & Analytics](#metrics-analytics)
 13. [Debugging Guide](#debugging-guide)
 14. [Best Practices](#best-practices)
-15. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
-16. [Postmortems & System Failures](#postmortems--system-failures)
+15. Edge Cases & Pitfalls
+16. [Postmortems & System Failures](#postmortems-system-failures)
 17. [Common Mistakes](#common-mistakes)
 18. [Tricky Points](#tricky-points)
 19. [Comparison with Other Languages](#comparison-with-other-languages)
 20. [Test](#test)
-21. [Tricky Questions](#tricky-questions)
+21. Tricky Questions
 22. [Cheat Sheet](#cheat-sheet)
 23. [Self-Assessment Checklist](#self-assessment-checklist)
 24. [Summary](#summary)
 25. [Further Reading](#further-reading)
 26. [Related Topics](#related-topics)
-27. [Diagrams & Visual Aids](#diagrams--visual-aids)
+27. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -1044,9 +1044,9 @@ Recommendation: CRaC for JIT-level performance with instant startup. Native-imag
 
 ## Related Topics
 
-- **[Basic Syntax](../01-basic-syntax/)** — compilation errors are lifecycle events
-- **[Data Types](../03-data-types/)** — primitive vs object types affect GC pressure
-- **[Basics of OOP](../11-basics-of-oop/)** — class hierarchies impact ClassLoader and JIT behavior
+- **[Basic Syntax](../01-basic-syntax/junior.md)** — compilation errors are lifecycle events
+- **[Data Types](../03-data-types/junior.md)** — primitive vs object types affect GC pressure
+- **[Basics of OOP](../11-basics-of-oop/junior.md)** — class hierarchies impact ClassLoader and JIT behavior
 
 ---
 

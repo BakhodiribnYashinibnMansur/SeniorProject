@@ -515,7 +515,7 @@ an `*os.File` (whose fd is a socket) back into a Go listener/conn.
 ## 19. Cross-references
 
 - [`../01-io-and-file-handling/senior.md`](../01-io-and-file-handling/senior.md) — `Read`/`Write` contracts that `Conn` inherits.
-- [`../03-time/`](../03-time/) — timer semantics behind deadlines.
-- [`../05-os/`](../05-os/) — process signals and `os.ErrDeadlineExceeded`.
-- [`../11-net-http-internals/`](../11-net-http-internals/) — uses every senior-level rule above.
-- [`../13-crypto/`](../13-crypto/) — `tls.Conn` wraps a `net.Conn` and inherits its deadline semantics.
+- [`../03-time/`](../03-time/junior.md) — timer semantics behind deadlines.
+- [`../05-os/`](../05-os/junior.md) — process signals and `os.ErrDeadlineExceeded`.
+- [`../11-net-http-internals/`](../11-net-http-internals/junior.md) — uses every senior-level rule above.
+- [`../13-crypto/`](../13-crypto/junior.md) — `tls.Conn` wraps a `net.Conn` and inherits its deadline semantics.

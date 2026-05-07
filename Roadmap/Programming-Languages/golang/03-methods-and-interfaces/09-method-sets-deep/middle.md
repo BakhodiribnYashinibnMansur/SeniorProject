@@ -7,7 +7,7 @@
 4. [Interface Boxing Strips Addressability](#interface-boxing-strips-addressability)
 5. [Type Assertion Returns a Copy](#type-assertion-returns-a-copy)
 6. [Composite-Literal Addressing](#composite-literal-addressing)
-7. [Embedding — T vs *T](#embedding--t-vs-t)
+7. [Embedding — T vs *T](#embedding-t-vs-t)
 8. [Promoted Method Sets in Detail](#promoted-method-sets-in-detail)
 9. [The Loop Variable Change in Go 1.22](#the-loop-variable-change-in-go-122)
 10. [Function Return Values and Method Calls](#function-return-values-and-method-calls)

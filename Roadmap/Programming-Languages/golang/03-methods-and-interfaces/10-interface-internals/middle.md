@@ -8,7 +8,7 @@
 5. [The itabTable hash and linker assist](#the-itabtable-hash-and-linker-assist)
 6. [Type assertion mechanics](#type-assertion-mechanics)
 7. [Boxing rules in detail](#boxing-rules-in-detail)
-8. [Typed-nil — memory walkthrough](#typed-nil--memory-walkthrough)
+8. [Typed-nil — memory walkthrough](#typed-nil-memory-walkthrough)
 9. [Comparison rules and panics](#comparison-rules-and-panics)
 10. [eface vs iface conversions](#eface-vs-iface-conversions)
 11. [Reflection meets interfaces](#reflection-meets-interfaces)

@@ -3,7 +3,7 @@
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Why the Standard Library Has Sentinels](#why-the-standard-library-has-sentinels)
-3. [`==` vs `errors.Is`: The Real Difference](#-vs-errorsis-the-real-difference)
+3. [`==` vs `errors.Is`: The Real Difference](#vs-errorsis-the-real-difference)
 4. [Wrapping a Sentinel](#wrapping-a-sentinel)
 5. [Sentinel Groupings](#sentinel-groupings)
 6. [Choosing Sentinels vs Typed Errors](#choosing-sentinels-vs-typed-errors)

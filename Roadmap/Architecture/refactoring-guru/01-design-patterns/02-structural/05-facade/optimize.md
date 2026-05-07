@@ -385,6 +385,6 @@ Drop the Module Facade; route Application directly to Service.
 
 ---
 
-[← Back to Facade folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Facade folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **You've completed the Facade pattern suite.** Continue to: [Flyweight](../06-flyweight/junior.md) · [Proxy](../07-proxy/junior.md)

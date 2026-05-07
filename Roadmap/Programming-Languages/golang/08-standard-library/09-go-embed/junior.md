@@ -405,5 +405,5 @@ violated.
 - [senior.md](senior.md) — the exact directive grammar, hidden-file
   rules, fs.FS guarantees, build flags, and binary-size measurement.
 - [tasks.md](tasks.md) — exercises that practice these patterns.
-- [`../14-io-fs/`](../14-io-fs/) — the full `io/fs.FS` API that
+- [`../14-io-fs/`](../14-io-fs/junior.md) — the full `io/fs.FS` API that
   `embed.FS` implements.

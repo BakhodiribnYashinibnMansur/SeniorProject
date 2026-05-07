@@ -15,7 +15,7 @@
 11. [Garbage Collection and Circular References in Custom Types](#garbage-collection-and-circular-references-in-custom-types)
 12. [Benchmarks: CPython vs PyPy vs Cython](#benchmarks-cpython-vs-pypy-vs-cython)
 13. [Test](#test)
-14. [Diagrams & Visual Aids](#diagrams--visual-aids)
+14. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

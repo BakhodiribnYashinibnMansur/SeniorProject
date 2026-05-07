@@ -2,18 +2,18 @@
 
 ## Table of Contents
 
-1. [Bug 1: Confusing O with Theta](#bug-1)
-2. [Bug 2: Wrong Theta for Conditional Loop](#bug-2)
-3. [Bug 3: Ignoring Best vs Worst Case](#bug-3)
-4. [Bug 4: Incorrect Proof Constants](#bug-4)
-5. [Bug 5: Wrong Theta for Nested Loops](#bug-5)
-6. [Bug 6: Misapplying Master Theorem](#bug-6)
-7. [Bug 7: Theta of Early-Exit Loop](#bug-7)
-8. [Bug 8: Confusing Theta(2^n) and Theta(n^2)](#bug-8)
-9. [Bug 9: Wrong Capacity Prediction](#bug-9)
-10. [Bug 10: Theta of Amortized Operations](#bug-10)
-11. [Bug 11: Incorrect Limit Conclusion](#bug-11)
-12. [Bug 12: Theta Symmetry Mistake](#bug-12)
+1. Bug 1: Confusing O with Theta
+2. Bug 2: Wrong Theta for Conditional Loop
+3. Bug 3: Ignoring Best vs Worst Case
+4. Bug 4: Incorrect Proof Constants
+5. Bug 5: Wrong Theta for Nested Loops
+6. Bug 6: Misapplying Master Theorem
+7. Bug 7: Theta of Early-Exit Loop
+8. Bug 8: Confusing Theta(2^n) and Theta(n^2)
+9. Bug 9: Wrong Capacity Prediction
+10. Bug 10: Theta of Amortized Operations
+11. Bug 11: Incorrect Limit Conclusion
+12. Bug 12: Theta Symmetry Mistake
 
 ---
 

@@ -4,7 +4,7 @@
 
 1. [Problem](#problem)
 2. [Problem Breakdown](#problem-breakdown)
-3. [Approach 1: Backtracking with Sorting + Duplicate Skipping](#approach-1-backtracking-with-sorting--duplicate-skipping)
+3. [Approach 1: Backtracking with Sorting + Duplicate Skipping](#approach-1-backtracking-with-sorting-duplicate-skipping)
 4. [Complexity Analysis](#complexity-analysis)
 5. [Edge Cases](#edge-cases)
 6. [Common Mistakes](#common-mistakes)

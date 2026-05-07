@@ -15,7 +15,7 @@
 5. [Performance](#performance)
 6. [Testability Strategies](#testability-strategies)
 7. [Versioning and Evolution](#versioning-and-evolution)
-8. [Code Examples — Advanced](#code-examples--advanced)
+8. [Code Examples — Advanced](#code-examples-advanced)
 9. [When Abstract Factory Becomes a Liability](#when-abstract-factory-becomes-a-liability)
 10. [Trade-off Analysis Matrix](#trade-off-analysis-matrix)
 11. [Migration Patterns](#migration-patterns)

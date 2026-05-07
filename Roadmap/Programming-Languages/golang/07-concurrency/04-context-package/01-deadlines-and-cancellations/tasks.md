@@ -1,6 +1,6 @@
 # Deadlines and Cancellations — Tasks
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 Hands-on exercises that build muscle memory for context cancellation. Each task lists a goal, a starter signature, expected behavior, and a hint section. Solutions are at the end. Solve them in order; later tasks reuse skills from earlier ones.
 

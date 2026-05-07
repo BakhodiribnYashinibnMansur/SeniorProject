@@ -3,7 +3,7 @@
 ## Table of Contents
 1. [Type set algebra](#type-set-algebra)
 2. [Intersection in practice](#intersection-in-practice)
-3. [Empty type sets — when they happen, when to fix](#empty-type-sets--when-they-happen-when-to-fix)
+3. [Empty type sets — when they happen, when to fix](#empty-type-sets-when-they-happen-when-to-fix)
 4. [`comparable` post Go 1.20](#comparable-post-go-120)
 5. [Designing reusable constraint hierarchies](#designing-reusable-constraint-hierarchies)
 6. [Self-bounded constraints](#self-bounded-constraints)

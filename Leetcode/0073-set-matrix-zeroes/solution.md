@@ -5,7 +5,7 @@
 1. [Problem](#problem)
 2. [Problem Breakdown](#problem-breakdown)
 3. [Approach 1: Extra Boolean Arrays](#approach-1-extra-boolean-arrays)
-4. [Approach 2: First Row / Column as Markers (O(1) space)](#approach-2-first-row--column-as-markers-o1-space)
+4. [Approach 2: First Row / Column as Markers (O(1) space)](#approach-2-first-row-column-as-markers-o1-space)
 5. [Complexity Comparison](#complexity-comparison)
 6. [Edge Cases](#edge-cases)
 7. [Common Mistakes](#common-mistakes)

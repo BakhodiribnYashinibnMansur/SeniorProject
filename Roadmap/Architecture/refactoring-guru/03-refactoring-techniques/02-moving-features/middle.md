@@ -8,12 +8,12 @@
 
 1. [The order matters: extract before move](#the-order-matters-extract-before-move)
 2. [Real-world triggers](#real-world-triggers)
-3. [Move Method vs. Move Field — pick the simpler first](#move-method-vs-move-field--pick-the-simpler-first)
-4. [Extract Class — the responsibility test](#extract-class--the-responsibility-test)
-5. [Inline Class — when "lazy" is wrong](#inline-class--when-lazy-is-wrong)
+3. [Move Method vs. Move Field — pick the simpler first](#move-method-vs-move-field-pick-the-simpler-first)
+4. [Extract Class — the responsibility test](#extract-class-the-responsibility-test)
+5. [Inline Class — when "lazy" is wrong](#inline-class-when-lazy-is-wrong)
 6. [Hide Delegate vs. Demeter's Train Wreck](#hide-delegate-vs-demeters-train-wreck)
 7. [Bounded contexts and DDD aggregates](#bounded-contexts-and-ddd-aggregates)
-8. [Foreign Method / Local Extension across languages](#foreign-method--local-extension-across-languages)
+8. [Foreign Method / Local Extension across languages](#foreign-method-local-extension-across-languages)
 9. [Comparison with Composing Methods](#comparison-with-composing-methods)
 10. [Review questions](#review-questions)
 

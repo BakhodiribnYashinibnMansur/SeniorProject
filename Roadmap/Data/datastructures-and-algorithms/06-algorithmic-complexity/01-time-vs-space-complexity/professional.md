@@ -3,12 +3,12 @@
 ## Table of Contents
 
 1. [Formal Definition](#formal-definition)
-2. [Correctness Proof — Loop Invariants](#correctness-proof)
+2. Correctness Proof — Loop Invariants
 3. [Amortized Analysis](#amortized-analysis)
-4. [NP-Completeness and Polynomial Reductions](#np-completeness)
-5. [Randomized Algorithm Probability Bounds](#randomized-algorithms)
+4. NP-Completeness and Polynomial Reductions
+5. Randomized Algorithm Probability Bounds
 6. [Cache-Oblivious Analysis](#cache-oblivious-analysis)
-7. [Comparison with Alternatives](#comparison)
+7. Comparison with Alternatives
 8. [Summary](#summary)
 
 ---

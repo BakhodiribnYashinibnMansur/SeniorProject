@@ -5,7 +5,7 @@
 1. [Production Usage](#production-usage)
 2. [Database Table Scans](#database-table-scans)
 3. [Full-Text Search Foundations](#full-text-search-foundations)
-4. [grep, awk, ag, ripgrep — Internals](#grep-awk-ag-ripgrep--internals)
+4. [grep, awk, ag, ripgrep — Internals](#grep-awk-ag-ripgrep-internals)
 5. [When to NOT Use an Index](#when-to-not-use-an-index)
 6. [CPU-Friendly Access Patterns](#cpu-friendly-access-patterns)
 7. [`contains()` in Standard Libraries](#contains-in-standard-libraries)

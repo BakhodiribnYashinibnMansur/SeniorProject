@@ -282,7 +282,7 @@ You still want `container/heap` for priority queues and
 `container/list` for handle-based O(1) middle insertion/removal.
 Everything else has a slice/map equivalent that's better.
 
-See [`../16-sort-slices-maps/`](../16-sort-slices-maps/) for the
+See [`../16-sort-slices-maps/`](../16-sort-slices-maps/junior.md) for the
 modern packages.
 
 ## Bonus questions

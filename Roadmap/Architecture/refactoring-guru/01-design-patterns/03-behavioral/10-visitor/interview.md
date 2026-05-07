@@ -14,7 +14,7 @@ A practice bank for Visitor pattern interviews — concise answers, code, and tr
 4. [Professional Questions](#professional-questions)
 5. [Coding Tasks](#coding-tasks)
 6. [System Design Questions](#system-design-questions)
-7. [Anti-pattern / "What's wrong" Questions](#anti-pattern--whats-wrong-questions)
+7. [Anti-pattern / "What's wrong" Questions](#anti-pattern-whats-wrong-questions)
 8. [Cross-pattern Questions](#cross-pattern-questions)
 9. [Quick Drills (1-line answers)](#quick-drills-1-line-answers)
 10. [Tips for Interviews](#tips-for-interviews)

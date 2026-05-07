@@ -13,7 +13,7 @@
    - [Linked List Insert at Head](#linked-list-insert-at-head)
 5. [Misconception: O(1) Does NOT Mean One Operation](#misconception-o1-does-not-mean-one-operation)
 6. [Visualizing Constant Time](#visualizing-constant-time)
-7. [Code Examples](#code-examples)
+7. Code Examples
 8. [Comparison with Other Complexities](#comparison-with-other-complexities)
 9. [Key Takeaways](#key-takeaways)
 10. [Further Reading](#further-reading)

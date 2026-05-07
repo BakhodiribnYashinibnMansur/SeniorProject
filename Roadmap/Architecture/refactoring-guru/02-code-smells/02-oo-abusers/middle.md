@@ -12,8 +12,8 @@
 4. [Real-world cases for Refused Bequest](#real-world-cases-for-refused-bequest)
 5. [Real-world cases for Alternative Classes](#real-world-cases-for-alternative-classes)
 6. [When NOT to refactor](#when-not-to-refactor)
-7. [Modern alternatives — pattern matching and sealed types](#modern-alternatives--pattern-matching-and-sealed-types)
-8. [Composition over inheritance — when does the rule apply?](#composition-over-inheritance--when-does-the-rule-apply)
+7. [Modern alternatives — pattern matching and sealed types](#modern-alternatives-pattern-matching-and-sealed-types)
+8. [Composition over inheritance — when does the rule apply?](#composition-over-inheritance-when-does-the-rule-apply)
 9. [Comparison with related smells](#comparison-with-related-smells)
 10. [Review questions](#review-questions)
 

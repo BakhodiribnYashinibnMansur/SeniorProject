@@ -11,13 +11,13 @@
 2. [When to Use Adapter](#when-to-use-adapter)
 3. [When NOT to Use Adapter](#when-not-to-use-adapter)
 4. [Real-World Cases](#real-world-cases)
-5. [Code Examples — Production-Grade](#code-examples--production-grade)
+5. [Code Examples — Production-Grade](#code-examples-production-grade)
 6. [Two-way Adapter](#two-way-adapter)
 7. [Adapter Registry](#adapter-registry)
 8. [Trade-offs](#trade-offs)
 9. [Alternatives Comparison](#alternatives-comparison)
 10. [Refactoring to Adapter](#refactoring-to-adapter)
-11. [Pros & Cons (Deeper)](#pros--cons-deeper)
+11. [Pros & Cons (Deeper)](#pros-cons-deeper)
 12. [Edge Cases](#edge-cases)
 13. [Tricky Points](#tricky-points)
 14. [Best Practices](#best-practices)
@@ -553,6 +553,6 @@ classDiagram
 
 ---
 
-[← Back to Adapter folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Adapter folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Adapter — Senior Level](senior.md) (anti-corruption layer, Hexagonal Architecture, perf, scaling)

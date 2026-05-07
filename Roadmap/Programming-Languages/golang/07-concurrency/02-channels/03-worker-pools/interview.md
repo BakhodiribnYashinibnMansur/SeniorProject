@@ -6,7 +6,7 @@ A staged sequence from junior to staff. Each question lists what the interviewer
 1. [Junior Questions](#junior-questions)
 2. [Mid-Level Questions](#mid-level-questions)
 3. [Senior Questions](#senior-questions)
-4. [Staff / Architecture Questions](#staff--architecture-questions)
+4. [Staff / Architecture Questions](#staff-architecture-questions)
 5. [Live Coding Prompts](#live-coding-prompts)
 6. [System Design Prompts](#system-design-prompts)
 

@@ -8,14 +8,14 @@ Each task includes: a brief, the dimensions, and a reference solution. Try each 
 
 ## Table of Contents
 
-1. [Task 1: Shape × Renderer](#task-1-shape--renderer)
-2. [Task 2: Notification × Channel](#task-2-notification--channel)
-3. [Task 3: Logger × Sink](#task-3-logger--sink)
-4. [Task 4: Repository × Storage](#task-4-repository--storage)
+1. [Task 1: Shape × Renderer](#task-1-shape-renderer)
+2. [Task 2: Notification × Channel](#task-2-notification-channel)
+3. [Task 3: Logger × Sink](#task-3-logger-sink)
+4. [Task 4: Repository × Storage](#task-4-repository-storage)
 5. [Task 5: Refactor Class Explosion](#task-5-refactor-class-explosion)
 6. [Task 6: Three-Hierarchy Bridge](#task-6-three-hierarchy-bridge)
-7. [Task 7: Theme × Widget](#task-7-theme--widget)
-8. [Task 8: Document × Storage × Renderer](#task-8-document--storage--renderer)
+7. [Task 7: Theme × Widget](#task-7-theme-widget)
+8. [Task 8: Document × Storage × Renderer](#task-8-document-storage-renderer)
 9. [Task 9: Bridge with Decorated Implementor](#task-9-bridge-with-decorated-implementor)
 10. [Task 10: Cross-Platform Beep](#task-10-cross-platform-beep)
 11. [How to Practice](#how-to-practice)
@@ -468,6 +468,6 @@ class Alarm(Sound):
 
 ---
 
-[← Back to Bridge folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Bridge folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Bridge — Find the Bug](find-bug.md)

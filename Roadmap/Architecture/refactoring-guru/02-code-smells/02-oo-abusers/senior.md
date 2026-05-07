@@ -10,7 +10,7 @@
 2. [SOLID principles and OO Abusers](#solid-principles-and-oo-abusers)
 3. [Detection: linters and AST tools](#detection-linters-and-ast-tools)
 4. [Pattern matching as scale-up of polymorphism](#pattern-matching-as-scale-up-of-polymorphism)
-5. [Inheritance hierarchies — depth limits and review heuristics](#inheritance-hierarchies--depth-limits-and-review-heuristics)
+5. [Inheritance hierarchies — depth limits and review heuristics](#inheritance-hierarchies-depth-limits-and-review-heuristics)
 6. [Migrating from Switch Statements at scale](#migrating-from-switch-statements-at-scale)
 7. [Capability-based design](#capability-based-design)
 8. [Review questions](#review-questions)

@@ -12,7 +12,7 @@
 2. [Task 2: SQL Query Builder](#task-2-sql-query-builder)
 3. [Task 3: Email with Optional CC/BCC](#task-3-email-with-optional-ccbcc)
 4. [Task 4: Step Builder for Required Fields](#task-4-step-builder-for-required-fields)
-5. [Task 5: Director + Multiple Concrete Builders](#task-5-director--multiple-concrete-builders)
+5. [Task 5: Director + Multiple Concrete Builders](#task-5-director-multiple-concrete-builders)
 6. [Task 6: Test Data Builder](#task-6-test-data-builder)
 7. [Task 7: HTML Document Tree Builder](#task-7-html-document-tree-builder)
 8. [Task 8: Functional Options in Go](#task-8-functional-options-in-go)

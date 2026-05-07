@@ -5,7 +5,7 @@
 1. [Problem](#problem)
 2. [Problem Breakdown](#problem-breakdown)
 3. [Approach 1: Brute Force](#approach-1-brute-force)
-4. [Approach 2: Sort + Two Pointers](#approach-2-sort--two-pointers)
+4. [Approach 2: Sort + Two Pointers](#approach-2-sort-two-pointers)
 5. [Complexity Comparison](#complexity-comparison)
 6. [Edge Cases](#edge-cases)
 7. [Common Mistakes](#common-mistakes)

@@ -308,5 +308,5 @@ same socket but encrypted. The deadline on the underlying
 ## Cross-references
 
 - [`../01-io-and-file-handling/interview.md`](../01-io-and-file-handling/interview.md) — adjacent stdlib I/O questions.
-- [`../11-net-http-internals/`](../11-net-http-internals/) — every interview question above shows up there in HTTP form.
+- [`../11-net-http-internals/`](../11-net-http-internals/junior.md) — every interview question above shows up there in HTTP form.
 - [specification.md](specification.md) — when an answer hinges on the exact contract.

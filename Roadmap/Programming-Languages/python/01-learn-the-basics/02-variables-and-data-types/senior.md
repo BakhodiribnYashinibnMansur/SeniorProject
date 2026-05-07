@@ -9,14 +9,14 @@
 5. [Code Examples](#code-examples)
 6. [Advanced Type System](#advanced-type-system)
 7. [Memory Management](#memory-management)
-8. [Debugging & Profiling](#debugging--profiling)
+8. [Debugging & Profiling](#debugging-profiling)
 9. [Best Practices at Scale](#best-practices-at-scale)
-10. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+10. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 11. [Test](#test)
 12. [Tricky Questions](#tricky-questions)
 13. [Summary](#summary)
 14. [Further Reading](#further-reading)
-15. [Diagrams & Visual Aids](#diagrams--visual-aids)
+15. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -896,9 +896,9 @@ print(isinstance(b, Box[int]))
 
 ## Related Topics
 
-- **[Functions](../07-functions/)** — closures, decorators, and generic callables
-- **[Dictionaries](../11-dictionaries/)** — hash tables and `__hash__`/`__eq__` protocol
-- **[Lists](../08-lists/)** — memory layout of dynamic arrays
+- **[Functions](../07-functions/junior.md)** — closures, decorators, and generic callables
+- **[Dictionaries](../11-dictionaries/junior.md)** — hash tables and `__hash__`/`__eq__` protocol
+- **[Lists](../08-lists/junior.md)** — memory layout of dynamic arrays
 
 ---
 

@@ -1,11 +1,11 @@
 # Generic Data Structures — Senior Level
 
 ## Table of Contents
-1. [The hard ones — trees, heaps, graphs](#the-hard-ones--trees-heaps-graphs)
-2. [Tree[T] — generic n-ary tree](#treet--generic-n-ary-tree)
-3. [BST[T cmp.Ordered] — binary search tree](#bstt-cmpordered--binary-search-tree)
-4. [Heap[T] — priority queue](#heapt--priority-queue)
-5. [Graph[V, E] — vertices and edges](#graphv-e--vertices-and-edges)
+1. [The hard ones — trees, heaps, graphs](#the-hard-ones-trees-heaps-graphs)
+2. [Tree[T] — generic n-ary tree](#treet-generic-n-ary-tree)
+3. [BST[T cmp.Ordered] — binary search tree](#bstt-cmpordered-binary-search-tree)
+4. [Heap[T] — priority queue](#heapt-priority-queue)
+5. [Graph[V, E] — vertices and edges](#graphv-e-vertices-and-edges)
 6. [Method-set constraints on T](#method-set-constraints-on-t)
 7. [Architectural choices](#architectural-choices)
 8. [Summary](#summary)

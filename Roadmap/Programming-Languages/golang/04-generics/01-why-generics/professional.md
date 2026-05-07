@@ -1,8 +1,8 @@
 # Why Generics? — Professional Level
 
 ## Table of Contents
-1. [The standard library's adoption journey](#the-standard-library-adoption-journey)
-2. [`slices`, `maps`, `cmp` — the three anchor packages](#slices-maps-cmp--the-three-anchor-packages)
+1. The standard library's adoption journey
+2. [`slices`, `maps`, `cmp` — the three anchor packages](#slices-maps-cmp-the-three-anchor-packages)
 3. [`sync.OnceValue`, `atomic.Pointer[T]` and friends](#synconcevalue-atomicpointert-and-friends)
 4. [Migration strategies for production codebases](#migration-strategies-for-production-codebases)
 5. [Team-level guidelines](#team-level-guidelines)

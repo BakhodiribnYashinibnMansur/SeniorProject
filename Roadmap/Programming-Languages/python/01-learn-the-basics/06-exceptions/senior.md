@@ -12,7 +12,7 @@
 8. [Testing Exception Handling](#testing-exception-handling)
 9. [Production Error Management](#production-error-management)
 10. [Test](#test)
-11. [Diagrams & Visual Aids](#diagrams--visual-aids)
+11. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

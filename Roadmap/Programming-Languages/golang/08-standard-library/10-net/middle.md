@@ -184,7 +184,7 @@ defer cancel()
 srv.Shutdown(shutCtx)
 ```
 
-For more on signals see [`../05-os/`](../05-os/).
+For more on signals see [`../05-os/`](../05-os/junior.md).
 
 ## 5. The Accept loop — resilience to transient errors
 
@@ -591,8 +591,8 @@ deadlines, bufio for line framing. Everything in
 
 ## 16. Cross-references
 
-- [`../01-io-and-file-handling/`](../01-io-and-file-handling/) — `Conn` is `io.ReadWriteCloser`; everything in that leaf works on a conn.
-- [`../03-time/`](../03-time/) — `time.Time`, `time.Now`, `time.Duration` for deadlines.
-- [`../05-os/`](../05-os/) — `signal.NotifyContext` for SIGTERM handling.
-- [`../11-net-http-internals/`](../11-net-http-internals/) — how `net/http.Server` builds on top of `Listener` and `Conn`.
-- [`../13-crypto/`](../13-crypto/) — wrapping `net.Conn` in `tls.Conn` for TLS.
+- [`../01-io-and-file-handling/`](../01-io-and-file-handling/junior.md) — `Conn` is `io.ReadWriteCloser`; everything in that leaf works on a conn.
+- [`../03-time/`](../03-time/junior.md) — `time.Time`, `time.Now`, `time.Duration` for deadlines.
+- [`../05-os/`](../05-os/junior.md) — `signal.NotifyContext` for SIGTERM handling.
+- [`../11-net-http-internals/`](../11-net-http-internals/junior.md) — how `net/http.Server` builds on top of `Listener` and `Conn`.
+- [`../13-crypto/`](../13-crypto/junior.md) — wrapping `net.Conn` in `tls.Conn` for TLS.

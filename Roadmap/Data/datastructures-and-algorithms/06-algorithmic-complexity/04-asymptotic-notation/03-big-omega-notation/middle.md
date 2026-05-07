@@ -27,7 +27,7 @@ By the end of this section, you will be able to:
 3. [Decision Tree Argument for Sorting](#decision-tree-argument-for-sorting)
 4. [Adversary Arguments](#adversary-arguments)
 5. [Best-Case vs Lower Bound — A Rigorous Distinction](#best-case-vs-lower-bound)
-6. [Big-Omega in Algorithm Design: Proving Optimality](#proving-optimality)
+6. Big-Omega in Algorithm Design: Proving Optimality
 7. [Code Examples with Formal Analysis](#code-examples-with-formal-analysis)
 8. [Practice Proofs](#practice-proofs)
 9. [Summary](#summary)

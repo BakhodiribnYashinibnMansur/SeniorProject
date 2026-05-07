@@ -3,7 +3,7 @@
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Composing Reader, Writer, and Closer](#composing-reader-writer-and-closer)
-3. [`io.Pipe` — A Reader and a Writer Wired Together](#iopipe--a-reader-and-a-writer-wired-together)
+3. [`io.Pipe` — A Reader and a Writer Wired Together](#iopipe-a-reader-and-a-writer-wired-together)
 4. [`io.Seeker` and `io.ReaderAt`](#ioseeker-and-ioreaderat)
 5. [`json.Marshaler` and `json.Unmarshaler`](#jsonmarshaler-and-jsonunmarshaler)
 6. [`encoding.TextMarshaler` and friends](#encodingtextmarshaler-and-friends)

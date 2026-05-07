@@ -5,7 +5,7 @@
 1. [Formal Algorithm Specification](#formal-algorithm-specification)
 2. [CLRS-Style Pseudo Code](#clrs-style-pseudo-code)
 3. [Correctness Proofs from Pseudo Code](#correctness-proofs-from-pseudo-code)
-4. [Recurrence Relations and Master Theorem](#recurrence-relations)
+4. Recurrence Relations and Master Theorem
 5. [Formal Verification](#formal-verification)
 6. [Summary](#summary)
 

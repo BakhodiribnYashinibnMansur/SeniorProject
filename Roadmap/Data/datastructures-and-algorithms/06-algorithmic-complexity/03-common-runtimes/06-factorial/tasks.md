@@ -10,13 +10,13 @@
 6. [Task 6: Permutation Rank](#task-6-permutation-rank)
 7. [Task 7: Heap's Algorithm](#task-7-heaps-algorithm)
 8. [Task 8: Brute-Force TSP](#task-8-brute-force-tsp)
-9. [Task 9: TSP with Branch and Bound](#task-9-tsp-branch-and-bound)
+9. Task 9: TSP with Branch and Bound
 10. [Task 10: Nearest Neighbor Heuristic](#task-10-nearest-neighbor-heuristic)
 11. [Task 11: 2-Opt Improvement](#task-11-2-opt-improvement)
-12. [Task 12: Brute-Force Job Scheduling](#task-12-brute-force-scheduling)
-13. [Task 13: Assignment Problem (Brute Force)](#task-13-assignment-problem)
+12. Task 12: Brute-Force Job Scheduling
+13. Task 13: Assignment Problem (Brute Force)
 14. [Task 14: Count Derangements](#task-14-count-derangements)
-15. [Task 15: Permutation Cycle Detection](#task-15-permutation-cycles)
+15. Task 15: Permutation Cycle Detection
 16. [Benchmark: Factorial Growth Timing](#benchmark-factorial-growth-timing)
 
 ---

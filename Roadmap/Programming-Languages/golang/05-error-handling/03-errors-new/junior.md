@@ -7,17 +7,17 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Clean Code](#clean-code)
-12. [Product Use / Feature](#product-use--feature)
+12. [Product Use / Feature](#product-use-feature)
 13. [Error Handling](#error-handling)
 14. [Security Considerations](#security-considerations)
 15. [Performance Tips](#performance-tips)
 16. [Best Practices](#best-practices)
-17. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+17. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 18. [Common Mistakes](#common-mistakes)
 19. [Common Misconceptions](#common-misconceptions)
 20. [Tricky Points](#tricky-points)
@@ -29,7 +29,7 @@
 26. [What You Can Build](#what-you-can-build)
 27. [Further Reading](#further-reading)
 28. [Related Topics](#related-topics)
-29. [Diagrams & Visual Aids](#diagrams--visual-aids)
+29. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -60,7 +60,7 @@ After reading this file you will:
 
 ## Prerequisites
 
-- **Required:** The `error` interface and `if err != nil` idiom (see [01-error-handling-basics](../01-error-handling-basics/index.md)).
+- **Required:** The `error` interface and `if err != nil` idiom (see [01-error-handling-basics](../01-error-handling-basics/junior.md)).
 - **Required:** Basic familiarity with Go imports and the standard library.
 - **Required:** Pointers (just enough to know "two different pointers can have the same string inside").
 - **Helpful:** Package-level variables (`var Foo = ...`).
@@ -766,11 +766,11 @@ return ErrNotFound                     // zero allocations
 
 ## Related Topics
 
-- [01-error-handling-basics](../01-error-handling-basics/index.md) — the `error` interface and `if err != nil`
-- [02-error-interface](../02-error-interface/index.md) — how `error` is defined
-- [04-fmt-errorf](../04-fmt-errorf/index.md) — formatted and wrapped errors
-- [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/index.md) — `%w`, `errors.Is`, `errors.As`
-- [06-sentinel-errors](../06-sentinel-errors/index.md) — design rules for sentinels at scale
+- [01-error-handling-basics](../01-error-handling-basics/junior.md) — the `error` interface and `if err != nil`
+- [02-error-interface](../02-error-interface/junior.md) — how `error` is defined
+- [04-fmt-errorf](../04-fmt-errorf/junior.md) — formatted and wrapped errors
+- [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/junior.md) — `%w`, `errors.Is`, `errors.As`
+- [06-sentinel-errors](../06-sentinel-errors/junior.md) — design rules for sentinels at scale
 
 ---
 

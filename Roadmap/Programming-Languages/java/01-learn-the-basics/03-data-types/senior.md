@@ -4,20 +4,20 @@
 
 1. [Introduction](#introduction)
 2. [Core Concepts](#core-concepts)
-3. [Pros & Cons](#pros--cons)
+3. [Pros & Cons](#pros-cons)
 4. [Use Cases](#use-cases)
 5. [Code Examples](#code-examples)
 6. [Coding Patterns](#coding-patterns)
 7. [Clean Code](#clean-code)
-8. [Product Use / Feature](#product-use--feature)
+8. [Product Use / Feature](#product-use-feature)
 9. [Error Handling](#error-handling)
 10. [Security Considerations](#security-considerations)
 11. [Performance Optimization](#performance-optimization)
-12. [Metrics & Analytics](#metrics--analytics)
+12. [Metrics & Analytics](#metrics-analytics)
 13. [Debugging Guide](#debugging-guide)
 14. [Best Practices](#best-practices)
-15. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
-16. [Postmortems & System Failures](#postmortems--system-failures)
+15. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
+16. [Postmortems & System Failures](#postmortems-system-failures)
 17. [Common Mistakes](#common-mistakes)
 18. [Tricky Points](#tricky-points)
 19. [Comparison with Other Languages](#comparison-with-other-languages)
@@ -25,10 +25,10 @@
 21. [Tricky Questions](#tricky-questions)
 22. [Cheat Sheet](#cheat-sheet)
 23. [Summary](#summary)
-24. [What You Can Build](#what-you-can-build)
+24. What You Can Build
 25. [Further Reading](#further-reading)
 26. [Related Topics](#related-topics)
-27. [Diagrams & Visual Aids](#diagrams--visual-aids)
+27. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -1133,8 +1133,8 @@ To eliminate boxing, you need to change the data structure: use `int[]`, `IntStr
 
 ## Related Topics
 
-- **[Type Casting](../05-type-casting/)** — widening/narrowing precision loss at architecture boundaries
-- **[Variables and Scopes](../04-variables-and-scopes/)** — stack vs heap allocation for primitives vs objects
+- **[Type Casting](../05-type-casting/junior.md)** — widening/narrowing precision loss at architecture boundaries
+- **[Variables and Scopes](../04-variables-and-scopes/junior.md)** — stack vs heap allocation for primitives vs objects
 
 ---
 

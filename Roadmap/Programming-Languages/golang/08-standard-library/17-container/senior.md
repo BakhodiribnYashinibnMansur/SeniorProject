@@ -458,7 +458,7 @@ introsort-based and faster on small inputs because they have lower
 constant factors. Don't use `container/heap` to sort unless you also
 need streaming pop semantics.
 
-See [`../16-sort-slices-maps/`](../16-sort-slices-maps/) for the
+See [`../16-sort-slices-maps/`](../16-sort-slices-maps/junior.md) for the
 modern sort packages.
 
 ## 19. Generics and the future

@@ -16,7 +16,7 @@
 13. [Memory Model Implications](#memory-model-implications)
 14. [Advanced Tooling: Writing Your Own Analyzer](#advanced-tooling-writing-your-own-analyzer)
 15. [Benchmarks and Performance](#benchmarks-and-performance)
-16. [Diagrams & Visual Aids](#diagrams--visual-aids)
+16. [Diagrams & Visual Aids](#diagrams-visual-aids)
 17. [Self-Assessment Checklist](#self-assessment-checklist)
 18. [Summary](#summary)
 

@@ -4,7 +4,7 @@
 1. [Junior-Level Questions](#junior-level-questions)
 2. [Middle-Level Questions](#middle-level-questions)
 3. [Senior-Level Questions](#senior-level-questions)
-4. [Tricky / Curveball Questions](#tricky--curveball-questions)
+4. [Tricky / Curveball Questions](#tricky-curveball-questions)
 5. [Coding Tasks](#coding-tasks)
 6. [System Design Style](#system-design-style)
 7. [Standard Library Trivia](#standard-library-trivia)

@@ -398,6 +398,6 @@ HEAP:
 
 ---
 
-[← Back to Adapter folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Adapter folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Adapter — Interview Preparation](interview.md) — questions, coding tasks, trick & behavioral

@@ -7,17 +7,17 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Clean Code](#clean-code)
-12. [Product Use / Feature](#product-use--feature)
+12. [Product Use / Feature](#product-use-feature)
 13. [Error Handling](#error-handling)
 14. [Security Considerations](#security-considerations)
 15. [Performance Tips](#performance-tips)
 16. [Best Practices](#best-practices)
-17. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+17. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 18. [Common Mistakes](#common-mistakes)
 19. [Common Misconceptions](#common-misconceptions)
 20. [Tricky Points](#tricky-points)
@@ -29,7 +29,7 @@
 26. [What You Can Build](#what-you-can-build)
 27. [Further Reading](#further-reading)
 28. [Related Topics](#related-topics)
-29. [Diagrams & Visual Aids](#diagrams--visual-aids)
+29. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -957,8 +957,8 @@ Every higher-level Go concurrency primitive (`errgroup`, pipeline stages, superv
 
 ## Related Topics
 
-- [Buffered vs Unbuffered](../01-buffered-vs-unbuffered/) — channel blocking semantics
-- [Worker Pools](../03-worker-pools/) — applied for-select at scale
+- [Buffered vs Unbuffered](../01-buffered-vs-unbuffered/junior.md) — channel blocking semantics
+- [Worker Pools](../03-worker-pools/junior.md) — applied for-select at scale
 - The `context` package — the modern source of `Done()` channels
 - `sync.WaitGroup` — for the "wait for all" pattern that `select` cannot express
 - `time.Timer` and `time.Ticker` — the engines behind timeout and heartbeat cases

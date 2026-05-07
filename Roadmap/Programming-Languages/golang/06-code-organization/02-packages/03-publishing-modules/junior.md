@@ -7,17 +7,17 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Clean Code](#clean-code)
-12. [Product Use / Feature](#product-use--feature)
+12. [Product Use / Feature](#product-use-feature)
 13. [Error Handling](#error-handling)
 14. [Security Considerations](#security-considerations)
 15. [Performance Tips](#performance-tips)
 16. [Best Practices](#best-practices)
-17. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+17. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 18. [Common Mistakes](#common-mistakes)
 19. [Common Misconceptions](#common-misconceptions)
 20. [Tricky Points](#tricky-points)
@@ -29,7 +29,7 @@
 26. [What You Can Build](#what-you-can-build)
 27. [Further Reading](#further-reading)
 28. [Related Topics](#related-topics)
-29. [Diagrams & Visual Aids](#diagrams--visual-aids)
+29. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -892,9 +892,9 @@ You cannot yet:
 
 ## Related Topics
 
-- [6.1.1 `go mod init`](../../01-modules-and-dependencies/01-go-mod-init/) — creating the module before you publish it
-- [6.1.2 `go mod tidy`](../../01-modules-and-dependencies/02-go-mod-tidy/) — cleaning up dependencies before tagging
-- [6.2.1 Package Import Rules](../01-package-import-rules/) — how consumers will import your module
+- [6.1.1 `go mod init`](../../01-modules-and-dependencies/01-go-mod-init/junior.md) — creating the module before you publish it
+- [6.1.2 `go mod tidy`](../../01-modules-and-dependencies/02-go-mod-tidy/junior.md) — cleaning up dependencies before tagging
+- [6.2.1 Package Import Rules](../01-package-import-rules/junior.md) — how consumers will import your module
 - 6.2.2 Internal & Vendor Folders — controlling visibility before publishing
 - 11.1.5 `go mod` — the full module subcommand reference
 

@@ -11,7 +11,7 @@
 7. [Specialized Bytecode (Python 3.11+)](#specialized-bytecode-python-311)
 8. [Generator Internals](#generator-internals)
 9. [Comparison: CPython vs PyPy Loop Performance](#comparison-cpython-vs-pypy-loop-performance)
-10. [Diagrams & Visual Aids](#diagrams--visual-aids)
+10. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

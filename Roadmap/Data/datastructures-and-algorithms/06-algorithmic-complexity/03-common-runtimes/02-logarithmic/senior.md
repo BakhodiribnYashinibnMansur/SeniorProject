@@ -3,9 +3,9 @@
 ## Table of Contents
 
 - [Introduction](#introduction)
-- [O(log n) in Databases — B+ Tree Indexes](#olog-n-in-databases--b-tree-indexes)
+- [O(log n) in Databases — B+ Tree Indexes](#olog-n-in-databases-b-tree-indexes)
 - [Binary Search in Production Systems](#binary-search-in-production-systems)
-- [Distributed Consensus — Raft Log](#distributed-consensus--raft-log)
+- [Distributed Consensus — Raft Log](#distributed-consensus-raft-log)
 - [Log-Structured Merge Trees (LSM Trees)](#log-structured-merge-trees-lsm-trees)
 - [Skip Lists in Production](#skip-lists-in-production)
 - [Practical Considerations](#practical-considerations)

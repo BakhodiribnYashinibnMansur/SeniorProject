@@ -2,18 +2,18 @@
 
 ## Table of Contents
 
-1. [Exercise 1: TSP from O(n!) to O(2^n * n^2) with DP](#exercise-1-tsp-held-karp)
-2. [Exercise 2: Reduce Permutation Search with Pruning](#exercise-2-pruning-permutations)
-3. [Exercise 3: Assignment Problem -- Hungarian Algorithm](#exercise-3-hungarian-algorithm)
-4. [Exercise 4: Scheduling -- Smith's Rule vs Brute Force](#exercise-4-smiths-rule)
-5. [Exercise 5: Permanent via Ryser's Formula](#exercise-5-rysers-formula)
-6. [Exercise 6: TSP Approximation via MST](#exercise-6-mst-approximation)
-7. [Exercise 7: Eliminate Rotational Symmetry in TSP](#exercise-7-symmetry-breaking)
-8. [Exercise 8: Memoize Subproblems in Permutation Search](#exercise-8-memoization)
-9. [Exercise 9: Replace Full Permutations with Partial](#exercise-9-partial-permutations)
-10. [Exercise 10: Use Greedy + Local Search Instead of Brute Force](#exercise-10-greedy-local-search)
-11. [Exercise 11: Color-Coding for Path Finding](#exercise-11-color-coding)
-12. [Exercise 12: Inclusion-Exclusion for Derangement Counting](#exercise-12-inclusion-exclusion)
+1. Exercise 1: TSP from O(n!) to O(2^n * n^2) with DP
+2. Exercise 2: Reduce Permutation Search with Pruning
+3. Exercise 3: Assignment Problem -- Hungarian Algorithm
+4. Exercise 4: Scheduling -- Smith's Rule vs Brute Force
+5. Exercise 5: Permanent via Ryser's Formula
+6. Exercise 6: TSP Approximation via MST
+7. Exercise 7: Eliminate Rotational Symmetry in TSP
+8. Exercise 8: Memoize Subproblems in Permutation Search
+9. Exercise 9: Replace Full Permutations with Partial
+10. Exercise 10: Use Greedy + Local Search Instead of Brute Force
+11. Exercise 11: Color-Coding for Path Finding
+12. Exercise 12: Inclusion-Exclusion for Derangement Counting
 
 ---
 

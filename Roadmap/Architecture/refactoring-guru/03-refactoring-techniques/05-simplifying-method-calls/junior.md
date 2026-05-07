@@ -22,7 +22,7 @@
 14. [Hide Method](#hide-method)
 15. [Replace Constructor with Factory Method](#replace-constructor-with-factory-method)
 16. [Encapsulate Downcast](#encapsulate-downcast)
-17. [Replace Error Code with Exception / Replace Exception with Test](#replace-error-code-with-exception--replace-exception-with-test)
+17. [Replace Error Code with Exception / Replace Exception with Test](#replace-error-code-with-exception-replace-exception-with-test)
 18. [Mini Glossary](#mini-glossary)
 19. [Review questions](#review-questions)
 

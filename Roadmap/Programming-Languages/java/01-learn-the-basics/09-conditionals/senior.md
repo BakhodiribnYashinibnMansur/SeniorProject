@@ -4,18 +4,18 @@
 
 1. [Introduction](#introduction)
 2. [Core Concepts](#core-concepts)
-3. [Pros & Cons](#pros--cons)
+3. [Pros & Cons](#pros-cons)
 4. [Use Cases](#use-cases)
 5. [Code Examples](#code-examples)
 6. [Coding Patterns](#coding-patterns)
-7. [Product Use / Feature](#product-use--feature)
+7. [Product Use / Feature](#product-use-feature)
 8. [Error Handling](#error-handling)
 9. [Security Considerations](#security-considerations)
 10. [Performance Optimization](#performance-optimization)
 11. [Debugging Guide](#debugging-guide)
 12. [Best Practices](#best-practices)
-13. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
-14. [Postmortems & System Failures](#postmortems--system-failures)
+13. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
+14. [Postmortems & System Failures](#postmortems-system-failures)
 15. [Common Mistakes](#common-mistakes)
 16. [Tricky Points](#tricky-points)
 17. [Comparison with Other Languages](#comparison-with-other-languages)
@@ -24,7 +24,7 @@
 20. [Cheat Sheet](#cheat-sheet)
 21. [Summary](#summary)
 22. [Further Reading](#further-reading)
-23. [Diagrams & Visual Aids](#diagrams--visual-aids)
+23. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -957,9 +957,9 @@ boolean result = (a == b) ? Boolean.TRUE : Boolean.FALSE;
 
 ## Related Topics
 
-- **[Basics of OOP](../11-basics-of-oop/)** — polymorphism as an alternative to conditionals
-- **[Loops](../10-loops/)** — conditional logic inside loops (filter, search, state machines)
-- **[Type Casting](../05-type-casting/)** — pattern matching switch eliminates manual casting
+- **[Basics of OOP](../11-basics-of-oop/junior.md)** — polymorphism as an alternative to conditionals
+- **[Loops](../10-loops/junior.md)** — conditional logic inside loops (filter, search, state machines)
+- **[Type Casting](../05-type-casting/junior.md)** — pattern matching switch eliminates manual casting
 
 ---
 

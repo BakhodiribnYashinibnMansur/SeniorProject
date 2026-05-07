@@ -13,7 +13,7 @@
 10. [Vendor and `replace` in Production](#vendor-and-replace-in-production)
 11. [Vendoring Patched Dependencies](#vendoring-patched-dependencies)
 12. [CI Strategy with Vendored Builds](#ci-strategy-with-vendored-builds)
-13. [Vendor and Toolchain / Go Version Pinning](#vendor-and-toolchain--go-version-pinning)
+13. [Vendor and Toolchain / Go Version Pinning](#vendor-and-toolchain-go-version-pinning)
 14. [Anti-Patterns](#anti-patterns)
 15. [Senior-Level Checklist](#senior-level-checklist)
 16. [Summary](#summary)

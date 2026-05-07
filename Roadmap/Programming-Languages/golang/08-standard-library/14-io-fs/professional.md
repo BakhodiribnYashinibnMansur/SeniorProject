@@ -400,5 +400,5 @@ file-like sources, less well for object-store sources.
   this file.
 - [optimize.md](optimize.md) — performance work for `fs.FS`-based
   code.
-- [`../15-templates/`](../15-templates/) — `template.ParseFS` in
+- [`../15-templates/`](../15-templates/junior.md) — `template.ParseFS` in
   detail.

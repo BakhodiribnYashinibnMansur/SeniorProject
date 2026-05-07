@@ -388,5 +388,5 @@ cases.
 - [find-bug.md](find-bug.md) — drills targeting production-shaped bugs.
 - [interview.md](interview.md) — the questions hiring loops actually
   ask about these structures.
-- [`../16-sort-slices-maps/`](../16-sort-slices-maps/) — the modern
+- [`../16-sort-slices-maps/`](../16-sort-slices-maps/junior.md) — the modern
   generic alternatives.

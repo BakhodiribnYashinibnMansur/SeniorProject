@@ -11,7 +11,7 @@
 7. [CPU-Level Math Operations](#cpu-level-math-operations)
 8. [GC Impact of Numeric Objects](#gc-impact-of-numeric-objects)
 9. [JVM Flags and Tuning](#jvm-flags-and-tuning)
-10. [Diagrams & Visual Aids](#diagrams--visual-aids)
+10. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

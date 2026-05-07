@@ -4,7 +4,7 @@
 
 1. [Overview](#overview)
 2. [Monotonic Stack](#monotonic-stack)
-3. [Min Stack -- getMin in O(1)](#min-stack----getmin-in-o1)
+3. [Min Stack -- getMin in O(1)](#min-stack-getmin-in-o1)
 4. [Expression Evaluation](#expression-evaluation)
 5. [DFS Using an Explicit Stack](#dfs-using-an-explicit-stack)
 6. [Stack in Backtracking](#stack-in-backtracking)

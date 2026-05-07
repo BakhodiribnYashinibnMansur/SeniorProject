@@ -4,20 +4,20 @@
 
 1. [Introduction](#introduction)
 2. [Core Concepts](#core-concepts)
-3. [Evolution & Historical Context](#evolution--historical-context)
-4. [Pros & Cons](#pros--cons)
-5. [Alternative Approaches](#alternative-approaches)
+3. [Evolution & Historical Context](#evolution-historical-context)
+4. [Pros & Cons](#pros-cons)
+5. Alternative Approaches
 6. [Use Cases](#use-cases)
 7. [Code Examples](#code-examples)
 8. [Coding Patterns](#coding-patterns)
 9. [Clean Code](#clean-code)
-10. [Product Use / Feature](#product-use--feature)
+10. [Product Use / Feature](#product-use-feature)
 11. [Error Handling](#error-handling)
 12. [Security Considerations](#security-considerations)
 13. [Performance Optimization](#performance-optimization)
 14. [Debugging Guide](#debugging-guide)
 15. [Best Practices](#best-practices)
-16. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+16. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 17. [Common Mistakes](#common-mistakes)
 18. [Comparison with Other Languages](#comparison-with-other-languages)
 19. [Test](#test)
@@ -25,7 +25,7 @@
 21. [Cheat Sheet](#cheat-sheet)
 22. [Summary](#summary)
 23. [Further Reading](#further-reading)
-24. [Diagrams & Visual Aids](#diagrams--visual-aids)
+24. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -1232,10 +1232,10 @@ System.out.println(a || b && c);
 
 ## Related Topics
 
-- **[Loops](../10-loops/)** — conditionals often live inside loops (filter, search, validate)
-- **[Basics of OOP](../11-basics-of-oop/)** — polymorphism replaces conditionals for type-based dispatch
-- **[Data Types](../03-data-types/)** — understanding which types are valid in switch statements
-- **[Type Casting](../05-type-casting/)** — pattern matching switch eliminates manual casting
+- **[Loops](../10-loops/junior.md)** — conditionals often live inside loops (filter, search, validate)
+- **[Basics of OOP](../11-basics-of-oop/junior.md)** — polymorphism replaces conditionals for type-based dispatch
+- **[Data Types](../03-data-types/junior.md)** — understanding which types are valid in switch statements
+- **[Type Casting](../05-type-casting/junior.md)** — pattern matching switch eliminates manual casting
 
 ---
 

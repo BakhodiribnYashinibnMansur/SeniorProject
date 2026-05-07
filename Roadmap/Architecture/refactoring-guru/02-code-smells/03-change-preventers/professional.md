@@ -6,7 +6,7 @@
 
 ## Table of Contents
 
-1. [The cost of cures — overview](#the-cost-of-cures--overview)
+1. [The cost of cures — overview](#the-cost-of-cures-overview)
 2. [Spring AOP runtime](#spring-aop-runtime)
 3. [AspectJ vs Spring AOP](#aspectj-vs-spring-aop)
 4. [Python decorator overhead](#python-decorator-overhead)

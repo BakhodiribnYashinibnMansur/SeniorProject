@@ -3,20 +3,20 @@
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Evolution & Historical Context](#evolution--historical-context)
+2. [Evolution & Historical Context](#evolution-historical-context)
 3. [Core Concepts](#core-concepts)
 4. [Coding Patterns](#coding-patterns)
 5. [Clean Code](#clean-code)
 6. [Performance Optimization](#performance-optimization)
 7. [Comparison with Other Languages](#comparison-with-other-languages)
-8. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+8. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 9. [Anti-Patterns](#anti-patterns)
 10. [Best Practices](#best-practices)
 11. [Test](#test)
 12. [Cheat Sheet](#cheat-sheet)
 13. [Summary](#summary)
 14. [Further Reading](#further-reading)
-15. [Diagrams & Visual Aids](#diagrams--visual-aids)
+15. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

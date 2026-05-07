@@ -8,7 +8,7 @@ nav_order: 9
 
 # Method Sets Deep — Optimize
 
-[← Back](./)
+← Back
 
 This file focuses on performance and cleaner code through the lens of **method sets**. Every example revolves around four levers: the `T` vs `*T` method set split, addressability, embedding propagation, and the Go 1.22 per-iteration loop variable. Each section shows how a method-set decision changes escape analysis, devirtualization, allocation count, or readability.
 

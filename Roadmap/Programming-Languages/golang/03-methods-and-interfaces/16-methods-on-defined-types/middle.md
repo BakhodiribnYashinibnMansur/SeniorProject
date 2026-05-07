@@ -2,12 +2,12 @@
 
 ## Table of Contents
 1. [Introduction](#introduction)
-2. [Methods on Function Types — http.HandlerFunc](#methods-on-function-types--httphandlerfunc)
+2. [Methods on Function Types — http.HandlerFunc](#methods-on-function-types-httphandlerfunc)
 3. [Anatomy of the HandlerFunc Adapter](#anatomy-of-the-handlerfunc-adapter)
-4. [Methods on Slice Types — sort.IntSlice](#methods-on-slice-types--sortintslice)
+4. [Methods on Slice Types — sort.IntSlice](#methods-on-slice-types-sortintslice)
 5. [Methods on Map Types](#methods-on-map-types)
 6. [Methods on Channel Types](#methods-on-channel-types)
-7. [Generic Map Type — Set[T comparable]](#generic-map-type--settcomparable)
+7. [Generic Map Type — Set[T comparable]](#generic-map-type-sett-comparable)
 8. [Defined Types and Interface Satisfaction](#defined-types-and-interface-satisfaction)
 9. [Why Function-Type Methods Matter](#why-function-type-methods-matter)
 10. [Method Promotion Through Defined Types](#method-promotion-through-defined-types)

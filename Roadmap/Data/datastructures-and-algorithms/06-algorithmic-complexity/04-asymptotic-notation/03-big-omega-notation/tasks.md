@@ -2,22 +2,22 @@
 
 ## Table of Contents
 
-1. [Task 1: Prove Omega Bounds Formally](#task-1)
-2. [Task 2: Count Comparisons in Find-Max](#task-2)
-3. [Task 3: Verify Sorting Lower Bound Experimentally](#task-3)
-4. [Task 4: Implement Optimal Min-Max Finder](#task-4)
-5. [Task 5: Binary Search Comparison Counter](#task-5)
-6. [Task 6: Prove Algorithm Optimality](#task-6)
-7. [Task 7: Decision Tree Leaf Counter](#task-7)
-8. [Task 8: Lower Bound Calculator](#task-8)
-9. [Task 9: Merge Operation Lower Bound](#task-9)
-10. [Task 10: Compare Sorting Algorithms to Lower Bound](#task-10)
-11. [Task 11: Adversary Simulator for Maximum Finding](#task-11)
-12. [Task 12: Information-Theoretic Bound Checker](#task-12)
-13. [Task 13: Detect When Algorithm Matches Lower Bound](#task-13)
-14. [Task 14: Lower Bound for Element Uniqueness](#task-14)
-15. [Task 15: Build an Optimality Report Generator](#task-15)
-16. [Benchmark Task: Comprehensive Lower Bound Analysis](#benchmark-task)
+1. Task 1: Prove Omega Bounds Formally
+2. Task 2: Count Comparisons in Find-Max
+3. Task 3: Verify Sorting Lower Bound Experimentally
+4. Task 4: Implement Optimal Min-Max Finder
+5. Task 5: Binary Search Comparison Counter
+6. Task 6: Prove Algorithm Optimality
+7. Task 7: Decision Tree Leaf Counter
+8. Task 8: Lower Bound Calculator
+9. Task 9: Merge Operation Lower Bound
+10. Task 10: Compare Sorting Algorithms to Lower Bound
+11. Task 11: Adversary Simulator for Maximum Finding
+12. Task 12: Information-Theoretic Bound Checker
+13. Task 13: Detect When Algorithm Matches Lower Bound
+14. Task 14: Lower Bound for Element Uniqueness
+15. Task 15: Build an Optimality Report Generator
+16. Benchmark Task: Comprehensive Lower Bound Analysis
 
 ---
 

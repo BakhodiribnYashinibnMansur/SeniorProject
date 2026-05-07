@@ -6,7 +6,7 @@
 
 ## Table of Contents
 
-1. [The cost model — what you actually pay](#the-cost-model--what-you-actually-pay)
+1. [The cost model — what you actually pay](#the-cost-model-what-you-actually-pay)
 2. [Long Method and JIT inlining](#long-method-and-jit-inlining)
 3. [Primitive Obsession: the value-object cost](#primitive-obsession-the-value-object-cost)
 4. [Long Parameter List and calling conventions](#long-parameter-list-and-calling-conventions)

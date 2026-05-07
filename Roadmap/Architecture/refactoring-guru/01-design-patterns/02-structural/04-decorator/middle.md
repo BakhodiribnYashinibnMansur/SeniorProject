@@ -11,14 +11,14 @@
 2. [When to Use Decorator](#when-to-use-decorator)
 3. [When NOT to Use Decorator](#when-not-to-use-decorator)
 4. [Real-World Cases](#real-world-cases)
-5. [Code Examples — Production-Grade](#code-examples--production-grade)
+5. [Code Examples — Production-Grade](#code-examples-production-grade)
 6. [Decorator Order](#decorator-order)
 7. [Conditional Decoration](#conditional-decoration)
 8. [Building Stacks Cleanly](#building-stacks-cleanly)
 9. [Trade-offs](#trade-offs)
 10. [Alternatives Comparison](#alternatives-comparison)
 11. [Refactoring to Decorator](#refactoring-to-decorator)
-12. [Pros & Cons (Deeper)](#pros--cons-deeper)
+12. [Pros & Cons (Deeper)](#pros-cons-deeper)
 13. [Edge Cases](#edge-cases)
 14. [Tricky Points](#tricky-points)
 15. [Best Practices](#best-practices)
@@ -580,6 +580,6 @@ flowchart TD
 
 ---
 
-[← Back to Decorator folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Decorator folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Decorator — Senior Level](senior.md)

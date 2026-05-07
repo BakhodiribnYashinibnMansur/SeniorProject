@@ -8,16 +8,16 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
-10. [Product Use / Feature](#product-use--feature)
+10. [Product Use / Feature](#product-use-feature)
 11. [Error Handling](#error-handling)
 12. [Security Considerations](#security-considerations)
 13. [Performance Tips](#performance-tips)
-14. [Metrics & Analytics](#metrics--analytics)
+14. [Metrics & Analytics](#metrics-analytics)
 15. [Best Practices](#best-practices)
-16. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+16. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 17. [Common Mistakes](#common-mistakes)
 18. [Common Misconceptions](#common-misconceptions)
 19. [Tricky Points](#tricky-points)
@@ -28,7 +28,7 @@
 24. [What You Can Build](#what-you-can-build)
 25. [Further Reading](#further-reading)
 26. [Related Topics](#related-topics)
-27. [Diagrams & Visual Aids](#diagrams--visual-aids)
+27. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -994,9 +994,9 @@ flowchart LR
 
 ## Related Topics
 
-- **[Basic Syntax](../01-basic-syntax/)** — foundation for writing any Python code including conditions
-- **[Variables and Data Types](../02-variables-and-data-types/)** — understanding types is essential for comparisons
-- **[Loops](../04-loops/)** — loops often contain conditionals for filtering and control flow
+- **[Basic Syntax](../01-basic-syntax/junior.md)** — foundation for writing any Python code including conditions
+- **[Variables and Data Types](../02-variables-and-data-types/junior.md)** — understanding types is essential for comparisons
+- **[Loops](../04-loops/junior.md)** — loops often contain conditionals for filtering and control flow
 
 ---
 

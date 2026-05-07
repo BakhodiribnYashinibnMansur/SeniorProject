@@ -264,7 +264,7 @@ class Solution:
 | **Time** | O(m + n) |
 | **Space** | O(1) |
 
-> Slower than binary search for this strict matrix, but works on the related problem [240. Search a 2D Matrix II](../). Here it makes a fun comparison.
+> Slower than binary search for this strict matrix, but works on the related problem 240. Search a 2D Matrix II. Here it makes a fun comparison.
 
 ### Implementation
 

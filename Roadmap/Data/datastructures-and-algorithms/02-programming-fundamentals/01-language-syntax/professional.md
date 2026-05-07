@@ -3,12 +3,12 @@
 ## Table of Contents
 
 1. [Formal Definition](#formal-definition)
-2. [Formal Grammar — BNF and EBNF](#formal-grammar)
+2. Formal Grammar — BNF and EBNF
 3. [Type Theory Foundations](#type-theory-foundations)
-4. [Computational Complexity of Language Features](#computational-complexity)
+4. Computational Complexity of Language Features
 5. [Compiler Optimization Proofs](#compiler-optimization-proofs)
 6. [Memory Model Formalization](#memory-model-formalization)
-7. [Comparison with Alternatives](#comparison)
+7. Comparison with Alternatives
 8. [Summary](#summary)
 
 ---

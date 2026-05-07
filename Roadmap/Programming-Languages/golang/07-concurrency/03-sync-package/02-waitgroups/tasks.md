@@ -9,7 +9,7 @@ permalink: /roadmap/programming-languages/golang/07-concurrency/03-sync-package/
 
 # WaitGroups — Tasks
 
-[← Back to WaitGroups](./)
+← Back to WaitGroups
 
 A graded set of WaitGroup exercises. Solutions are at the bottom of each task. Try the task before peeking.
 

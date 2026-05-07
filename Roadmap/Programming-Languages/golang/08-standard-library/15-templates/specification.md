@@ -308,8 +308,8 @@ text. Use `{{- ... -}}` to remove unwanted whitespace.
 
 | Topic | See |
 |-------|-----|
-| `embed.FS` | [`../09-go-embed/`](../09-go-embed/) |
-| `io/fs` | [`../14-io-fs/`](../14-io-fs/) |
-| HTTP serving | [`../11-net-http-internals/`](../11-net-http-internals/) |
-| `bytes.Buffer`, `io.Writer` | [`../01-io-and-file-handling/`](../01-io-and-file-handling/) |
+| `embed.FS` | [`../09-go-embed/`](../09-go-embed/junior.md) |
+| `io/fs` | [`../14-io-fs/`](../14-io-fs/junior.md) |
+| HTTP serving | [`../11-net-http-internals/`](../11-net-http-internals/junior.md) |
+| `bytes.Buffer`, `io.Writer` | [`../01-io-and-file-handling/`](../01-io-and-file-handling/junior.md) |
 | Official docs | [`text/template`](https://pkg.go.dev/text/template), [`html/template`](https://pkg.go.dev/html/template), [`text/template/parse`](https://pkg.go.dev/text/template/parse) |

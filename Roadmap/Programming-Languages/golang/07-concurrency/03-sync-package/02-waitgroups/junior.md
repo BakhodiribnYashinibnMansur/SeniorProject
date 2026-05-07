@@ -9,7 +9,7 @@ permalink: /roadmap/programming-languages/golang/07-concurrency/03-sync-package/
 
 # WaitGroups — Junior
 
-[← Back to WaitGroups](./)
+← Back to WaitGroups
 
 > "How do I wait for all my goroutines to finish?"
 

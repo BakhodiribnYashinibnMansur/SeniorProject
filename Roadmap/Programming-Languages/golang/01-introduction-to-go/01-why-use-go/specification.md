@@ -8,18 +8,18 @@
 
 ## Table of Contents
 
-1. [Spec Reference](#spec-reference)
-2. [Formal Grammar](#formal-grammar)
-3. [Core Rules & Constraints](#core-rules--constraints)
-4. [Type Rules](#type-rules)
-5. [Behavioral Specification](#behavioral-specification)
-6. [Defined vs Undefined Behavior](#defined-vs-undefined-behavior)
-7. [Edge Cases from Spec](#edge-cases-from-spec)
-8. [Version History](#version-history)
-9. [Implementation-Specific Behavior](#implementation-specific-behavior)
-10. [Spec Compliance Checklist](#spec-compliance-checklist)
-11. [Official Examples](#official-examples)
-12. [Related Spec Sections](#related-spec-sections)
+1. Spec Reference
+2. Formal Grammar
+3. Core Rules & Constraints
+4. Type Rules
+5. Behavioral Specification
+6. Defined vs Undefined Behavior
+7. Edge Cases from Spec
+8. Version History
+9. Implementation-Specific Behavior
+10. Spec Compliance Checklist
+11. Official Examples
+12. Related Spec Sections
 
 ---
 

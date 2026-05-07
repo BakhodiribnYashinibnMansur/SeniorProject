@@ -12,7 +12,7 @@
 9. [Patterns Across Layers](#patterns-across-layers)
 10. [Wrap-Aware Logging](#wrap-aware-logging)
 11. [Wrap and Concurrency](#wrap-and-concurrency)
-12. [Backward Compatibility with Go < 1.13](#backward-compatibility-with-go--113)
+12. [Backward Compatibility with Go < 1.13](#backward-compatibility-with-go-113)
 13. [Testing Wrapped Errors](#testing-wrapped-errors)
 14. [Common Anti-Patterns](#common-anti-patterns)
 15. [Summary](#summary)

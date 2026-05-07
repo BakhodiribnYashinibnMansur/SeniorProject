@@ -1,6 +1,6 @@
 # Deadlines and Cancellations — Middle
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 ## Picture the Tree
 

@@ -2,9 +2,9 @@
 
 ## Table of Contents
 1. [The 1.20 change in one paragraph](#the-120-change-in-one-paragraph)
-2. [Pre-1.20 `comparable` — strict interfaces only](#pre-120-comparable--strict-interfaces-only)
-3. [Post-1.20 `comparable` — interfaces qualify](#post-120-comparable--interfaces-qualify)
-4. ["Strictly comparable" — the formal idea](#strictly-comparable--the-formal-idea)
+2. [Pre-1.20 `comparable` — strict interfaces only](#pre-120-comparable-strict-interfaces-only)
+3. [Post-1.20 `comparable` — interfaces qualify](#post-120-comparable-interfaces-qualify)
+4. ["Strictly comparable" — the formal idea](#strictly-comparable-the-formal-idea)
 5. [Type-by-type analysis](#type-by-type-analysis)
 6. [Why slices, maps, and functions are excluded](#why-slices-maps-and-functions-are-excluded)
 7. [How `comparable` interacts with embedded interfaces](#how-comparable-interacts-with-embedded-interfaces)

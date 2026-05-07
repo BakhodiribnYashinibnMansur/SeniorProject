@@ -524,4 +524,4 @@ per-rune, per-line). For a single bulk transfer, skip it.
 - [find-bug.md](find-bug.md) — broken snippets to diagnose.
 - The official package docs: [`bufio`](https://pkg.go.dev/bufio).
 - The I/O foundations leaf:
-  [../01-io-and-file-handling/](../01-io-and-file-handling/).
+  [../01-io-and-file-handling/](../01-io-and-file-handling/junior.md).

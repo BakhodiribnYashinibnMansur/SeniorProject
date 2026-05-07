@@ -1,7 +1,7 @@
 # Empty Interfaces — Senior Level
 
 ## Table of Contents
-1. [Internals — eface vs iface](#internals--eface-vs-iface)
+1. [Internals — eface vs iface](#internals-eface-vs-iface)
 2. [Performance Profile](#performance-profile)
 3. [Generic Migration Strategy](#generic-migration-strategy)
 4. [Architectural Decisions](#architectural-decisions)

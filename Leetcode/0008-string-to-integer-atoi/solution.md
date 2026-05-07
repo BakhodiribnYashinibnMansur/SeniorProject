@@ -4,7 +4,7 @@
 
 1. [Problem](#problem)
 2. [Problem Breakdown](#problem-breakdown)
-3. [Approach 1: Parse with Built-in / Naive](#approach-1-parse-with-built-in--naive)
+3. [Approach 1: Parse with Built-in / Naive](#approach-1-parse-with-built-in-naive)
 4. [Approach 2: Single-pass Simulation (Optimal)](#approach-2-single-pass-simulation-optimal)
 5. [Complexity Comparison](#complexity-comparison)
 6. [Edge Cases](#edge-cases)

@@ -8,7 +8,7 @@
 4. [When Tight Bounds Matter](#when-tight-bounds-matter)
 5. [Theta-Aware System Design](#theta-aware-system-design)
 6. [Cost Modeling with Exact Growth](#cost-modeling-with-exact-growth)
-7. [Code Examples: Production Patterns](#code-examples)
+7. Code Examples: Production Patterns
 8. [Case Studies](#case-studies)
 9. [Decision Framework](#decision-framework)
 10. [Summary](#summary)

@@ -563,11 +563,11 @@ Always pair `WithTimeout` / `WithCancel` with `defer cancel()`. The
 
 - [`../10-net/optimize.md`](../10-net/optimize.md) — socket-layer
   optimizations underlying every HTTP optimization here.
-- [`../03-time/`](../03-time/) — timer-wheel cost behind context
+- [`../03-time/`](../03-time/junior.md) — timer-wheel cost behind context
   deadlines and server timeouts.
-- [`../04-encoding-json/`](../04-encoding-json/) — JSON-specific
+- [`../04-encoding-json/`](../04-encoding-json/junior.md) — JSON-specific
   optimizations beyond `Decoder`/`Encoder`.
-- [`../13-crypto/`](../13-crypto/) — TLS handshake cost,
+- [`../13-crypto/`](../13-crypto/junior.md) — TLS handshake cost,
   session resumption, cipher suites.
 - [senior.md](senior.md), [professional.md](professional.md) — the
   contracts and patterns these optimizations build on.

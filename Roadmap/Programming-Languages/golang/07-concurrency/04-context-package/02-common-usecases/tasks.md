@@ -1,6 +1,6 @@
 # Common Usecases — Tasks
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 Hands-on exercises that build muscle memory for using `context.Context` in real applications. Each task lists a goal, a starter signature, expected behavior, and hints. Solutions are sketched at the end. Solve in order — later tasks reuse skills from earlier.
 
@@ -468,4 +468,4 @@ func RunTx(ctx context.Context, db *sql.DB, fn func(*sql.Tx) error) (err error) 
 
 Solve at least Tasks 1–10 to internalize the basic ctx flow. Tasks 11–20 deepen the toolbox: hedging, detached work, pipelines, and leak detection. Once you can produce these from a blank file, you have the practical command of context that production work demands.
 
-[← Back to index](index.md)
+[← Back to index](junior.md)

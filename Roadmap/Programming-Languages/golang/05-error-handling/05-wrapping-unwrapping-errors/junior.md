@@ -7,17 +7,17 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Clean Code](#clean-code)
-12. [Product Use / Feature](#product-use--feature)
+12. [Product Use / Feature](#product-use-feature)
 13. [Error Handling](#error-handling)
 14. [Security Considerations](#security-considerations)
 15. [Performance Tips](#performance-tips)
 16. [Best Practices](#best-practices)
-17. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+17. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 18. [Common Mistakes](#common-mistakes)
 19. [Common Misconceptions](#common-misconceptions)
 20. [Tricky Points](#tricky-points)
@@ -29,7 +29,7 @@
 26. [What You Can Build](#what-you-can-build)
 27. [Further Reading](#further-reading)
 28. [Related Topics](#related-topics)
-29. [Diagrams & Visual Aids](#diagrams--visual-aids)
+29. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -60,7 +60,7 @@ After reading this file you will:
 
 ## Prerequisites
 
-- **Required:** Error handling basics — you know what an `error` is, how to return one, and how to write `if err != nil`. (See [01-error-handling-basics](../01-error-handling-basics/index.md).)
+- **Required:** Error handling basics — you know what an `error` is, how to return one, and how to write `if err != nil`. (See [01-error-handling-basics](../01-error-handling-basics/junior.md).)
 - **Required:** `fmt.Errorf` — you have built error messages with `fmt.Errorf("%v: %s", a, b)` style formatting.
 - **Required:** `errors.New` — the simple constructor for an error with a message.
 - **Helpful:** Knowing what an interface is in Go. The wrap mechanism uses an `Unwrap() error` method.
@@ -727,10 +727,10 @@ Error wrapping in Go means attaching context to an error while preserving the or
 
 ## Related Topics
 
-- [01-error-handling-basics](../01-error-handling-basics/index.md) — the underlying `error` interface and idiom
-- [06-sentinel-errors](../06-sentinel-errors/index.md) — `io.EOF` and friends
-- [07-panic-and-recover](../07-panic-and-recover/index.md) — for unrecoverable cases
-- [02-error-interface](../02-error-interface/index.md) — formal interface definition
+- [01-error-handling-basics](../01-error-handling-basics/junior.md) — the underlying `error` interface and idiom
+- [06-sentinel-errors](../06-sentinel-errors/junior.md) — `io.EOF` and friends
+- [07-panic-and-recover](../07-panic-and-recover/junior.md) — for unrecoverable cases
+- [02-error-interface](../02-error-interface/junior.md) — formal interface definition
 
 ---
 

@@ -7,18 +7,18 @@
 3. [Runtime Deep Dive](#runtime-deep-dive)
 4. [Compiler Perspective](#compiler-perspective)
 5. [Memory Layout](#memory-layout)
-6. [OS / Syscall Level](#os--syscall-level)
+6. [OS / Syscall Level](#os-syscall-level)
 7. [Source Code Walkthrough](#source-code-walkthrough)
 8. [Assembly Output Analysis](#assembly-output-analysis)
 9. [Performance Internals](#performance-internals)
-10. [Metrics & Analytics (Runtime Level)](#metrics--analytics-runtime-level)
+10. [Metrics & Analytics (Runtime Level)](#metrics-analytics-runtime-level)
 11. [Edge Cases at the Lowest Level](#edge-cases-at-the-lowest-level)
 12. [Test](#test)
 13. [Tricky Questions](#tricky-questions)
 14. [Self-Assessment Checklist](#self-assessment-checklist)
 15. [Summary](#summary)
 16. [Further Reading](#further-reading)
-17. [Diagrams & Visual Aids](#diagrams--visual-aids)
+17. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

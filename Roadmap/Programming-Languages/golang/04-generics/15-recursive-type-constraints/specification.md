@@ -5,7 +5,7 @@
 2. [Why "F-bounded" is not in the spec](#why-f-bounded-is-not-in-the-spec)
 3. [Type sets and self-reference](#type-sets-and-self-reference)
 4. [Type parameters as instantiation arguments](#type-parameters-as-instantiation-arguments)
-5. [Implementing an interface — the recursive case](#implementing-an-interface--the-recursive-case)
+5. [Implementing an interface — the recursive case](#implementing-an-interface-the-recursive-case)
 6. [Substitution rules](#substitution-rules)
 7. [What the spec forbids about recursion](#what-the-spec-forbids-about-recursion)
 8. [Constraint type inference and recursion](#constraint-type-inference-and-recursion)

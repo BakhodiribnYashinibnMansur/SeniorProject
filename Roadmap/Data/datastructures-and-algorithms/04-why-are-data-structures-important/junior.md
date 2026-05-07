@@ -4,12 +4,12 @@
 
 1. [Introduction](#introduction)
 2. [Why Organizing Data Matters](#why-organizing-data-matters)
-3. [Efficiency — The Right DS Makes Programs Fast](#efficiency--the-right-ds-makes-programs-fast)
+3. [Efficiency — The Right DS Makes Programs Fast](#efficiency-the-right-ds-makes-programs-fast)
 4. [Real-World Impact](#real-world-impact)
 5. [Choosing the Right Data Structure](#choosing-the-right-data-structure)
 6. [How Data Structures Affect Big-O](#how-data-structures-affect-big-o)
-7. [Wrong DS Choice — Slow Code](#wrong-ds-choice--slow-code)
-8. [Right DS Choice — Fast Code](#right-ds-choice--fast-code)
+7. [Wrong DS Choice — Slow Code](#wrong-ds-choice-slow-code)
+8. [Right DS Choice — Fast Code](#right-ds-choice-fast-code)
 9. [Code Examples](#code-examples)
 10. [Summary](#summary)
 

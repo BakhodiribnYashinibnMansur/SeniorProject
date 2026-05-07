@@ -472,6 +472,6 @@ For real reliability: use an outbox pattern or a saga orchestrator with retries.
 
 ---
 
-[← Back to Facade folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Facade folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Facade — Optimize](optimize.md)

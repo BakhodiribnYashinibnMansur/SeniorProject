@@ -14,7 +14,7 @@ Bugs are distributed across **Go**, **Java**, and **Python** to expose language-
 3. [Bug 3: sync.Once with closure capture (Go)](#bug-3-synconce-with-closure-capture-go)
 4. [Bug 4: Reflection breaks Singleton (Java)](#bug-4-reflection-breaks-singleton-java)
 5. [Bug 5: Serialization creates new instance (Java)](#bug-5-serialization-creates-new-instance-java)
-6. [Bug 6: __init__ runs every time (Python)](#bug-6-__init__-runs-every-time-python)
+6. Bug 6: __init__ runs every time (Python)
 7. [Bug 7: Forking breaks state (Python)](#bug-7-forking-breaks-state-python)
 8. [Bug 8: Singleton state leaks between tests](#bug-8-singleton-state-leaks-between-tests)
 9. [Bug 9: Cloneable bypasses Singleton (Java)](#bug-9-cloneable-bypasses-singleton-java)
@@ -750,6 +750,6 @@ If you genuinely need cross-classloader singleton-ness, store the state outside 
 
 ---
 
-[← Back to Singleton folder](.) · [↑ Creational Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Singleton folder · [↑ Creational Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Previous:** [Singleton — Tasks](tasks.md) | **Next:** [Singleton — Optimize](optimize.md)

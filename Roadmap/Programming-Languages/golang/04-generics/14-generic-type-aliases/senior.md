@@ -4,7 +4,7 @@
 1. [Identity rules](#identity-rules)
 2. [Method sets and the no-methods rule](#method-sets-and-the-no-methods-rule)
 3. [Interface satisfaction implications](#interface-satisfaction-implications)
-4. [Library re-exports — the architectural lens](#library-re-exports--the-architectural-lens)
+4. [Library re-exports — the architectural lens](#library-re-exports-the-architectural-lens)
 5. [Picking alias vs defined type vs wrapper](#picking-alias-vs-defined-type-vs-wrapper)
 6. [Embedding and aliases](#embedding-and-aliases)
 7. [Reflection on aliased types](#reflection-on-aliased-types)

@@ -8,7 +8,7 @@
 5. [`go/types.Type` and `go/types.Object`](#gotypestype-and-gotypesobject)
 6. [Naming Conventions Across the Std-Lib](#naming-conventions-across-the-std-lib)
 7. [Sealing Method on Pointer vs Value](#sealing-method-on-pointer-vs-value)
-8. [The Embedding Loophole — In Detail](#the-embedding-loophole--in-detail)
+8. [The Embedding Loophole — In Detail](#the-embedding-loophole-in-detail)
 9. [Combining Seal With Behavior](#combining-seal-with-behavior)
 10. [Type-Switch Patterns](#type-switch-patterns)
 11. [When to Seal vs When to Leave Open](#when-to-seal-vs-when-to-leave-open)

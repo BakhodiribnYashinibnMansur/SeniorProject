@@ -5,7 +5,7 @@
 1. [Problem](#problem)
 2. [Problem Breakdown](#problem-breakdown)
 3. [Approach 1: Two Pointers (Optimal)](#approach-1-two-pointers-optimal)
-4. [Approach 2: Brute Force / Extra Array](#approach-2-brute-force--extra-array)
+4. [Approach 2: Brute Force / Extra Array](#approach-2-brute-force-extra-array)
 5. [Complexity Comparison](#complexity-comparison)
 6. [Edge Cases](#edge-cases)
 7. [Common Mistakes](#common-mistakes)

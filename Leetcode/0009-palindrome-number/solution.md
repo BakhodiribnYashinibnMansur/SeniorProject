@@ -5,7 +5,7 @@
 1. [Problem](#problem)
 2. [Problem Breakdown](#problem-breakdown)
 3. [Approach 1: String Conversion](#approach-1-string-conversion)
-4. [Approach 2: Reverse Second Half — No String (Optimal)](#approach-2-reverse-second-half--no-string-optimal)
+4. [Approach 2: Reverse Second Half — No String (Optimal)](#approach-2-reverse-second-half-no-string-optimal)
 5. [Complexity Comparison](#complexity-comparison)
 6. [Edge Cases](#edge-cases)
 7. [Common Mistakes](#common-mistakes)

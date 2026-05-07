@@ -20,7 +20,7 @@ or hand-rolled bytes belong instead of `fmt`.
 - Junior-level `fmt` content.
 - `io.Writer`, `bytes.Buffer`, `strings.Builder`.
 - Go errors (`errors.Is`, `errors.As`, `errors.Unwrap`).
-- Reading-level acquaintance with [`slog`](../07-slog/) and
+- Reading-level acquaintance with [`slog`](../07-slog/junior.md) and
   [`strconv`](https://pkg.go.dev/strconv).
 
 ---
@@ -158,7 +158,7 @@ Senior-level material covers `Stringer`, `GoStringer`, and
 
 | Situation | Use instead |
 |-----------|-------------|
-| Long-running service logs | [`slog`](../07-slog/) |
+| Long-running service logs | [`slog`](../07-slog/junior.md) |
 | Building a large string | `strings.Builder` |
 | Single int → string | `strconv.Itoa` |
 | Single float → string | `strconv.FormatFloat` |

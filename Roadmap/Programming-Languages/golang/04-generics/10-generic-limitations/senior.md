@@ -288,7 +288,7 @@ type Comparer[T any] interface { CompareTo(other T) int }
 func Sort[T Comparer[T]](s []T) { /* ... */ }
 ```
 
-This works for the simple case but breaks when `T` itself has type parameters or when you need recursive bounds. See [`15-recursive-type-constraints`](../15-recursive-type-constraints/) for the deep dive.
+This works for the simple case but breaks when `T` itself has type parameters or when you need recursive bounds. See [`15-recursive-type-constraints`](../15-recursive-type-constraints/junior.md) for the deep dive.
 
 #### 2. "T must be a slice of some E"
 

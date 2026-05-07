@@ -2,12 +2,12 @@
 
 ## Table of Contents
 1. [The cost of equality](#the-cost-of-equality)
-2. [`==` on big structs — what the compiler emits](#-on-big-structs--what-the-compiler-emits)
+2. [`==` on big structs — what the compiler emits](#on-big-structs-what-the-compiler-emits)
 3. [Generic equality vs hand-written](#generic-equality-vs-hand-written)
 4. [Comparison-dominated hot loops](#comparison-dominated-hot-loops)
 5. [Choosing the right comparison strategy](#choosing-the-right-comparison-strategy)
 6. [Map keys and hashing cost](#map-keys-and-hashing-cost)
-7. [Sort comparators — operator vs `cmp.Compare`](#sort-comparators--operator-vs-cmpcompare)
+7. [Sort comparators — operator vs `cmp.Compare`](#sort-comparators-operator-vs-cmpcompare)
 8. [`slices.Sort` vs `sort.Slice`](#slicessort-vs-sortslice)
 9. [Real benchmark numbers](#real-benchmark-numbers)
 10. [When NOT to optimize equality](#when-not-to-optimize-equality)

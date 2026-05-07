@@ -5,7 +5,7 @@
 2. [Workarounds you actually saw in the wild](#workarounds-you-actually-saw-in-the-wild)
 3. [The compatibility window: GOEXPERIMENT=aliastypeparams](#the-compatibility-window-goexperimentaliastypeparams)
 4. [Migration patterns](#migration-patterns)
-5. [Identity vs equivalence — re-explained](#identity-vs-equivalence--re-explained)
+5. [Identity vs equivalence — re-explained](#identity-vs-equivalence-re-explained)
 6. [Aliases and the type checker](#aliases-and-the-type-checker)
 7. [Constraint propagation](#constraint-propagation)
 8. [Tooling readiness](#tooling-readiness)

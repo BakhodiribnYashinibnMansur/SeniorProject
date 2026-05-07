@@ -3,16 +3,16 @@
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Architecture & Design](#architecture--design)
+2. [Architecture & Design](#architecture-design)
 3. [Advanced Patterns](#advanced-patterns)
 4. [Performance Benchmarks](#performance-benchmarks)
 5. [JVM Internals for Arrays](#jvm-internals-for-arrays)
-6. [Concurrency & Thread Safety](#concurrency--thread-safety)
+6. [Concurrency & Thread Safety](#concurrency-thread-safety)
 7. [Best Practices for Production](#best-practices-for-production)
 8. [Test](#test)
 9. [Summary](#summary)
 10. [Further Reading](#further-reading)
-11. [Diagrams & Visual Aids](#diagrams--visual-aids)
+11. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

@@ -3,15 +3,15 @@
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Architecture & Design](#architecture--design)
+2. [Architecture & Design](#architecture-design)
 3. [Performance Benchmarks](#performance-benchmarks)
 4. [Advanced Patterns](#advanced-patterns)
 5. [Memory Management](#memory-management)
-6. [Concurrency & Strings](#concurrency--strings)
+6. [Concurrency & Strings](#concurrency-strings)
 7. [Best Practices](#best-practices)
 8. [Production Considerations](#production-considerations)
 9. [Test](#test)
-10. [Diagrams & Visual Aids](#diagrams--visual-aids)
+10. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

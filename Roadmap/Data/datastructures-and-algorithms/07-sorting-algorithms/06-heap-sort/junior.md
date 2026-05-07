@@ -12,7 +12,7 @@
 4. [Core Concepts](#core-concepts)
 5. [Big-O Summary](#big-o-summary)
 6. [Real-World Analogies](#real-world-analogies)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Step-by-Step Walkthrough](#step-by-step-walkthrough)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)

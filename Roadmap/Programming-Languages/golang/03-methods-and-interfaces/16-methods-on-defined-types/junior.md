@@ -13,7 +13,7 @@
 10. [Conversions Between Defined Type and Underlying Type](#conversions-between-defined-type-and-underlying-type)
 11. [Real-World Examples in the Standard Library](#real-world-examples-in-the-standard-library)
 12. [Common Mistakes](#common-mistakes)
-13. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+13. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 14. [Test](#test)
 15. [Cheat Sheet](#cheat-sheet)
 16. [Self-Assessment Checklist](#self-assessment-checklist)

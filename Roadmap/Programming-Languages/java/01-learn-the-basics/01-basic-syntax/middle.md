@@ -4,20 +4,20 @@
 
 1. [Introduction](#introduction)
 2. [Core Concepts](#core-concepts)
-3. [Evolution & Historical Context](#evolution--historical-context)
-4. [Pros & Cons](#pros--cons)
-5. [Alternative Approaches](#alternative-approaches)
+3. [Evolution & Historical Context](#evolution-historical-context)
+4. [Pros & Cons](#pros-cons)
+5. Alternative Approaches
 6. [Use Cases](#use-cases)
 7. [Code Examples](#code-examples)
 8. [Coding Patterns](#coding-patterns)
 9. [Clean Code](#clean-code)
-10. [Product Use / Feature](#product-use--feature)
+10. [Product Use / Feature](#product-use-feature)
 11. [Error Handling](#error-handling)
 12. [Security Considerations](#security-considerations)
 13. [Performance Optimization](#performance-optimization)
 14. [Debugging Guide](#debugging-guide)
 15. [Best Practices](#best-practices)
-16. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+16. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 17. [Common Mistakes](#common-mistakes)
 18. [Anti-Patterns](#anti-patterns)
 19. [Tricky Points](#tricky-points)
@@ -27,7 +27,7 @@
 23. [Cheat Sheet](#cheat-sheet)
 24. [Summary](#summary)
 25. [Further Reading](#further-reading)
-26. [Diagrams & Visual Aids](#diagrams--visual-aids)
+26. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

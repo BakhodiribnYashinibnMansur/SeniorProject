@@ -1,31 +1,1241 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>100. Same Tree</title>
-<style>body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0f172a;color:#e2e8f0;padding:20px}
-.header{text-align:center;margin-bottom:20px}.header h1{font-size:1.6rem;color:#60a5fa}
-.container{max-width:800px;margin:0 auto;background:#1e293b;border-radius:12px;padding:24px}
-.viz{background:#0f172a;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px;align-items:center}
-.trees{display:flex;gap:32px}
-.tree{position:relative;width:240px;height:200px}
-.node{position:absolute;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:#475569;color:#fff;font-weight:700;border-radius:50%}
-.node.match{background:#22c55e}.node.diff{background:#ef4444}
-.verdict{font-size:1.4rem;font-weight:800;padding:12px 24px;border-radius:8px}
-.verdict.t{background:#22c55e}.verdict.f{background:#ef4444}
-</style></head>
-<body><div class="header"><h1>100. Same Tree</h1></div>
-<div class="container"><div class="viz" id="viz"></div></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0100. Same Tree — Visual Animation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header p { color: #94a3b8; font-size: 0.95rem; }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+        .tab:hover { background: #334155; }
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        /* INPUT */
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .input-section input {
+            padding: 8px 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: 'Consolas', monospace;
+        }
+        .input-section input::placeholder { color: #64748b; }
+        #pInput, #qInput { width: 220px; }
+
+        .input-label { color: #94a3b8; font-size: 0.85rem; }
+
+        .btn-generate { background: #8b5cf6; color: white; }
+        .btn-generate:hover { background: #7c3aed; }
+
+        .gen-options {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .gen-options label { color: #94a3b8; font-size: 0.8rem; }
+        .gen-options select {
+            padding: 5px 8px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-play { background: #22c55e; color: white; }
+        .btn-play:hover { background: #16a34a; }
+        .btn-pause { background: #ef4444; color: white; }
+        .btn-pause:hover { background: #dc2626; }
+        .btn-step { background: #3b82f6; color: white; }
+        .btn-step:hover { background: #2563eb; }
+        .btn-reset { background: #6b7280; color: white; }
+        .btn-reset:hover { background: #4b5563; }
+
+        .speed-control { display: flex; align-items: center; gap: 8px; }
+        .speed-control label { color: #94a3b8; font-size: 0.85rem; }
+        .speed-control select {
+            padding: 6px 10px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 4px;
+        }
+
+        /* STEP DESCRIPTION */
+        .step-description {
+            background: #0f172a;
+            border-left: 3px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 50px;
+            white-space: pre-line;
+        }
+
+        /* VIZ AREA */
+        .viz-area {
+            min-height: 280px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        /* TREES */
+        .trees-row {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .tree-card {
+            flex: 1 1 320px;
+            min-width: 280px;
+            background: #1e293b;
+            border-radius: 10px;
+            padding: 14px;
+            border: 1px solid #334155;
+        }
+        .tree-card h4 {
+            text-align: center;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .tree-svg-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+        .tree-svg {
+            display: block;
+            margin: 0 auto;
+        }
+        .tree-svg .edge {
+            stroke: #475569;
+            stroke-width: 2;
+            transition: stroke 0.3s;
+        }
+        .tree-svg .edge.active { stroke: #3b82f6; stroke-width: 3; }
+        .tree-svg .node-circle {
+            fill: #334155;
+            stroke: #475569;
+            stroke-width: 2;
+            transition: all 0.35s ease;
+        }
+        .tree-svg .node-circle.active {
+            fill: #3b82f6;
+            stroke: #60a5fa;
+            filter: drop-shadow(0 0 8px rgba(59,130,246,0.6));
+        }
+        .tree-svg .node-circle.match {
+            fill: #22c55e;
+            stroke: #4ade80;
+            filter: drop-shadow(0 0 10px rgba(34,197,94,0.6));
+        }
+        .tree-svg .node-circle.diff {
+            fill: #ef4444;
+            stroke: #f87171;
+            filter: drop-shadow(0 0 10px rgba(239,68,68,0.6));
+        }
+        .tree-svg .node-circle.visited { fill: #6366f1; stroke: #818cf8; }
+        .tree-svg .node-circle.null-node {
+            fill: transparent;
+            stroke: #475569;
+            stroke-dasharray: 3,3;
+        }
+        .tree-svg .node-text {
+            fill: #e2e8f0;
+            font-weight: 700;
+            font-size: 13px;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+        }
+        .tree-svg .node-text.null-text { fill: #64748b; font-size: 11px; }
+
+        /* AUX PANEL: stack/queue/calls */
+        .aux-panel {
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid #1e293b;
+        }
+        .aux-grid {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+        .aux-entry {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            min-width: 90px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .aux-entry.top {
+            border-color: #f59e0b;
+            box-shadow: 0 0 12px rgba(245,158,11,0.3);
+            background: #422006;
+        }
+        .aux-entry .pair { font-weight: 700; color: #e2e8f0; }
+        .aux-entry .label { font-size: 0.7rem; color: #94a3b8; }
+
+        .calc-box {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            text-align: center;
+            font-size: 1.05rem;
+            border: 1px solid #334155;
+        }
+        .calc-box .formula { color: #94a3b8; }
+        .calc-box .result { font-weight: 700; margin-left: 8px; }
+        .result-match { color: #22c55e; }
+        .result-no { color: #ef4444; }
+
+        /* INFO PANEL */
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+        .info-box h3 {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .info-box .value { font-size: 1.1rem; font-weight: 700; }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        /* COMPLEXITY CHART */
+        .complexity-chart { margin-top: 20px; background: #0f172a; border-radius: 10px; padding: 18px; border: 1px solid #1e293b; }
+        .chart-title { text-align: center; font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+        .chart-bars { display: flex; flex-direction: column; gap: 12px; }
+        .chart-row { display: flex; align-items: center; gap: 10px; }
+        .chart-label { min-width: 130px; font-size: 0.8rem; color: #94a3b8; text-align: right; flex-shrink: 0; }
+        .chart-bar-wrap { flex: 1; background: #1e293b; border-radius: 5px; height: 24px; overflow: hidden; position: relative; }
+        .chart-bar { height: 100%; border-radius: 5px; display: flex; align-items: center; padding-left: 8px; font-size: 0.75rem; font-weight: 600; color: white; transition: width 0.8s cubic-bezier(0.16,1,0.3,1); width: 0; white-space: nowrap; position: absolute; }
+        .chart-bar.dfs { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .chart-bar.bfs { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .chart-bar.itstack { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .chart-complexity { min-width: 105px; font-size: 0.78rem; font-weight: 600; color: #e2e8f0; flex-shrink: 0; }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) { .container { padding: 16px; } }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header h1 { font-size: 1.4rem; }
+            .header { margin-bottom: 16px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .container { padding: 14px; }
+            .tab { padding: 8px 14px; font-size: 0.8rem; }
+            .btn { padding: 7px 12px; font-size: 0.8rem; }
+            .input-section { gap: 6px; }
+            #pInput, #qInput { width: 160px; }
+            .input-section input { padding: 6px 10px; font-size: 0.8rem; }
+            .gen-options { width: 100%; justify-content: center; }
+            .step-description { padding: 10px 12px; font-size: 0.82rem; }
+            .viz-area { padding: 14px; }
+            .chart-label { min-width: 100px; font-size: 0.73rem; }
+            .chart-complexity { min-width: 80px; font-size: 0.7rem; }
+            .trees-row { gap: 12px; }
+        }
+        @media (max-width: 480px) {
+            body { padding: 6px; }
+            .header h1 { font-size: 1.1rem; }
+            .header p { font-size: 0.8rem; }
+            .header { margin-bottom: 10px; }
+            .tabs { gap: 2px; margin-bottom: 12px; }
+            .tab { padding: 6px 10px; font-size: 0.72rem; }
+            .container { padding: 10px; border-radius: 8px; }
+            .info-panel { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .info-box { padding: 8px; }
+            .info-box h3 { font-size: 0.6rem; }
+            .info-box .value { font-size: 0.9rem; }
+            .input-section { flex-direction: column; align-items: stretch; }
+            .input-section input { width: 100%; }
+            #pInput, #qInput { width: 100%; }
+            .gen-options { flex-wrap: wrap; justify-content: center; }
+            .controls { gap: 6px; }
+            .btn { padding: 6px 10px; font-size: 0.75rem; }
+            .speed-control { width: 100%; justify-content: center; }
+            .step-description { padding: 8px 10px; font-size: 0.78rem; min-height: 40px; }
+            .viz-area { padding: 10px; min-height: 200px; }
+            .calc-box { padding: 8px 12px; font-size: 0.9rem; }
+            .legend { gap: 8px; margin-top: 10px; }
+            .legend-item { font-size: 0.7rem; gap: 4px; }
+            .legend-color { width: 12px; height: 12px; }
+            .complexity-chart { padding: 12px; }
+            .chart-label { min-width: 75px; font-size: 0.65rem; }
+            .chart-complexity { display: none; }
+            .chart-bar-wrap { height: 20px; }
+            .chart-bar { font-size: 0.65rem; }
+            .tree-card { min-width: 0; padding: 10px; }
+        }
+
+        /* NAVIGATION */
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 95vw;
+            margin: 0 auto 20px;
+        }
+        .nav-btn {
+            padding: 8px 18px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #334155; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>0100. Same Tree</h1>
+    <p>Easy — Tree, DFS, BFS</p>
+</div>
+
+<div class="nav-links">
+    <a href="../0099-recover-binary-search-tree/animation.html" class="nav-btn">← 0099. Recover BST</a>
+    <span></span>
+</div>
+
+<div class="tabs" id="tabs">
+    <div class="tab active" data-tab="dfs">Recursive DFS</div>
+    <div class="tab" data-tab="bfs">Iterative BFS (Queue)</div>
+    <div class="tab" data-tab="itdfs">Iterative DFS (Stack)</div>
+</div>
+
+<div class="container">
+    <div class="input-section">
+        <span class="input-label">p =</span>
+        <input type="text" id="pInput" placeholder="[1,2,3]" value="1,2,3">
+        <span class="input-label">q =</span>
+        <input type="text" id="qInput" placeholder="[1,2,3]" value="1,2,3">
+        <button class="btn btn-step" onclick="applyInput()">Apply</button>
+        <button class="btn btn-generate" onclick="generateRandom()">&#127922; Generate</button>
+        <div class="gen-options">
+            <label>Depth:</label>
+            <select id="genDepth">
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+            </select>
+            <label>Mode:</label>
+            <select id="genMode">
+                <option value="same" selected>Same</option>
+                <option value="diff">Different</option>
+                <option value="random">Random</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-play" onclick="play()">&#9654; Play</button>
+        <button class="btn btn-pause" onclick="pause()">&#9646;&#9646; Pause</button>
+        <button class="btn btn-step" onclick="stepForward()">&#9197; Step</button>
+        <button class="btn btn-reset" onclick="reset()">&#8634; Reset</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <select id="speed" onchange="updateSpeed()">
+                <option value="2000">Slow</option>
+                <option value="1000" selected>Normal</option>
+                <option value="500">Fast</option>
+                <option value="200">Very Fast</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="step-description" id="stepDesc">
+        &#9654; Press "Play" or "Step" to walk through the comparison.
+    </div>
+
+    <div class="viz-area" id="vizArea"></div>
+
+    <div class="info-panel">
+        <div class="info-box">
+            <h3>Step</h3>
+            <div class="value" id="stepCounter">0 / 0</div>
+        </div>
+        <div class="info-box">
+            <h3>Comparisons</h3>
+            <div class="value" id="opsCounter">0</div>
+        </div>
+        <div class="info-box">
+            <h3>Time</h3>
+            <div class="value" id="timeComp">—</div>
+        </div>
+        <div class="info-box">
+            <h3>Space</h3>
+            <div class="value" id="spaceComp">—</div>
+        </div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#334155;"></div><span>Default</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#3b82f6;"></div><span>Comparing</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#22c55e;"></div><span>Match</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ef4444;"></div><span>Mismatch</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:#6366f1;"></div><span>Visited</span></div>
+        <div class="legend-item"><div class="legend-color" style="background:transparent;border:2px dashed #475569;"></div><span>Null</span></div>
+    </div>
+
+    <div class="complexity-chart">
+        <div class="chart-title">Algorithm Complexity</div>
+        <div class="chart-bars">
+            <div class="chart-row">
+                <div class="chart-label">Recursive DFS</div>
+                <div class="chart-bar-wrap"><div class="chart-bar dfs" data-w="60" style="width:0">O(n)</div></div>
+                <div class="chart-complexity">O(n) / O(h)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Iterative BFS</div>
+                <div class="chart-bar-wrap"><div class="chart-bar bfs" data-w="60" style="width:0">O(n)</div></div>
+                <div class="chart-complexity">O(n) / O(w)</div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-label">Iterative DFS</div>
+                <div class="chart-bar-wrap"><div class="chart-bar itstack" data-w="60" style="width:0">O(n)</div></div>
+                <div class="chart-complexity">O(n) / O(h)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-const p=[1,2,3];const q=[1,2,3];
-function build(arr){if(!arr.length)return null;const r={val:arr[0]};const Q=[r];let i=1;
-while(Q.length&&i<arr.length){const n=Q.shift();
-if(i<arr.length&&arr[i]!==null){n.l={val:arr[i]};Q.push(n.l)}i++;
-if(i<arr.length&&arr[i]!==null){n.r={val:arr[i]};Q.push(n.r)}i++}return r}
-function same(a,b){if(!a&&!b)return true;if(!a||!b)return false;if(a.val!==b.val)return false;return same(a.l,b.l)&&same(a.r,b.r)}
-const result=same(build(p),build(q));
-function draw(arr,w){const t=document.createElement('div');t.className='tree';t.style.width=w+'px';
-const positions={0:[w/2-18,20],1:[w/4-18,80],2:[3*w/4-18,80]};
-arr.forEach((v,i)=>{if(v!==null&&positions[i]){const n=document.createElement('div');n.className='node '+(result?'match':'diff');
-n.style.left=positions[i][0]+'px';n.style.top=positions[i][1]+'px';n.textContent=v;t.appendChild(n)}});return t}
-const trees=document.createElement('div');trees.className='trees';
-trees.appendChild(draw(p,200));trees.appendChild(draw(q,200));
-const viz=document.getElementById('viz');viz.appendChild(trees);
-const v=document.createElement('div');v.className='verdict '+(result?'t':'f');v.textContent=result?'TRUE — same':'FALSE';viz.appendChild(v);
-</script></body></html>
+// ============================================================
+// LOCAL STORAGE
+// ============================================================
+const STORAGE_KEY = 'sametree_animation_state';
+
+function saveState() {
+    const state = { currentTab, currentStep, speed, pArr, qArr };
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+function loadState() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch (e) { return null; }
+}
+
+// ============================================================
+// STATE
+// ============================================================
+const saved = loadState();
+let currentTab = saved ? saved.currentTab : 'dfs';
+let steps = [];
+let currentStep = saved ? saved.currentStep : 0;
+let isPlaying = false;
+let playInterval = null;
+let speed = saved ? saved.speed : 1000;
+let pArr = saved ? saved.pArr : [1, 2, 3];
+let qArr = saved ? saved.qArr : [1, 2, 3];
+let pTree = null, qTree = null;
+let pNodes = [], qNodes = [];
+
+// ============================================================
+// TABS
+// ============================================================
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentTab = tab.dataset.tab;
+        reset();
+        rebuild();
+        renderStep();
+        saveState();
+    });
+});
+
+// ============================================================
+// PARSE / BUILD TREE
+// ============================================================
+function parseArr(str) {
+    const cleaned = str.replace(/[\[\]\s]/g, '');
+    if (!cleaned) return [];
+    return cleaned.split(',').map(s => {
+        const t = s.trim().toLowerCase();
+        if (t === '' || t === 'null' || t === 'none' || t === 'nil') return null;
+        const n = parseInt(t);
+        return isNaN(n) ? null : n;
+    });
+}
+
+let nodeIdCounter = 0;
+
+function buildTree(arr) {
+    if (!arr.length || arr[0] == null) return null;
+    const root = { val: arr[0], left: null, right: null, id: nodeIdCounter++ };
+    const queue = [root];
+    let i = 1;
+    while (queue.length && i < arr.length) {
+        const node = queue.shift();
+        if (i < arr.length) {
+            if (arr[i] != null) {
+                node.left = { val: arr[i], left: null, right: null, id: nodeIdCounter++ };
+                queue.push(node.left);
+            }
+            i++;
+        }
+        if (i < arr.length) {
+            if (arr[i] != null) {
+                node.right = { val: arr[i], left: null, right: null, id: nodeIdCounter++ };
+                queue.push(node.right);
+            }
+            i++;
+        }
+    }
+    return root;
+}
+
+function maxDepth(node) {
+    if (!node) return 0;
+    return 1 + Math.max(maxDepth(node.left), maxDepth(node.right));
+}
+
+function collectNodes(root) {
+    const out = [];
+    function walk(n) {
+        if (!n) return;
+        out.push(n);
+        walk(n.left);
+        walk(n.right);
+    }
+    walk(root);
+    return out;
+}
+
+// Layout: assign (x, y) to every node so siblings don't overlap
+function layoutTree(root, width) {
+    if (!root) return { width, height: 60 };
+    const depth = maxDepth(root);
+    const vSpacing = 60;
+    const height = Math.max(60, depth * vSpacing + 40);
+    function place(node, xMin, xMax, level) {
+        if (!node) return;
+        node.x = (xMin + xMax) / 2;
+        node.y = 24 + level * vSpacing;
+        const mid = (xMin + xMax) / 2;
+        place(node.left, xMin, mid, level + 1);
+        place(node.right, mid, xMax, level + 1);
+    }
+    place(root, 0, width, 0);
+    return { width, height };
+}
+
+function rebuild() {
+    nodeIdCounter = 0;
+    pTree = buildTree(pArr);
+    qTree = buildTree(qArr);
+    pNodes = collectNodes(pTree);
+    qNodes = collectNodes(qTree);
+    generateSteps();
+}
+
+// ============================================================
+// RANDOM GENERATOR
+// ============================================================
+function randInt(lo, hi) { return lo + Math.floor(Math.random() * (hi - lo + 1)); }
+
+function genTree(depth) {
+    if (depth <= 0) return null;
+    const root = { val: randInt(1, 9), left: null, right: null };
+    function grow(node, d) {
+        if (d >= depth) return;
+        if (Math.random() < 0.85) {
+            node.left = { val: randInt(1, 9), left: null, right: null };
+            grow(node.left, d + 1);
+        }
+        if (Math.random() < 0.85) {
+            node.right = { val: randInt(1, 9), left: null, right: null };
+            grow(node.right, d + 1);
+        }
+    }
+    grow(root, 1);
+    return root;
+}
+
+function serializeTree(root) {
+    if (!root) return [];
+    const out = [];
+    const queue = [root];
+    while (queue.length) {
+        const n = queue.shift();
+        if (n == null) {
+            out.push(null);
+        } else {
+            out.push(n.val);
+            queue.push(n.left);
+            queue.push(n.right);
+        }
+    }
+    while (out.length && out[out.length - 1] == null) out.pop();
+    return out;
+}
+
+function cloneTree(root) {
+    if (!root) return null;
+    return { val: root.val, left: cloneTree(root.left), right: cloneTree(root.right) };
+}
+
+function mutateTree(root) {
+    // Flip one node's value to make it different
+    const all = [];
+    (function walk(n) { if (!n) return; all.push(n); walk(n.left); walk(n.right); })(root);
+    if (!all.length) return root;
+    const target = all[randInt(0, all.length - 1)];
+    let nv;
+    do { nv = randInt(1, 9); } while (nv === target.val);
+    target.val = nv;
+    return root;
+}
+
+function generateRandom() {
+    const depth = parseInt(document.getElementById('genDepth').value);
+    const mode = document.getElementById('genMode').value;
+
+    let p = genTree(depth);
+    let q;
+    if (mode === 'same') {
+        q = cloneTree(p);
+    } else if (mode === 'diff') {
+        q = mutateTree(cloneTree(p));
+    } else {
+        q = genTree(depth);
+    }
+
+    pArr = serializeTree(p);
+    qArr = serializeTree(q);
+    document.getElementById('pInput').value = pArr.map(v => v === null ? 'null' : v).join(',');
+    document.getElementById('qInput').value = qArr.map(v => v === null ? 'null' : v).join(',');
+
+    reset();
+    rebuild();
+    renderStep();
+    saveState();
+}
+
+// ============================================================
+// CONTROLS
+// ============================================================
+function play() {
+    if (isPlaying) return;
+    isPlaying = true;
+    playInterval = setInterval(() => {
+        if (currentStep < steps.length - 1) {
+            currentStep++;
+            renderStep();
+        } else {
+            pause();
+        }
+    }, speed);
+}
+
+function pause() {
+    isPlaying = false;
+    if (playInterval) clearInterval(playInterval);
+}
+
+function stepForward() {
+    pause();
+    if (currentStep < steps.length - 1) {
+        currentStep++;
+        renderStep();
+    }
+}
+
+function reset() {
+    pause();
+    currentStep = 0;
+    if (steps.length > 0) renderStep();
+}
+
+function applyInput() {
+    try {
+        pArr = parseArr(document.getElementById('pInput').value);
+        qArr = parseArr(document.getElementById('qInput').value);
+        reset();
+        rebuild();
+        renderStep();
+        saveState();
+    } catch (e) {
+        document.getElementById('stepDesc').textContent = 'Invalid format. Example: 1,2,3 or 1,null,2';
+    }
+}
+
+function updateSpeed() {
+    speed = parseInt(document.getElementById('speed').value);
+    if (isPlaying) { pause(); play(); }
+    saveState();
+}
+
+// ============================================================
+// STEP GENERATION
+// ============================================================
+function generateSteps() {
+    steps = [];
+    if (currentTab === 'dfs') generateDFS();
+    else if (currentTab === 'bfs') generateBFS();
+    else if (currentTab === 'itdfs') generateItDFS();
+}
+
+function pairLabel(a, b) {
+    const av = a ? a.val : 'null';
+    const bv = b ? b.val : 'null';
+    return `(${av}, ${bv})`;
+}
+
+function generateDFS() {
+    let ops = 0;
+    const callStack = [];
+    let finalResult = true;
+    let earlyReturn = false;
+
+    steps.push({
+        kind: 'init',
+        desc: `p = [${pArr.map(v => v === null ? 'null' : v).join(',')}]\nq = [${qArr.map(v => v === null ? 'null' : v).join(',')}]\nRecursive DFS: compare each pair (p, q) at the same position.`,
+        ops: 0, hlP: {}, hlQ: {}, callStack: [],
+        time: 'O(n)', space: 'O(h)'
+    });
+
+    function dfs(a, b, path) {
+        if (earlyReturn) return false;
+        ops++;
+        const frame = `dfs(${a ? a.val : 'null'}, ${b ? b.val : 'null'})`;
+        callStack.push(frame);
+
+        // Step: entering call
+        const hlP = {}, hlQ = {};
+        if (a) hlP[a.id] = 'active';
+        if (b) hlQ[b.id] = 'active';
+
+        if (!a && !b) {
+            steps.push({
+                kind: 'compare', desc: `Both nodes are null → trees match here. Return true.`,
+                ops, hlP, hlQ, callStack: [...callStack],
+                calc: { a: null, b: null, match: true, reason: 'both null' },
+                time: 'O(n)', space: 'O(h)'
+            });
+            callStack.pop();
+            return true;
+        }
+        if (!a || !b) {
+            const reason = !a ? 'p is null but q is not' : 'q is null but p is not';
+            const hlPx = {}, hlQx = {};
+            if (a) hlPx[a.id] = 'diff';
+            if (b) hlQx[b.id] = 'diff';
+            steps.push({
+                kind: 'compare', desc: `${reason} → trees differ. Return false.`,
+                ops, hlP: hlPx, hlQ: hlQx, callStack: [...callStack],
+                calc: { a: a ? a.val : null, b: b ? b.val : null, match: false, reason },
+                time: 'O(n)', space: 'O(h)'
+            });
+            callStack.pop();
+            finalResult = false;
+            earlyReturn = true;
+            return false;
+        }
+        if (a.val !== b.val) {
+            const hlPx = {}, hlQx = {};
+            hlPx[a.id] = 'diff';
+            hlQx[b.id] = 'diff';
+            steps.push({
+                kind: 'compare', desc: `Values differ: ${a.val} ≠ ${b.val} → trees differ. Return false.`,
+                ops, hlP: hlPx, hlQ: hlQx, callStack: [...callStack],
+                calc: { a: a.val, b: b.val, match: false, reason: 'values differ' },
+                time: 'O(n)', space: 'O(h)'
+            });
+            callStack.pop();
+            finalResult = false;
+            earlyReturn = true;
+            return false;
+        }
+        // Match — show match step, then recurse
+        const hlPm = {}, hlQm = {};
+        hlPm[a.id] = 'match';
+        hlQm[b.id] = 'match';
+        steps.push({
+            kind: 'compare', desc: `${a.val} == ${b.val} ✅. Recurse into left children.`,
+            ops, hlP: hlPm, hlQ: hlQm, callStack: [...callStack],
+            calc: { a: a.val, b: b.val, match: true, reason: 'values equal' },
+            time: 'O(n)', space: 'O(h)'
+        });
+        const leftOk = dfs(a.left, b.left, path + 'L');
+        if (!leftOk) {
+            callStack.pop();
+            return false;
+        }
+        if (earlyReturn) { callStack.pop(); return false; }
+        // Show going to right
+        const hlPr = {}, hlQr = {};
+        hlPr[a.id] = 'visited';
+        hlQr[b.id] = 'visited';
+        steps.push({
+            kind: 'compare', desc: `Left subtree at (${a.val}, ${b.val}) matched. Now recurse into right children.`,
+            ops, hlP: hlPr, hlQ: hlQr, callStack: [...callStack],
+            time: 'O(n)', space: 'O(h)'
+        });
+        const rightOk = dfs(a.right, b.right, path + 'R');
+        callStack.pop();
+        return leftOk && rightOk;
+    }
+
+    dfs(pTree, qTree, '');
+
+    // Final
+    steps.push({
+        kind: 'final',
+        desc: finalResult ? 'All pairs matched ✅ → isSameTree returns TRUE.' : 'A mismatch was found ❌ → isSameTree returns FALSE.',
+        ops, hlP: {}, hlQ: {}, callStack: [],
+        verdict: finalResult,
+        time: 'O(n)', space: 'O(h)'
+    });
+}
+
+function generateBFS() {
+    let ops = 0;
+    const queue = [];
+    let finalResult = true;
+
+    steps.push({
+        kind: 'init',
+        desc: `p = [${pArr.map(v => v === null ? 'null' : v).join(',')}]\nq = [${qArr.map(v => v === null ? 'null' : v).join(',')}]\nIterative BFS: enqueue pairs, compare in FIFO order.`,
+        ops: 0, hlP: {}, hlQ: {}, queue: [],
+        time: 'O(n)', space: 'O(w)'
+    });
+
+    queue.push([pTree, qTree]);
+    steps.push({
+        kind: 'compare', desc: `Enqueue root pair ${pairLabel(pTree, qTree)}.`,
+        ops, hlP: {}, hlQ: {}, queue: queue.map(p => pairLabel(p[0], p[1])),
+        time: 'O(n)', space: 'O(w)'
+    });
+
+    while (queue.length) {
+        ops++;
+        const [a, b] = queue.shift();
+        const hlP = {}, hlQ = {};
+        if (a) hlP[a.id] = 'active';
+        if (b) hlQ[b.id] = 'active';
+        steps.push({
+            kind: 'compare', desc: `Dequeue ${pairLabel(a, b)} → compare.`,
+            ops, hlP, hlQ, queue: queue.map(p => pairLabel(p[0], p[1])),
+            calc: { a: a ? a.val : null, b: b ? b.val : null },
+            time: 'O(n)', space: 'O(w)'
+        });
+        if (!a && !b) {
+            steps.push({
+                kind: 'compare', desc: `Both null → OK, continue.`,
+                ops, hlP: {}, hlQ: {}, queue: queue.map(p => pairLabel(p[0], p[1])),
+                time: 'O(n)', space: 'O(w)'
+            });
+            continue;
+        }
+        if (!a || !b || a.val !== b.val) {
+            const hlPx = {}, hlQx = {};
+            if (a) hlPx[a.id] = 'diff';
+            if (b) hlQx[b.id] = 'diff';
+            const reason = (!a || !b) ? 'one is null' : `${a.val} ≠ ${b.val}`;
+            steps.push({
+                kind: 'compare', desc: `Mismatch (${reason}) → isSameTree = false. Stop.`,
+                ops, hlP: hlPx, hlQ: hlQx, queue: queue.map(p => pairLabel(p[0], p[1])),
+                calc: { a: a ? a.val : null, b: b ? b.val : null, match: false, reason },
+                time: 'O(n)', space: 'O(w)'
+            });
+            finalResult = false;
+            break;
+        }
+        const hlPm = {}, hlQm = {};
+        hlPm[a.id] = 'match';
+        hlQm[b.id] = 'match';
+        steps.push({
+            kind: 'compare', desc: `${a.val} == ${b.val} ✅. Enqueue (left, left) and (right, right).`,
+            ops, hlP: hlPm, hlQ: hlQm, queue: queue.map(p => pairLabel(p[0], p[1])),
+            calc: { a: a.val, b: b.val, match: true },
+            time: 'O(n)', space: 'O(w)'
+        });
+        queue.push([a.left, b.left]);
+        queue.push([a.right, b.right]);
+        steps.push({
+            kind: 'compare', desc: `Queue updated.`,
+            ops, hlP: {}, hlQ: {}, queue: queue.map(p => pairLabel(p[0], p[1])),
+            time: 'O(n)', space: 'O(w)'
+        });
+    }
+
+    steps.push({
+        kind: 'final',
+        desc: finalResult ? 'Queue drained with no mismatches ✅ → isSameTree returns TRUE.' : 'A mismatch was found ❌ → isSameTree returns FALSE.',
+        ops, hlP: {}, hlQ: {}, queue: [],
+        verdict: finalResult,
+        time: 'O(n)', space: 'O(w)'
+    });
+}
+
+function generateItDFS() {
+    let ops = 0;
+    const stack = [];
+    let finalResult = true;
+
+    steps.push({
+        kind: 'init',
+        desc: `p = [${pArr.map(v => v === null ? 'null' : v).join(',')}]\nq = [${qArr.map(v => v === null ? 'null' : v).join(',')}]\nIterative DFS: push pairs onto a stack, pop in LIFO order.`,
+        ops: 0, hlP: {}, hlQ: {}, stack: [],
+        time: 'O(n)', space: 'O(h)'
+    });
+
+    stack.push([pTree, qTree]);
+    steps.push({
+        kind: 'compare', desc: `Push root pair ${pairLabel(pTree, qTree)} onto stack.`,
+        ops, hlP: {}, hlQ: {}, stack: stack.map(p => pairLabel(p[0], p[1])),
+        time: 'O(n)', space: 'O(h)'
+    });
+
+    while (stack.length) {
+        ops++;
+        const [a, b] = stack.pop();
+        const hlP = {}, hlQ = {};
+        if (a) hlP[a.id] = 'active';
+        if (b) hlQ[b.id] = 'active';
+        steps.push({
+            kind: 'compare', desc: `Pop ${pairLabel(a, b)} → compare.`,
+            ops, hlP, hlQ, stack: stack.map(p => pairLabel(p[0], p[1])),
+            calc: { a: a ? a.val : null, b: b ? b.val : null },
+            time: 'O(n)', space: 'O(h)'
+        });
+        if (!a && !b) {
+            steps.push({
+                kind: 'compare', desc: `Both null → OK, continue.`,
+                ops, hlP: {}, hlQ: {}, stack: stack.map(p => pairLabel(p[0], p[1])),
+                time: 'O(n)', space: 'O(h)'
+            });
+            continue;
+        }
+        if (!a || !b || a.val !== b.val) {
+            const hlPx = {}, hlQx = {};
+            if (a) hlPx[a.id] = 'diff';
+            if (b) hlQx[b.id] = 'diff';
+            const reason = (!a || !b) ? 'one is null' : `${a.val} ≠ ${b.val}`;
+            steps.push({
+                kind: 'compare', desc: `Mismatch (${reason}) → isSameTree = false. Stop.`,
+                ops, hlP: hlPx, hlQ: hlQx, stack: stack.map(p => pairLabel(p[0], p[1])),
+                calc: { a: a ? a.val : null, b: b ? b.val : null, match: false, reason },
+                time: 'O(n)', space: 'O(h)'
+            });
+            finalResult = false;
+            break;
+        }
+        const hlPm = {}, hlQm = {};
+        hlPm[a.id] = 'match';
+        hlQm[b.id] = 'match';
+        steps.push({
+            kind: 'compare', desc: `${a.val} == ${b.val} ✅. Push (right, right) then (left, left) so left is processed next.`,
+            ops, hlP: hlPm, hlQ: hlQm, stack: stack.map(p => pairLabel(p[0], p[1])),
+            calc: { a: a.val, b: b.val, match: true },
+            time: 'O(n)', space: 'O(h)'
+        });
+        stack.push([a.right, b.right]);
+        stack.push([a.left, b.left]);
+        steps.push({
+            kind: 'compare', desc: `Stack updated.`,
+            ops, hlP: {}, hlQ: {}, stack: stack.map(p => pairLabel(p[0], p[1])),
+            time: 'O(n)', space: 'O(h)'
+        });
+    }
+
+    steps.push({
+        kind: 'final',
+        desc: finalResult ? 'Stack drained with no mismatches ✅ → isSameTree returns TRUE.' : 'A mismatch was found ❌ → isSameTree returns FALSE.',
+        ops, hlP: {}, hlQ: {}, stack: [],
+        verdict: finalResult,
+        time: 'O(n)', space: 'O(h)'
+    });
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderTreeSVG(root, hl, label) {
+    if (!root) {
+        return `<div class="tree-card"><h4>${label}</h4>
+            <div style="text-align:center;color:#64748b;font-style:italic;padding:30px 0;">empty tree</div>
+        </div>`;
+    }
+    const baseWidth = 320;
+    const { width, height } = layoutTree(root, baseWidth);
+    let svg = `<svg class="tree-svg" viewBox="0 0 ${width} ${height}" width="100%" preserveAspectRatio="xMidYMin meet" style="max-height:${height}px;">`;
+    // Edges first
+    function drawEdges(n) {
+        if (!n) return '';
+        let s = '';
+        if (n.left) {
+            s += `<line class="edge" x1="${n.x}" y1="${n.y}" x2="${n.left.x}" y2="${n.left.y}"/>`;
+            s += drawEdges(n.left);
+        }
+        if (n.right) {
+            s += `<line class="edge" x1="${n.x}" y1="${n.y}" x2="${n.right.x}" y2="${n.right.y}"/>`;
+            s += drawEdges(n.right);
+        }
+        return s;
+    }
+    svg += drawEdges(root);
+    // Nodes
+    function drawNodes(n) {
+        if (!n) return '';
+        const cls = hl[n.id] || '';
+        let s = `<circle class="node-circle ${cls}" cx="${n.x}" cy="${n.y}" r="18"/>`;
+        s += `<text class="node-text" x="${n.x}" y="${n.y}">${n.val}</text>`;
+        if (n.left) s += drawNodes(n.left);
+        if (n.right) s += drawNodes(n.right);
+        return s;
+    }
+    svg += drawNodes(root);
+    svg += '</svg>';
+    return `<div class="tree-card"><h4>${label}</h4><div class="tree-svg-wrap">${svg}</div></div>`;
+}
+
+function renderStep() {
+    if (steps.length === 0) {
+        document.getElementById('vizArea').innerHTML = '<div style="text-align:center;color:#64748b;padding:40px;">No steps to display.</div>';
+        return;
+    }
+    saveState();
+    const step = steps[currentStep];
+
+    document.getElementById('stepCounter').textContent = `${currentStep + 1} / ${steps.length}`;
+    document.getElementById('opsCounter').textContent = step.ops || 0;
+    document.getElementById('stepDesc').textContent = step.desc || '';
+    document.getElementById('timeComp').textContent = step.time || '—';
+    document.getElementById('spaceComp').textContent = step.space || '—';
+
+    let html = '';
+    html += '<div class="trees-row">';
+    html += renderTreeSVG(pTree, step.hlP || {}, 'p');
+    html += renderTreeSVG(qTree, step.hlQ || {}, 'q');
+    html += '</div>';
+
+    // Calc
+    if (step.calc) {
+        html += '<div class="calc-box">';
+        const av = step.calc.a == null ? 'null' : step.calc.a;
+        const bv = step.calc.b == null ? 'null' : step.calc.b;
+        html += `<span class="formula">compare(${av}, ${bv})</span>`;
+        if (step.calc.match === true) {
+            html += `<span class="result result-match"> match ✅</span>`;
+        } else if (step.calc.match === false) {
+            html += `<span class="result result-no"> mismatch ❌${step.calc.reason ? ' (' + step.calc.reason + ')' : ''}</span>`;
+        }
+        html += '</div>';
+    }
+
+    // Aux: call stack / queue / stack
+    if (step.callStack) {
+        html += '<div class="aux-panel"><div class="section-label">Call stack (top = current call)</div>';
+        if (step.callStack.length === 0) {
+            html += '<div style="color:#475569;font-style:italic;">empty</div>';
+        } else {
+            html += '<div class="aux-grid">';
+            step.callStack.forEach((frame, i) => {
+                const isTop = i === step.callStack.length - 1;
+                html += `<div class="aux-entry ${isTop ? 'top' : ''}"><div class="label">depth ${i}</div><div class="pair">${frame}</div></div>`;
+            });
+            html += '</div>';
+        }
+        html += '</div>';
+    }
+    if (step.queue) {
+        html += '<div class="aux-panel"><div class="section-label">Queue (front → back)</div>';
+        if (step.queue.length === 0) {
+            html += '<div style="color:#475569;font-style:italic;">empty</div>';
+        } else {
+            html += '<div class="aux-grid">';
+            step.queue.forEach((p, i) => {
+                html += `<div class="aux-entry ${i === 0 ? 'top' : ''}"><div class="label">${i === 0 ? 'front' : '#' + i}</div><div class="pair">${p}</div></div>`;
+            });
+            html += '</div>';
+        }
+        html += '</div>';
+    }
+    if (step.stack) {
+        html += '<div class="aux-panel"><div class="section-label">Stack (top = next to pop)</div>';
+        if (step.stack.length === 0) {
+            html += '<div style="color:#475569;font-style:italic;">empty</div>';
+        } else {
+            html += '<div class="aux-grid">';
+            step.stack.forEach((p, i) => {
+                const isTop = i === step.stack.length - 1;
+                html += `<div class="aux-entry ${isTop ? 'top' : ''}"><div class="label">${isTop ? 'top' : '#' + i}</div><div class="pair">${p}</div></div>`;
+            });
+            html += '</div>';
+        }
+        html += '</div>';
+    }
+
+    // Verdict on final step
+    if (step.kind === 'final') {
+        const color = step.verdict ? '#22c55e' : '#ef4444';
+        const text = step.verdict ? 'TRUE — same tree' : 'FALSE — different';
+        html += `<div style="margin-top:18px;padding:14px;text-align:center;background:${step.verdict ? '#052e16' : '#450a0a'};border:1px solid ${color};border-radius:10px;">
+            <div style="font-size:1.3rem;font-weight:800;color:${color};">${text}</div>
+        </div>`;
+    }
+
+    document.getElementById('vizArea').innerHTML = html;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.getElementById('pInput').value = pArr.map(v => v === null ? 'null' : v).join(',');
+document.getElementById('qInput').value = qArr.map(v => v === null ? 'null' : v).join(',');
+document.getElementById('speed').value = speed;
+document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === currentTab);
+});
+
+rebuild();
+if (currentStep >= steps.length) currentStep = 0;
+renderStep();
+
+setTimeout(() => {
+    document.querySelectorAll('.chart-bar[data-w]').forEach(bar => {
+        bar.style.width = bar.dataset.w + '%';
+    });
+}, 400);
+</script>
+
+</body>
+</html>

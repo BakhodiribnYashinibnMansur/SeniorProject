@@ -5,7 +5,7 @@
 1. [Introduction](#introduction)
 2. [Deeper Concepts](#deeper-concepts)
 3. [Loop Invariants](#loop-invariants)
-4. [Comparison with Bubble & Selection](#comparison-with-bubble--selection)
+4. [Comparison with Bubble & Selection](#comparison-with-bubble-selection)
 5. [Variants](#variants)
 6. [Why Hybrid Sorts Use Insertion Sort](#why-hybrid-sorts-use-insertion-sort)
 7. [Code Examples](#code-examples)

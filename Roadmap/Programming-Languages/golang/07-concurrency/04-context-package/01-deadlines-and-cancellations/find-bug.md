@@ -1,6 +1,6 @@
 # Deadlines and Cancellations — Find the Bug
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 Each section presents broken code, asks you to find the bug, and offers a fix. Treat them like code review: read carefully before peeking at the answer.
 

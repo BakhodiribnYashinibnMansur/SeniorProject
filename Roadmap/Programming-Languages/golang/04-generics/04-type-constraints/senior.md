@@ -3,7 +3,7 @@
 ## Table of Contents
 1. [Overview](#overview)
 2. [Architecting Constraint Hierarchies](#architecting-constraint-hierarchies)
-3. [`comparable` Semantics — Pre-1.20 vs 1.20+](#comparable-semantics--pre-120-vs-120)
+3. [`comparable` Semantics — Pre-1.20 vs 1.20+](#comparable-semantics-pre-120-vs-120)
 4. [When a Constraint Is Too Restrictive](#when-a-constraint-is-too-restrictive)
 5. [When a Constraint Is Too Loose](#when-a-constraint-is-too-loose)
 6. [Constraint Composition Strategies](#constraint-composition-strategies)

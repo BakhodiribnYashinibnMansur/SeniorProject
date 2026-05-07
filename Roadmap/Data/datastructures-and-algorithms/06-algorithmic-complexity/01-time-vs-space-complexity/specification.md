@@ -8,16 +8,16 @@
 
 ## Table of Contents
 
-1. [Docs Reference](#docs-reference)
-2. [API / Configuration Reference](#api--configuration-reference)
-3. [Core Concepts & Rules](#core-concepts--rules)
-4. [Schema / Parameters Reference](#schema--parameters-reference)
-5. [Behavioral Specification](#behavioral-specification)
-6. [Edge Cases from Official Docs](#edge-cases-from-official-docs)
-7. [Version & Compatibility Matrix](#version--compatibility-matrix)
-8. [Official Examples](#official-examples)
-9. [Compliance & Best Practices Checklist](#compliance--best-practices-checklist)
-10. [Related Documentation](#related-documentation)
+1. Docs Reference
+2. API / Configuration Reference
+3. Core Concepts & Rules
+4. Schema / Parameters Reference
+5. Behavioral Specification
+6. Edge Cases from Official Docs
+7. Version & Compatibility Matrix
+8. Official Examples
+9. Compliance & Best Practices Checklist
+10. Related Documentation
 
 ---
 

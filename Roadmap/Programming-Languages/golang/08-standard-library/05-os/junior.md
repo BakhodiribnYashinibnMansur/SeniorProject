@@ -42,7 +42,7 @@ func must[T any](v T, err error) T {
 `os.Args` is always non-empty: `os.Args[0]` is whatever name the parent
 used to invoke you (often the absolute path, sometimes just `myprog`).
 `os.Args[1:]` is the actual arguments. For anything more than counting
-positional args, use the [`flag`](../02-flag/) package — don't parse
+positional args, use the [`flag`](../02-flag/junior.md) package — don't parse
 `os.Args` by hand.
 
 ## 2. `os.Args` and a one-line argument loop
@@ -529,6 +529,6 @@ once you outgrow `Output()`.
 - [senior.md](senior.md) — process groups, signal masking, the exact
   semantics of `os.Exit`, the deadlock pattern with `Cmd.Wait`.
 - [tasks.md](tasks.md) — exercises that build on this junior material.
-- [`01-io-and-file-handling`](../01-io-and-file-handling/index.md) for
+- [`01-io-and-file-handling`](../01-io-and-file-handling/junior.md) for
   everything file-related.
-- [`02-flag`](../02-flag/) for parsing `os.Args` properly.
+- [`02-flag`](../02-flag/junior.md) for parsing `os.Args` properly.

@@ -11,13 +11,13 @@
 2. [When to Use Proxy](#when-to-use-proxy)
 3. [When NOT to Use Proxy](#when-not-to-use-proxy)
 4. [Real-World Cases](#real-world-cases)
-5. [Code Examples — Production-Grade](#code-examples--production-grade)
+5. [Code Examples — Production-Grade](#code-examples-production-grade)
 6. [Dynamic Proxies](#dynamic-proxies)
 7. [Combining Proxy Types](#combining-proxy-types)
 8. [Trade-offs](#trade-offs)
 9. [Alternatives Comparison](#alternatives-comparison)
 10. [Refactoring to Proxy](#refactoring-to-proxy)
-11. [Pros & Cons (Deeper)](#pros--cons-deeper)
+11. [Pros & Cons (Deeper)](#pros-cons-deeper)
 12. [Edge Cases](#edge-cases)
 13. [Tricky Points](#tricky-points)
 14. [Best Practices](#best-practices)
@@ -503,6 +503,6 @@ flowchart LR
 
 ---
 
-[← Back to Proxy folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Proxy folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Proxy — Senior Level](senior.md)

@@ -13,7 +13,7 @@
 5. [Strangler Fig and Branch by Abstraction](#strangler-fig-and-branch-by-abstraction)
 6. [Characterization tests](#characterization-tests)
 7. [Extract Method as architecture move](#extract-method-as-architecture-move)
-8. [Method Object → Command/Saga/Workflow](#method-object--commandsagaworkflow)
+8. [Method Object → Command/Saga/Workflow](#method-object-commandsagaworkflow)
 9. [The cost of refactoring debt](#the-cost-of-refactoring-debt)
 10. [Anti-patterns: refactoring theatre](#anti-patterns-refactoring-theatre)
 11. [Review questions](#review-questions)

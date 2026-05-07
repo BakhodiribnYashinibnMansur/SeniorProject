@@ -12,11 +12,11 @@
 8. [Branch Prediction at the CPU Level](#branch-prediction-at-the-cpu-level)
 9. [Memory Layout and Caching](#memory-layout-and-caching)
 10. [Code Examples](#code-examples)
-11. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+11. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 12. [Tricky Points](#tricky-points)
 13. [Test](#test)
 14. [Summary](#summary)
-15. [Diagrams & Visual Aids](#diagrams--visual-aids)
+15. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

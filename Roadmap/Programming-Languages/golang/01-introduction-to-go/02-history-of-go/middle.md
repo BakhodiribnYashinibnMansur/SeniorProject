@@ -4,21 +4,21 @@
 
 1. [Introduction](#introduction)
 2. [Core Concepts](#core-concepts)
-3. [Evolution & Historical Context](#evolution--historical-context)
-4. [Pros & Cons](#pros--cons)
+3. [Evolution & Historical Context](#evolution-historical-context)
+4. [Pros & Cons](#pros-cons)
 5. [Alternative Approaches](#alternative-approaches-plan-b)
 6. [Use Cases](#use-cases)
 7. [Code Examples](#code-examples)
 8. [Coding Patterns](#coding-patterns)
 9. [Clean Code](#clean-code)
-10. [Product Use / Feature](#product-use--feature)
+10. [Product Use / Feature](#product-use-feature)
 11. [Error Handling](#error-handling)
 12. [Security Considerations](#security-considerations)
 13. [Performance Optimization](#performance-optimization)
-14. [Metrics & Analytics](#metrics--analytics)
+14. [Metrics & Analytics](#metrics-analytics)
 15. [Debugging Guide](#debugging-guide)
 16. [Best Practices](#best-practices)
-17. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+17. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 18. [Common Mistakes](#common-mistakes)
 19. [Tricky Points](#tricky-points)
 20. [Comparison with Other Languages](#comparison-with-other-languages)
@@ -29,7 +29,7 @@
 25. [What You Can Build](#what-you-can-build)
 26. [Further Reading](#further-reading)
 27. [Related Topics](#related-topics)
-28. [Diagrams & Visual Aids](#diagrams--visual-aids)
+28. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -1108,7 +1108,7 @@ flowchart LR
 ## Related Topics
 
 - **Go Modules** — deep dive into the module system introduced in Go 1.11
-- **[Generics](../../04-generics/)** — understanding type parameters added in Go 1.18
+- **[Generics](../../04-generics/01-why-generics/junior.md)** — understanding type parameters added in Go 1.18
 
 ---
 

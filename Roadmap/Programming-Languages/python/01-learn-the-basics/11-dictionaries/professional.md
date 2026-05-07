@@ -10,10 +10,10 @@
 6. [Collision Resolution](#collision-resolution)
 7. [Resize Strategy](#resize-strategy)
 8. [Bytecode Analysis](#bytecode-analysis)
-9. [Memory Layout & Allocation](#memory-layout--allocation)
-10. [GIL & Thread Safety Internals](#gil--thread-safety-internals)
+9. [Memory Layout & Allocation](#memory-layout-allocation)
+10. [GIL & Thread Safety Internals](#gil-thread-safety-internals)
 11. [Key Sharing Dict (Split Table)](#key-sharing-dict-split-table)
-12. [Diagrams & Visual Aids](#diagrams--visual-aids)
+12. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

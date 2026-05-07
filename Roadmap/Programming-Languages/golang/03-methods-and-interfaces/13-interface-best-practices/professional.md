@@ -2,7 +2,7 @@
 
 ## Table of Contents
 1. [Introduction](#introduction)
-2. [DDD — Ports and Aggregates](#ddd--ports-and-aggregates)
+2. [DDD — Ports and Aggregates](#ddd-ports-and-aggregates)
 3. [Hexagonal Architecture in Go](#hexagonal-architecture-in-go)
 4. [Interface Governance in Large Codebases](#interface-governance-in-large-codebases)
 5. [Module Boundary Contracts](#module-boundary-contracts)
@@ -12,7 +12,7 @@
 9. [Migration Playbooks](#migration-playbooks)
 10. [Production-Grade Documentation Standards](#production-grade-documentation-standards)
 11. [Observability and Interface Contracts](#observability-and-interface-contracts)
-12. [Case Study — Splitting a Monolith Repo Interface](#case-study--splitting-a-monolith-repo-interface)
+12. [Case Study — Splitting a Monolith Repo Interface](#case-study-splitting-a-monolith-repo-interface)
 13. [Summary](#summary)
 
 ---

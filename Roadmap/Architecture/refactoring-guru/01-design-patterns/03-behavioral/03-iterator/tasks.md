@@ -12,7 +12,7 @@ Each task includes a brief and a reference solution. Try first; check after.
 2. [Task 2: Tree BFS iterator](#task-2-tree-bfs-iterator)
 3. [Task 3: Auto-paginating API client](#task-3-auto-paginating-api-client)
 4. [Task 4: Bidirectional list iterator](#task-4-bidirectional-list-iterator)
-5. [Task 5: Filter + take generator chain](#task-5-filter--take-generator-chain)
+5. [Task 5: Filter + take generator chain](#task-5-filter-take-generator-chain)
 6. [Task 6: Streaming JDBC iterator](#task-6-streaming-jdbc-iterator)
 7. [Task 7: Snapshot iterator](#task-7-snapshot-iterator)
 8. [Task 8: Custom Spliterator over a range](#task-8-custom-spliterator-over-a-range)

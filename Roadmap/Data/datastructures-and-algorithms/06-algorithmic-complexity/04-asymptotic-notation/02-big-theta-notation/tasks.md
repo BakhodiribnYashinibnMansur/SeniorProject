@@ -2,22 +2,22 @@
 
 ## Table of Contents
 
-1. [Task 1: Identify Theta of Simple Functions](#task-1)
-2. [Task 2: Prove Theta Using Constants](#task-2)
-3. [Task 3: Prove Theta Using Limits](#task-3)
-4. [Task 4: Count Operations and Verify Theta](#task-4)
-5. [Task 5: Classify Loop Patterns](#task-5)
-6. [Task 6: Theta of Recursive Functions](#task-6)
-7. [Task 7: Distinguish O from Theta](#task-7)
-8. [Task 8: Empirical Growth Rate Detector](#task-8)
-9. [Task 9: Master Theorem Application](#task-9)
-10. [Task 10: Theta-Based Capacity Planner](#task-10)
-11. [Task 11: Compare Algorithms by Theta](#task-11)
-12. [Task 12: Sandwich Bound Finder](#task-12)
-13. [Task 13: Theta of String Operations](#task-13)
-14. [Task 14: Theta of Matrix Operations](#task-14)
-15. [Task 15: Theta Proof Validator](#task-15)
-16. [Benchmark: Full Theta Analysis Suite](#benchmark)
+1. Task 1: Identify Theta of Simple Functions
+2. Task 2: Prove Theta Using Constants
+3. Task 3: Prove Theta Using Limits
+4. Task 4: Count Operations and Verify Theta
+5. Task 5: Classify Loop Patterns
+6. Task 6: Theta of Recursive Functions
+7. Task 7: Distinguish O from Theta
+8. Task 8: Empirical Growth Rate Detector
+9. Task 9: Master Theorem Application
+10. Task 10: Theta-Based Capacity Planner
+11. Task 11: Compare Algorithms by Theta
+12. Task 12: Sandwich Bound Finder
+13. Task 13: Theta of String Operations
+14. Task 14: Theta of Matrix Operations
+15. Task 15: Theta Proof Validator
+16. Benchmark: Full Theta Analysis Suite
 
 ---
 

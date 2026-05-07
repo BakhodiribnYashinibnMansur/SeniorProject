@@ -2,9 +2,9 @@
 
 ## Table of Contents
 1. [The performance question for containers](#the-performance-question-for-containers)
-2. [Memory layout — slice vs linked structures](#memory-layout--slice-vs-linked-structures)
+2. [Memory layout — slice vs linked structures](#memory-layout-slice-vs-linked-structures)
 3. [Receiver choice and inlining](#receiver-choice-and-inlining)
-4. [Avoiding boxing — keep T concrete](#avoiding-boxing--keep-t-concrete)
+4. [Avoiding boxing — keep T concrete](#avoiding-boxing-keep-t-concrete)
 5. [Pre-allocation tricks](#pre-allocation-tricks)
 6. [Pointer-shaped vs scalar-shaped T](#pointer-shaped-vs-scalar-shaped-t)
 7. [GC-friendly removal](#gc-friendly-removal)

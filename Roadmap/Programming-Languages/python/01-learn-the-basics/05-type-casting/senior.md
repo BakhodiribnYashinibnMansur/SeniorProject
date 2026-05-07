@@ -15,7 +15,7 @@
 11. [Best Practices for Large Codebases](#best-practices-for-large-codebases)
 12. [Edge Cases at Scale](#edge-cases-at-scale)
 13. [Test](#test)
-14. [Diagrams & Visual Aids](#diagrams--visual-aids)
+14. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

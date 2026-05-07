@@ -2,7 +2,7 @@
 
 ## Table of Contents
 1. [Introduction](#introduction)
-2. [Domain Primitives — Type-Safe IDs](#domain-primitives--type-safe-ids)
+2. [Domain Primitives — Type-Safe IDs](#domain-primitives-type-safe-ids)
 3. [Strongly-Typed Units](#strongly-typed-units)
 4. [Custom Error Types via int](#custom-error-types-via-int)
 5. [ADT-Like Enums](#adt-like-enums)

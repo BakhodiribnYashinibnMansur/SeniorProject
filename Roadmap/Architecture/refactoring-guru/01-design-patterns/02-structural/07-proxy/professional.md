@@ -411,6 +411,6 @@ Total request: ~70 ms
 
 ---
 
-[← Back to Proxy folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Proxy folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Proxy — Interview Preparation](interview.md)

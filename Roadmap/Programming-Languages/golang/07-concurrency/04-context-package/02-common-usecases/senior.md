@@ -1,6 +1,6 @@
 # Common Usecases — Senior
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 The middle file showed you middleware, shutdown, and worker pools. The senior file is about cross-service propagation: how a 500 ms deadline that started at the edge of your system arrives, intact and budget-aware, at a Postgres replica three hops deep.
 
@@ -489,4 +489,4 @@ Discussed in deadlines-and-cancellations; mentioned again here because it is the
 
 Professional-level patterns: payment systems with idempotency in context, multi-stage file uploads with progress, scheduled job orchestration, and the subtle interaction between context and `runtime/trace`.
 
-[← Back to index](index.md)
+[← Back to index](junior.md)

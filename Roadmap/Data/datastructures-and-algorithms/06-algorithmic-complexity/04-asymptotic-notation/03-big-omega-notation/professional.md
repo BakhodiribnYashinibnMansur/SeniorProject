@@ -11,15 +11,15 @@ bound for sorted search, and the adversary method as a general proof technique.
 
 ## Table of Contents
 
-1. [Formal Proof: Omega(n log n) for Comparison Sorting](#sorting-lower-bound)
-2. [Formal Proof: Omega(n) for Finding the Maximum](#maximum-lower-bound)
-3. [Formal Proof: Omega(log n) for Sorted Search](#search-lower-bound)
-4. [The Adversary Method](#adversary-method)
+1. Formal Proof: Omega(n log n) for Comparison Sorting
+2. Formal Proof: Omega(n) for Finding the Maximum
+3. Formal Proof: Omega(log n) for Sorted Search
+4. The Adversary Method
 5. [Information-Theoretic Arguments](#information-theoretic-arguments)
-6. [The Relationship: Theta = O Intersection Omega](#theta-relationship)
+6. The Relationship: Theta = O Intersection Omega
 7. [Advanced Topics](#advanced-topics)
-8. [Code Examples: Formal Verification](#code-examples)
-9. [Summary of Results](#summary)
+8. Code Examples: Formal Verification
+9. Summary of Results
 
 ---
 

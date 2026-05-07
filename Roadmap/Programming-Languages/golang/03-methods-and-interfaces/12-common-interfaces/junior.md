@@ -8,7 +8,7 @@
 5. [`fmt.Stringer`](#fmtstringer)
 6. [`io.Reader`](#ioreader)
 7. [`io.Writer`](#iowriter)
-8. [`io.Closer` and Composed Interfaces](#ioclose-and-composed-interfaces)
+8. `io.Closer` and Composed Interfaces
 9. [`sort.Interface`](#sortinterface)
 10. [Quick Tour: Other Interfaces You Will Meet](#quick-tour-other-interfaces-you-will-meet)
 11. [Common Mistakes](#common-mistakes)

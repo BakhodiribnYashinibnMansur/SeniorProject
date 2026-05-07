@@ -2,9 +2,9 @@
 
 ## Table of Contents
 1. [Constraints and the call-site cost](#constraints-and-the-call-site-cost)
-2. [Type-only constraints — the fast path](#type-only-constraints--the-fast-path)
-3. [Method-bearing constraints — dictionary cost](#method-bearing-constraints--dictionary-cost)
-4. [Mixed constraints — the worst-case shape](#mixed-constraints--the-worst-case-shape)
+2. [Type-only constraints — the fast path](#type-only-constraints-the-fast-path)
+3. [Method-bearing constraints — dictionary cost](#method-bearing-constraints-dictionary-cost)
+4. [Mixed constraints — the worst-case shape](#mixed-constraints-the-worst-case-shape)
 5. [Inlining and devirtualization](#inlining-and-devirtualization)
 6. [Minimal vs maximal constraints](#minimal-vs-maximal-constraints)
 7. [Constraint design for hot paths](#constraint-design-for-hot-paths)

@@ -11,7 +11,7 @@ Each exercise contains buggy code. Find the bug, explain what goes wrong, and fi
 - [Bug 5: Integer Overflow in Two Sum (Java)](#bug-5-integer-overflow-in-two-sum-java)
 - [Bug 6: Modifying List During Iteration (Python)](#bug-6-modifying-list-during-iteration-python)
 - [Bug 7: Wrong Direction in Shift (Go)](#bug-7-wrong-direction-in-shift-go)
-- [Bug 8: Comparing Arrays with == (Java)](#bug-8-comparing-arrays-with--java)
+- [Bug 8: Comparing Arrays with == (Java)](#bug-8-comparing-arrays-with-java)
 - [Bug 9: Forgot to Handle Empty Array (Python)](#bug-9-forgot-to-handle-empty-array-python)
 - [Bug 10: Off-by-One in Binary Search (Go)](#bug-10-off-by-one-in-binary-search-go)
 - [Bug 11: Wrong Append After Delete (Java)](#bug-11-wrong-append-after-delete-java)

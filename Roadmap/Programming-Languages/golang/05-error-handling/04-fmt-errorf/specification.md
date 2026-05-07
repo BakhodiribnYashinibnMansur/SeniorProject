@@ -8,10 +8,10 @@
 5. [The `%w` Verb](#the-w-verb)
 6. [Multiple `%w` (Go 1.20+)](#multiple-w-go-120)
 7. [Returned Concrete Types](#returned-concrete-types)
-8. [Interaction with `errors.Is` / `errors.As` / `errors.Unwrap`](#interaction-with-errorsis--errorsas--errorsunwrap)
+8. [Interaction with `errors.Is` / `errors.As` / `errors.Unwrap`](#interaction-with-errorsis-errorsas-errorsunwrap)
 9. [Version History](#version-history)
 10. [Relationship to `fmt.Sprintf`](#relationship-to-fmtsprintf)
-11. [Things the Spec / Documentation Does NOT Guarantee](#things-the-spec--documentation-does-not-guarantee)
+11. [Things the Spec / Documentation Does NOT Guarantee](#things-the-spec-documentation-does-not-guarantee)
 12. [References](#references)
 
 ---

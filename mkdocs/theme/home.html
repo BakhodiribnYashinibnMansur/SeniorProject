@@ -448,6 +448,185 @@
       border-color: var(--sp-green);
     }
 
+    /* expanded directory listings — sections under chapter cards */
+    .sp-section {
+      margin-top: 1.6rem;
+      animation: sp-fade 0.7s 2.3s both ease-out;
+    }
+    .sp-section-prompt {
+      font-size: 0.78rem;
+      color: var(--sp-fg-dim);
+      margin: 0 0 0.5rem 0.1rem;
+      letter-spacing: 0.04em;
+    }
+    .sp-section-prompt .user  { color: var(--sp-green); }
+    .sp-section-prompt .host  { color: var(--sp-fg); }
+    .sp-section-prompt .path  { color: #6fa8dc; }
+    .sp-section-prompt .dim   { color: var(--sp-fg-dim); }
+    .sp-section-prompt .green { color: var(--sp-green); margin-right: 0.5em; }
+    .sp-section-prompt .cmd   { color: var(--sp-fg); }
+    .sp-section-prompt .arg   { color: #6fa8dc; }
+
+    .sp-listing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.65rem;
+      padding: 0.95rem 0.85rem;
+    }
+    .sp-listing-cell {
+      border: 1px solid var(--sp-line);
+      background: rgba(20, 20, 20, 0.4);
+      padding: 0.6rem 0.7rem;
+      transition: border-color 0.2s ease;
+    }
+    .sp-listing-cell:hover { border-color: var(--sp-line-strong); }
+    .sp-listing-cell .head {
+      color: var(--sp-green);
+      font-weight: 600;
+      font-size: 0.74rem;
+      letter-spacing: 0.06em;
+      display: block;
+      margin-bottom: 0.45rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px dashed var(--sp-line-strong);
+    }
+    .sp-listing-cell ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .sp-listing-cell li {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      padding: 0.16rem 0;
+      font-size: 0.75rem;
+      color: var(--sp-fg-dim);
+    }
+    .sp-listing-cell li a {
+      color: var(--sp-fg);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .sp-listing-cell li a:hover {
+      color: var(--sp-green);
+      border-color: var(--sp-green);
+    }
+    .sp-listing-cell li .tag {
+      flex-shrink: 0;
+      font-size: 0.66rem;
+      letter-spacing: 0.06em;
+      color: var(--sp-fg-deep);
+    }
+    .sp-listing-cell li .tag.live { color: var(--sp-green); }
+
+    /* system design — 4 levels grid */
+    .sp-levels {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.65rem;
+      padding: 0.95rem 0.85rem;
+    }
+    @media (max-width: 900px) { .sp-levels { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .sp-levels { grid-template-columns: 1fr; } }
+    .sp-level {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      border: 1px solid var(--sp-line);
+      background: rgba(20, 20, 20, 0.4);
+      padding: 0.7rem 0.75rem;
+      text-decoration: none;
+      color: var(--sp-fg);
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    .sp-level:hover {
+      border-color: var(--sp-green);
+      transform: translateY(-2px);
+    }
+    .sp-level:hover .name { color: var(--sp-green); }
+    .sp-level .ord {
+      color: var(--sp-green);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+    }
+    .sp-level .name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+    .sp-level .lead {
+      font-size: 0.74rem;
+      color: var(--sp-fg-dim);
+      line-height: 1.5;
+    }
+
+    /* leetcode — latest problems table */
+    .sp-leet { padding: 0.65rem 0.85rem 0.95rem; }
+    .sp-leet table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+    .sp-leet th {
+      text-align: left;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--sp-fg-deep);
+      font-weight: 500;
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px dashed var(--sp-line-strong);
+    }
+    .sp-leet td {
+      padding: 0.36rem 0.6rem;
+      border-bottom: 1px solid var(--sp-line);
+      color: var(--sp-fg-dim);
+    }
+    .sp-leet tr:last-child td { border-bottom: none; }
+    .sp-leet td a {
+      color: var(--sp-fg);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .sp-leet td a:hover {
+      color: var(--sp-green);
+      border-color: var(--sp-green);
+    }
+    .sp-leet .num {
+      color: var(--sp-green);
+      font-variant-numeric: tabular-nums;
+      width: 3.5rem;
+    }
+    .sp-leet .diff {
+      width: 4.5rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      text-align: right;
+    }
+    .sp-leet .diff.easy   { color: var(--sp-green); }
+    .sp-leet .diff.medium { color: #f5d76e; }
+    .sp-leet .diff.hard   { color: #ff6b6b; }
+    .sp-leet-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin: 0.7rem 0.05rem 0;
+      padding-top: 0.55rem;
+      border-top: 1px dashed var(--sp-line-strong);
+      font-size: 0.74rem;
+      color: var(--sp-fg-dim);
+    }
+    .sp-leet-foot a {
+      color: var(--sp-green);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s ease;
+    }
+    .sp-leet-foot a:hover { border-color: var(--sp-green); }
+
     /* tame Material chrome on home only */
     .md-main { background: var(--sp-bg); }
     .md-main__inner { margin: 0; padding: 0; }
@@ -600,6 +779,222 @@
           </div>
         </a>
       </nav>
+
+      <section class="sp-section" aria-labelledby="sec-roadmaps">
+        <p class="sp-section-prompt">
+          <span class="user">root</span><span class="dim">@</span><span class="host">senior</span><span class="dim">:</span><span class="path">~</span>
+          <span class="green">#</span> <span class="cmd">tree</span> <span class="arg">./roadmaps</span>
+        </p>
+        <div class="sp-window" id="sec-roadmaps">
+          <div class="sp-window-title">
+            <span><span class="ord">[01]</span> &nbsp;curriculum/</span>
+            <span>11 domains &nbsp;·&nbsp; 50+ paths</span>
+          </div>
+          <div class="sp-listing-grid">
+
+            <div class="sp-listing-cell">
+              <span class="head">ai/</span>
+              <ul>
+                <li><span>ai-engineer</span><span class="tag">soon</span></li>
+                <li><span>machine-learning</span><span class="tag">soon</span></li>
+                <li><span>ai-agents</span><span class="tag">soon</span></li>
+                <li><span>prompt-engineering</span><span class="tag">soon</span></li>
+                <li><span>claude-code</span><span class="tag">soon</span></li>
+                <li><span>vibe-coding</span><span class="tag">soon</span></li>
+              </ul>
+            </div>
+
+            <div class="sp-listing-cell">
+              <span class="head">architecture/</span>
+              <ul>
+                <li><span>software-architect</span><span class="tag">soon</span></li>
+                <li><span>software-design</span><span class="tag">soon</span></li>
+                <li><span>system-design</span><span class="tag">soon</span></li>
+                <li><span>computer-science</span><span class="tag">soon</span></li>
+                <li><span>blockchain</span><span class="tag">soon</span></li>
+                <li><span>refactoring</span><span class="tag">soon</span></li>
+              </ul>
+            </div>
+
+            <div class="sp-listing-cell">
+              <span class="head">backend/</span>
+              <ul>
+                <li><span>backend</span><span class="tag">soon</span></li>
+                <li><span>api-design</span><span class="tag">soon</span></li>
+                <li><span>full-stack</span><span class="tag">soon</span></li>
+                <li><span>postgresql</span><span class="tag">soon</span></li>
+                <li><span>mongodb</span><span class="tag">soon</span></li>
+                <li><span>redis</span><span class="tag">soon</span></li>
+                <li><span>elasticsearch</span><span class="tag">soon</span></li>
+              </ul>
+            </div>
+
+            <div class="sp-listing-cell">
+              <span class="head">data/</span>
+              <ul>
+                <li><a href="Roadmap/Data/datastructures-and-algorithms/">data-structures-algorithms</a><span class="tag live">live</span></li>
+                <li><span>ai-data-scientist</span><span class="tag">soon</span></li>
+                <li><span>data-analyst</span><span class="tag">soon</span></li>
+                <li><span>bi-analyst</span><span class="tag">soon</span></li>
+              </ul>
+            </div>
+
+            <div class="sp-listing-cell">
+              <span class="head">devops/</span>
+              <ul>
+                <li><span>devops</span><span class="tag">soon</span></li>
+                <li><span>docker</span><span class="tag">soon</span></li>
+                <li><span>kubernetes</span><span class="tag">soon</span></li>
+                <li><span>terraform</span><span class="tag">soon</span></li>
+                <li><span>aws</span><span class="tag">soon</span></li>
+                <li><span>cloudflare</span><span class="tag">soon</span></li>
+                <li><span>linux</span><span class="tag">soon</span></li>
+                <li><span>mlops</span><span class="tag">soon</span></li>
+              </ul>
+            </div>
+
+            <div class="sp-listing-cell">
+              <span class="head">frontend/</span>
+              <ul>
+                <li><span>frontend</span><span class="tag">soon</span></li>
+                <li><span>react</span><span class="tag">soon</span></li>
+                <li><span>typescript</span><span class="tag">soon</span></li>
+                <li><span>graphql</span><span class="tag">soon</span></li>
+                <li><span>design-system</span><span class="tag">soon</span></li>
+              </ul>
+            </div>
+
+            <div class="sp-listing-cell">
+              <span class="head">mobile/</span>
+              <ul>
+                <li><span>android</span><span class="tag">soon</span></li>
+                <li><span>ios</span><span class="tag">soon</span></li>
+              </ul>
+            </div>
+
+            <div class="sp-listing-cell">
+              <span class="head">programming-languages/</span>
+              <ul>
+                <li><a href="Roadmap/Programming-Languages/golang/">go</a><span class="tag live">live</span></li>
+                <li><a href="Roadmap/Programming-Languages/java/">java</a><span class="tag live">live</span></li>
+                <li><a href="Roadmap/Programming-Languages/python/">python</a><span class="tag live">live</span></li>
+                <li><span>rust</span><span class="tag">soon</span></li>
+                <li><span>sql</span><span class="tag">soon</span></li>
+              </ul>
+            </div>
+
+            <div class="sp-listing-cell">
+              <span class="head">security/</span>
+              <ul>
+                <li><span>cyber-security</span><span class="tag">soon</span></li>
+                <li><span>ai-red-teaming</span><span class="tag">soon</span></li>
+              </ul>
+            </div>
+
+            <div class="sp-listing-cell">
+              <span class="head">soft-skills/</span>
+              <ul>
+                <li><span>code-review</span><span class="tag">soon</span></li>
+                <li><span>devrel</span><span class="tag">soon</span></li>
+                <li><span>engineering-manager</span><span class="tag">soon</span></li>
+                <li><span>product-manager</span><span class="tag">soon</span></li>
+                <li><span>qa</span><span class="tag">soon</span></li>
+                <li><span>technical-writer</span><span class="tag">soon</span></li>
+              </ul>
+            </div>
+
+            <div class="sp-listing-cell">
+              <span class="head">tools-platforms/</span>
+              <ul>
+                <li><span>aws</span><span class="tag">soon</span></li>
+                <li><span>git-github</span><span class="tag">soon</span></li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <section class="sp-section" aria-labelledby="sec-systemdesign">
+        <p class="sp-section-prompt">
+          <span class="user">root</span><span class="dim">@</span><span class="host">senior</span><span class="dim">:</span><span class="path">~</span>
+          <span class="green">#</span> <span class="cmd">ls</span> <span class="arg">./system-design</span>
+        </p>
+        <div class="sp-window" id="sec-systemdesign">
+          <div class="sp-window-title">
+            <span><span class="ord">[03]</span> &nbsp;architecture/</span>
+            <span>4 levels &nbsp;·&nbsp; design problems &nbsp;·&nbsp; sources</span>
+          </div>
+          <div class="sp-levels">
+            <a class="sp-level" href="System%20Design/01-junior-level/">
+              <span class="ord">[01]</span>
+              <span class="name">junior/</span>
+              <span class="lead">building blocks of distributed systems, scalability basics, common architectural patterns.</span>
+            </a>
+            <a class="sp-level" href="System%20Design/02-middle-level/">
+              <span class="ord">[02]</span>
+              <span class="name">middle/</span>
+              <span class="lead">production patterns: caching, message queues, db scaling, observability fundamentals.</span>
+            </a>
+            <a class="sp-level" href="System%20Design/03-senior-level/">
+              <span class="ord">[03]</span>
+              <span class="name">senior/</span>
+              <span class="lead">high-availability, consistency tradeoffs, distributed transactions, tradeoff analysis.</span>
+            </a>
+            <a class="sp-level" href="System%20Design/04-professional-level/">
+              <span class="ord">[04]</span>
+              <span class="name">professional/</span>
+              <span class="lead">multi-region, capacity planning, disaster recovery, operating at scale.</span>
+            </a>
+            <a class="sp-level" href="System%20Design/06-design-problems/">
+              <span class="ord">[06]</span>
+              <span class="name">design-problems/</span>
+              <span class="lead">worked-through interview-style design problems with explicit tradeoff analysis.</span>
+            </a>
+            <a class="sp-level" href="System%20Design/05-sources/">
+              <span class="ord">[05]</span>
+              <span class="name">sources/</span>
+              <span class="lead">curated reading list — books, papers, engineering blogs worth re-reading.</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="sp-section" aria-labelledby="sec-leetcode">
+        <p class="sp-section-prompt">
+          <span class="user">root</span><span class="dim">@</span><span class="host">senior</span><span class="dim">:</span><span class="path">~</span>
+          <span class="green">#</span> <span class="cmd">ls -lt</span> <span class="arg">./leetcode</span> | <span class="cmd">head</span>
+        </p>
+        <div class="sp-window" id="sec-leetcode">
+          <div class="sp-window-title">
+            <span><span class="ord">[02]</span> &nbsp;algorithms/</span>
+            <span>100 problems &nbsp;·&nbsp; latest 10</span>
+          </div>
+          <div class="sp-leet">
+            <table>
+              <thead>
+                <tr><th class="num">#</th><th>problem</th><th class="diff">level</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="num">100</td><td><a href="Leetcode/0100-same-tree/solution/">same-tree</a></td><td class="diff easy">easy</td></tr>
+                <tr><td class="num">099</td><td><a href="Leetcode/0099-recover-binary-search-tree/solution/">recover-binary-search-tree</a></td><td class="diff medium">medium</td></tr>
+                <tr><td class="num">098</td><td><a href="Leetcode/0098-validate-binary-search-tree/solution/">validate-binary-search-tree</a></td><td class="diff medium">medium</td></tr>
+                <tr><td class="num">097</td><td><a href="Leetcode/0097-interleaving-string/solution/">interleaving-string</a></td><td class="diff medium">medium</td></tr>
+                <tr><td class="num">096</td><td><a href="Leetcode/0096-unique-binary-search-trees/solution/">unique-binary-search-trees</a></td><td class="diff medium">medium</td></tr>
+                <tr><td class="num">095</td><td><a href="Leetcode/0095-unique-binary-search-trees-ii/solution/">unique-binary-search-trees-ii</a></td><td class="diff medium">medium</td></tr>
+                <tr><td class="num">094</td><td><a href="Leetcode/0094-binary-tree-inorder-traversal/solution/">binary-tree-inorder-traversal</a></td><td class="diff easy">easy</td></tr>
+                <tr><td class="num">093</td><td><a href="Leetcode/0093-restore-ip-addresses/solution/">restore-ip-addresses</a></td><td class="diff medium">medium</td></tr>
+                <tr><td class="num">092</td><td><a href="Leetcode/0092-reverse-linked-list-ii/solution/">reverse-linked-list-ii</a></td><td class="diff medium">medium</td></tr>
+                <tr><td class="num">091</td><td><a href="Leetcode/0091-decode-ways/solution/">decode-ways</a></td><td class="diff medium">medium</td></tr>
+              </tbody>
+            </table>
+            <div class="sp-leet-foot">
+              <span>// 100 total &nbsp;·&nbsp; go &nbsp;·&nbsp; java &nbsp;·&nbsp; python</span>
+              <a href="Leetcode/">view all 100 &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <footer class="sp-footer">
         <span>// docs generated with <a href="https://claude.com/claude-code" target="_blank" rel="noopener">claude</a></span>

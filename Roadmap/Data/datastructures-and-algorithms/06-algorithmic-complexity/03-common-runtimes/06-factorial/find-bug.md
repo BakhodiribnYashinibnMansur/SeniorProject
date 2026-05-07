@@ -2,18 +2,18 @@
 
 ## Table of Contents
 
-1. [Bug 1: Missing Base Case in Factorial](#bug-1-missing-base-case)
-2. [Bug 2: Wrong Swap Restore in Permutation](#bug-2-wrong-swap-restore)
-3. [Bug 3: Heap's Algorithm Even/Odd Mixup](#bug-3-heaps-algorithm-mixup)
-4. [Bug 4: Next Permutation Wrong Comparison](#bug-4-next-permutation-comparison)
-5. [Bug 5: Missing Copy in Permutation Collection](#bug-5-missing-copy)
-6. [Bug 6: Off-by-One in TSP Brute Force](#bug-6-off-by-one-tsp)
-7. [Bug 7: Duplicate Permutations Not Skipped](#bug-7-duplicate-permutations)
-8. [Bug 8: K-th Permutation Indexing Error](#bug-8-kth-permutation)
-9. [Bug 9: 2-Opt Reversal Wrong Bounds](#bug-9-two-opt-bounds)
-10. [Bug 10: Branch and Bound Never Prunes](#bug-10-branch-and-bound)
-11. [Bug 11: Derangement Recurrence Off by One](#bug-11-derangement-recurrence)
-12. [Bug 12: Permutation Rank Overcounting](#bug-12-permutation-rank)
+1. Bug 1: Missing Base Case in Factorial
+2. Bug 2: Wrong Swap Restore in Permutation
+3. Bug 3: Heap's Algorithm Even/Odd Mixup
+4. Bug 4: Next Permutation Wrong Comparison
+5. Bug 5: Missing Copy in Permutation Collection
+6. Bug 6: Off-by-One in TSP Brute Force
+7. Bug 7: Duplicate Permutations Not Skipped
+8. Bug 8: K-th Permutation Indexing Error
+9. Bug 9: 2-Opt Reversal Wrong Bounds
+10. Bug 10: Branch and Bound Never Prunes
+11. Bug 11: Derangement Recurrence Off by One
+12. Bug 12: Permutation Rank Overcounting
 
 ---
 

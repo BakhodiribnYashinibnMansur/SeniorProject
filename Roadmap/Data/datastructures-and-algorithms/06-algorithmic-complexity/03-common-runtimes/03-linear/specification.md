@@ -5,7 +5,7 @@
 1. [Formal Definition](#formal-definition)
 2. [Mathematical Properties](#mathematical-properties)
 3. [Standard Linear-Time Operations by Data Structure](#standard-linear-time-operations)
-   - [Arrays / Slices](#arrays--slices)
+   - [Arrays / Slices](#arrays-slices)
    - [Linked Lists](#linked-lists)
    - [Hash Tables](#hash-tables)
    - [Strings](#strings)

@@ -14,7 +14,7 @@
 4. [Task 4: Database Dialect Family](#task-4-database-dialect-family)
 5. [Task 5: Cipher Suite Factory](#task-5-cipher-suite-factory)
 6. [Task 6: Game Asset Theme](#task-6-game-asset-theme)
-7. [Task 7: Notification Family (Email + SMS + Push)](#task-7-notification-family-email--sms--push)
+7. [Task 7: Notification Family (Email + SMS + Push)](#task-7-notification-family-email-sms-push)
 8. [Task 8: Test-Friendly In-Memory Variant](#task-8-test-friendly-in-memory-variant)
 9. [Task 9: Sub-Factory Composition](#task-9-sub-factory-composition)
 10. [Task 10: Hot-Swap Variant at Runtime](#task-10-hot-swap-variant-at-runtime)

@@ -14,7 +14,7 @@
 11. [Errors in the Runtime](#errors-in-the-runtime)
 12. [The Standard Library's Error Strategy](#the-standard-librarys-error-strategy)
 13. [Performance Profiles of Real Programs](#performance-profiles-of-real-programs)
-14. [Disassembly: What if err != nil Actually Compiles To](#disassembly-what-if-err--nil-actually-compiles-to)
+14. [Disassembly: What if err != nil Actually Compiles To](#disassembly-what-if-err-nil-actually-compiles-to)
 15. [Cross-Goroutine Error Propagation Costs](#cross-goroutine-error-propagation-costs)
 16. [Summary](#summary)
 17. [Further Reading](#further-reading)

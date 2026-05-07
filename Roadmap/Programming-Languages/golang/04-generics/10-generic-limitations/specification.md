@@ -3,12 +3,12 @@
 ## Table of Contents
 1. [Source of truth](#source-of-truth)
 2. [The original Type Parameters proposal](#the-original-type-parameters-proposal)
-3. [Proposal 47781 — type parameters in methods](#proposal-47781--type-parameters-in-methods)
-4. [Proposal 46477 — generic type aliases](#proposal-46477--generic-type-aliases)
+3. [Proposal 47781 — type parameters in methods](#proposal-47781-type-parameters-in-methods)
+4. [Proposal 46477 — generic type aliases](#proposal-46477-generic-type-aliases)
 5. [What the spec forbids: explicit list](#what-the-spec-forbids-explicit-list)
 6. [Method receiver type parameter rules](#method-receiver-type-parameter-rules)
 7. [The "type parameter is not an interface" rule](#the-type-parameter-is-not-an-interface-rule)
-8. [Variance rules — invariance](#variance-rules--invariance)
+8. [Variance rules — invariance](#variance-rules-invariance)
 9. [Predeclared functions on type parameters](#predeclared-functions-on-type-parameters)
 10. [Constraint elements: what can and cannot appear](#constraint-elements-what-can-and-cannot-appear)
 11. [Summary](#summary)
@@ -97,7 +97,7 @@ The challenge was **identity**: aliases are supposed to be the same as their tar
 2. The alias does not introduce a new defined type — no new method set.
 3. Recursive aliases are forbidden.
 
-For the full treatment see [`14-generic-type-aliases`](../14-generic-type-aliases/). This file mentions it only as a former limit now lifted.
+For the full treatment see [`14-generic-type-aliases`](../14-generic-type-aliases/junior.md). This file mentions it only as a former limit now lifted.
 
 ---
 

@@ -1,6 +1,6 @@
 # Deadlines and Cancellations — Senior
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 ## Reading the Source
 

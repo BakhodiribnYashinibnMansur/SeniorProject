@@ -10,7 +10,7 @@
 7. [Lock-Free Queues in Practice](#lock-free-queues-in-practice)
 8. [CI Discipline at Scale](#ci-discipline-at-scale)
 9. [Stress Testing](#stress-testing)
-10. [Migration: Mutex → Atomic](#migration-mutex--atomic)
+10. [Migration: Mutex → Atomic](#migration-mutex-atomic)
 11. [Diagnosing Production Races](#diagnosing-production-races)
 12. [Cheat Sheet](#cheat-sheet)
 13. [Summary](#summary)

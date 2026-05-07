@@ -13,7 +13,7 @@ Each section presents a Flyweight that *looks* fine but is broken. Find the bug 
 3. [Bug 3: Extrinsic state stored inside the flyweight](#bug-3-extrinsic-state-stored-inside-the-flyweight)
 4. [Bug 4: Unbounded cache turns into memory leak](#bug-4-unbounded-cache-turns-into-memory-leak)
 5. [Bug 5: Concurrent insertion creates duplicates](#bug-5-concurrent-insertion-creates-duplicates)
-6. [Bug 6: Bad hashCode/__hash__ on key](#bug-6-bad-hashcode__hash__-on-key)
+6. Bug 6: Bad hashCode/__hash__ on key
 7. [Bug 7: Equality semantics surprise the caller](#bug-7-equality-semantics-surprise-the-caller)
 8. [Bug 8: Static factory leaks across tests](#bug-8-static-factory-leaks-across-tests)
 9. [Bug 9: Weak-ref cache loses live entries](#bug-9-weak-ref-cache-loses-live-entries)
@@ -503,6 +503,6 @@ For the rare case (e.g., autoboxed `Boolean.TRUE`/`Boolean.FALSE`), the runtime 
 
 ---
 
-[← Back to Flyweight folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Flyweight folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Flyweight — Optimize](optimize.md)

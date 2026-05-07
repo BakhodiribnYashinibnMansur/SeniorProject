@@ -7,13 +7,13 @@
 
 ## Table of Contents
 
-1. [Formal Definition — ADTs as Algebraic Specifications](#1-formal-definition--adts-as-algebraic-specifications)
-2. [Correctness Proof — Loop Invariant for Array Insertion](#2-correctness-proof--loop-invariant-for-array-insertion)
-3. [Amortized Analysis — Dynamic Array Resizing](#3-amortized-analysis--dynamic-array-resizing)
-4. [NP-Completeness — How DS Choice Affects Tractability](#4-np-completeness--how-ds-choice-affects-tractability)
-5. [Randomized Algorithm Probability Bounds — Skip List Analysis](#5-randomized-algorithm-probability-bounds--skip-list-analysis)
+1. [Formal Definition — ADTs as Algebraic Specifications](#1-formal-definition-adts-as-algebraic-specifications)
+2. [Correctness Proof — Loop Invariant for Array Insertion](#2-correctness-proof-loop-invariant-for-array-insertion)
+3. [Amortized Analysis — Dynamic Array Resizing](#3-amortized-analysis-dynamic-array-resizing)
+4. [NP-Completeness — How DS Choice Affects Tractability](#4-np-completeness-how-ds-choice-affects-tractability)
+5. [Randomized Algorithm Probability Bounds — Skip List Analysis](#5-randomized-algorithm-probability-bounds-skip-list-analysis)
 6. [Cache-Oblivious Analysis](#6-cache-oblivious-analysis)
-7. [Comparison with Alternatives — Formal Table](#7-comparison-with-alternatives--formal-table)
+7. [Comparison with Alternatives — Formal Table](#7-comparison-with-alternatives-formal-table)
 8. [Summary](#8-summary)
 
 ---

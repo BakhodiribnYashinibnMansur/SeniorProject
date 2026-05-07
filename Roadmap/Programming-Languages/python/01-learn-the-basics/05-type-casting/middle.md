@@ -14,12 +14,12 @@
 10. [Performance Considerations](#performance-considerations)
 11. [Testing Type Conversions](#testing-type-conversions)
 12. [Best Practices](#best-practices)
-13. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+13. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 14. [Common Mistakes at Middle Level](#common-mistakes-at-middle-level)
 15. [Tricky Points](#tricky-points)
 16. [Test](#test)
 17. [Cheat Sheet](#cheat-sheet)
-18. [Diagrams & Visual Aids](#diagrams--visual-aids)
+18. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

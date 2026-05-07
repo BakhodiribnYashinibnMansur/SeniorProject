@@ -3,7 +3,7 @@
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [System Design with Language Syntax](#system-design)
+2. System Design with Language Syntax
 3. [Compiler and Runtime Internals](#compiler-and-runtime-internals)
 4. [Memory Management Deep Dive](#memory-management-deep-dive)
 5. [Concurrency Primitives](#concurrency-primitives)

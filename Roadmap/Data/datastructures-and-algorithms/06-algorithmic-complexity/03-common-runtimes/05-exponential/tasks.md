@@ -11,7 +11,7 @@
 - [Task 7: N-Queens Solver](#task-7-n-queens-solver)
 - [Task 8: Meet-in-the-Middle Subset Sum](#task-8-meet-in-the-middle-subset-sum)
 - [Task 9: Letter Combinations of a Phone Number](#task-9-letter-combinations-of-a-phone-number)
-- [Task 10: Target Sum with +/- Assignments](#task-10-target-sum-with---assignments)
+- [Task 10: Target Sum with +/- Assignments](#task-10-target-sum-with-assignments)
 - [Task 11: Count Unique Binary Search Trees](#task-11-count-unique-binary-search-trees)
 - [Task 12: Partition Equal Subset Sum](#task-12-partition-equal-subset-sum)
 - [Task 13: Word Break (Exponential to DP)](#task-13-word-break-exponential-to-dp)

@@ -8,17 +8,17 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Clean Code](#clean-code)
-11. [Product Use / Feature](#product-use--feature)
+11. [Product Use / Feature](#product-use-feature)
 12. [Error Handling](#error-handling)
 13. [Security Considerations](#security-considerations)
 14. [Performance Tips](#performance-tips)
-15. [Metrics & Analytics](#metrics--analytics)
+15. [Metrics & Analytics](#metrics-analytics)
 16. [Best Practices](#best-practices)
-17. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+17. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 18. [Common Mistakes](#common-mistakes)
 19. [Common Misconceptions](#common-misconceptions)
 20. [Tricky Points](#tricky-points)
@@ -30,7 +30,7 @@
 26. [What You Can Build](#what-you-can-build)
 27. [Further Reading](#further-reading)
 28. [Related Topics](#related-topics)
-29. [Diagrams & Visual Aids](#diagrams--visual-aids)
+29. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -937,10 +937,10 @@ flowchart LR
 
 ## Related Topics
 
-- **[Conditionals](../03-conditionals/)** — loops often contain `if/elif/else` logic
-- **[Type Casting](../05-type-casting/)** — converting loop values between types
+- **[Conditionals](../03-conditionals/junior.md)** — loops often contain `if/elif/else` logic
+- **[Type Casting](../05-type-casting/junior.md)** — converting loop values between types
 - **List Comprehensions** — advanced use of comprehension syntax
-- **[Functions](../07-functions/)** — encapsulating loop logic into reusable functions
+- **[Functions](../07-functions/junior.md)** — encapsulating loop logic into reusable functions
 
 ---
 

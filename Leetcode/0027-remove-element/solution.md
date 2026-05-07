@@ -4,8 +4,8 @@
 
 1. [Problem](#problem)
 2. [Problem Breakdown](#problem-breakdown)
-3. [Approach 1: Two Pointers — Same Direction](#approach-1-two-pointers--same-direction)
-4. [Approach 2: Two Pointers — Opposite Direction](#approach-2-two-pointers--opposite-direction)
+3. [Approach 1: Two Pointers — Same Direction](#approach-1-two-pointers-same-direction)
+4. [Approach 2: Two Pointers — Opposite Direction](#approach-2-two-pointers-opposite-direction)
 5. [Complexity Comparison](#complexity-comparison)
 6. [Edge Cases](#edge-cases)
 7. [Common Mistakes](#common-mistakes)

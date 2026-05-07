@@ -8,7 +8,7 @@ Each section presents a Composite that *looks* fine but is broken. Find the bug 
 
 ## Table of Contents
 
-1. [Bug 1: Cycle in tree → infinite recursion](#bug-1-cycle-in-tree--infinite-recursion)
+1. [Bug 1: Cycle in tree → infinite recursion](#bug-1-cycle-in-tree-infinite-recursion)
 2. [Bug 2: Mutable internal list returned](#bug-2-mutable-internal-list-returned)
 3. [Bug 3: ConcurrentModificationException during traversal](#bug-3-concurrentmodificationexception-during-traversal)
 4. [Bug 4: Parent pointer not updated on remove](#bug-4-parent-pointer-not-updated-on-remove)
@@ -474,6 +474,6 @@ for i := len(d.children) - 1; i >= 0; i-- {
 
 ---
 
-[← Back to Composite folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Composite folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Composite — Optimize](optimize.md)

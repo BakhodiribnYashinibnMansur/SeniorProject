@@ -16,7 +16,7 @@ Each task includes the problem statement, constraints, test cases, full solution
 5. [Task 5: Singleton with Initialization Parameters](#task-5-singleton-with-initialization-parameters)
 6. [Task 6: Resettable Singleton for Tests](#task-6-resettable-singleton-for-tests)
 7. [Task 7: Singleton with Mutable State (Cache)](#task-7-singleton-with-mutable-state-cache)
-8. [Task 8: Multiton — One per Key](#task-8-multiton--one-per-key)
+8. [Task 8: Multiton — One per Key](#task-8-multiton-one-per-key)
 9. [Task 9: Serialization-Safe Singleton (Java)](#task-9-serialization-safe-singleton-java)
 10. [Task 10: Refactor Singleton to DI](#task-10-refactor-singleton-to-di)
 
@@ -916,6 +916,6 @@ The trick is the **two-constructor** transition: legacy code keeps working, new 
 
 ---
 
-[← Back to Singleton folder](.) · [↑ Creational Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Singleton folder · [↑ Creational Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Previous:** [Singleton — Interview](interview.md) | **Next:** [Singleton — Find-Bug](find-bug.md)

@@ -8,14 +8,14 @@
 5. [Overflow and Saturation Arithmetic](#overflow-and-saturation-arithmetic)
 6. [Type System Design Patterns](#type-system-design-patterns)
 7. [Numeric Stability](#numeric-stability)
-8. [Postmortems & System Failures](#postmortems--system-failures)
+8. [Postmortems & System Failures](#postmortems-system-failures)
 9. [Concurrency and Numeric Types](#concurrency-and-numeric-types)
 10. [Cross-Platform Considerations](#cross-platform-considerations)
 11. [Optimization Techniques](#optimization-techniques)
 12. [Test Strategies](#test-strategies)
 13. [Interview Questions](#interview-questions)
 14. [Summary](#summary)
-15. [Diagrams & Visual Aids](#diagrams--visual-aids)
+15. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

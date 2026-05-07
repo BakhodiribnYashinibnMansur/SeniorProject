@@ -9,7 +9,7 @@ permalink: /roadmap/programming-languages/golang/07-concurrency/03-sync-package/
 
 # WaitGroups — Senior
 
-[← Back to WaitGroups](./)
+← Back to WaitGroups
 
 At the senior level we move beyond "how to use WaitGroup" and look at:
 

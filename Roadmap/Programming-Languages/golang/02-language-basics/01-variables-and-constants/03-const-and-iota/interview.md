@@ -5,7 +5,7 @@
 2. [Junior-Level Questions (Q1–Q7)](#junior-level-questions)
 3. [Middle-Level Questions (Q8–Q14)](#middle-level-questions)
 4. [Senior-Level Questions (Q15–Q22)](#senior-level-questions)
-5. [Professional / Compiler Questions (Q23–Q27)](#professional--compiler-questions)
+5. [Professional / Compiler Questions (Q23–Q27)](#professional-compiler-questions)
 6. [Rapid-Fire Quiz](#rapid-fire-quiz)
 7. [Coding Challenges](#coding-challenges)
 8. [Interview Tips](#interview-tips)

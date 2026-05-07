@@ -11,14 +11,14 @@
 7. [GC Internals](#gc-internals)
 8. [Source Code Walkthrough](#source-code-walkthrough)
 9. [Performance Internals](#performance-internals)
-10. [Metrics & Analytics (JVM Level)](#metrics--analytics-jvm-level)
+10. [Metrics & Analytics (JVM Level)](#metrics-analytics-jvm-level)
 11. [Edge Cases at the Lowest Level](#edge-cases-at-the-lowest-level)
 12. [Test](#test)
 13. [Tricky Questions](#tricky-questions)
 14. [Self-Assessment Checklist](#self-assessment-checklist)
 15. [Summary](#summary)
 16. [Further Reading](#further-reading)
-17. [Diagrams & Visual Aids](#diagrams--visual-aids)
+17. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

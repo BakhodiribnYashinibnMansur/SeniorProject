@@ -13,7 +13,7 @@
 3. [Implementation contract from runtime/iface.go](#3-implementation-contract-from-runtimeifacego)
 4. [Layout in runtime/runtime2.go](#4-layout-in-runtimeruntime2go)
 5. [Type identity and the _type descriptor](#5-type-identity-and-the-_type-descriptor)
-6. [Comparison rules — formal](#6-comparison-rules--formal)
+6. [Comparison rules — formal](#6-comparison-rules-formal)
 7. [Conversion semantics](#7-conversion-semantics)
 8. [Type assertion semantics](#8-type-assertion-semantics)
 9. [Reflection contract](#9-reflection-contract)

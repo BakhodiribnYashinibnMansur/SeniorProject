@@ -12,11 +12,11 @@ Each section presents a Composite that *works* but is wasteful. Profile, optimiz
 2. [Optimization 2: Iterative traversal for deep trees](#optimization-2-iterative-traversal-for-deep-trees)
 3. [Optimization 3: Pre-size children list](#optimization-3-pre-size-children-list)
 4. [Optimization 4: Side-index for fast lookup](#optimization-4-side-index-for-fast-lookup)
-5. [Optimization 5: __slots__ for million-node Python](#optimization-5-__slots__-for-million-node-python)
+5. Optimization 5: __slots__ for million-node Python
 6. [Optimization 6: Snapshot iteration to avoid CME](#optimization-6-snapshot-iteration-to-avoid-cme)
 7. [Optimization 7: Batched leaf operations](#optimization-7-batched-leaf-operations)
 8. [Optimization 8: Flyweight leaves](#optimization-8-flyweight-leaves)
-9. [Optimization 9: Persistent / structural-sharing](#optimization-9-persistent--structural-sharing)
+9. [Optimization 9: Persistent / structural-sharing](#optimization-9-persistent-structural-sharing)
 10. [Optimization 10: Data-oriented rewrite for hot loops](#optimization-10-data-oriented-rewrite-for-hot-loops)
 11. [Optimization Tips](#optimization-tips)
 
@@ -382,6 +382,6 @@ Composite stays for editor/structure code; runtime hot path is data-oriented.
 
 ---
 
-[← Back to Composite folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Composite folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **You've completed the Composite pattern suite.** Continue to: [Decorator](../04-decorator/junior.md) · [Facade](../05-facade/junior.md) · [Flyweight](../06-flyweight/junior.md) · [Proxy](../07-proxy/junior.md)

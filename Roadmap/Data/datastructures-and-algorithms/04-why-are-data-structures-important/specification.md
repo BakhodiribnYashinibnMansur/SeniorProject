@@ -7,7 +7,7 @@
 3. [Java Collections Framework](#java-collections-framework)
 4. [Python Built-in Data Structures](#python-built-in-data-structures)
 5. [Performance Guarantees](#performance-guarantees)
-6. [When to Use Which DS — Official Recommendations](#when-to-use-which-ds--official-recommendations)
+6. [When to Use Which DS — Official Recommendations](#when-to-use-which-ds-official-recommendations)
 7. [Core Rules](#core-rules)
 8. [Edge Cases and Gotchas](#edge-cases-and-gotchas)
 9. [Version Compatibility](#version-compatibility)

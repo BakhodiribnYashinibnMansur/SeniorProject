@@ -304,6 +304,6 @@ A 4-layer stack adds 3 forwarding frames before the actual failure.
 
 ---
 
-[← Back to Decorator folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Decorator folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Decorator — Interview Preparation](interview.md)

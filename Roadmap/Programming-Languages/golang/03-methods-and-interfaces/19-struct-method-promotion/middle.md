@@ -6,7 +6,7 @@
 3. [Value vs Pointer Embed](#value-vs-pointer-embed)
 4. [Method-Set Propagation Rules](#method-set-propagation-rules)
 5. [Ambiguity at Compile Time](#ambiguity-at-compile-time)
-6. [Shadowing — Outer Wins](#shadowing--outer-wins)
+6. [Shadowing — Outer Wins](#shadowing-outer-wins)
 7. [Explicit Qualification](#explicit-qualification)
 8. [Field Promotion vs Method Promotion](#field-promotion-vs-method-promotion)
 9. [Multiple-Level Embedding](#multiple-level-embedding)

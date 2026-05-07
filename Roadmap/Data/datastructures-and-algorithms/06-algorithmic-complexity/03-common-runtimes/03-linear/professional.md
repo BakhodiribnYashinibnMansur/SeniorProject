@@ -7,11 +7,11 @@
    - [Information-Theoretic Arguments](#information-theoretic-arguments)
    - [Adversary Arguments](#adversary-arguments)
 3. [Adversary Argument for Finding Minimum](#adversary-argument-for-finding-minimum)
-4. [Linear-Time Selection: Median of Medians](#linear-time-selection)
+4. Linear-Time Selection: Median of Medians
    - [The Algorithm](#the-algorithm)
    - [Why It Is O(n)](#why-it-is-on)
    - [Implementation](#implementation)
-5. [Linear-Time Sorting: Breaking the O(n log n) Barrier](#linear-time-sorting)
+5. Linear-Time Sorting: Breaking the O(n log n) Barrier
    - [The Comparison-Based Lower Bound](#comparison-based-lower-bound)
    - [Counting Sort — O(n + k)](#counting-sort)
    - [Radix Sort — O(d * (n + k))](#radix-sort)

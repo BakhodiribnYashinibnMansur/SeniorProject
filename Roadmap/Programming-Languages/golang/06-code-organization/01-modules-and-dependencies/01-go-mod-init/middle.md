@@ -10,7 +10,7 @@
 7. [Multi-Module Repositories](#multi-module-repositories)
 8. [Migrating from GOPATH](#migrating-from-gopath)
 9. [Renaming a Module](#renaming-a-module)
-10. [Versioned Module Paths (`/v2`, `/v3`, ...)](#versioned-module-paths-v2-v3-)
+10. [Versioned Module Paths (`/v2`, `/v3`, ...)](#versioned-module-paths-v2-v3)
 11. [Interaction with the Go Toolchain](#interaction-with-the-go-toolchain)
 12. [Workspaces and `go.work`](#workspaces-and-gowork)
 13. [Best Practices for Established Codebases](#best-practices-for-established-codebases)
@@ -47,7 +47,7 @@ The module path is more constrained than it looks.
 3. **No leading or trailing slash.** No empty components.
 4. **No `..` or `.` components.** No path-traversal tricks.
 5. **No Windows-reserved characters.** Even on macOS or Linux, the module proxy will reject them.
-6. **The version-suffix rule (for `v2+`):** if your major version is 2 or higher, the path **must** end with `/vN` where `N` is the major version. So `github.com/alice/lib` for v0/v1, `github.com/alice/lib/v2` for v2.x.x, and so on. (See [Versioned Module Paths](#versioned-module-paths-v2-v3-).)
+6. **The version-suffix rule (for `v2+`):** if your major version is 2 or higher, the path **must** end with `/vN` where `N` is the major version. So `github.com/alice/lib` for v0/v1, `github.com/alice/lib/v2` for v2.x.x, and so on. (See [Versioned Module Paths](#versioned-module-paths-v2-v3).)
 
 ### Conventional rules (not enforced, strongly recommended)
 

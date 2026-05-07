@@ -11,7 +11,7 @@
 7. [Compact Strings Implementation](#compact-strings-implementation)
 8. [String Concatenation via invokedynamic](#string-concatenation-via-invokedynamic)
 9. [GC and String Deduplication Internals](#gc-and-string-deduplication-internals)
-10. [Diagrams & Visual Aids](#diagrams--visual-aids)
+10. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

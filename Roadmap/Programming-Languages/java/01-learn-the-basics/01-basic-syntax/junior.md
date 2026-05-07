@@ -8,18 +8,18 @@
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
 6. [Mental Models](#mental-models)
-7. [Pros & Cons](#pros--cons)
+7. [Pros & Cons](#pros-cons)
 8. [Use Cases](#use-cases)
 9. [Code Examples](#code-examples)
 10. [Coding Patterns](#coding-patterns)
 11. [Clean Code](#clean-code)
-12. [Product Use / Feature](#product-use--feature)
+12. [Product Use / Feature](#product-use-feature)
 13. [Error Handling](#error-handling)
 14. [Security Considerations](#security-considerations)
 15. [Performance Tips](#performance-tips)
-16. [Metrics & Analytics](#metrics--analytics)
+16. [Metrics & Analytics](#metrics-analytics)
 17. [Best Practices](#best-practices)
-18. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+18. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 19. [Common Mistakes](#common-mistakes)
 20. [Common Misconceptions](#common-misconceptions)
 21. [Tricky Points](#tricky-points)
@@ -31,7 +31,7 @@
 27. [What You Can Build](#what-you-can-build)
 28. [Further Reading](#further-reading)
 29. [Related Topics](#related-topics)
-30. [Diagrams & Visual Aids](#diagrams--visual-aids)
+30. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 
@@ -983,9 +983,9 @@ flowchart LR
 
 Topics to explore next or that connect to this one:
 
-- **[Lifecycle of a Program](../02-lifecycle-of-program/)** — understand how Java compiles and runs your code
-- **[Data Types](../03-data-types/)** — learn what types of data Java supports
-- **[Variables and Scopes](../04-variables-and-scopes/)** — understand where variables live and how long they last
+- **[Lifecycle of a Program](../02-lifecycle-of-program/junior.md)** — understand how Java compiles and runs your code
+- **[Data Types](../03-data-types/junior.md)** — learn what types of data Java supports
+- **[Variables and Scopes](../04-variables-and-scopes/junior.md)** — understand where variables live and how long they last
 
 ---
 

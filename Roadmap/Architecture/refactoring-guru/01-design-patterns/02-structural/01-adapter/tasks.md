@@ -10,11 +10,11 @@ Each task includes: a brief, the target interface, a buggy/legacy adaptee, and a
 
 1. [Task 1: Basic Logger Adapter](#task-1-basic-logger-adapter)
 2. [Task 2: Currency Converter Adapter](#task-2-currency-converter-adapter)
-3. [Task 3: Storage Adapter (S3 + LocalFS)](#task-3-storage-adapter-s3--localfs)
+3. [Task 3: Storage Adapter (S3 + LocalFS)](#task-3-storage-adapter-s3-localfs)
 4. [Task 4: Iterator Adapter](#task-4-iterator-adapter)
 5. [Task 5: Async-to-Sync Adapter](#task-5-async-to-sync-adapter)
 6. [Task 6: Two-way Adapter](#task-6-two-way-adapter)
-7. [Task 7: Notification Adapter (Email + SMS + Slack)](#task-7-notification-adapter-email--sms--slack)
+7. [Task 7: Notification Adapter (Email + SMS + Slack)](#task-7-notification-adapter-email-sms-slack)
 8. [Task 8: Database Driver Adapter](#task-8-database-driver-adapter)
 9. [Task 9: HTTP Handler Adapter (Go)](#task-9-http-handler-adapter-go)
 10. [Task 10: Anti-Corruption Layer Mini-Project](#task-10-anti-corruption-layer-mini-project)
@@ -565,6 +565,6 @@ public final class LegacyErrorTranslator {
 
 ---
 
-[← Back to Adapter folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Adapter folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Adapter — Find the Bug](find-bug.md)

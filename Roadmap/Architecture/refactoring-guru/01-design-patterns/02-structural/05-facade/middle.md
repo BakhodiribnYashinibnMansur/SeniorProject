@@ -11,13 +11,13 @@
 2. [When to Use Facade](#when-to-use-facade)
 3. [When NOT to Use Facade](#when-not-to-use-facade)
 4. [Real-World Cases](#real-world-cases)
-5. [Code Examples — Production-Grade](#code-examples--production-grade)
+5. [Code Examples — Production-Grade](#code-examples-production-grade)
 6. [Multiple Facades for One Subsystem](#multiple-facades-for-one-subsystem)
 7. [Facade as a Stable API Surface](#facade-as-a-stable-api-surface)
 8. [Trade-offs](#trade-offs)
 9. [Alternatives Comparison](#alternatives-comparison)
 10. [Refactoring to Facade](#refactoring-to-facade)
-11. [Pros & Cons (Deeper)](#pros--cons-deeper)
+11. [Pros & Cons (Deeper)](#pros-cons-deeper)
 12. [Edge Cases](#edge-cases)
 13. [Tricky Points](#tricky-points)
 14. [Best Practices](#best-practices)
@@ -466,6 +466,6 @@ flowchart TD
 
 ---
 
-[← Back to Facade folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Facade folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Facade — Senior Level](senior.md)

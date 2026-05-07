@@ -559,9 +559,9 @@ Before promoting an HTTP service to "ready":
 - [`../10-net/professional.md`](../10-net/professional.md) — listener
   patterns at scale, fd handover, slow-loris resistance at the socket
   layer.
-- [`../05-os/`](../05-os/) — `signal.NotifyContext` for shutdown,
+- [`../05-os/`](../05-os/junior.md) — `signal.NotifyContext` for shutdown,
   `SIGHUP` for reload.
-- [`../13-crypto/`](../13-crypto/) — `tls.Config` deep-dive,
+- [`../13-crypto/`](../13-crypto/junior.md) — `tls.Config` deep-dive,
   `GetCertificate`, ALPN.
-- [`../03-time/`](../03-time/) — timer-wheel mechanics behind
+- [`../03-time/`](../03-time/junior.md) — timer-wheel mechanics behind
   every HTTP timeout.

@@ -13,7 +13,7 @@
 9. [Exercise 9: Duplicate Distance O(n^2) to O(n)](#exercise-9-duplicate-distance-on2-to-on)
 10. [Exercise 10: Matrix Chain Order O(n^3) Space to O(n^2)](#exercise-10-matrix-chain-order-space-optimization)
 11. [Exercise 11: All Pairs Sorted O(n^2 log n) to O(n^2)](#exercise-11-all-pairs-sorted)
-12. [Exercise 12: Count Pairs Less Than Target O(n^2) to O(n log n)](#exercise-12-count-pairs-less-than-target)
+12. Exercise 12: Count Pairs Less Than Target O(n^2) to O(n log n)
 
 ---
 

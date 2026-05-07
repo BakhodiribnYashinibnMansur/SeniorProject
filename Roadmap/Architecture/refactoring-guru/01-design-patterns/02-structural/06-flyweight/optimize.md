@@ -358,6 +358,6 @@ public final class Setting {
 
 ---
 
-[← Back to Flyweight folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Flyweight folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **You've completed the Flyweight pattern suite.** Continue to: [Proxy](../07-proxy/junior.md)

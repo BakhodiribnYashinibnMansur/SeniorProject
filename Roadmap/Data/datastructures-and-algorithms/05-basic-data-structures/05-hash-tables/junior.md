@@ -15,7 +15,7 @@
    - [Open Addressing](#open-addressing)
 6. [Operations and Complexity](#operations-and-complexity)
 7. [Load Factor](#load-factor)
-8. [Full Implementation — Chaining](#full-implementation--chaining)
+8. [Full Implementation — Chaining](#full-implementation-chaining)
    - [Go](#go-implementation)
    - [Java](#java-implementation)
    - [Python](#python-implementation)

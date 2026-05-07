@@ -3,11 +3,11 @@
 A graded set of exercises that build real `select`-driven systems. Each task lists what to build, hints, and acceptance criteria. Solutions are intentionally not provided — that is what makes them tasks. Use the rest of the suite (junior/middle/senior) as reference material.
 
 ## Table of Contents
-1. [Task Set 1 — Basics (Junior)](#task-set-1--basics-junior)
-2. [Task Set 2 — Patterns (Middle)](#task-set-2--patterns-middle)
-3. [Task Set 3 — Systems (Senior)](#task-set-3--systems-senior)
-4. [Task Set 4 — Production (Professional)](#task-set-4--production-professional)
-5. [Task Set 5 — Open-Ended Designs](#task-set-5--open-ended-designs)
+1. [Task Set 1 — Basics (Junior)](#task-set-1-basics-junior)
+2. [Task Set 2 — Patterns (Middle)](#task-set-2-patterns-middle)
+3. [Task Set 3 — Systems (Senior)](#task-set-3-systems-senior)
+4. [Task Set 4 — Production (Professional)](#task-set-4-production-professional)
+5. [Task Set 5 — Open-Ended Designs](#task-set-5-open-ended-designs)
 6. [Self-Grading Rubric](#self-grading-rubric)
 
 ---

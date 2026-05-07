@@ -1,6 +1,6 @@
 # Common Usecases — Interview
 
-[← Back to index](index.md)
+[← Back to index](junior.md)
 
 A graduated set of interview questions and model answers. Junior questions test recall of common APIs; senior and staff questions test taste, trade-off awareness, and the ability to reason about cross-service deadlines.
 
@@ -310,4 +310,4 @@ Generally no. Reasons to keep it:
 
 Reasons to remove: if it's a private helper that will never become I/O-bearing. Even then, the cost of keeping it is one parameter, often worth it.
 
-[← Back to index](index.md)
+[← Back to index](junior.md)

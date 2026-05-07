@@ -7,7 +7,7 @@
 4. [Library patterns: keys, weights, totals](#library-patterns-keys-weights-totals)
 5. [Compatibility windows for downstream users](#compatibility-windows-for-downstream-users)
 6. [Method-based ordering vs operator ordering](#method-based-ordering-vs-operator-ordering)
-7. [Generic vs interface dispatch — when each wins](#generic-vs-interface-dispatch--when-each-wins)
+7. [Generic vs interface dispatch — when each wins](#generic-vs-interface-dispatch-when-each-wins)
 8. [Case study: `slices` and `maps`](#case-study-slices-and-maps)
 9. [Case study: hashicorp/golang-lru/v2](#case-study-hashicorpgolang-lruv2)
 10. [Case study: a metrics library](#case-study-a-metrics-library)

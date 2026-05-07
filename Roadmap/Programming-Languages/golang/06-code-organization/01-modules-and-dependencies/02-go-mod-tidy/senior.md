@@ -12,7 +12,7 @@
 9. [Tidy and Retraction Awareness](#tidy-and-retraction-awareness)
 10. [CI Strategy: Tidy as a Build-Breaking Gate](#ci-strategy-tidy-as-a-build-breaking-gate)
 11. [Policy Enforcement: Allow-listing New Direct Dependencies via Tidy Diffs](#policy-enforcement-allow-listing-new-direct-dependencies-via-tidy-diffs)
-12. [Tidy and SBOM / License Audits](#tidy-and-sbom--license-audits)
+12. [Tidy and SBOM / License Audits](#tidy-and-sbom-license-audits)
 13. [Tidy in Air-Gapped Environments](#tidy-in-air-gapped-environments)
 14. [Anti-Patterns](#anti-patterns)
 15. [Senior-Level Checklist](#senior-level-checklist)

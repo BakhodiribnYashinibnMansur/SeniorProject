@@ -3,7 +3,7 @@
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [System Design with Time-Space Trade-Offs](#system-design)
+2. System Design with Time-Space Trade-Offs
 3. [Distributed Data Structures](#distributed-data-structures)
 4. [Comparison with Alternatives](#comparison-with-alternatives)
 5. [Architecture Patterns](#architecture-patterns)

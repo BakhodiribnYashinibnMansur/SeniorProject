@@ -12,7 +12,7 @@
 3. [MVCC Implementation Details](#mvcc-implementation-details)
 4. [Snapshot Compression](#snapshot-compression)
 5. [Copy-on-Write Performance](#copy-on-write-performance)
-6. [Memory Layout & Allocation](#memory-layout--allocation)
+6. [Memory Layout & Allocation](#memory-layout-allocation)
 7. [Serialization Costs](#serialization-costs)
 8. [Snapshot Frequency Tuning](#snapshot-frequency-tuning)
 9. [Cross-Language Comparison](#cross-language-comparison)

@@ -12,7 +12,7 @@
 8. [Memory Impact of Exceptions](#memory-impact-of-exceptions)
 9. [C-Level Exception API](#c-level-exception-api)
 10. [ExceptionGroup Internals](#exceptiongroup-internals)
-11. [Diagrams & Visual Aids](#diagrams--visual-aids)
+11. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

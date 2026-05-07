@@ -7,7 +7,7 @@
 3. [Glossary](#glossary)
 4. [Core Concepts](#core-concepts)
 5. [Real-World Analogies](#real-world-analogies)
-6. [Pros & Cons](#pros--cons)
+6. [Pros & Cons](#pros-cons)
 7. [Pseudo Code Syntax Rules](#pseudo-code-syntax-rules)
 8. [Code Examples](#code-examples)
 9. [Common Patterns](#common-patterns)

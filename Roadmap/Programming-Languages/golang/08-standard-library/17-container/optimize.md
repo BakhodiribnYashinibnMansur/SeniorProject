@@ -392,7 +392,7 @@ match real cache behavior.
 - [find-bug.md](find-bug.md) — for the antipatterns these
   optimizations avoid.
 - [professional.md](professional.md) — production patterns at scale.
-- [`../16-sort-slices-maps/`](../16-sort-slices-maps/) — `slices`
+- [`../16-sort-slices-maps/`](../16-sort-slices-maps/junior.md) — `slices`
   and `maps` for the cases where `container/*` doesn't apply.
 - The Go runtime source: `runtime/map.go` for how the built-in map
   works, and `runtime/iface.go` for how interface dispatch works

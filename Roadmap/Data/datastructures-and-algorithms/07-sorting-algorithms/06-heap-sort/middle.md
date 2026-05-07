@@ -11,7 +11,7 @@
 3. [Why Build-Heap Is O(n), Not O(n log n)](#why-build-heap-is-on-not-on-log-n)
 4. [Heap Sort vs Quick Sort vs Merge Sort](#heap-sort-vs-quick-sort-vs-merge-sort)
 5. [Variants: Bottom-Up vs Top-Down Build](#variants-bottom-up-vs-top-down-build)
-6. [Sift Down vs Sift Up — When to Use Which](#sift-down-vs-sift-up--when-to-use-which)
+6. [Sift Down vs Sift Up — When to Use Which](#sift-down-vs-sift-up-when-to-use-which)
 7. [Priority Queues](#priority-queues)
 8. [K-th Largest, K-th Smallest, Top-K](#k-th-largest-k-th-smallest-top-k)
 9. [Floyd's Heap Construction](#floyds-heap-construction)

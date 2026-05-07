@@ -10,13 +10,13 @@
 6. [Production Patterns](#production-patterns)
 7. [Refactoring Guide](#refactoring-guide)
 8. [Testing Conditional Logic](#testing-conditional-logic)
-9. [Metrics & Observability](#metrics--observability)
-10. [Edge Cases & Pitfalls](#edge-cases--pitfalls)
+9. [Metrics & Observability](#metrics-observability)
+10. [Edge Cases & Pitfalls](#edge-cases-pitfalls)
 11. [Tricky Points](#tricky-points)
 12. [Test](#test)
 13. [Cheat Sheet](#cheat-sheet)
 14. [Summary](#summary)
-15. [Diagrams & Visual Aids](#diagrams--visual-aids)
+15. [Diagrams & Visual Aids](#diagrams-visual-aids)
 
 ---
 

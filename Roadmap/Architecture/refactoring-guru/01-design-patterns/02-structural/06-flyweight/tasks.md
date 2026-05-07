@@ -372,6 +372,6 @@ print(f"savings:        {(without - with_fw) / 1024:.1f} KB ({100 * (1 - with_fw
 
 ---
 
-[← Back to Flyweight folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Flyweight folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Flyweight — Find the Bug](find-bug.md)

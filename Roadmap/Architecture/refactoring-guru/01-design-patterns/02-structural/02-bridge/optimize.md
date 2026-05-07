@@ -12,7 +12,7 @@ Each section presents a Bridge that *works* but is wasteful. Profile, optimize, 
 2. [Optimization 2: Group by type to avoid megamorphism (Java)](#optimization-2-group-by-type-to-avoid-megamorphism-java)
 3. [Optimization 3: Batch the implementor call](#optimization-3-batch-the-implementor-call)
 4. [Optimization 4: Memoize values across the bridge](#optimization-4-memoize-values-across-the-bridge)
-5. [Optimization 5: Pointer receivers + reused interface (Go)](#optimization-5-pointer-receivers--reused-interface-go)
+5. [Optimization 5: Pointer receivers + reused interface (Go)](#optimization-5-pointer-receivers-reused-interface-go)
 6. [Optimization 6: Decorator stack on implementor](#optimization-6-decorator-stack-on-implementor)
 7. [Optimization 7: Lazy-construct heavy implementors](#optimization-7-lazy-construct-heavy-implementors)
 8. [Optimization 8: Drop the Bridge when only one implementor exists](#optimization-8-drop-the-bridge-when-only-one-implementor-exists)
@@ -397,6 +397,6 @@ func (sp *Sprites) Draw() {
 
 ---
 
-[← Back to Bridge folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Bridge folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **You've completed the Bridge pattern suite.** Continue to: [Composite](../03-composite/junior.md) · [Decorator](../04-decorator/junior.md) · [Facade](../05-facade/junior.md)

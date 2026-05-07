@@ -4,7 +4,7 @@
 
 1. [Problem](#problem)
 2. [Problem Breakdown](#problem-breakdown)
-3. [Approach 1: Transpose + Reverse Rows](#approach-1-transpose--reverse-rows)
+3. [Approach 1: Transpose + Reverse Rows](#approach-1-transpose-reverse-rows)
 4. [Approach 2: Rotate Four Cells at a Time](#approach-2-rotate-four-cells-at-a-time)
 5. [Complexity Comparison](#complexity-comparison)
 6. [Edge Cases](#edge-cases)

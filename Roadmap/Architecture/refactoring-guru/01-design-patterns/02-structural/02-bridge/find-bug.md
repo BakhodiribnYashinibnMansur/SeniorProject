@@ -455,6 +455,6 @@ For extreme cases, hand-write per-type loops.
 
 ---
 
-[← Back to Bridge folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Bridge folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Bridge — Optimize](optimize.md)

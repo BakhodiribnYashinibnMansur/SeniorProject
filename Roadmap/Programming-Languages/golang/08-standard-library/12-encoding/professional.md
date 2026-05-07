@@ -171,7 +171,7 @@ between your services, internal IPC over Unix sockets), gob is fine
 
 ## 6. JSON-adjacent: when `[]byte` is the wrong choice
 
-`encoding/json` (covered in [`../04-encoding-json/`](../04-encoding-json/))
+`encoding/json` (covered in [`../04-encoding-json/`](../04-encoding-json/junior.md))
 auto-base64s `[]byte`. For this leaf, the relevant decision is
 whether to send binary blobs through JSON at all.
 

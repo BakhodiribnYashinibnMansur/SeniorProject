@@ -9,7 +9,7 @@ permalink: /roadmap/programming-languages/golang/07-concurrency/03-sync-package/
 
 # WaitGroups — Specification
 
-[← Back to WaitGroups](./)
+← Back to WaitGroups
 
 This page collects the formal API contract for `sync.WaitGroup` from the Go standard library, the relevant clauses of the Go memory model, and a precise re-statement of the rules with their justifications.
 

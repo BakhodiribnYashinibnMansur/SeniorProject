@@ -2,7 +2,7 @@
 
 ## Table of Contents
 1. [What the compiler actually does](#what-the-compiler-actually-does)
-2. [GC shape stenciling — the formal model](#gc-shape-stenciling--the-formal-model)
+2. [GC shape stenciling — the formal model](#gc-shape-stenciling-the-formal-model)
 3. [The dictionary, in detail](#the-dictionary-in-detail)
 4. [What gets shared vs specialized](#what-gets-shared-vs-specialized)
 5. [Escape analysis under generics](#escape-analysis-under-generics)

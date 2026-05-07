@@ -10,7 +10,7 @@ Each task includes a brief and a reference solution. Try first; check after.
 
 1. [Task 1: Home theater controller](#task-1-home-theater-controller)
 2. [Task 2: Order placement service](#task-2-order-placement-service)
-3. [Task 3: HTTP client with retries + JSON](#task-3-http-client-with-retries--json)
+3. [Task 3: HTTP client with retries + JSON](#task-3-http-client-with-retries-json)
 4. [Task 4: Compiler frontend](#task-4-compiler-frontend)
 5. [Task 5: Multiple Facades for the same subsystem](#task-5-multiple-facades-for-the-same-subsystem)
 6. [Task 6: BFF aggregator](#task-6-bff-aggregator)
@@ -327,6 +327,6 @@ Latency = max(inv, price, risk) instead of sum.
 
 ---
 
-[← Back to Facade folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Facade folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Facade — Find the Bug](find-bug.md)

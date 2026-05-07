@@ -545,5 +545,5 @@ Three patterns from this snippet that show up everywhere:
   [`container/heap`](https://pkg.go.dev/container/heap),
   [`container/list`](https://pkg.go.dev/container/list),
   [`container/ring`](https://pkg.go.dev/container/ring).
-- Cross-link: [`../16-sort-slices-maps/`](../16-sort-slices-maps/) for
+- Cross-link: [`../16-sort-slices-maps/`](../16-sort-slices-maps/junior.md) for
   `sort.Interface`, which `heap.Interface` extends.

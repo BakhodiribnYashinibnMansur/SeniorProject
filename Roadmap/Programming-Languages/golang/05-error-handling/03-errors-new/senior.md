@@ -9,7 +9,7 @@
 6. [Stability Guarantees of Sentinel Strings](#stability-guarantees-of-sentinel-strings)
 7. [Sentinels Across Package Boundaries](#sentinels-across-package-boundaries)
 8. [Versioning Errors](#versioning-errors)
-9. [Hybrid Strategies: Sentinel + Type](#hybrid-strategies-sentinel--type)
+9. [Hybrid Strategies: Sentinel + Type](#hybrid-strategies-sentinel-type)
 10. [`errors.New` in Library Design](#errorsnew-in-library-design)
 11. [Concurrency and Sentinels](#concurrency-and-sentinels)
 12. [Distributed Systems: Sentinels Don't Cross the Wire](#distributed-systems-sentinels-dont-cross-the-wire)

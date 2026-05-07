@@ -2,11 +2,11 @@
 
 ## Table of Contents
 1. [Source of truth](#source-of-truth)
-2. [Method declarations — the relevant grammar](#method-declarations--the-relevant-grammar)
+2. [Method declarations — the relevant grammar](#method-declarations-the-relevant-grammar)
 3. [Receivers on parameterised types](#receivers-on-parameterised-types)
 4. [The "identical type parameter list" rule](#the-identical-type-parameter-list-rule)
 5. [The forbidden constructs](#the-forbidden-constructs)
-6. [Method sets — formal definition](#method-sets--formal-definition)
+6. [Method sets — formal definition](#method-sets-formal-definition)
 7. [Method values and method expressions](#method-values-and-method-expressions)
 8. [Embedded fields and promoted methods](#embedded-fields-and-promoted-methods)
 9. [Type aliases and methods (1.24+)](#type-aliases-and-methods-124)

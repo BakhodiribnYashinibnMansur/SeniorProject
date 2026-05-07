@@ -2,18 +2,18 @@
 
 ## Table of Contents
 
-1. [Exercise 1: Contains Duplicate — O(n^2) to O(n)](#exercise-1)
-2. [Exercise 2: Two Sum — O(n^2) to O(n)](#exercise-2)
-3. [Exercise 3: Maximum Subarray Sum — O(n^3) to O(n)](#exercise-3)
-4. [Exercise 4: Find Missing Number — O(n log n) to O(n)](#exercise-4)
-5. [Exercise 5: Intersection of Two Arrays — O(n*m) to O(n+m)](#exercise-5)
-6. [Exercise 6: String Compression — O(n^2) to O(n)](#exercise-6)
-7. [Exercise 7: First Duplicate — O(n^2) to O(n)](#exercise-7)
-8. [Exercise 8: Maximum Sliding Window Sum — O(n*k) to O(n)](#exercise-8)
-9. [Exercise 9: Sort Array of 0s, 1s, 2s — O(n log n) to O(n)](#exercise-9)
-10. [Exercise 10: Product Except Self — O(n^2) to O(n)](#exercise-10)
-11. [Exercise 11: Majority Element — O(n log n) to O(n)](#exercise-11)
-12. [Exercise 12: Longest Consecutive Sequence — O(n log n) to O(n)](#exercise-12)
+1. Exercise 1: Contains Duplicate — O(n^2) to O(n)
+2. Exercise 2: Two Sum — O(n^2) to O(n)
+3. Exercise 3: Maximum Subarray Sum — O(n^3) to O(n)
+4. Exercise 4: Find Missing Number — O(n log n) to O(n)
+5. Exercise 5: Intersection of Two Arrays — O(n*m) to O(n+m)
+6. Exercise 6: String Compression — O(n^2) to O(n)
+7. Exercise 7: First Duplicate — O(n^2) to O(n)
+8. Exercise 8: Maximum Sliding Window Sum — O(n*k) to O(n)
+9. Exercise 9: Sort Array of 0s, 1s, 2s — O(n log n) to O(n)
+10. Exercise 10: Product Except Self — O(n^2) to O(n)
+11. Exercise 11: Majority Element — O(n log n) to O(n)
+12. Exercise 12: Longest Consecutive Sequence — O(n log n) to O(n)
 
 ---
 

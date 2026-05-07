@@ -11,12 +11,12 @@
 2. [When to Use Bridge](#when-to-use-bridge)
 3. [When NOT to Use Bridge](#when-not-to-use-bridge)
 4. [Real-World Cases](#real-world-cases)
-5. [Code Examples — Production-Grade](#code-examples--production-grade)
+5. [Code Examples — Production-Grade](#code-examples-production-grade)
 6. [Three-Hierarchy Variants](#three-hierarchy-variants)
 7. [Refactoring to Bridge](#refactoring-to-bridge)
 8. [Trade-offs](#trade-offs)
 9. [Alternatives Comparison](#alternatives-comparison)
-10. [Pros & Cons (Deeper)](#pros--cons-deeper)
+10. [Pros & Cons (Deeper)](#pros-cons-deeper)
 11. [Edge Cases](#edge-cases)
 12. [Tricky Points](#tricky-points)
 13. [Best Practices](#best-practices)
@@ -488,6 +488,6 @@ graph LR
 
 ---
 
-[← Back to Bridge folder](.) · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
+← Back to Bridge folder · [↑ Structural Patterns](../README.md) · [↑↑ Roadmap Home](../../../README.md)
 
 **Next:** [Bridge — Senior Level](senior.md)

@@ -10,7 +10,7 @@
 7. [Memory Ordering and Happens-before](#memory-ordering-and-happens-before)
 8. [Priority-Select Patterns and Their Trade-offs](#priority-select-patterns-and-their-trade-offs)
 9. [Select with Send and Receive Cases Together](#select-with-send-and-receive-cases-together)
-10. [Send on Closed Channel — The Panic and How to Avoid It](#send-on-closed-channel--the-panic-and-how-to-avoid-it)
+10. [Send on Closed Channel — The Panic and How to Avoid It](#send-on-closed-channel-the-panic-and-how-to-avoid-it)
 11. [Goroutine Lifetime and Leak Audit](#goroutine-lifetime-and-leak-audit)
 12. [Reflect-based Dynamic Selects](#reflect-based-dynamic-selects)
 13. [Combining Select with `context`, `errgroup`, and `singleflight`](#combining-select-with-context-errgroup-and-singleflight)

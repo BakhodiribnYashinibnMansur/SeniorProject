@@ -26,7 +26,7 @@
 12. [AP-10 io.Reader-Shaped Misuse](#12-ap-10-ioreader-shaped-misuse)
 13. [AP-11 `interface{}` Instead of Generics](#13-ap-11-interface-instead-of-generics)
 14. [AP-12 Pseudo-OOP "Animal Interface"](#14-ap-12-pseudo-oop-animal-interface)
-15. [Detection Heuristics & Linters](#15-detection-heuristics--linters)
+15. [Detection Heuristics & Linters](#15-detection-heuristics-linters)
 
 ---
 
