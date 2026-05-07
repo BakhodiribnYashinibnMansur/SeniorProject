@@ -23,3 +23,4 @@ permalink: /roadmap/programming-languages/golang/02-language-basics/
 | 5 | Loops | [05-loops/](05-loops/) |
 | 6 | Functions | [06-functions/](06-functions/) |
 | 7 | Pointers | [07-pointers/](07-pointers/) |
+| 8 | Error Handling Basics | [08-error-handling-basics/](08-error-handling-basics/) |
