@@ -39,7 +39,7 @@ body,
 }
 
 .md-typeset {
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   line-height: 1.65;
 }
 
@@ -108,7 +108,7 @@ body,
   border-bottom: 1px solid #1a1a1a;
   font-family: "Intel One Mono", monospace;
 }
-.md-tabs__link { opacity: 0.6; font-size: 0.72rem; }
+.md-tabs__link { opacity: 0.6; font-size: 0.78rem; }
 .md-tabs__link--active,
 .md-tabs__link:hover {
   opacity: 1;
@@ -118,7 +118,7 @@ body,
 
 /* Sidebar nav — terminal tree style */
 .md-nav {
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-family: "Intel One Mono", monospace;
 }
 .md-nav__title {
