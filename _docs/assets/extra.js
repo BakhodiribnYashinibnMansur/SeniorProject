@@ -66,6 +66,11 @@
   }
 
   function renderMermaid() {
+    // Only load Mermaid if this page actually has a diagram.
+    // Material's superfences renders mermaid blocks as <pre class="mermaid">.
+    const hasMermaid = document.querySelector('pre.mermaid, .mermaid');
+    if (!hasMermaid) return;
+
     // Find unprocessed mermaid blocks. We skip ones already rendered
     // (have a child SVG) so SPA navigation re-render is idempotent.
     const blocks = Array.from(document.querySelectorAll(".mermaid")).filter(
