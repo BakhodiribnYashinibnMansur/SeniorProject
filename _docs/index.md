@@ -1,6 +1,5 @@
 ---
 template: home.html
-title: Senior Project
 hide:
   - navigation
   - toc
