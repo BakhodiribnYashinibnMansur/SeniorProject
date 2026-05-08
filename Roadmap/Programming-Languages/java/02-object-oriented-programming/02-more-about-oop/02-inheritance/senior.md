@@ -178,7 +178,7 @@ Patterns to extract:
 - **Replace Subclass with Strategy** — turn vertical hierarchy into horizontal composition.
 - **Tease Apart Inheritance** — when one hierarchy is doing two jobs, split into two hierarchies.
 
-These all appear in the Refactoring Guru section of this curriculum.
+These all appear in the Refactoring section of this curriculum.
 
 ---
 
