@@ -70,6 +70,17 @@ plugins:
       order: asc
       sort_type: natural
       order_by: filename
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+      htmlmin_opts:
+        remove_comments: true
+      js_files:
+        - assets/extra.js
+      css_files:
+        - assets/extra.css
+        - assets/fonts/intel-one-mono.css
 
 markdown_extensions:
   - admonition
