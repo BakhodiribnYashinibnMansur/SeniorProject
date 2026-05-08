@@ -2,6 +2,14 @@
 
 > A personal project for organizing, consolidating, and strengthening the essential knowledge needed to grow as a software engineer.
 
+### 🌐 Live site: **[senior-stack.uz](https://senior-stack.uz/)**
+
+Browse the full project online — 50+ roadmaps, 100 annotated Leetcode solutions, and system design patterns in one searchable place.
+
+[![Visit](https://img.shields.io/badge/visit-senior--stack.uz-2563eb?style=for-the-badge)](https://senior-stack.uz/)
+[![Roadmaps](https://img.shields.io/badge/roadmaps-50%2B-22c55e?style=for-the-badge)](https://senior-stack.uz/roadmap/)
+[![Leetcode](https://img.shields.io/badge/leetcode-100-f59e0b?style=for-the-badge)](https://senior-stack.uz/Leetcode/)
+
 ## Purpose
 
 The knowledge required for modern software development is scattered across countless blogs, courses, and documentation. This project brings it all together in **one place**, in a **structured way**:
