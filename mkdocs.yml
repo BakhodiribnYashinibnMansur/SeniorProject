@@ -46,6 +46,7 @@ theme:
     - content.code.annotate
     - content.tabs.link
     - toc.follow
+  font: false
   palette:
     scheme: slate
     primary: custom
@@ -137,6 +138,7 @@ extra:
       - manage
 
 extra_css:
+  - assets/fonts/intel-one-mono.css
   - assets/extra.css
 
 extra_javascript:

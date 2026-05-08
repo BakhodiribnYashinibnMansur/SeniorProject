@@ -2,8 +2,6 @@
    Senior Project — terminal / phosphor theme (all pages)
    ================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@300;400;500;600;700&display=swap');
-
 /* Both light & dark schemes share the dark hacker palette */
 [data-md-color-scheme="default"],
 [data-md-color-scheme="slate"] {
