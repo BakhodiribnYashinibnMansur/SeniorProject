@@ -1013,79 +1013,89 @@
       const canvas  = document.querySelector('.sp-canvas');
       if (!canvas || !homeEl || reduced) return;
 
-      const ctx = canvas.getContext('2d');
+      const initMatrixRain = () => {
+        const ctx = canvas.getContext('2d');
 
-      // char pool — katakana subset + ascii symbols + digits
-      const KATA = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝ';
-      const ASCII = '01<>{}[]()=*/\\$&|;#@?!';
-      const POOL = (KATA + ASCII).split('');
+        // char pool — katakana subset + ascii symbols + digits
+        const KATA = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝ';
+        const ASCII = '01<>{}[]()=*/\\$&|;#@?!';
+        const POOL = (KATA + ASCII).split('');
 
-      const FONT_SIZE = 14;
-      let cols = 0;
-      let drops = [];
-      let speeds = [];
-      let cw = 0, ch = 0;
+        const FONT_SIZE = 14;
+        let cols = 0;
+        let drops = [];
+        let speeds = [];
+        let cw = 0, ch = 0;
 
-      const setup = () => {
-        const dpr = Math.min(devicePixelRatio || 1, 2);
-        cw = homeEl.clientWidth;
-        ch = homeEl.clientHeight;
-        canvas.width  = cw * dpr;
-        canvas.height = ch * dpr;
-        canvas.style.width  = cw + 'px';
-        canvas.style.height = ch + 'px';
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const setup = () => {
+          const dpr = Math.min(devicePixelRatio || 1, 2);
+          cw = homeEl.clientWidth;
+          ch = homeEl.clientHeight;
+          canvas.width  = cw * dpr;
+          canvas.height = ch * dpr;
+          canvas.style.width  = cw + 'px';
+          canvas.style.height = ch + 'px';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        cols = Math.ceil(cw / FONT_SIZE);
-        drops  = new Array(cols).fill(0).map(() => Math.random() * -ch);
-        speeds = new Array(cols).fill(0).map(() => 0.4 + Math.random() * 1.2);
-        ctx.font = `${FONT_SIZE}px "Intel One Mono", monospace`;
-        ctx.textBaseline = 'top';
-      };
+          cols = Math.ceil(cw / FONT_SIZE);
+          drops  = new Array(cols).fill(0).map(() => Math.random() * -ch);
+          speeds = new Array(cols).fill(0).map(() => 0.4 + Math.random() * 1.2);
+          ctx.font = `${FONT_SIZE}px "Intel One Mono", monospace`;
+          ctx.textBaseline = 'top';
+        };
 
-      setup();
-      addEventListener('resize', setup);
-      new ResizeObserver(setup).observe(homeEl);
+        setup();
+        addEventListener('resize', setup);
+        new ResizeObserver(setup).observe(homeEl);
 
-      let visible = true;
-      const io = new IntersectionObserver(([entry]) => {
-        visible = entry.isIntersecting;
-      }, { threshold: 0 });
-      io.observe(homeEl);
-      document.addEventListener('visibilitychange', () => {
-        visible = !document.hidden && visible;
-      });
+        let visible = true;
+        const io = new IntersectionObserver(([entry]) => {
+          visible = entry.isIntersecting;
+        }, { threshold: 0 });
+        io.observe(homeEl);
+        document.addEventListener('visibilitychange', () => {
+          visible = !document.hidden && visible;
+        });
 
-      const draw = () => {
-        requestAnimationFrame(draw);
-        if (!visible) return;
+        const draw = () => {
+          requestAnimationFrame(draw);
+          if (!visible) return;
 
-        // trail-fade overlay
-        ctx.fillStyle = 'rgba(5, 5, 5, 0.08)';
-        ctx.fillRect(0, 0, cw, ch);
+          // trail-fade overlay
+          ctx.fillStyle = 'rgba(5, 5, 5, 0.08)';
+          ctx.fillRect(0, 0, cw, ch);
 
-        for (let i = 0; i < cols; i++) {
-          const x = i * FONT_SIZE;
-          const y = drops[i];
-          const ch2 = POOL[(Math.random() * POOL.length) | 0];
+          for (let i = 0; i < cols; i++) {
+            const x = i * FONT_SIZE;
+            const y = drops[i];
+            const ch2 = POOL[(Math.random() * POOL.length) | 0];
 
-          // bright leading head
-          ctx.fillStyle = '#b9ffcd';
-          ctx.fillText(ch2, x, y);
+            // bright leading head
+            ctx.fillStyle = '#b9ffcd';
+            ctx.fillText(ch2, x, y);
 
-          // dim trail above
-          ctx.fillStyle = '#1f8a3e';
-          ctx.fillText(ch2, x, y - FONT_SIZE * 1.5);
+            // dim trail above
+            ctx.fillStyle = '#1f8a3e';
+            ctx.fillText(ch2, x, y - FONT_SIZE * 1.5);
 
-          drops[i] += FONT_SIZE * speeds[i] * 0.45;
-          if (drops[i] > ch && Math.random() > 0.965) {
-            drops[i] = -FONT_SIZE * (5 + Math.random() * 30);
-            speeds[i] = 0.4 + Math.random() * 1.2;
+            drops[i] += FONT_SIZE * speeds[i] * 0.45;
+            if (drops[i] > ch && Math.random() > 0.965) {
+              drops[i] = -FONT_SIZE * (5 + Math.random() * 30);
+              speeds[i] = 0.4 + Math.random() * 1.2;
+            }
           }
-        }
+        };
+        requestAnimationFrame(draw);
+        requestAnimationFrame(() => canvas.classList.add('is-ready'));
       };
-      requestAnimationFrame(draw);
-      requestAnimationFrame(() => canvas.classList.add('is-ready'));
+
+      // Defer matrix rain init until browser is idle — keeps it off the
+      // critical path so LCP lands first.
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(initMatrixRain, { timeout: 1500 });
+      } else {
+        setTimeout(initMatrixRain, 800);
+      }
     })();
 
     /* ============================================================
