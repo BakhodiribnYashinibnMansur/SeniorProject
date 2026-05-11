@@ -19,7 +19,7 @@
   --md-default-bg-color:        #050505;
   --md-default-fg-color:        #d4d4d4;
   --md-default-fg-color--light: #a0a0a0;
-  --md-default-fg-color--lighter: #6a6a6a;
+  --md-default-fg-color--lighter: #909090;
   --md-default-fg-color--lightest: #2a2a2a;
 
   --md-typeset-a-color:          #39ff7a;
@@ -28,7 +28,7 @@
 
   --md-footer-bg-color:          #050505;
   --md-footer-bg-color--dark:    #050505;
-  --md-footer-fg-color:          #6a6a6a;
+  --md-footer-fg-color:          #909090;
 }
 
 /* Whole page typography */

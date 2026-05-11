@@ -299,3 +299,36 @@
     onPage();
   }
 })();
+
+/* ============================================================
+   Accessibility patches for Material partials we don't own:
+   - search dialog needs an accessible name
+   - instant-nav progress bar needs an accessible name
+   - cookie-consent h4 jumps heading order from h2 → h4 (no h3)
+   ============================================================ */
+(() => {
+  const patch = () => {
+    const search = document.querySelector('[data-md-component="search"][role="dialog"]');
+    if (search && !search.hasAttribute('aria-label')) {
+      search.setAttribute('aria-label', 'Search');
+    }
+    const progress = document.querySelector('[data-md-component="progress"][role="progressbar"]');
+    if (progress && !progress.hasAttribute('aria-label')) {
+      progress.setAttribute('aria-label', 'Page loading progress');
+    }
+    // Cookie consent uses <h4> directly under H2 nav cards; promote semantically to h3.
+    const consentHeading = document.querySelector('#__consent .md-consent__form h4');
+    if (consentHeading && !consentHeading.hasAttribute('aria-level')) {
+      consentHeading.setAttribute('role', 'heading');
+      consentHeading.setAttribute('aria-level', '3');
+    }
+  };
+
+  if (window.document$ && typeof window.document$.subscribe === 'function') {
+    window.document$.subscribe(patch);
+  } else if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', patch);
+  } else {
+    patch();
+  }
+})();
