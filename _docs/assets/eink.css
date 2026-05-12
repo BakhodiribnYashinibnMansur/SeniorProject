@@ -35,18 +35,27 @@ html[data-eink="1"] {
   --md-footer-fg-color:            #1a1a1a;
 }
 
-/* -------- Kill every animation, transition, transform --------- */
+/* -------- Kill every animation, transition, transform ---------
+   E-ink panels refresh at ~1 FPS — any motion looks like a smear.
+   We override at every CSS property layer (shorthand + longhand)
+   so JS-injected inline styles can't sneak motion back in.
+   -------------------------------------------------------------- */
 html[data-eink="1"],
 html[data-eink="1"] *,
 html[data-eink="1"] *::before,
 html[data-eink="1"] *::after {
   animation: none !important;
+  animation-name: none !important;
   animation-duration: 0s !important;
   animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  animation-play-state: paused !important;
   transition: none !important;
+  transition-property: none !important;
   transition-duration: 0s !important;
   transition-delay: 0s !important;
   scroll-behavior: auto !important;
+  view-transition-name: none !important;
 }
 
 html[data-eink="1"] * {
@@ -54,6 +63,36 @@ html[data-eink="1"] * {
   box-shadow: none !important;
   filter: none !important;
   backdrop-filter: none !important;
+}
+
+/* Material's instant-navigation progress bar (top loading line) */
+html[data-eink="1"] .md-progress,
+html[data-eink="1"] [data-md-component="progress"] {
+  display: none !important;
+}
+
+/* Explicit override for the page fade-in keyframe defined in extra.css */
+html[data-eink="1"] .md-content,
+html[data-eink="1"] .md-main,
+html[data-eink="1"] .md-sidebar,
+html[data-eink="1"] .md-sidebar__scrollwrap,
+html[data-eink="1"] .md-nav,
+html[data-eink="1"] .md-nav__link,
+html[data-eink="1"] .md-nav__item {
+  animation-name: none !important;
+  transition-property: none !important;
+  transform: none !important;
+}
+
+/* Some browsers re-enable motion when prefers-reduced-motion is "no-preference".
+   In e-ink we want hard-disabled, regardless of OS-level preference. */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-eink="1"] *,
+  html[data-eink="1"] *::before,
+  html[data-eink="1"] *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 /* -------- Typography: bigger, serif-friendly, high contrast --- */
