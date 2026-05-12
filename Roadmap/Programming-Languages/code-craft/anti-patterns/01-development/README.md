@@ -12,9 +12,9 @@ This chapter groups **19 anti-patterns** into **3 categories** by the kind of mi
 
 | Category | What it signals | Anti-patterns |
 |---|---|---|
-| [Bad Structure](01-bad-structure/junior.md) | Code has grown into a shape that resists change | 5 |
-| [Bad Shortcuts](02-bad-shortcuts/junior.md) | Convenience taken now, paid back many times later | 6 |
-| [Over-Engineering](03-over-engineering/junior.md) | Effort spent solving problems you don't have | 8 |
+| **Bad Structure** | Code has grown into a shape that resists change | 5 |
+| **Bad Shortcuts** | Convenience taken now, paid back many times later | 6 |
+| **Over-Engineering** | Effort spent solving problems you don't have | 8 |
 
 Each category is delivered as an **8-file suite** (junior → professional + tasks/find-bug/optimize/interview), covering every anti-pattern in the category collectively.
 

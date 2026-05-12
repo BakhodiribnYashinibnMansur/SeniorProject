@@ -1,6 +1,6 @@
 # `GOMAXPROCS` — Interview Questions (Performance Focus)
 
-> A collection of interview questions grouped by level. Each carries a model answer in the depth a strong candidate would give. Mechanics questions appear in the [scheduler-internals interview file](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/interview.md); here we focus on tuning, measurement, and production.
+> A collection of interview questions grouped by level. Each carries a model answer in the depth a strong candidate would give. Mechanics questions will appear in the planned `10-scheduler-deep-dive/03-gomaxprocs-tuning` chapter (coming soon); here we focus on tuning, measurement, and production.
 
 ---
 
@@ -126,4 +126,4 @@ If you can answer Q1–Q12 cleanly: junior–middle level on tuning.
 If you can answer Q13–Q19 cleanly: senior level.
 If you can answer Q20–Q25 cleanly: professional level, ready to design fleet policy.
 
-Cross-reference to the internals interview file: [10-scheduler-deep-dive/03-gomaxprocs-tuning/interview.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/interview.md).
+Cross-reference: the planned `10-scheduler-deep-dive/03-gomaxprocs-tuning/interview.md` chapter (coming soon).

@@ -375,4 +375,4 @@ The CI runner is shared. Another job started running on the same runner today; t
 
 You should be able to diagnose Bugs 1–8 in under five minutes each at junior–middle level, Bugs 9–14 at senior level, and Bugs 15–16 at professional level. If you found yourself surprised, re-read the relevant level's file.
 
-Cross-reference: [10-scheduler-deep-dive/03-gomaxprocs-tuning/find-bug.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/find-bug.md) for mechanics-side bugs that complement these performance-focused ones.
+Cross-reference: the planned `10-scheduler-deep-dive/03-gomaxprocs-tuning/find-bug.md` chapter (coming soon) for mechanics-side bugs that complement these performance-focused ones.

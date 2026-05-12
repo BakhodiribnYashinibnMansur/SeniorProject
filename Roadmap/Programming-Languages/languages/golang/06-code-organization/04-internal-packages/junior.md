@@ -1127,9 +1127,9 @@ You cannot yet:
 
 ## Related Topics
 
-- [6.2.1 Package Import Rules](../../02-packages/01-package-import-rules/junior.md) — how Go resolves imports in general.
-- [6.3 Project Layout](../../03-project-layout/) — where `internal/` fits in a typical Go layout.
-- [6.5 Workspaces](../../05-workspaces/) — how `go.work` interacts (or does not interact) with `internal/`.
+- [6.2.1 Package Import Rules](../02-packages/01-package-import-rules/junior.md) — how Go resolves imports in general.
+- [6.3 Project Layout](../03-project-layout/) — where `internal/` fits in a typical Go layout.
+- [6.5 Workspaces](../05-workspaces/) — how `go.work` interacts (or does not interact) with `internal/`.
 - [6.7 Architecture Patterns](../../07-architecture-patterns/) — designing import graphs.
 
 ---

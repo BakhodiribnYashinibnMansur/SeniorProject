@@ -24,17 +24,17 @@
 
 | # | Chapter | Focus |
 |---|---|---|
-| [01](01-meaningful-names/junior.md) | Meaningful Names | Intention-revealing, pronounceable, searchable, unambiguous |
-| [02](02-functions/junior.md) | Functions | Small, one level of abstraction, few arguments, no side effects |
-| [03](03-comments/junior.md) | Comments | When they help, when they lie, what to delete |
-| [04](04-formatting/junior.md) | Formatting | Vertical density, horizontal limits, team rules |
-| [05](05-objects-and-data-structures/junior.md) | Objects & Data Structures | Tell-don't-ask, Law of Demeter, DTOs, hybrids |
-| [06](06-error-handling/junior.md) | Error Handling | Exceptions over codes, no nulls, wrap third-party APIs |
-| [07](07-boundaries/junior.md) | Boundaries | Isolating third-party code, learning tests |
-| [08](08-unit-tests/junior.md) | Unit Tests | F.I.R.S.T., one assert per test, the TDD rhythm |
-| [09](09-classes/junior.md) | Classes | SRP at class scope, cohesion, organizing for change |
-| [10](10-emergence/junior.md) | Emergent Design | Kent Beck's four rules: tests pass, no duplication, expressive, minimal |
-| [11](11-concurrency/junior.md) | Concurrency | SRP for threads, limit shared scope, copy-on-write, server-thread independence |
+| [01](01-meaningful-names/README.md) | Meaningful Names | Intention-revealing, pronounceable, searchable, unambiguous |
+| [02](02-functions/README.md) | Functions | Small, one level of abstraction, few arguments, no side effects |
+| [03](03-comments/README.md) | Comments | When they help, when they lie, what to delete |
+| [04](04-formatting/README.md) | Formatting | Vertical density, horizontal limits, team rules |
+| [05](05-objects-and-data-structures/README.md) | Objects & Data Structures | Tell-don't-ask, Law of Demeter, DTOs, hybrids |
+| [06](06-error-handling/README.md) | Error Handling | Exceptions over codes, no nulls, wrap third-party APIs |
+| [07](07-boundaries/README.md) | Boundaries | Isolating third-party code, learning tests |
+| [08](08-unit-tests/README.md) | Unit Tests | F.I.R.S.T., one assert per test, the TDD rhythm |
+| [09](09-classes/README.md) | Classes | SRP at class scope, cohesion, organizing for change |
+| [10](10-emergence/README.md) | Emergent Design | Kent Beck's four rules: tests pass, no duplication, expressive, minimal |
+| [11](11-concurrency/README.md) | Concurrency | SRP for threads, limit shared scope, copy-on-write, server-thread independence |
 
 > Chapters 12–17 of the original book (successive refinement, JUnit internals, case studies, *Smells and Heuristics*) are intentionally **not** duplicated — the smells catalog already lives in [Refactoring → Code Smells](../refactoring/01-code-smells/README.md), and the case studies are a learning vehicle rather than a reference topic.
 
@@ -46,11 +46,11 @@
 
 | # | Chapter | Focus |
 |---|---|---|
-| [12](12-async-and-functional/junior.md) | Async & Functional | async/await, promises, functional pipelines, backpressure |
-| [13](13-generics-and-types/junior.md) | Generics & Types | Type expressiveness, "make illegal states unrepresentable" |
-| [14](14-immutability/junior.md) | Immutability | Value objects, persistent data structures, mutability as the new goto |
-| [15](15-pure-functions/junior.md) | Pure Functions | Referential transparency, side-effect quarantine |
-| [16](16-defensive-vs-offensive/junior.md) | Defensive vs Offensive | Assertions, contracts, fail-fast vs fail-safe |
+| [12](12-async-and-functional/README.md) | Async & Functional | async/await, promises, functional pipelines, backpressure |
+| [13](13-generics-and-types/README.md) | Generics & Types | Type expressiveness, "make illegal states unrepresentable" |
+| [14](14-immutability/README.md) | Immutability | Value objects, persistent data structures, mutability as the new goto |
+| [15](15-pure-functions/README.md) | Pure Functions | Referential transparency, side-effect quarantine |
+| [16](16-defensive-vs-offensive/README.md) | Defensive vs Offensive | Assertions, contracts, fail-fast vs fail-safe |
 
 ---
 
@@ -60,11 +60,11 @@
 
 | # | Chapter | Focus |
 |---|---|---|
-| [17](17-code-reviews/junior.md) | Code Reviews | Reviewer/author etiquette, nits vs blockers, review tempo, small-PR culture, discipline of clean reviews |
-| [18](18-logging-and-diagnostics/junior.md) | Logging & Diagnostics | Structured logging, log levels, PII scrubbing, "log once at the boundary" |
-| [19](19-modules-and-packages/junior.md) | Modules & Packages | Public/private boundary, circular deps, layering, package-by-feature |
-| [20](20-cognitive-load/junior.md) | Cognitive Load | Cyclomatic/cognitive complexity metrics, rule of 7±2, measuring "clean" |
-| [21](21-boy-scout-rule/junior.md) | Boy Scout Rule | "Leave it cleaner than you found it" — incremental, continuous cleanup as habit |
+| [17](17-code-reviews/README.md) | Code Reviews | Reviewer/author etiquette, nits vs blockers, review tempo, small-PR culture, discipline of clean reviews |
+| [18](18-logging-and-diagnostics/README.md) | Logging & Diagnostics | Structured logging, log levels, PII scrubbing, "log once at the boundary" |
+| [19](19-modules-and-packages/README.md) | Modules & Packages | Public/private boundary, circular deps, layering, package-by-feature |
+| [20](20-cognitive-load/README.md) | Cognitive Load | Cyclomatic/cognitive complexity metrics, rule of 7±2, measuring "clean" |
+| [21](21-boy-scout-rule/README.md) | Boy Scout Rule | "Leave it cleaner than you found it" — incremental, continuous cleanup as habit |
 
 ---
 

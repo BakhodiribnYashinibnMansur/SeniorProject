@@ -14,9 +14,9 @@ This chapter groups **9 anti-patterns** into **3 categories** by the dimension t
 
 | Category | What it signals | Anti-patterns |
 |---|---|---|
-| [Error Handling](01-error-handling/junior.md) | Errors fall on the floor instead of propagating | 4 |
-| [Execution Shape](02-execution-shape/junior.md) | The async control flow runs differently than the code reads | 3 |
-| [Misuse](03-misuse/junior.md) | Async machinery applied where it doesn't help | 2 |
+| **Error Handling** | Errors fall on the floor instead of propagating | 4 |
+| **Execution Shape** | The async control flow runs differently than the code reads | 3 |
+| **Misuse** | Async machinery applied where it doesn't help | 2 |
 
 Each category is delivered as an **8-file suite** covering every anti-pattern in the category collectively.
 

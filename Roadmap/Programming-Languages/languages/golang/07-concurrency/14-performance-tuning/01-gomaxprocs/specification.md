@@ -16,7 +16,7 @@
 
 This file documents the **tuning-relevant** specifications: what the Go runtime guarantees about `GOMAXPROCS` behaviour that tuning policies can rely on, what measurement primitives are stable across Go versions, and what is explicitly undefined.
 
-The mechanical specification (the prose contract of `runtime.GOMAXPROCS`, env-var precedence, cgroup detection algorithm) lives in [10-scheduler-deep-dive/03-gomaxprocs-tuning/specification.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/specification.md). This file complements it from the performance angle.
+The mechanical specification (the prose contract of `runtime.GOMAXPROCS`, env-var precedence, cgroup detection algorithm) lives in `10-scheduler-deep-dive/03-gomaxprocs-tuning/specification.md`. This file complements it from the performance angle.
 
 ---
 
@@ -238,8 +238,8 @@ If T1–T5 all pass, the service conforms to the tuning specification.
 - [`runtime` package documentation](https://pkg.go.dev/runtime) — official API.
 - [`runtime/metrics`](https://pkg.go.dev/runtime/metrics) — stable metrics.
 - [Go GC pacer design document](https://go.googlesource.com/proposal/+/master/design/44167-gc-pacer-redesign.md) — mark worker sizing.
-- [10-scheduler-deep-dive/03-gomaxprocs-tuning/specification.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/specification.md) — internals specification.
-- [10-scheduler-deep-dive/03-gomaxprocs-tuning/professional.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/professional.md) — runtime source references.
+- `10-scheduler-deep-dive/03-gomaxprocs-tuning/specification.md` — internals specification.
+- `10-scheduler-deep-dive/03-gomaxprocs-tuning/professional.md` — runtime source references.
 - Linux kernel documentation: `Documentation/scheduler/sched-bwc.txt` for CFS bandwidth control.
 - `cgroup v2` admin guide: kernel docs `Documentation/admin-guide/cgroup-v2.rst`.
 

@@ -391,7 +391,7 @@ The professional file picks up from here:
 - A real-world benchmark: `+=` vs `Builder` vs `Sprintf` vs raw
   `append`.
 
-For the underlying memory model, see
-[`../../25-runtime-and-internals/`](../../25-runtime-and-internals/index.md).
+For the underlying memory model, see the planned
+`25-runtime-and-internals/` chapter (coming soon).
 For pooling and `sync.Pool` semantics, see
-[`../../07-concurrency/03-sync-package/`](../../07-concurrency/03-sync-package/index.md).
+[`../../07-concurrency/03-sync-package/01-mutexes/junior.md`](../../07-concurrency/03-sync-package/01-mutexes/junior.md).

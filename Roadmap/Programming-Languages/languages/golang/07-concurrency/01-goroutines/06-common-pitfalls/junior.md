@@ -435,7 +435,7 @@ return result
 
 Now the function always drains `ch` before returning.
 
-For deep coverage of leak shapes, see [07-goroutine-lifecycle-leaks/junior.md](../07-goroutine-lifecycle-leaks/junior.md).
+For deep coverage of leak shapes, see the planned `07-goroutine-lifecycle-leaks` chapter (coming soon).
 
 ### Example 7: Goroutine leak — receiver on never-closed channel
 

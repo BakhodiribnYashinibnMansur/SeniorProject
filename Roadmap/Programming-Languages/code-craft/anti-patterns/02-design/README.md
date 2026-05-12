@@ -12,9 +12,9 @@ This chapter groups **20 anti-patterns** into **3 categories** by the design dim
 
 | Category | What it signals | Anti-patterns |
 |---|---|---|
-| [OO Misuse](01-oo-misuse/junior.md) | Object-orientation applied as procedure-with-classes | 11 |
-| [Coupling & State](02-coupling-and-state/junior.md) | Modules know or share too much | 5 |
-| [Abstraction Failures](03-abstraction-failures/junior.md) | The chosen abstraction fights the problem instead of fitting it | 4 |
+| **OO Misuse** | Object-orientation applied as procedure-with-classes | 11 |
+| **Coupling & State** | Modules know or share too much | 5 |
+| **Abstraction Failures** | The chosen abstraction fights the problem instead of fitting it | 4 |
 
 Each category is delivered as an **8-file suite** (junior → professional + tasks/find-bug/optimize/interview), covering every anti-pattern in the category collectively.
 

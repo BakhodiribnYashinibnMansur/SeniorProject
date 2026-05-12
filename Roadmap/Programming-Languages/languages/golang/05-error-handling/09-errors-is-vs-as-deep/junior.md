@@ -785,9 +785,9 @@ func (e *APIError) Error() string { return ... }
 ## Related Topics
 
 - [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/junior.md) — `%w` and the chain
-- [04-custom-error-types](../04-custom-error-types/junior.md) — typed errors that pair with `As`
+- [10-custom-error-types](../10-custom-error-types/junior.md) — typed errors that pair with `As`
 - [06-sentinel-errors](../06-sentinel-errors/junior.md) — package-level error variables that pair with `Is`
-- [10-error-categories-design](../10-error-categories-design/junior.md) — designing error families that read well with `Is`
+- [12-error-design-best-practices](../12-error-design-best-practices/junior.md) — designing error families that read well with `Is`
 
 ---
 

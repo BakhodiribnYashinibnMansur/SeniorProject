@@ -14,9 +14,9 @@ This roadmap groups **15 anti-patterns** into **3 categories** by which architec
 
 | Category | What it signals | Anti-patterns |
 |---|---|---|
-| [System Shape](01-system-shape/junior.md) | The overall topology has decayed or never had structure | 4 |
-| [Coupling at Boundaries](02-coupling-at-boundaries/junior.md) | Services or layers depend on each other in ways they shouldn't | 6 |
-| [Process & Trend-Chasing](03-process-and-trends/junior.md) | The architecture reflects fashion or politics, not requirements | 5 |
+| **System Shape** | The overall topology has decayed or never had structure | 4 |
+| **Coupling at Boundaries** | Services or layers depend on each other in ways they shouldn't | 6 |
+| **Process & Trend-Chasing** | The architecture reflects fashion or politics, not requirements | 5 |
 
 Each category is delivered as an **8-file suite** (junior → professional + tasks/find-bug/optimize/interview), covering every anti-pattern in the category collectively.
 
@@ -185,4 +185,4 @@ Because architecture anti-patterns are larger in scope, each file uses **case st
 
 ## Project Context
 
-This roadmap is part of the [Architecture section](../) of the [Senior Project](../../../../index.md).
+This roadmap is part of the [Architecture section](../) of the [Senior Project](../../../index.md).

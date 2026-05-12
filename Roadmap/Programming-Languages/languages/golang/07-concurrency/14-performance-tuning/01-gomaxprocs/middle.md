@@ -24,7 +24,7 @@
 
 Junior level covered the *why* of `GOMAXPROCS = NumCPU` and the shape of throughput and latency curves. Middle level is about *how* you produce those curves rigorously, what to do when they surprise you, and what container and NUMA realities they hide. You are expected to be able to plan, run, and interpret a `GOMAXPROCS` sweep on a real service without supervision.
 
-The scheduler-internals chapter at [10-scheduler-deep-dive/03-gomaxprocs-tuning/middle.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/middle.md) explains *what* cgroup files exist and how `automaxprocs` reads them. We will not repeat that here. What we add is the **measurement side**: given that the runtime is doing the right thing (or you suspect it is not), how do you confirm by experiment?
+The scheduler-internals chapter at `10-scheduler-deep-dive/03-gomaxprocs-tuning/middle.md` explains *what* cgroup files exist and how `automaxprocs` reads them. We will not repeat that here. What we add is the **measurement side**: given that the runtime is doing the right thing (or you suspect it is not), how do you confirm by experiment?
 
 By the end of this file you should be able to:
 
@@ -493,4 +493,4 @@ At middle level, `GOMAXPROCS` tuning is a *measurement discipline*. The runtime 
 - NUMA pinning is sometimes a latency win at a throughput cost.
 - "No effect" sweeps mean tune something else.
 
-Internals references throughout, especially [10-scheduler-deep-dive/03-gomaxprocs-tuning/middle.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/middle.md). Move on to senior for the fleet-level view.
+Internals references throughout, especially `10-scheduler-deep-dive/03-gomaxprocs-tuning/middle.md`. Move on to senior for the fleet-level view.

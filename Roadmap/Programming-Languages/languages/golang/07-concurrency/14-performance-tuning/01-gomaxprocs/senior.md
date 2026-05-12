@@ -21,7 +21,7 @@
 
 ## Introduction
 
-At senior level you own the policy that governs `GOMAXPROCS` across many services. The mechanical material on `procresize`, cgroup files, and the runtime's detection logic lives in [10-scheduler-deep-dive/03-gomaxprocs-tuning/senior.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/senior.md). Here we focus on **performance policy**: how to make sure the right value is set everywhere, how to detect when it is not, and how to allocate engineering time to tuning vs to capacity changes.
+At senior level you own the policy that governs `GOMAXPROCS` across many services. The mechanical material on `procresize`, cgroup files, and the runtime's detection logic lives in `10-scheduler-deep-dive/03-gomaxprocs-tuning/senior.md`. Here we focus on **performance policy**: how to make sure the right value is set everywhere, how to detect when it is not, and how to allocate engineering time to tuning vs to capacity changes.
 
 The senior brief, in one paragraph: every service in the fleet emits `process_gomaxprocs` as a metric; every service logs the resolved value at startup; every manifest declares CPU limits; the runtime version is uniform enough that the default detection works, and `automaxprocs` is in place where it is not; CFS throttling is monitored and alerted; benchmark sweeps are run as part of release engineering when hardware or runtime versions change.
 
@@ -110,7 +110,7 @@ If you have an internal logging library that wraps zap, slog, or zerolog, wire `
 
 ## Container CFS Quotas — The Operator's View
 
-The kernel's CFS bandwidth controller enforces CPU limits via a quota-per-period mechanism, described in [10-scheduler-deep-dive/03-gomaxprocs-tuning/middle.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/middle.md). At senior level you should be able to:
+The kernel's CFS bandwidth controller enforces CPU limits via a quota-per-period mechanism, described in `10-scheduler-deep-dive/03-gomaxprocs-tuning/middle.md`. At senior level you should be able to:
 
 1. Read the cgroup quota for any pod from `/sys/fs/cgroup/cpu.max` (v2) or the v1 files.
 2. Compute the runtime's expected `GOMAXPROCS` from the quota.

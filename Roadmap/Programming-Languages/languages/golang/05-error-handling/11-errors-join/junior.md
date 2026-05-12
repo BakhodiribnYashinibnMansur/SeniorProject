@@ -702,9 +702,9 @@ if u, ok := err.(unwrapper); ok {
 ## Related Topics
 
 - [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/junior.md) — `%w` and `Unwrap() error`; `Join` is the multi-error sibling.
-- [02-sentinel-errors](../02-sentinel-errors/junior.md) — `errors.Is` against a join still finds sentinel children.
-- [04-custom-error-types](../04-custom-error-types/junior.md) — implementing `Unwrap() []error` on your own multi-error type.
-- [09-best-practices](../09-best-practices/junior.md) — when to collect vs short-circuit.
+- [06-sentinel-errors](../06-sentinel-errors/junior.md) — `errors.Is` against a join still finds sentinel children.
+- [10-custom-error-types](../10-custom-error-types/junior.md) — implementing `Unwrap() []error` on your own multi-error type.
+- [12-error-design-best-practices](../12-error-design-best-practices/junior.md) — when to collect vs short-circuit.
 
 ---
 

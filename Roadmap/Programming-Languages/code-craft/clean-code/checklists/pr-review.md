@@ -4,13 +4,13 @@ Status: ⏳ PENDING
 
 What to look for as a **reviewer**. Goes beyond the [pre-commit checklist](pre-commit.md) — focuses on design and cross-cutting concerns rather than line-level cleanliness (which the author has already passed).
 
-## Design ([Chapter 09](../09-classes/junior.md), [Chapter 10](../10-emergence/junior.md))
+## Design ([Chapter 09](../09-classes/README.md), [Chapter 10](../10-emergence/README.md))
 - [ ] Single Responsibility — each class/module has one reason to change
 - [ ] No new God objects introduced
 - [ ] No speculative generality — abstractions earn their existence with two real consumers
 - [ ] Public interfaces minimal — anything not needed by callers is private
 
-## Boundaries ([Chapter 07](../07-boundaries/junior.md))
+## Boundaries ([Chapter 07](../07-boundaries/README.md))
 - [ ] Third-party types don't leak across module/package boundaries
 - [ ] New dependency has a learning test
 - [ ] SDK or library wrapped in a thin layer the rest of the codebase calls
@@ -20,18 +20,18 @@ What to look for as a **reviewer**. Goes beyond the [pre-commit checklist](pre-c
 - [ ] No circular dependencies introduced
 - [ ] Module/package dependencies still flow in one direction
 
-## Tests ([Chapter 08](../08-unit-tests/junior.md))
+## Tests ([Chapter 08](../08-unit-tests/README.md))
 - [ ] Tests cover the new **behaviour**, not just the new lines
 - [ ] Failure modes considered, not only happy paths
 - [ ] Test names readable as English sentences
 - [ ] Mocks are used only for collaborators the team owns
 
-## Errors & Edge Cases ([Chapter 06](../06-error-handling/junior.md))
+## Errors & Edge Cases ([Chapter 06](../06-error-handling/README.md))
 - [ ] Nil / empty / boundary inputs handled at the right layer
 - [ ] No new silent failures
 - [ ] Errors carry enough context for triage (chained / wrapped)
 
-## Concurrency ([Chapter 11](../11-concurrency/junior.md))
+## Concurrency ([Chapter 11](../11-concurrency/README.md))
 - [ ] No new shared mutable state without locks
 - [ ] Race conditions considered for any new goroutine/thread/async
 - [ ] Cancellation / shutdown path handled

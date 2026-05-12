@@ -18,7 +18,7 @@
 
 ## Introduction
 
-Professional-level `GOMAXPROCS` work is the territory of teams running services at scale where 1% latency improvements translate to real money, where the fleet spans 50+ services across multiple hardware generations, and where the standard `automaxprocs` plus sweep methodology is the *floor* not the ceiling. The mechanical underpinnings — `procresize`, the runtime's source — live in [10-scheduler-deep-dive/03-gomaxprocs-tuning/professional.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/professional.md). Here we focus on the **operational and performance edges** that show up at scale.
+Professional-level `GOMAXPROCS` work is the territory of teams running services at scale where 1% latency improvements translate to real money, where the fleet spans 50+ services across multiple hardware generations, and where the standard `automaxprocs` plus sweep methodology is the *floor* not the ceiling. The mechanical underpinnings — `procresize`, the runtime's source — live in `10-scheduler-deep-dive/03-gomaxprocs-tuning/professional.md`. Here we focus on the **operational and performance edges** that show up at scale.
 
 By the end you should be able to: design an internal autosetting library that goes beyond `automaxprocs`; reason about `GOMAXPROCS`'s interaction with the GC pacer and `GOMEMLIMIT`; decide when kernel-level affinity is worth the operational complexity; and benchmark against other runtimes (Java, Tokio) when making language choices for performance-critical paths.
 
@@ -322,4 +322,4 @@ Professional-level `GOMAXPROCS` tuning is mostly about *operational maturity*:
 - Compare against other runtimes when making language decisions.
 - Trust observability — most incidents are diagnosed by reading the resolved value.
 
-Internals references in [10-scheduler-deep-dive/03-gomaxprocs-tuning/professional.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/professional.md). Move to [specification.md](specification.md) for the contracts and guarantees that all of this rests on.
+Internals references in `10-scheduler-deep-dive/03-gomaxprocs-tuning/professional.md`. Move to [specification.md](specification.md) for the contracts and guarantees that all of this rests on.

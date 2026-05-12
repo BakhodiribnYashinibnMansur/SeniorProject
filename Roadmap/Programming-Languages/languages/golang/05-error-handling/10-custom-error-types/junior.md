@@ -810,10 +810,10 @@ A custom error type is a struct (or named type) that implements `Error() string`
 ## Related Topics
 
 - [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/junior.md) — `%w` and `Unwrap` semantics
-- [06-error-as-error-is](../06-error-as-error-is/junior.md) — detecting errors in chains
-- [04-sentinel-errors](../04-sentinel-errors/junior.md) — when one fixed value is enough
+- [09-errors-is-vs-as-deep](../09-errors-is-vs-as-deep/junior.md) — detecting errors in chains
+- [06-sentinel-errors](../06-sentinel-errors/junior.md) — when one fixed value is enough
 - [08-stack-traces-debugging](../08-stack-traces-debugging/junior.md) — adding `Stack` to a custom error type
-- [09-error-wrapping-best-practices](../09-error-wrapping-best-practices/junior.md) — when to wrap, when to translate
+- [05-wrapping-unwrapping-errors](../05-wrapping-unwrapping-errors/junior.md) — when to wrap, when to translate
 
 ---
 

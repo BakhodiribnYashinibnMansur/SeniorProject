@@ -8,7 +8,7 @@ This roadmap is about **how a program tells the truth to its caller when somethi
 >
 > Looking for the *Clean Code chapter angle*? See [Clean Code → Error Handling](../../code-craft/clean-code/06-error-handling/README.md).
 >
-> Looking for *language-specific* idioms? See [Golang → Error Handling](../../languages/golang/05-error-handling/README.md).
+> Looking for *language-specific* idioms? See [Golang → Error Handling](../../languages/golang/05-error-handling/01-error-handling-basics/junior.md).
 >
 > Looking for *retry / circuit breaker / backoff*? Those are resilience patterns — see the `retry-pattern`, `circuit-breaker-pattern`, and `error-handling-patterns` skills.
 
@@ -67,4 +67,4 @@ Examples in **Go** (errors as values), **Java** (checked + unchecked exceptions)
 
 ## Project Context
 
-Part of the [Senior Project](../../../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.
+Part of the [Senior Project](../../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.

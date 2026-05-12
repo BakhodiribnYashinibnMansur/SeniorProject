@@ -14,9 +14,9 @@ This chapter groups **9 anti-patterns** into **3 categories** by the axis of coo
 
 | Category | What it signals | Anti-patterns |
 |---|---|---|
-| [Synchronization Misuse](01-synchronization/junior.md) | Locks and memory primitives used wrongly | 3 |
-| [Coordination](02-coordination/junior.md) | Two or more lock holders fail to make progress together | 3 |
-| [Shared State](03-shared-state/junior.md) | Mutable state crosses threads without protection or with the wrong protection | 3 |
+| **Synchronization Misuse** | Locks and memory primitives used wrongly | 3 |
+| **Coordination** | Two or more lock holders fail to make progress together | 3 |
+| **Shared State** | Mutable state crosses threads without protection or with the wrong protection | 3 |
 
 Each category is delivered as an **8-file suite** covering every anti-pattern in the category collectively.
 

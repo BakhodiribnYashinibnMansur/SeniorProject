@@ -6,7 +6,7 @@ This roadmap is about **what types actually are**, what guarantees they buy you,
 
 > Looking for the *Clean Code chapter* on practical type expressiveness ("make illegal states unrepresentable")? See [Clean Code → Generics & Types](../../code-craft/clean-code/13-generics-and-types/README.md).
 >
-> Looking for *Go-specific* generics? See [Golang → Generics](../../languages/golang/04-generics/README.md).
+> Looking for *Go-specific* generics? See [Golang → Generics](../../languages/golang/04-generics/01-why-generics/junior.md).
 
 ---
 
@@ -64,4 +64,4 @@ Cross-language comparison is the whole point. Examples in **Go**, **Java**, **Py
 
 ## Project Context
 
-Part of the [Senior Project](../../../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.
+Part of the [Senior Project](../../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.

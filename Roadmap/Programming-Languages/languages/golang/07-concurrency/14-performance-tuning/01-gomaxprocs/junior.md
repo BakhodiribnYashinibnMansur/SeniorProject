@@ -35,7 +35,7 @@
 
 ## Introduction
 
-This is the junior-level guide to **performance tuning** of `GOMAXPROCS`. It is the natural sequel to the scheduler-internals chapter at [10-scheduler-deep-dive/03-gomaxprocs-tuning/junior.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/junior.md), which covered the *what* and *how* of the knob. This file covers the *why* — specifically, why the default is almost always the right answer for performance, what happens to throughput and latency curves when you deviate from it, and how to convince yourself with numbers rather than blog-post folklore.
+This is the junior-level guide to **performance tuning** of `GOMAXPROCS`. It is the natural sequel to the scheduler-internals chapter at `10-scheduler-deep-dive/03-gomaxprocs-tuning/junior.md`, which covered the *what* and *how* of the knob. This file covers the *why* — specifically, why the default is almost always the right answer for performance, what happens to throughput and latency curves when you deviate from it, and how to convince yourself with numbers rather than blog-post folklore.
 
 A new Go engineer is exposed to `GOMAXPROCS` in three contexts, more or less in this order. The first is when someone on the team mentions a Kubernetes incident in which a service was running with the host's CPU count instead of the pod's quota; the second is when a colleague suggests "let's try bumping `GOMAXPROCS`" as a fix for slow performance; the third is when an interviewer asks "what does `GOMAXPROCS` control and when would you change it?". This file aims to make you competent in all three.
 
@@ -54,7 +54,7 @@ This file is **about performance**. It assumes you already know:
 - That `runtime.GOMAXPROCS(0)` reads the current value.
 - That the value can be set via the `GOMAXPROCS` environment variable.
 
-If any of those are new, read [the scheduler-internals junior.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/junior.md) first; it is the prerequisite for this page.
+If any of those are new, read `the scheduler-internals junior.md` first; it is the prerequisite for this page.
 
 This file is **not** going to re-explain G-M-P, `procresize()`, or how cgroup files are parsed. Those are internals. Here we treat the runtime as a black box with a single knob and ask: how do we measure the effect of that knob on the metric our service cares about?
 
@@ -336,7 +336,7 @@ Go 1.16 added cgroup v1 awareness; Go 1.18 added cgroup v2. From Go 1.18 onwards
 
 But: many services run older Go. Some run on platforms where cgroup detection does not work (some custom container runtimes, FreeBSD, Windows containers). For these, the community solution is the `automaxprocs` library.
 
-The internals of cgroup parsing live in [the scheduler chapter's middle.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/middle.md). For tuning, the headline is: **on Go ≥ 1.18 Linux, the default is correct in containers; on older Go, use `automaxprocs`.**
+The internals of cgroup parsing live in `the scheduler chapter's middle.md`. For tuning, the headline is: **on Go ≥ 1.18 Linux, the default is correct in containers; on older Go, use `automaxprocs`.**
 
 ---
 
@@ -625,12 +625,12 @@ A non-exhaustive list, all of which I have personally seen in production:
 
 For everything this page deliberately does *not* explain, the canonical references are:
 
-- [10-scheduler-deep-dive/01-gmp-model](../../../10-scheduler-deep-dive/01-gmp-model/) — what `P` actually is.
-- [10-scheduler-deep-dive/03-gomaxprocs-tuning/junior.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/junior.md) — the env var, the API, defaults.
-- [10-scheduler-deep-dive/03-gomaxprocs-tuning/middle.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/middle.md) — cgroup files, `automaxprocs` source.
-- [10-scheduler-deep-dive/03-gomaxprocs-tuning/professional.md](../../../10-scheduler-deep-dive/03-gomaxprocs-tuning/professional.md) — `procresize`, STW.
+- `10-scheduler-deep-dive/01-gmp-model` — what `P` actually is.
+- `10-scheduler-deep-dive/03-gomaxprocs-tuning/junior.md` — the env var, the API, defaults.
+- `10-scheduler-deep-dive/03-gomaxprocs-tuning/middle.md` — cgroup files, `automaxprocs` source.
+- `10-scheduler-deep-dive/03-gomaxprocs-tuning/professional.md` — `procresize`, STW.
 - [01-goroutines/02-vs-os-threads](../../../01-goroutines/02-vs-os-threads/) — why goroutines are not threads, netpoller in depth.
-- [10-scheduler-deep-dive/05-work-stealing](../../../10-scheduler-deep-dive/05-work-stealing/) — what cross-P stealing actually costs.
+- `10-scheduler-deep-dive/05-work-stealing` — what cross-P stealing actually costs.
 
 This page is the **performance** view. Those pages are the **mechanism** view. Together they should give you a complete picture.
 
