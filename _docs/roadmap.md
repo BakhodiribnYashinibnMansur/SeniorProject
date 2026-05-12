@@ -87,11 +87,20 @@ hide:
 
     ---
 
+    **Languages**
+
     - [Go](Roadmap/Programming-Languages/languages/golang/README.md)
     - [Java](Roadmap/Programming-Languages/languages/java/README.md)
     - [Python](Roadmap/Programming-Languages/languages/python/README.md)
-    - Rust · soon
-    - SQL · soon
+    - [Rust](Roadmap/Programming-Languages/languages/rust/README.md) · soon
+    - [SQL](Roadmap/Programming-Languages/languages/sql/README.md) · soon
+
+    **Tracks**
+
+    - [Code Craft](Roadmap/Programming-Languages/code-craft/README.md) — clean code, design patterns, refactoring, anti-patterns, functional programming
+    - [Quality Engineering](Roadmap/Programming-Languages/quality-engineering/README.md) — testing, performance, build systems
+    - [Language Internals](Roadmap/Programming-Languages/language-internals/README.md) — concurrency, memory, type systems, compilers
+    - [Diagnostics](Roadmap/Programming-Languages/diagnostics/README.md) — debugging, logging, error handling
 
 -   :material-shield-lock:{ .lg .middle } **Security**
 
