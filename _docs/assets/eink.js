@@ -1,7 +1,7 @@
 /* ================================================================
    Senior Stack — e-ink toggle (manual only)
    Activation paths:
-     1. Floating "eink mode" button (bottom-right)
+     1. Checkbox inside the reader-settings panel (gear button)
      2. Keyboard shortcut: Shift+E
      3. URL param: ?eink=1 / ?eink=0  → force, persisted to storage
    Persisted in localStorage; defaults to OFF until the user opts in.
@@ -43,41 +43,36 @@
     } else {
       html.removeAttribute("data-eink");
     }
-    updateToggleLabel();
+    syncCheckbox();
   }
 
   function isEinkOn() {
     return document.documentElement.getAttribute("data-eink") === "1";
   }
 
-  // ---------- Toggle button --------------------------------------
-  function ensureToggle() {
-    let btn = document.querySelector(".sp-eink-toggle");
-    if (btn) return btn;
-    btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "sp-eink-toggle";
-    btn.setAttribute("aria-label", "Toggle e-ink reading mode");
-    btn.title = "Toggle e-ink reading mode (Shift+E)";
-    btn.addEventListener("click", function () {
-      const next = isEinkOn() ? "off" : "on";
+  // ---------- Reader-settings panel binding ---------------------
+  function syncCheckbox() {
+    const cb = document.querySelector('.sp-reader-panel input[data-toggle="eink"]');
+    if (cb) cb.checked = isEinkOn();
+  }
+
+  function bindPanel() {
+    const cb = document.querySelector('.sp-reader-panel input[data-toggle="eink"]');
+    if (!cb || cb.dataset.spBound === "1") return;
+    cb.addEventListener("change", function () {
+      const next = this.checked ? "on" : "off";
       writeStoredMode(next);
       setEink(next === "on");
     });
-    document.body.appendChild(btn);
-    return btn;
+    cb.dataset.spBound = "1";
+    syncCheckbox();
   }
 
-  function updateToggleLabel() {
-    const btn = document.querySelector(".sp-eink-toggle");
-    if (!btn) return;
-    btn.textContent = isEinkOn() ? "eink mode: on" : "eink mode";
-  }
+  window.SP_Eink = { bindPanel: bindPanel, isOn: isEinkOn };
 
   // ---------- Init flow -----------------------------------------
   function init() {
     if (!document.body) return; // wait for body
-    ensureToggle();
     // URL param overrides storage and is persisted
     const url = readUrlOverride();
     if (url) writeStoredMode(url);

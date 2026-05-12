@@ -262,23 +262,23 @@ html[data-eink="1"] .md-header {
 .sp-reader-panel__toggle {
   position: fixed;
   right: 12px;
-  bottom: 84px;
+  bottom: 12px;
   z-index: 9999;
   appearance: none;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  font: 15px/1 ui-monospace, "SF Mono", Menlo, monospace;
+  font: 17px/1 ui-monospace, "SF Mono", Menlo, monospace;
   background: rgba(0, 0, 0, 0.65);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   cursor: pointer;
   user-select: none;
-  opacity: 0.45;
+  opacity: 0.6;
 }
 .sp-reader-panel__toggle:hover,
 .sp-reader-panel__toggle[aria-expanded="true"] {
@@ -288,7 +288,7 @@ html[data-eink="1"] .md-header {
 .sp-reader-panel {
   position: fixed;
   right: 12px;
-  bottom: 120px;
+  bottom: 52px;
   z-index: 9999;
   width: 240px;
   padding: 12px 14px 10px;
@@ -414,6 +414,82 @@ html[data-eink="1"] .sp-reader-panel__btns button[aria-pressed="true"] {
   background: #000; color: #fff;
 }
 html[data-eink="1"] .sp-reader-panel hr { border-top-color: #000; }
+
+/* ----------------------------------------------------------------
+   Responsive — tablet & phone
+   Touch targets grow, panel expands toward the viewport edges so it
+   doesn't get clipped on narrow screens, and font sizes step up for
+   easier tapping with a finger instead of a cursor.
+   ---------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .sp-reader-panel__toggle {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+    right: 16px;
+    bottom: 16px;
+    opacity: 0.85;
+  }
+
+  .sp-reader-panel {
+    right: 16px;
+    bottom: 68px;
+    width: 280px;
+    padding: 14px 16px 12px;
+    font-size: 13px;
+  }
+
+  .sp-reader-panel h4 {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .sp-reader-panel section {
+    margin-bottom: 12px;
+  }
+  .sp-reader-panel section > span {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .sp-reader-panel__btns button {
+    padding: 8px 12px;
+    min-width: 44px;
+    min-height: 36px;
+    font-size: 13px;
+  }
+
+  .sp-reader-panel label {
+    padding: 8px 0;
+    min-height: 36px;
+    gap: 0.65em;
+  }
+  .sp-reader-panel label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+
+  .sp-fontsize__btn--minus { font-size: 13px; }
+  .sp-fontsize__btn--reset { font-size: 14px; }
+  .sp-fontsize__btn--plus  { font-size: 16px; }
+}
+
+@media (max-width: 600px) {
+  .sp-reader-panel {
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-width: none;
+    bottom: 68px;
+  }
+  .sp-reader-panel__btns {
+    display: flex;
+    width: 100%;
+  }
+  .sp-reader-panel__btns button {
+    flex: 1 1 0;
+  }
+}
 
 /* ================================================================
    F10 — Per-section read stats

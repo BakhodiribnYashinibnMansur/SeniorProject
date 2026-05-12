@@ -60,30 +60,28 @@
     if (plus)  plus.disabled  = (i >= SCALES.length - 1);
   }
 
-  function ensureWidget() {
-    let w = document.querySelector(".sp-fontsize");
-    if (w) return w;
-    w = document.createElement("div");
-    w.className = "sp-fontsize";
-    w.setAttribute("role", "group");
-    w.setAttribute("aria-label", "Adjust font size");
-    w.innerHTML =
-      '<button type="button" class="sp-fontsize__btn sp-fontsize__btn--minus" ' +
-        'aria-label="Decrease font size" title="Decrease font (Ctrl/Cmd+Shift+-)">A&minus;</button>' +
-      '<button type="button" class="sp-fontsize__btn sp-fontsize__btn--reset" ' +
-        'aria-label="Reset font size"    title="Reset font (Ctrl/Cmd+Shift+0)">A</button>' +
-      '<button type="button" class="sp-fontsize__btn sp-fontsize__btn--plus" ' +
-        'aria-label="Increase font size" title="Increase font (Ctrl/Cmd+Shift++)">A+</button>';
-    w.querySelector(".sp-fontsize__btn--minus").addEventListener("click", function () { step(-1); });
-    w.querySelector(".sp-fontsize__btn--reset").addEventListener("click", reset);
-    w.querySelector(".sp-fontsize__btn--plus").addEventListener("click",  function () { step(+1); });
-    document.body.appendChild(w);
+  function bindWidget() {
+    const w = document.querySelector(".sp-fontsize");
+    if (!w || w.dataset.spBound === "1") return w;
+    const minus = w.querySelector(".sp-fontsize__btn--minus");
+    const reset_ = w.querySelector(".sp-fontsize__btn--reset");
+    const plus  = w.querySelector(".sp-fontsize__btn--plus");
+    if (minus)  minus.addEventListener("click",  function () { step(-1); });
+    if (reset_) reset_.addEventListener("click", reset);
+    if (plus)   plus.addEventListener("click",   function () { step(+1); });
+    w.dataset.spBound = "1";
+    updateButtonStates(readScale());
     return w;
   }
 
+  // Exposed so the reader-settings panel (reading.js) can bind buttons
+  // immediately after it injects the .sp-fontsize markup, regardless
+  // of script load order.
+  window.SP_FontSize = { bindWidget: bindWidget, apply: function () { applyScale(readScale()); } };
+
   function init() {
     if (!document.body) return;
-    ensureWidget();
+    bindWidget();
     applyScale(readScale());
   }
 

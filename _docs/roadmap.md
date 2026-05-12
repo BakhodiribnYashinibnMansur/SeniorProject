@@ -97,41 +97,33 @@ hide:
 
     **Tracks**
 
-    <details markdown>
-    <summary>[Code Craft](Roadmap/Programming-Languages/code-craft/README.md)</summary>
+    ??? note "[Code Craft](Roadmap/Programming-Languages/code-craft/README.md)"
 
-    - [Clean Code](Roadmap/Programming-Languages/code-craft/clean-code/README.md)
-    - [Design Patterns](Roadmap/Programming-Languages/code-craft/design-patterns/README.md)
-    - [Refactoring](Roadmap/Programming-Languages/code-craft/refactoring/README.md)
-    - [Anti-Patterns](Roadmap/Programming-Languages/code-craft/anti-patterns/README.md)
-    - [Functional Programming](Roadmap/Programming-Languages/code-craft/functional-programming/README.md)
-    </details>
+        - [Clean Code](Roadmap/Programming-Languages/code-craft/clean-code/README.md)
+        - [Design Patterns](Roadmap/Programming-Languages/code-craft/design-patterns/README.md)
+        - [Refactoring](Roadmap/Programming-Languages/code-craft/refactoring/README.md)
+        - [Anti-Patterns](Roadmap/Programming-Languages/code-craft/anti-patterns/README.md)
+        - [Functional Programming](Roadmap/Programming-Languages/code-craft/functional-programming/README.md)
 
-    <details markdown>
-    <summary>[Quality Engineering](Roadmap/Programming-Languages/quality-engineering/README.md)</summary>
+    ??? note "[Quality Engineering](Roadmap/Programming-Languages/quality-engineering/README.md)"
 
-    - [Testing](Roadmap/Programming-Languages/quality-engineering/testing/README.md)
-    - [Performance](Roadmap/Programming-Languages/quality-engineering/performance/README.md)
-    - [Build Systems](Roadmap/Programming-Languages/quality-engineering/build-systems/README.md)
-    </details>
+        - [Testing](Roadmap/Programming-Languages/quality-engineering/testing/README.md)
+        - [Performance](Roadmap/Programming-Languages/quality-engineering/performance/README.md)
+        - [Build Systems](Roadmap/Programming-Languages/quality-engineering/build-systems/README.md)
 
-    <details markdown>
-    <summary>[Language Internals](Roadmap/Programming-Languages/language-internals/README.md)</summary>
+    ??? note "[Language Internals](Roadmap/Programming-Languages/language-internals/README.md)"
 
-    - [Concurrency](Roadmap/Programming-Languages/language-internals/concurrency/README.md)
-    - [Memory Management](Roadmap/Programming-Languages/language-internals/memory-management/README.md)
-    - [Type Systems](Roadmap/Programming-Languages/language-internals/type-systems/README.md)
-    - [Compilers and Interpreters](Roadmap/Programming-Languages/language-internals/compilers-and-interpreters/README.md)
-    - [Metaprogramming](Roadmap/Programming-Languages/language-internals/metaprogramming/README.md)
-    </details>
+        - [Concurrency](Roadmap/Programming-Languages/language-internals/concurrency/README.md)
+        - [Memory Management](Roadmap/Programming-Languages/language-internals/memory-management/README.md)
+        - [Type Systems](Roadmap/Programming-Languages/language-internals/type-systems/README.md)
+        - [Compilers and Interpreters](Roadmap/Programming-Languages/language-internals/compilers-and-interpreters/README.md)
+        - [Metaprogramming](Roadmap/Programming-Languages/language-internals/metaprogramming/README.md)
 
-    <details markdown>
-    <summary>[Diagnostics](Roadmap/Programming-Languages/diagnostics/README.md)</summary>
+    ??? note "[Diagnostics](Roadmap/Programming-Languages/diagnostics/README.md)"
 
-    - [Debugging](Roadmap/Programming-Languages/diagnostics/debugging/README.md)
-    - [Logging](Roadmap/Programming-Languages/diagnostics/logging/README.md)
-    - [Error Handling](Roadmap/Programming-Languages/diagnostics/error-handling/README.md)
-    </details>
+        - [Debugging](Roadmap/Programming-Languages/diagnostics/debugging/README.md)
+        - [Logging](Roadmap/Programming-Languages/diagnostics/logging/README.md)
+        - [Error Handling](Roadmap/Programming-Languages/diagnostics/error-handling/README.md)
 
 -   :material-shield-lock:{ .lg .middle } **Security**
 

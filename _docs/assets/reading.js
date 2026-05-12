@@ -153,6 +153,10 @@
     const next = !isFocusOn();
     lsSet(K.focus, next ? "on" : "off");
     applyFocus(next);
+    if (next && panelEl && !panelEl.hidden) {
+      panelEl.hidden = true;
+      if (panelToggleEl) panelToggleEl.setAttribute("aria-expanded", "false");
+    }
   }
 
   // ---------- F5: Mark-as-read ----------------------------------
@@ -534,6 +538,17 @@
     panelEl.innerHTML =
       '<h4>Reader settings</h4>' +
       '<section>' +
+        '<span>Font size</span>' +
+        '<div class="sp-reader-panel__btns sp-fontsize" role="group" aria-label="Adjust font size">' +
+          '<button type="button" class="sp-fontsize__btn sp-fontsize__btn--minus" ' +
+            'aria-label="Decrease font size" title="Decrease font (Ctrl/Cmd+Shift+-)">A&minus;</button>' +
+          '<button type="button" class="sp-fontsize__btn sp-fontsize__btn--reset" ' +
+            'aria-label="Reset font size"    title="Reset font (Ctrl/Cmd+Shift+0)">A</button>' +
+          '<button type="button" class="sp-fontsize__btn sp-fontsize__btn--plus" ' +
+            'aria-label="Increase font size" title="Increase font (Ctrl/Cmd+Shift++)">A+</button>' +
+        '</div>' +
+      '</section>' +
+      '<section>' +
         '<span>Reading width</span>' +
         '<div class="sp-reader-panel__btns">' +
           '<button type="button" data-width="60ch" aria-pressed="false">60</button>' +
@@ -545,6 +560,7 @@
       '<label><input type="checkbox" data-toggle="focus"> Focus mode (F)</label>' +
       '<label><input type="checkbox" data-toggle="bionic"> Bionic reading</label>' +
       '<label><input type="checkbox" data-toggle="autohide"> Auto-hide header</label>' +
+      '<label><input type="checkbox" data-toggle="eink"> E-ink mode (Shift+E)</label>' +
       '<hr>' +
       '<label><input type="checkbox" data-toggle="read"> Mark this page as read</label>';
 
@@ -585,6 +601,10 @@
     panelEl.querySelector('input[data-toggle="focus"]').addEventListener("change", function () {
       lsSet(K.focus, this.checked ? "on" : "off");
       applyFocus(this.checked);
+      if (this.checked) {
+        panelEl.hidden = true;
+        panelToggleEl.setAttribute("aria-expanded", "false");
+      }
     });
     panelEl.querySelector('input[data-toggle="bionic"]').addEventListener("change", function () {
       lsSet(K.bionic, this.checked ? "on" : "off");
@@ -598,6 +618,15 @@
     panelEl.querySelector('input[data-toggle="read"]').addEventListener("change", function () {
       setPageRead(this.checked);
     });
+
+    // Wire up the externally-owned controls injected into the panel:
+    // font-size buttons (fontsize.js) and e-ink checkbox (eink.js).
+    if (window.SP_FontSize && window.SP_FontSize.bindWidget) {
+      window.SP_FontSize.bindWidget();
+    }
+    if (window.SP_Eink && window.SP_Eink.bindPanel) {
+      window.SP_Eink.bindPanel();
+    }
   }
 
   function syncPanelState() {
@@ -605,10 +634,12 @@
     const focusCb    = panelEl.querySelector('input[data-toggle="focus"]');
     const bionicCb   = panelEl.querySelector('input[data-toggle="bionic"]');
     const autohideCb = panelEl.querySelector('input[data-toggle="autohide"]');
+    const einkCb     = panelEl.querySelector('input[data-toggle="eink"]');
     const readCb     = panelEl.querySelector('input[data-toggle="read"]');
     if (focusCb)    focusCb.checked    = (lsGet(K.focus) === "on");
     if (bionicCb)   bionicCb.checked   = (lsGet(K.bionic) === "on");
     if (autohideCb) autohideCb.checked = (lsGet(K.autohide) === "on");
+    if (einkCb)     einkCb.checked     = (document.documentElement.getAttribute("data-eink") === "1");
     if (readCb)     readCb.checked     = isPageRead(readSet());
   }
 

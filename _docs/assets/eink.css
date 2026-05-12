@@ -333,31 +333,5 @@ html[data-eink="1"] .mermaid svg {
   background: #fff !important;
 }
 
-/* -------- Eink toggle button (always visible) ----------------- */
-.sp-eink-toggle {
-  position: fixed;
-  right: 12px;
-  bottom: 12px;
-  z-index: 9999;
-  font: 12px/1.2 ui-monospace, "SF Mono", Menlo, monospace;
-  padding: 6px 10px;
-  background: rgba(0, 0, 0, 0.65);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-  cursor: pointer;
-  user-select: none;
-  opacity: 0.45;
-}
-
-.sp-eink-toggle:hover {
-  opacity: 1;
-}
-
-html[data-eink="1"] .sp-eink-toggle {
-  background: #fff;
-  color: #000;
-  border: 1px solid #000;
-  opacity: 1;
-  border-radius: 0;
-}
+/* (E-ink toggle is now a checkbox inside the reader-settings panel,
+   styled by reading.css. The floating button has been removed.) */

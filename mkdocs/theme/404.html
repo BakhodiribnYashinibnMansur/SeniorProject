@@ -20,17 +20,21 @@
       --sp-green: #39ff7a;
       --sp-green-dim: #1f8a3e;
 
-      min-height: calc(100vh - 6rem);
+      min-height: calc(100dvh - 6rem);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem);
+      padding: clamp(1rem, 5vw, 4rem) clamp(0.75rem, 4vw, 2rem);
       background: var(--sp-bg);
       color: var(--sp-fg);
       font-family: "Intel One Mono", ui-monospace, "SF Mono", Menlo, monospace;
       font-size: 14px;
       line-height: 1.55;
+      box-sizing: border-box;
     }
+    .sp-404 *,
+    .sp-404 *::before,
+    .sp-404 *::after { box-sizing: border-box; }
 
     .sp-404__shell {
       max-width: 640px;
@@ -65,6 +69,7 @@
     .sp-404__dots {
       display: inline-flex;
       gap: 6px;
+      flex-shrink: 0;
     }
     .sp-404__dots span {
       width: 12px;
@@ -77,12 +82,18 @@
     .sp-404__dots span:nth-child(3) { background: #28c840; }
     .sp-404__bar-title {
       flex: 1;
+      min-width: 0;
       text-align: center;
       color: var(--sp-fg);
       font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .sp-404__bar-meta {
       color: var(--sp-fg-deep);
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .sp-404__body {
@@ -112,6 +123,7 @@
       font-size: 0.88rem;
       margin: 0 0 1.75rem;
       max-width: 42ch;
+      overflow-wrap: anywhere;
     }
 
     .sp-404__actions {
@@ -119,6 +131,7 @@
       flex-wrap: wrap;
       gap: 0.6rem;
     }
+    .sp-404__btn { white-space: nowrap; }
 
     .sp-404__btn {
       display: inline-flex;
@@ -178,6 +191,38 @@
     }
     @keyframes sp-404-blink {
       50% { opacity: 0; }
+    }
+
+    /* ---- responsive breakpoints -------------------------------------- */
+    @media (max-width: 600px) {
+      .sp-404 { min-height: calc(100dvh - 3.5rem); }
+      .sp-404__shell { border-radius: 6px; }
+      .sp-404__bar { gap: 0.55rem; padding: 0.5rem 0.7rem; font-size: 0.68rem; }
+      .sp-404__bar-meta { display: none; }
+      .sp-404__body { padding: 1.25rem 1.1rem 1.4rem; }
+      .sp-404__heading { font-size: 1.05rem; }
+      .sp-404__sub { font-size: 0.85rem; margin-bottom: 1.4rem; }
+      .sp-404__actions { gap: 0.5rem; }
+      .sp-404__btn { flex: 1 1 auto; justify-content: center; padding: 0.6rem 0.9rem; }
+    }
+    @media (max-width: 380px) {
+      .sp-404 { padding: 0.75rem; }
+      .sp-404__dots span { width: 10px; height: 10px; }
+      .sp-404__bar-title { font-size: 0.7rem; }
+      .sp-404__body { padding: 1rem 0.9rem 1.2rem; }
+      .sp-404__btn { flex-basis: 100%; }
+      .sp-404__prompt { font-size: 0.74rem; }
+    }
+    @media (max-height: 520px) and (orientation: landscape) {
+      .sp-404 { min-height: auto; padding: 1rem; }
+      .sp-404__body { padding: 1rem 1.25rem 1.25rem; }
+      .sp-404__code { font-size: clamp(2.5rem, 7vw, 3.5rem); margin-bottom: 0.3rem; }
+      .sp-404__sub { margin-bottom: 1rem; }
+      .sp-404__prompt { margin-top: 1rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sp-404__shell { animation: none; }
+      .sp-404__caret { animation: none; }
     }
 
     /* hide page chrome that doesn't make sense on a 404 */
