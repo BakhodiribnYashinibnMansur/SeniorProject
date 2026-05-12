@@ -90,9 +90,11 @@ plugins:
       js_files:
         - assets/extra.js
         - assets/eink.js
+        - assets/fontsize.js
       css_files:
         - assets/extra.css
         - assets/eink.css
+        - assets/fontsize.css
         - assets/fonts/intel-one-mono.css
 
 markdown_extensions:
@@ -165,7 +167,9 @@ extra_css:
   - assets/fonts/intel-one-mono.css
   - assets/extra.css
   - assets/eink.css
+  - assets/fontsize.css
 
 extra_javascript:
   - assets/extra.js
   - assets/eink.js
+  - assets/fontsize.js

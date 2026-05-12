@@ -1,0 +1,82 @@
+/* ================================================================
+   Senior Stack — reader font-size control (A− / A / A+)
+   Position: bottom-right, stacked directly above .sp-eink-toggle.
+   ================================================================ */
+
+.sp-fontsize {
+  position: fixed;
+  right: 12px;
+  bottom: 48px;
+  z-index: 9999;
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0;
+  font: 12px/1 ui-monospace, "SF Mono", Menlo, monospace;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  opacity: 0.45;
+  user-select: none;
+  overflow: hidden;
+}
+
+.sp-fontsize:hover {
+  opacity: 1;
+}
+
+.sp-fontsize__btn {
+  appearance: none;
+  background: transparent;
+  color: inherit;
+  border: 0;
+  padding: 6px 9px;
+  cursor: pointer;
+  font: inherit;
+  line-height: 1;
+}
+
+.sp-fontsize__btn + .sp-fontsize__btn {
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.sp-fontsize__btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.sp-fontsize__btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.sp-fontsize__btn--minus { font-size: 11px; }
+.sp-fontsize__btn--reset { font-size: 12px; }
+.sp-fontsize__btn--plus  { font-size: 14px; }
+
+/* Light scheme — invert colors */
+[data-md-color-scheme="default"] .sp-fontsize {
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a1a1a;
+  border-color: #d8d8d2;
+}
+[data-md-color-scheme="default"] .sp-fontsize__btn + .sp-fontsize__btn {
+  border-left-color: #d8d8d2;
+}
+[data-md-color-scheme="default"] .sp-fontsize__btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* E-ink mode — flat black on white, no opacity */
+html[data-eink="1"] .sp-fontsize {
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 0;
+  opacity: 1;
+}
+html[data-eink="1"] .sp-fontsize__btn + .sp-fontsize__btn {
+  border-left-color: #000;
+}
+html[data-eink="1"] .sp-fontsize__btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
