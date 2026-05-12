@@ -687,115 +687,6 @@ hide:
 
     ---
 
-    **Languages**
-
-    ??? note "[Go](Roadmap/Programming-Languages/languages/golang/README.md)"
-
-        - [Introduction to Go](Roadmap/Programming-Languages/languages/golang/01-introduction-to-go/index.md)
-        - [Language Basics](Roadmap/Programming-Languages/languages/golang/02-language-basics/index.md)
-        - [Methods and Interfaces](Roadmap/Programming-Languages/languages/golang/03-methods-and-interfaces/01-methods-vs-functions/junior.md)
-        - [Generics](Roadmap/Programming-Languages/languages/golang/04-generics/01-why-generics/junior.md)
-        - [Error Handling](Roadmap/Programming-Languages/languages/golang/05-error-handling/01-error-handling-basics/junior.md)
-        - [Code Organization](Roadmap/Programming-Languages/languages/golang/06-code-organization/01-modules-and-dependencies/01-go-mod-init/junior.md)
-        - [Concurrency](Roadmap/Programming-Languages/languages/golang/07-concurrency/00-introduction/01-what-is-concurrency/junior.md)
-        - [Standard Library](Roadmap/Programming-Languages/languages/golang/08-standard-library/01-io-and-file-handling/junior.md)
-        - Testing and Benchmarking
-        - Ecosystem and Libraries
-        - Go Toolchain
-        - Advanced Topics
-        - Performance Engineering
-        - Security in Go
-        - Design Patterns in Go
-        - Cloud Native Go
-        - Runtime and Internals
-        - Go Source Reading
-
-    ??? note "[Java](Roadmap/Programming-Languages/languages/java/README.md)"
-
-        - [Learn the Basics](Roadmap/Programming-Languages/languages/java/01-learn-the-basics/01-basic-syntax/junior.md)
-        - [Object Oriented Programming](Roadmap/Programming-Languages/languages/java/02-object-oriented-programming/01-basics-of-oop/01-classes-and-objects/junior.md)
-        - Exception Handling
-        - Lambda Expressions
-        - Annotations
-        - Modules
-        - Optionals
-        - Collections
-        - Dependency Injection
-        - Concurrency
-        - Cryptography
-        - Date and Time
-        - Networking
-        - Regular Expressions
-        - I O Operations
-        - Functional Programming
-        - Build Tools
-        - Web Frameworks
-        - Database Access
-        - Testing
-        - Logging Frameworks
-
-    ??? note "[Python](Roadmap/Programming-Languages/languages/python/README.md)"
-
-        - [Learn the Basics](Roadmap/Programming-Languages/languages/python/01-learn-the-basics/index.md)
-        - Data Structures Algorithms
-        - Modules
-        - Lambdas
-        - Decorators
-        - Iterators
-        - Regular Expressions
-        - Object Oriented Programming
-        - Package Managers
-        - Common Packages
-        - List Comprehensions
-        - Generator Expressions
-        - Paradigms
-        - Context Manager
-        - Environments
-        - Static Typing
-        - Code Formatting
-        - Documentation
-        - Concurrency
-        - Learn a Framework
-        - Testing
-
-    ??? note "[Rust](Roadmap/Programming-Languages/languages/rust/README.md)"
-
-        - Introduction
-        - Language Basics
-        - Ownership System
-        - Advanced Topics
-        - Error Handling
-        - Modules Crates
-        - Testing
-        - Concurrency Parallelism
-        - Traits Generics
-        - Lifetimes Borrow Checker
-        - Macros Metaprogramming
-        - Ecosystem and Libraries
-        - Debugging
-        - Performance and Profiling
-
-    ??? note "[SQL](Roadmap/Programming-Languages/languages/sql/README.md)"
-
-        - Learn the Basics
-        - Basic SQL Syntax
-        - Data Definition Language Ddl
-        - Data Manipulation Language Dml
-        - Aggregate Queries
-        - Data Constraints
-        - Subqueries
-        - Join Queries
-        - Advanced Functions
-        - Views
-        - Indexes
-        - Transactions
-        - Data Integrity Security
-        - Stored Procedures Functions
-        - Performance Optimization
-        - Advanced SQL
-
-    **Tracks**
-
     ??? note "[Code Craft](Roadmap/Programming-Languages/code-craft/README.md)"
 
         - [Anti Patterns](Roadmap/Programming-Languages/code-craft/anti-patterns/README.md)
@@ -817,6 +708,14 @@ hide:
         - [Memory Management](Roadmap/Programming-Languages/language-internals/memory-management/README.md)
         - [Metaprogramming](Roadmap/Programming-Languages/language-internals/metaprogramming/README.md)
         - [Type Systems](Roadmap/Programming-Languages/language-internals/type-systems/README.md)
+
+    ??? note "[Languages](Roadmap/Programming-Languages/languages/README.md)"
+
+        - [Go](Roadmap/Programming-Languages/languages/golang/README.md)
+        - [Java](Roadmap/Programming-Languages/languages/java/README.md)
+        - [Python](Roadmap/Programming-Languages/languages/python/README.md)
+        - [Rust](Roadmap/Programming-Languages/languages/rust/README.md)
+        - [SQL](Roadmap/Programming-Languages/languages/sql/README.md)
 
     ??? note "[Quality Engineering](Roadmap/Programming-Languages/quality-engineering/README.md)"
 
