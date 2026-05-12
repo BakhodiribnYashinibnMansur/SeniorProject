@@ -2,8 +2,7 @@
    Senior Project — terminal / phosphor theme (all pages)
    ================================================================ */
 
-/* Both light & dark schemes share the dark hacker palette */
-[data-md-color-scheme="default"],
+/* Dark scheme — terminal / phosphor green on near-black */
 [data-md-color-scheme="slate"] {
   --md-primary-fg-color:        #39ff7a;
   --md-primary-fg-color--light: #6effa5;
@@ -29,6 +28,34 @@
   --md-footer-bg-color:          #050505;
   --md-footer-bg-color--dark:    #050505;
   --md-footer-fg-color:          #909090;
+}
+
+/* Light scheme — darker phosphor on warm off-white, same typography */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color:        #1f8a3e;
+  --md-primary-fg-color--light: #2da854;
+  --md-primary-fg-color--dark:  #15662c;
+  --md-primary-bg-color:        #fafaf7;
+  --md-primary-bg-color--light: #fafaf7;
+
+  --md-accent-fg-color:         #1f8a3e;
+  --md-accent-fg-color--transparent: rgba(31, 138, 62, 0.10);
+  --md-accent-bg-color:         #fafaf7;
+  --md-accent-bg-color--light:  #fafaf7;
+
+  --md-default-bg-color:        #fafaf7;
+  --md-default-fg-color:        #1a1a1a;
+  --md-default-fg-color--light: #4a4a4a;
+  --md-default-fg-color--lighter: #6a6a6a;
+  --md-default-fg-color--lightest: #d8d8d2;
+
+  --md-typeset-a-color:          #1f8a3e;
+  --md-code-bg-color:            #f0f0eb;
+  --md-code-fg-color:            #1a1a1a;
+
+  --md-footer-bg-color:          #fafaf7;
+  --md-footer-bg-color--dark:    #ebebe5;
+  --md-footer-fg-color:          #4a4a4a;
 }
 
 /* Whole page typography */
@@ -287,8 +314,7 @@ body,
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Hide light-mode toggle since we're always dark */
-[data-md-component="palette"] { display: none; }
+/* Palette toggle stays visible (dark <-> light) */
 
 /* ================================================================
    "Report this page" footer block — injected by extra.js
@@ -413,4 +439,132 @@ body,
 
 .md-nav.sibling-nav + .md-nav.sibling-nav {
   margin-top: -0.25rem;
+}
+
+/* ================================================================
+   Light-scheme overrides
+   Remap the hardcoded dark surfaces/borders above so the same
+   terminal layout works on warm off-white with a darker phosphor.
+   ================================================================ */
+[data-md-color-scheme="default"] .md-header,
+[data-md-color-scheme="default"] .md-tabs,
+[data-md-color-scheme="default"] .md-main,
+[data-md-color-scheme="default"] .md-content,
+[data-md-color-scheme="default"] .md-footer,
+[data-md-color-scheme="default"] .md-footer-meta,
+[data-md-color-scheme="default"] .md-search-result__meta,
+[data-md-color-scheme="default"] .md-search-result__article {
+  background: #fafaf7 !important;
+}
+
+[data-md-color-scheme="default"] .md-header {
+  box-shadow: 0 1px 0 #d8d8d2;
+}
+
+[data-md-color-scheme="default"] .md-search__input {
+  background: #f0f0eb;
+  border-color: #d8d8d2;
+}
+
+[data-md-color-scheme="default"] .md-search-result__article:hover {
+  background: #f0f0eb;
+}
+
+[data-md-color-scheme="default"] .md-tabs {
+  border-bottom-color: #d8d8d2;
+}
+
+[data-md-color-scheme="default"] .md-tabs__link--active,
+[data-md-color-scheme="default"] .md-tabs__link:hover {
+  text-shadow: none;
+}
+
+[data-md-color-scheme="default"] .md-typeset a:not(.md-button):not(.md-tag) {
+  border-bottom-color: rgba(31, 138, 62, 0.30);
+}
+
+[data-md-color-scheme="default"] .md-typeset a:not(.md-button):not(.md-tag):hover {
+  text-shadow: none;
+}
+
+[data-md-color-scheme="default"] .md-typeset code {
+  background: #f0f0eb;
+  color: #15662c;
+  border-color: #d8d8d2;
+}
+
+[data-md-color-scheme="default"] .md-typeset pre > code,
+[data-md-color-scheme="default"] .md-typeset .highlight {
+  background: #f4f4ef !important;
+  border-color: #d8d8d2;
+}
+
+[data-md-color-scheme="default"] .md-typeset .highlight pre {
+  background: #f4f4ef !important;
+}
+
+[data-md-color-scheme="default"] .md-typeset .filename {
+  background: #ebebe5;
+  border-color: #d8d8d2;
+}
+
+[data-md-color-scheme="default"] .md-typeset table:not([class]) {
+  background: #fafaf7;
+  border-color: #d8d8d2;
+}
+
+[data-md-color-scheme="default"] .md-typeset table:not([class]) th {
+  background: #ebebe5;
+  border-bottom-color: #d8d8d2;
+}
+
+[data-md-color-scheme="default"] .md-typeset table:not([class]) td {
+  border-color: #d8d8d2;
+}
+
+[data-md-color-scheme="default"] .md-typeset .grid.cards > :is(ul, ol) > li,
+[data-md-color-scheme="default"] .md-typeset .grid > .card {
+  background: #f4f4ef;
+  border-color: #d8d8d2;
+}
+
+[data-md-color-scheme="default"] .md-typeset .grid.cards > :is(ul, ol) > li:hover {
+  box-shadow: 0 4px 18px rgba(31, 138, 62, 0.10);
+}
+
+[data-md-color-scheme="default"] .md-typeset .admonition,
+[data-md-color-scheme="default"] .md-typeset details {
+  background: #f4f4ef;
+  border-color: #d8d8d2;
+}
+
+[data-md-color-scheme="default"] .md-typeset .admonition-title,
+[data-md-color-scheme="default"] .md-typeset summary {
+  background: #ebebe5 !important;
+}
+
+[data-md-color-scheme="default"] ::selection {
+  background: rgba(31, 138, 62, 0.25);
+  color: #1a1a1a;
+}
+
+[data-md-color-scheme="default"] * {
+  scrollbar-color: #c8c8c2 #fafaf7;
+}
+[data-md-color-scheme="default"] *::-webkit-scrollbar-track { background: #fafaf7; }
+[data-md-color-scheme="default"] *::-webkit-scrollbar-thumb { background: #c8c8c2; }
+
+[data-md-color-scheme="default"] .mermaid {
+  background: #f4f4ef;
+  border-color: #d8d8d2;
+}
+[data-md-color-scheme="default"] .mermaid svg {
+  filter: none;
+}
+
+[data-md-color-scheme="default"] .sp-report-row {
+  background: rgba(31, 138, 62, 0.04);
+}
+[data-md-color-scheme="default"] .sp-report-link:hover {
+  text-shadow: none;
 }
