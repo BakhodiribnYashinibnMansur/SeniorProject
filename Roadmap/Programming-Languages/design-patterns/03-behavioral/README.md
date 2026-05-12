@@ -8,7 +8,7 @@
 
 **Behavioral patterns** describe **how objects communicate and collaborate**. Where creational patterns answer *"who creates this?"* and structural answer *"how are these connected?"*, behavioral answer *"how do these talk, and who is responsible for what?"*
 
-The category is the largest (10 patterns) because **communication** is where complexity multiplies. Two objects calling each other is simple; ten objects with mutual dependencies is a maintenance nightmare. Behavioral patterns are the toolkit for taming that.
+The category is the largest (11 patterns) because **communication** is where complexity multiplies. Two objects calling each other is simple; ten objects with mutual dependencies is a maintenance nightmare. Behavioral patterns are the toolkit for taming that.
 
 ### The two questions every behavioral pattern asks
 
@@ -17,7 +17,7 @@ The category is the largest (10 patterns) because **communication** is where com
 
 ---
 
-## The 10 Behavioral Patterns
+## The 11 Behavioral Patterns
 
 | Pattern | Intent (one line) | Key Question Answered |
 |---|---|---|
@@ -31,6 +31,7 @@ The category is the largest (10 patterns) because **communication** is where com
 | [Strategy](08-strategy/junior.md) | Define a family of algorithms, encapsulate each, make them interchangeable | "How do I swap algorithms at runtime?" |
 | [Template Method](09-template-method/junior.md) | Define the skeleton of an algorithm in a superclass, let subclasses override steps | "How do I share structure but vary steps?" |
 | [Visitor](10-visitor/junior.md) | Separate algorithms from the objects on which they operate | "How do I add operations to a class hierarchy without modifying it?" |
+| [Interpreter](11-interpreter/junior.md) | Represent a grammar's rules as a class hierarchy and evaluate sentences by tree walking | "How do I evaluate expressions in a small language without writing a full compiler?" |
 
 ---
 
@@ -50,6 +51,7 @@ Watch for these symptoms in code:
 | You have multiple ways to do something and pick at runtime | **Strategy** |
 | Several methods share most of their logic but differ in a few steps | **Template Method** |
 | You want to add an operation that crosses many class types | **Visitor** |
+| You need to evaluate sentences in a small custom language or rule grammar | **Interpreter** |
 
 ---
 
@@ -67,6 +69,7 @@ Watch for these symptoms in code:
 | **Strategy** | Object delegates to strategy | Object holds current strategy | Object from algorithm details |
 | **Template Method** | Superclass → subclass step | Superclass calls hooks | Algorithm structure from steps |
 | **Visitor** | Visitor → element (double dispatch) | Visitor knows all element types | Element types from operations |
+| **Interpreter** | Node → recursive `interpret(ctx)` on children | Each node knows its grammar rule | Evaluation logic from grammar surface syntax |
 
 ---
 
@@ -117,6 +120,17 @@ Both compose objects in a chain — but:
 | **Traverses** | A collection | A type hierarchy |
 | **Operation** | Implicit (caller does it) | Explicit (visitor encodes it) |
 
+### Interpreter vs Visitor
+
+Both walk a tree of typed nodes — they are duals:
+
+| | Interpreter | Visitor |
+|---|---|---|
+| **Where logic lives** | Inside the node (`node.interpret(ctx)`) | Outside the node (`visitor.visit(node)`) |
+| **Easy to add** | New grammar rule = new node class | New operation = new visitor class |
+| **Hard to add** | New operation across all rules | New node type across all visitors |
+| **Typical use** | Evaluating a small DSL or rule language | Many different operations on a stable AST |
+
 ---
 
 ## Pattern Relationships
@@ -133,6 +147,7 @@ graph TD
     SR[Strategy]
     TM[Template Method]
     VS[Visitor]
+    IN[Interpreter]
 
     ST -.similar to.-> SR
     CM -.holds.-> MM
@@ -141,6 +156,8 @@ graph TD
     IT -.uses.-> VS
     SR -.composition over.-> TM
     VS -.double dispatch.-> IT
+    IN -.dual of.-> VS
+    IN -.is a.-> CM
 
     style CO fill:#dae8fc
     style CM fill:#dae8fc
@@ -152,6 +169,7 @@ graph TD
     style SR fill:#f8cecc
     style TM fill:#e1d5e7
     style VS fill:#e1d5e7
+    style IN fill:#ffe6cc
 ```
 
 ---
@@ -172,6 +190,7 @@ graph TD
 | ...I have multiple algorithms picked at runtime → | **Strategy** |
 | ...subclasses share structure but vary steps → | **Template Method** |
 | ...I add operations to a stable class hierarchy → | **Visitor** |
+| ...I need to evaluate a small custom language or rule grammar → | **Interpreter** |
 
 ---
 
@@ -200,5 +219,6 @@ graph TD
 - 08-strategy/ — Strategy
 - 09-template-method/ — Template Method
 - 10-visitor/ — Visitor
+- 11-interpreter/ — Interpreter
 
 [← Back to Design Patterns](../README.md) · [↑ Roadmap Home](../../README.md)

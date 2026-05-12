@@ -30,7 +30,7 @@ Two engineers implementing the same pattern can produce very different code, but
 | **2004** | *Head First Design Patterns* makes the GoF accessible to a wider audience. |
 | **Today** | Patterns remain a shared vocabulary — the foundation of communicating design across teams. |
 
-This roadmap covers the **22 patterns** from the GoF book that refactoring.guru documents (the *Interpreter* pattern is omitted, as on the source site).
+This roadmap covers all **23 patterns** from the GoF book. The *Interpreter* pattern — omitted on refactoring.guru — is included here because it remains conceptually important (regex engines, SQL `WHERE` evaluators, mini DSLs, rule engines) and is the natural dual of *Visitor*.
 
 ---
 
@@ -43,14 +43,14 @@ graph TD
     DP[Design Patterns]
     DP --> C[Creational<br/>5 patterns<br/>How objects are created]
     DP --> S[Structural<br/>7 patterns<br/>How objects are composed]
-    DP --> B[Behavioral<br/>10 patterns<br/>How objects communicate]
+    DP --> B[Behavioral<br/>11 patterns<br/>How objects communicate]
 ```
 
 | Category | Concern | Pattern Count | Examples |
 |---|---|---|---|
 | **[Creational](01-creational/README.md)** | Object creation mechanisms | 5 | Singleton, Factory Method, Builder |
 | **[Structural](02-structural/README.md)** | Object composition / structure | 7 | Adapter, Decorator, Proxy |
-| **[Behavioral](03-behavioral/README.md)** | Object communication / responsibilities | 10 | Strategy, Observer, Iterator |
+| **[Behavioral](03-behavioral/README.md)** | Object communication / responsibilities | 11 | Strategy, Observer, Interpreter |
 
 ---
 
@@ -112,7 +112,7 @@ Many patterns are related, complementary, or contrasting. A few key contrasts to
 
 - [Creational Patterns](01-creational/README.md) — Factory Method, Abstract Factory, Builder, Prototype, Singleton
 - [Structural Patterns](02-structural/README.md) — Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy
-- [Behavioral Patterns](03-behavioral/README.md) — Chain of Responsibility, Command, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor
+- [Behavioral Patterns](03-behavioral/README.md) — Chain of Responsibility, Command, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor, Interpreter
 
 ---
 
@@ -123,4 +123,7 @@ Many patterns are related, complementary, or contrasting. A few key contrasts to
 - **Refactoring.Guru** — [refactoring.guru/design-patterns](https://refactoring.guru/design-patterns)
 - **Pattern-Oriented Software Architecture (POSA)** — five-volume series; covers patterns beyond GoF (concurrency, distribution, integration)
 
-**See also:** [Refactoring Roadmap](../refactoring/README.md) — code smells and the techniques that resolve them.
+**See also:**
+- [Refactoring Roadmap](../refactoring/README.md) — code smells and the techniques that resolve them.
+- [Coding Anti-Patterns](../anti-patterns/README.md) — the recognized *wrong* solutions at code/design level; the negative catalog to this positive one.
+- [Architecture Anti-Patterns](../../Architecture/anti-patterns/README.md) — the same idea at the system level (Big Ball of Mud, Distributed Monolith, …).
