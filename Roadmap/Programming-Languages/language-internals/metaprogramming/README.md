@@ -70,4 +70,4 @@ The whole roadmap is a comparison: **Rust** (compile-time, type-checked macros),
 
 ## Project Context
 
-Part of the [Senior Project](../../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.
+Part of the [Senior Project](../../../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.

@@ -67,4 +67,4 @@ Examples in **Go** (errors as values), **Java** (checked + unchecked exceptions)
 
 ## Project Context
 
-Part of the [Senior Project](../../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.
+Part of the [Senior Project](../../../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.

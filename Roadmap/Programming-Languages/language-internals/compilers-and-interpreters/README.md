@@ -72,4 +72,4 @@ The roadmap is meta-linguistic: examples in **Go** (writing a small interpreter,
 
 ## Project Context
 
-Part of the [Senior Project](../../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.
+Part of the [Senior Project](../../../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.

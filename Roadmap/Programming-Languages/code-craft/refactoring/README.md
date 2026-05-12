@@ -123,4 +123,4 @@ Comparing the same refactoring across all three is a powerful learning device: i
 
 ## Project Context
 
-This roadmap is part of the [Senior Project](../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.
+This roadmap is part of the [Senior Project](../../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.

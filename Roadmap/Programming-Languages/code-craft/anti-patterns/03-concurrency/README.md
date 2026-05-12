@@ -153,4 +153,4 @@ Each subcategory folder contains an **8-file suite**:
 
 ## Project Context
 
-This chapter is part of the [Coding Anti-Patterns Roadmap](../README.md), itself part of the [Senior Project](../../../../index.md).
+This chapter is part of the [Coding Anti-Patterns Roadmap](../README.md), itself part of the [Senior Project](../../../../../index.md).

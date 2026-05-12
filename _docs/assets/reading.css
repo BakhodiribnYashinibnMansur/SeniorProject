@@ -414,3 +414,172 @@ html[data-eink="1"] .sp-reader-panel__btns button[aria-pressed="true"] {
   background: #000; color: #fff;
 }
 html[data-eink="1"] .sp-reader-panel hr { border-top-color: #000; }
+
+/* ================================================================
+   F10 — Per-section read stats
+   Three surfaces: top-right pill · sidebar inline counts · home card
+   ================================================================ */
+
+/* --- Top-right pill (overall read %) --- */
+.sp-progress-stat {
+  position: fixed;
+  top: 8px;
+  right: 12px;
+  z-index: 10001;
+  padding: 2px 8px;
+  font: 10px/1.4 "Intel One Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  letter-spacing: 0.06em;
+  background: rgba(10, 10, 10, 0.65);
+  color: #d4d4d4;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  pointer-events: none;
+  user-select: none;
+}
+[data-md-color-scheme="default"] .sp-progress-stat {
+  background: rgba(255, 255, 255, 0.85);
+  color: #4a4a4a;
+  border-color: #d8d8d2;
+}
+[data-md-color-scheme="senior-sepia"] .sp-progress-stat {
+  background: rgba(245, 236, 217, 0.92);
+  color: #5a3413;
+  border-color: #d8cdb2;
+}
+html[data-eink="1"] .sp-progress-stat {
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 0;
+}
+
+/* --- Sidebar inline section counts --- */
+.sp-sec-stat {
+  margin-left: auto;
+  padding-left: 0.6em;
+  font: 10px/1 "Intel One Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color: var(--md-default-fg-color--lighter);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.md-nav__link {
+  display: flex;
+  align-items: center;
+}
+[data-md-color-scheme="senior-sepia"] .sp-sec-stat {
+  color: #6a6a58;
+}
+html[data-eink="1"] .sp-sec-stat {
+  color: #555;
+}
+
+/* --- Home stats card --- */
+.sp-home-stats {
+  margin: 1.4rem 0 1.6rem;
+  padding: 14px 16px 12px;
+  background: var(--sp-cell-bg, rgba(20, 20, 20, 0.4));
+  border: 1px solid var(--sp-line-strong, #2a2a2a);
+  border-radius: 2px;
+  font-family: "Intel One Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color: var(--sp-fg, #d4d4d4);
+}
+.sp-home-stats[hidden] { display: none; }
+
+.sp-home-stats__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 8px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.sp-home-stats__label {
+  color: var(--sp-fg-dim, #909090);
+}
+.sp-home-stats__total {
+  color: var(--sp-fg, #d4d4d4);
+}
+.sp-home-stats__total strong {
+  color: var(--sp-green, #39ff7a);
+  font-weight: 700;
+}
+
+.sp-home-stats__bar {
+  height: 4px;
+  background: var(--sp-line, #1a1a1a);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.sp-home-stats__bar-fill {
+  height: 100%;
+  background: var(--sp-green, #39ff7a);
+  transition: width 0.3s ease-out;
+}
+
+.sp-home-stats__sections {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 4px 16px;
+  font-size: 11px;
+}
+.sp-home-stats__sections li {
+  display: grid;
+  grid-template-columns: 1fr 48px 90px;
+  align-items: center;
+  gap: 8px;
+  color: var(--sp-fg-dim, #909090);
+}
+.sp-home-stats__sec-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sp-home-stats__sec-bar {
+  display: block;
+  height: 3px;
+  background: var(--sp-line, #1a1a1a);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.sp-home-stats__sec-bar span {
+  display: block;
+  height: 100%;
+  background: var(--sp-green-dim, #1f8a3e);
+}
+.sp-home-stats__sec-count {
+  text-align: right;
+  color: var(--sp-fg-deep, #3a3a3a);
+}
+
+/* E-ink overrides for home stats — flat black/white, no animation */
+html[data-eink="1"] .sp-home-stats {
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 0;
+  color: #000;
+}
+html[data-eink="1"] .sp-home-stats__bar,
+html[data-eink="1"] .sp-home-stats__sec-bar {
+  background: #ddd;
+  border-radius: 0;
+}
+html[data-eink="1"] .sp-home-stats__bar-fill,
+html[data-eink="1"] .sp-home-stats__sec-bar span {
+  background: #000;
+  transition: none;
+}
+html[data-eink="1"] .sp-home-stats__label,
+html[data-eink="1"] .sp-home-stats__sections li,
+html[data-eink="1"] .sp-home-stats__sec-count {
+  color: #555;
+}
+html[data-eink="1"] .sp-home-stats__total strong {
+  color: #000;
+}

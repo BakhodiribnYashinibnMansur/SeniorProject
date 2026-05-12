@@ -62,4 +62,4 @@ All examples in **Go**, **Java**, and **Python** — same bug, different debugge
 
 ## Project Context
 
-Part of the [Senior Project](../../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.
+Part of the [Senior Project](../../../../../index.md) — a personal effort to consolidate the essential knowledge of software engineering in one place.

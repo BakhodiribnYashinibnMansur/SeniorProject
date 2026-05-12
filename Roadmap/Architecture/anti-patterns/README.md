@@ -4,7 +4,7 @@
 
 Architecture anti-patterns operate at the **system level** — they describe how services, modules, teams, and technology choices fit together wrongly. You usually cannot see them in any one file. You see them in dependency graphs, deployment topology, on-call rotations, and procurement contracts.
 
-> Looking for **code-level** anti-patterns (God Object, Spaghetti Code, Magic Numbers, etc.)? They live in their own roadmap: [Programming-Languages → Anti-Patterns](../../Programming-Languages/anti-patterns/README.md). This roadmap focuses exclusively on **system architecture**.
+> Looking for **code-level** anti-patterns (God Object, Spaghetti Code, Magic Numbers, etc.)? They live in their own roadmap: [Programming-Languages → Anti-Patterns](../../Programming-Languages/code-craft/anti-patterns/README.md). This roadmap focuses exclusively on **system architecture**.
 
 This roadmap groups **15 anti-patterns** into **3 categories** by which architectural axis they corrupt.
 
@@ -179,10 +179,10 @@ Because architecture anti-patterns are larger in scope, each file uses **case st
 - [Software Design & Architecture](../software-design-architecture/README.md)
 - [Domain-Driven Design](../ddd/README.md) — bounded contexts as the cure for Stovepipe and Big Ball of Mud
 - [Distributed Systems](../../Backend/distributed-systems/README.md) — async patterns that resolve coupling at boundaries
-- [Programming-Languages → Anti-Patterns](../../Programming-Languages/anti-patterns/README.md) — code- and design-level anti-patterns (the layers below this one)
+- [Programming-Languages → Anti-Patterns](../../Programming-Languages/code-craft/anti-patterns/README.md) — code- and design-level anti-patterns (the layers below this one)
 
 ---
 
 ## Project Context
 
-This roadmap is part of the [Architecture section](../) of the [Senior Project](../../../index.md).
+This roadmap is part of the [Architecture section](../) of the [Senior Project](../../../../index.md).

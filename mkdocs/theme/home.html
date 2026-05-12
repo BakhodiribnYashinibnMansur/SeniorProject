@@ -9,6 +9,7 @@
        ================================================================ */
 
     .sp-home {
+      /* dark / phosphor — default tokens (slate scheme) */
       --sp-bg:      #050505;
       --sp-bg-soft: #0a0a0a;
       --sp-fg:      #d4d4d4;
@@ -18,6 +19,18 @@
       --sp-line-strong: #2a2a2a;
       --sp-green:   #39ff7a;
       --sp-green-dim: #1f8a3e;
+
+      /* surface tokens — vary per scheme */
+      --sp-window-bg:   rgba(10, 10, 10, 0.85);
+      --sp-cell-bg:     rgba(20, 20, 20, 0.4);
+      --sp-titlebar-bg: linear-gradient(to bottom, #1a1a1a, #0e0e0e);
+      --sp-path:        #6fa8dc;
+      --sp-shadow:      0 30px 80px rgba(0, 0, 0, 0.6);
+
+      /* hacker-only visual effects (rain / scanlines / vignette) */
+      --sp-rain-display:      block;
+      --sp-scanlines-display: block;
+      --sp-vignette-display:  block;
 
       position: relative;
       isolation: isolate;
@@ -31,8 +44,55 @@
       overflow: hidden;
     }
 
-    /* Three.js canvas */
+    /* light scheme — warm off-white, darker phosphor */
+    [data-md-color-scheme="default"] .sp-home {
+      --sp-bg:      #fafaf7;
+      --sp-bg-soft: #f0f0eb;
+      --sp-fg:      #1a1a1a;
+      --sp-fg-dim:  #4a4a4a;
+      --sp-fg-deep: #8a8a82;
+      --sp-line:    #e4e4dc;
+      --sp-line-strong: #d8d8d2;
+      --sp-green:   #1f8a3e;
+      --sp-green-dim: #15662c;
+
+      --sp-window-bg:   #ffffff;
+      --sp-cell-bg:     #f4f4ef;
+      --sp-titlebar-bg: linear-gradient(to bottom, #ebebe5, #f0f0eb);
+      --sp-path:        #1a6bb8;
+      --sp-shadow:      0 18px 50px rgba(40, 40, 30, 0.10);
+
+      --sp-rain-display:      none;
+      --sp-scanlines-display: none;
+      --sp-vignette-display:  none;
+    }
+
+    /* sepia scheme — paper / warm reading mode */
+    [data-md-color-scheme="senior-sepia"] .sp-home {
+      --sp-bg:      #f5ecd9;
+      --sp-bg-soft: #ece2c8;
+      --sp-fg:      #2a2a24;
+      --sp-fg-dim:  #4a4a3e;
+      --sp-fg-deep: #8a8868;
+      --sp-line:    #e2d6b8;
+      --sp-line-strong: #d8cdb2;
+      --sp-green:   #7a4a1f;
+      --sp-green-dim: #5a3413;
+
+      --sp-window-bg:   #fbf5e6;
+      --sp-cell-bg:     #ece2c8;
+      --sp-titlebar-bg: linear-gradient(to bottom, #e2d6b8, #ece2c8);
+      --sp-path:        #5a3413;
+      --sp-shadow:      0 18px 50px rgba(80, 60, 30, 0.10);
+
+      --sp-rain-display:      none;
+      --sp-scanlines-display: none;
+      --sp-vignette-display:  none;
+    }
+
+    /* Three.js canvas — hacker rain, dark scheme only */
     .sp-canvas {
+      display: var(--sp-rain-display);
       position: absolute;
       inset: 0;
       width: 100%;
@@ -44,8 +104,9 @@
     }
     .sp-canvas.is-ready { opacity: 0.18; }
 
-    /* CRT scanlines + vignette */
+    /* CRT scanlines + vignette — dark scheme only */
     .sp-scanlines {
+      display: var(--sp-scanlines-display);
       position: absolute;
       inset: 0;
       pointer-events: none;
@@ -61,6 +122,7 @@
       mix-blend-mode: screen;
     }
     .sp-vignette {
+      display: var(--sp-vignette-display);
       position: absolute;
       inset: 0;
       pointer-events: none;
@@ -83,12 +145,12 @@
     .sp-window {
       border: 1px solid var(--sp-line-strong);
       border-radius: 8px;
-      background: rgba(10, 10, 10, 0.85);
+      background: var(--sp-window-bg);
       backdrop-filter: blur(8px);
       box-shadow:
-        0 0 0 1px rgba(57, 255, 122, 0.04),
-        0 30px 80px rgba(0, 0, 0, 0.6),
-        0 8px 24px rgba(57, 255, 122, 0.05);
+        0 0 0 1px color-mix(in srgb, var(--sp-green) 4%, transparent),
+        var(--sp-shadow),
+        0 8px 24px color-mix(in srgb, var(--sp-green) 5%, transparent);
       overflow: hidden;
       animation: sp-fade 0.6s 0.05s both ease-out;
     }
@@ -97,7 +159,7 @@
       align-items: center;
       gap: 0.85rem;
       padding: 0.55rem 0.9rem;
-      background: linear-gradient(to bottom, #1a1a1a, #0e0e0e);
+      background: var(--sp-titlebar-bg);
       border-bottom: 1px solid var(--sp-line-strong);
       font-size: 0.72rem;
       color: var(--sp-fg-dim);
@@ -137,7 +199,7 @@
       vertical-align: -0.18em;
       margin-left: 0.05em;
       background: var(--sp-green);
-      box-shadow: 0 0 8px var(--sp-green);
+      box-shadow: 0 0 8px color-mix(in srgb, var(--sp-green) 60%, transparent);
       display: inline-block;
       animation: sp-blink 1.05s steps(2) infinite;
     }
@@ -152,14 +214,14 @@
     .sp-chapter.is-active {
       border-color: var(--sp-green) !important;
       box-shadow:
-        0 0 0 1px rgba(57, 255, 122, 0.5),
-        0 0 18px rgba(57, 255, 122, 0.18) inset,
-        0 0 30px rgba(57, 255, 122, 0.15);
+        0 0 0 1px color-mix(in srgb, var(--sp-green) 50%, transparent),
+        0 0 18px color-mix(in srgb, var(--sp-green) 18%, transparent) inset,
+        0 0 30px color-mix(in srgb, var(--sp-green) 15%, transparent);
       transform: translateY(-3px);
     }
     .sp-chapter.is-active .sp-chapter-title {
       color: var(--sp-green);
-      text-shadow: 0 0 10px rgba(57, 255, 122, 0.5);
+      text-shadow: 0 0 10px color-mix(in srgb, var(--sp-green) 50%, transparent);
     }
     .sp-chapter.is-active .sp-window-title::before {
       color: var(--sp-green);
@@ -196,7 +258,7 @@
       height: 7px;
       border-radius: 50%;
       background: var(--sp-green);
-      box-shadow: 0 0 6px var(--sp-green);
+      box-shadow: 0 0 6px color-mix(in srgb, var(--sp-green) 70%, transparent);
       margin-right: 0.5em;
       vertical-align: middle;
       animation: sp-blink 2s steps(2) infinite;
@@ -235,7 +297,7 @@
     }
     .sp-prompt .user { color: var(--sp-green); }
     .sp-prompt .at, .sp-prompt .colon, .sp-prompt .path { color: var(--sp-fg-dim); }
-    .sp-prompt .path { color: #6fa8dc; } /* small blue for path, allowed for terminal feel */
+    .sp-prompt .path { color: var(--sp-path); } /* small blue for path, allowed for terminal feel */
     .sp-prompt .dollar { color: var(--sp-green); margin: 0 0.5em; }
     .sp-prompt .cmd { color: var(--sp-fg); }
 
@@ -248,7 +310,7 @@
       padding: 0.6rem 0.85rem;
       border-top: 1px solid var(--sp-line);
       border-bottom: 1px solid var(--sp-line);
-      background: rgba(57, 255, 122, 0.015);
+      background: color-mix(in srgb, var(--sp-green) 1.5%, transparent);
       font-family: "Intel One Mono", ui-monospace, monospace;
       font-weight: 400;
       font-size: 0.84rem;
@@ -267,7 +329,7 @@
       background: var(--sp-green);
       vertical-align: -0.05em;
       margin-left: 0.05em;
-      box-shadow: 0 0 8px var(--sp-green);
+      box-shadow: 0 0 8px color-mix(in srgb, var(--sp-green) 60%, transparent);
       animation: sp-blink 1.05s steps(2) infinite;
     }
 
@@ -286,7 +348,7 @@
       margin: 1.4rem 0 2rem;
       padding: 0.85rem 1rem;
       border: 1px solid var(--sp-line-strong);
-      background: rgba(57, 255, 122, 0.02);
+      background: color-mix(in srgb, var(--sp-green) 2%, transparent);
       font-size: 0.84rem;
       animation: sp-fade 0.6s 1.6s both ease-out;
     }
@@ -315,7 +377,7 @@
     .sp-cmd-line .cmd { color: var(--sp-fg); }
     .sp-cmd-line .user  { color: var(--sp-green); }
     .sp-cmd-line .host  { color: var(--sp-fg); }
-    .sp-cmd-line .path  { color: #6fa8dc; }
+    .sp-cmd-line .path  { color: var(--sp-path); }
     .sp-cmd-line .dim   { color: var(--sp-fg-dim); }
     .sp-cmd-line .green { color: var(--sp-green); margin-right: 0.5em; }
 
@@ -349,7 +411,7 @@
       border-color: var(--sp-green);
       transform: translateY(-2px);
     }
-    .sp-chapter:hover .sp-chapter-title { color: var(--sp-green); text-shadow: 0 0 8px rgba(57, 255, 122, 0.4); }
+    .sp-chapter:hover .sp-chapter-title { color: var(--sp-green); text-shadow: 0 0 8px color-mix(in srgb, var(--sp-green) 40%, transparent); }
     .sp-chapter:hover .sp-chapter-arrow { color: var(--sp-green); transform: translateX(6px); }
     .sp-chapter:hover .sp-window-title::before { color: var(--sp-green); }
 
@@ -457,11 +519,11 @@
     }
     .sp-section-prompt .user  { color: var(--sp-green); }
     .sp-section-prompt .host  { color: var(--sp-fg); }
-    .sp-section-prompt .path  { color: #6fa8dc; }
+    .sp-section-prompt .path  { color: var(--sp-path); }
     .sp-section-prompt .dim   { color: var(--sp-fg-dim); }
     .sp-section-prompt .green { color: var(--sp-green); margin-right: 0.5em; }
     .sp-section-prompt .cmd   { color: var(--sp-fg); }
-    .sp-section-prompt .arg   { color: #6fa8dc; }
+    .sp-section-prompt .arg   { color: var(--sp-path); }
 
     .sp-listing-grid {
       display: grid;
@@ -471,7 +533,7 @@
     }
     .sp-listing-cell {
       border: 1px solid var(--sp-line);
-      background: rgba(20, 20, 20, 0.4);
+      background: var(--sp-cell-bg);
       padding: 0.6rem 0.7rem;
       transition: border-color 0.2s ease;
     }
@@ -532,7 +594,7 @@
       flex-direction: column;
       gap: 0.4rem;
       border: 1px solid var(--sp-line);
-      background: rgba(20, 20, 20, 0.4);
+      background: var(--sp-cell-bg);
       padding: 0.7rem 0.75rem;
       text-decoration: none;
       color: var(--sp-fg);
@@ -776,6 +838,9 @@
         </a>
       </nav>
 
+      {# F10 — Per-section read stats card, populated by reading.js #}
+      <aside class="sp-home-stats" data-sp-home-stats hidden></aside>
+
       <section class="sp-section" aria-labelledby="sec-roadmaps">
         <p class="sp-section-prompt">
           <span class="user">root</span><span class="dim">@</span><span class="host">senior</span><span class="dim">:</span><span class="path">~</span>
@@ -1012,6 +1077,10 @@
       const homeEl  = document.querySelector('[data-home]');
       const canvas  = document.querySelector('.sp-canvas');
       if (!canvas || !homeEl || reduced) return;
+
+      /* dark scheme only — light/sepia are paper, not CRT */
+      const scheme = document.body.getAttribute('data-md-color-scheme');
+      if (scheme && scheme !== 'slate') return;
 
       const initMatrixRain = () => {
         const ctx = canvas.getContext('2d');

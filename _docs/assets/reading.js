@@ -1,11 +1,11 @@
 /* ================================================================
    Senior Stack — Reading-Comfort Pack
-   Nine features in one IIFE:
+   Ten features in one IIFE:
      F1 progress bar (top)       F6 bionic reading
      F2 read-time (per-article)  F7 scroll-position save
      F3 focus mode (F key)       F8 reading-width toggle
      F4 sepia palette (CSS only) F9 auto-hide header
-     F5 mark-as-read
+     F5 mark-as-read             F10 per-section read stats
 
    Conventions reused: window.document$.subscribe, sp- localStorage
    prefix, .sp-* BEM classes, INPUT/TEXTAREA keyboard guard.
@@ -175,6 +175,7 @@
     if (on) set.add(path); else set.delete(path);
     writeReadSet(set);
     markSidebar();
+    refreshAllStats();
     const cb = document.querySelector('.sp-reader-panel input[data-toggle="read"]');
     if (cb) cb.checked = on;
   }
@@ -368,6 +369,151 @@
     applyAutoHideAttr(next);
   }
 
+  // ---------- F10: Per-section read stats -----------------------
+  function getManifest() {
+    const m = window.SP_READ_MANIFEST;
+    if (!m || !Array.isArray(m.sections)) return null;
+    return m;
+  }
+
+  function computeStats(set) {
+    const m = getManifest();
+    if (!m) return null;
+    const out = [];
+    let oRead = 0, oTotal = 0;
+    for (let i = 0; i < m.sections.length; i++) {
+      const s = m.sections[i];
+      const paths = s.paths || [];
+      let read = 0;
+      for (let j = 0; j < paths.length; j++) if (set.has(paths[j])) read++;
+      const total = paths.length;
+      const pct = total > 0 ? Math.round((read / total) * 100) : 0;
+      out.push({ key: s.key, label: s.label, read: read, total: total, pct: pct });
+      oRead += read;
+      oTotal += total;
+    }
+    return {
+      overall: {
+        read: oRead,
+        total: oTotal,
+        pct: oTotal > 0 ? Math.round((oRead / oTotal) * 100) : 0,
+      },
+      sections: out,
+    };
+  }
+
+  let progressStatEl = null;
+  function ensureProgressStatEl() {
+    if (progressStatEl && document.body.contains(progressStatEl)) return progressStatEl;
+    progressStatEl = document.createElement("div");
+    progressStatEl.className = "sp-progress-stat";
+    progressStatEl.setAttribute("aria-live", "polite");
+    document.body.appendChild(progressStatEl);
+    return progressStatEl;
+  }
+  function renderTopBarStat(stats) {
+    if (!stats || isHome()) {
+      if (progressStatEl) progressStatEl.style.display = "none";
+      return;
+    }
+    const o = stats.overall;
+    if (!o.total) {
+      if (progressStatEl) progressStatEl.style.display = "none";
+      return;
+    }
+    const el = ensureProgressStatEl();
+    el.style.display = "";
+    el.textContent = "READ " + o.pct + "% · " + o.read + "/" + o.total;
+  }
+
+  function sidebarLabelText(link) {
+    const ellipsis = link.querySelector(".md-ellipsis");
+    return ((ellipsis ? ellipsis.textContent : link.textContent) || "").trim();
+  }
+  function renderSidebarSectionStats(stats) {
+    if (!stats) return;
+    const sidebar = document.querySelector(".md-sidebar--primary");
+    if (!sidebar) return;
+    const prior = sidebar.querySelectorAll(".sp-sec-stat");
+    for (let i = 0; i < prior.length; i++) prior[i].remove();
+    const byKey = {}, byLabel = {};
+    for (let i = 0; i < stats.sections.length; i++) {
+      const s = stats.sections[i];
+      byKey[s.key] = s;
+      byLabel[s.label] = s;
+    }
+    const items = sidebar.querySelectorAll(".md-nav--primary > ul.md-nav__list > li.md-nav__item");
+    for (let i = 0; i < items.length; i++) {
+      const li = items[i];
+      let lbl = null;
+      const kids = li.children;
+      for (let j = 0; j < kids.length; j++) {
+        if (kids[j].classList && kids[j].classList.contains("md-nav__link")) {
+          lbl = kids[j];
+          break;
+        }
+      }
+      if (!lbl) continue;
+      const text = sidebarLabelText(lbl);
+      const st = byKey[text] || byLabel[text];
+      if (!st) continue;
+      const span = document.createElement("span");
+      span.className = "sp-sec-stat";
+      span.textContent = st.read + "/" + st.total + " · " + st.pct + "%";
+      const icon = lbl.querySelector(".md-nav__icon");
+      if (icon) lbl.insertBefore(span, icon);
+      else lbl.appendChild(span);
+    }
+  }
+
+  function escapeHTML(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+  function renderHomeStatsCard(stats) {
+    if (!stats) return;
+    const slot = document.querySelector("[data-sp-home-stats]");
+    if (!slot) return;
+    const o = stats.overall;
+    if (!o.total) {
+      slot.hidden = true;
+      slot.innerHTML = "";
+      return;
+    }
+    const sorted = stats.sections.slice().sort(function (a, b) {
+      if (b.pct !== a.pct) return b.pct - a.pct;
+      return a.label.localeCompare(b.label);
+    });
+    let html = "";
+    html += '<div class="sp-home-stats__head">';
+    html +=   '<span class="sp-home-stats__label">// reading progress</span>';
+    html +=   '<span class="sp-home-stats__total">' + o.read + " / " + o.total + " pages · <strong>" + o.pct + "%</strong></span>";
+    html += '</div>';
+    html += '<div class="sp-home-stats__bar"><div class="sp-home-stats__bar-fill" style="width:' + o.pct + '%"></div></div>';
+    html += '<ul class="sp-home-stats__sections">';
+    for (let i = 0; i < sorted.length; i++) {
+      const s = sorted[i];
+      html += '<li>';
+      html +=   '<span class="sp-home-stats__sec-label">' + escapeHTML(s.label) + '</span>';
+      html +=   '<span class="sp-home-stats__sec-bar"><span style="width:' + s.pct + '%"></span></span>';
+      html +=   '<span class="sp-home-stats__sec-count">' + s.read + "/" + s.total + " · " + s.pct + '%</span>';
+      html += '</li>';
+    }
+    html += '</ul>';
+    slot.innerHTML = html;
+    slot.hidden = false;
+  }
+
+  function refreshAllStats() {
+    const stats = computeStats(readSet());
+    if (!stats) return;
+    renderTopBarStat(stats);
+    renderSidebarSectionStats(stats);
+    renderHomeStatsCard(stats);
+  }
+
   // ---------- Reader-settings panel -----------------------------
   let panelEl = null;
   let panelToggleEl = null;
@@ -511,6 +657,9 @@
 
     // F5 — mark-as-read sidebar + checkbox
     markSidebar();
+
+    // F10 — per-section read stats (pill + sidebar pills + home card)
+    refreshAllStats();
 
     // F6 — bionic (reapply on each page swap if on)
     applyBionicAttr(lsGet(K.bionic) === "on");
