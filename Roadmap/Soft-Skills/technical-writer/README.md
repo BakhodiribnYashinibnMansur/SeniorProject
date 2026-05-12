@@ -2,6 +2,17 @@
 
 - Roadmap: https://roadmap.sh/technical-writer
 
+## Deep-Dive Sections (Engineer-Facing Writing)
+
+- [01. ADR](01-adr/) — Architecture Decision Records, template, when to write
+- [02. RFC](02-rfc/) — Request for Comments, scope, audience, lifecycle
+- [03. Postmortems](03-postmortems/) — blameless postmortems, timelines, root cause vs contributing factors
+- [04. Runbooks](04-runbooks/) — operational procedures, on-call handover, escalation paths
+- [05. API Docs](05-api-docs/) — OpenAPI, idiomatic examples, error catalogues
+- [06. Tutorials](06-tutorials/) — Diátaxis framework, learner-oriented progression
+
+---
+
 ## 1. Introduction
 - 1.1 Who is a Technical Writer?
 - 1.2 What is Technical Writing?

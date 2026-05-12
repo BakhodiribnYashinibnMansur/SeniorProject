@@ -2,6 +2,21 @@
 
 - Roadmap: https://roadmap.sh/system-design
 
+## Deep-Dive Sections
+
+- [01. Capacity Estimation](01-capacity-estimation/) — QPS, storage, bandwidth, latency budgets
+- [02. Trade-offs Framework](02-tradeoffs-framework/) — CAP, PACELC, consistency vs availability
+- [03. Classic Problems](03-classic-problems/) — URL shortener, Twitter timeline, WhatsApp/chat, YouTube, Uber, Dropbox, Instagram, Stack Overflow, ad counter, payment system, web crawler, recommendation engine, rate limiter service, key-value store
+- [04. Real-World Architectures](04-real-architectures/) — Google Spanner, Facebook TAO, Amazon DynamoDB, Netflix stack
+- [05. Back-of-Envelope](05-back-of-envelope/) — number tables, Fermi estimation
+
+**Companion roadmaps:**
+- [Distributed Systems](../../Backend/distributed-systems/) — consensus, replication, sharding, sagas, CRDTs
+- [Architecture / DDD](../ddd/) — bounded contexts, aggregates
+- [Computer Science](../computer-science/) — OS, networking, DB internals
+
+---
+
 ## 1. Introduction
 - 1.1 What is System Design?
 - 1.2 How to approach System Design?

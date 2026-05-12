@@ -6,6 +6,28 @@ comments: true
 
 - Roadmap: https://roadmap.sh/backend
 
+## Deep-Dive Sections
+
+The roadmap.sh checklist below lists the breadth. The deep-dive sections below are organized as structured, multi-language learning units with junior → professional progression (when filled out).
+
+- [01. Databases](01-databases/) — relational vs NoSQL, indexing, transactions, isolation, ORM vs raw SQL
+- [02. Caching](02-caching/) — patterns, Redis, Memcached, CDN, invalidation strategies
+- [03. Message Queues](03-message-queues/) — Kafka, RabbitMQ, NATS, SQS, delivery guarantees
+- [04. Rate Limiting](04-rate-limiting/) — token bucket, leaky bucket, sliding/fixed window
+- [05. API Design](05-api-design/) — REST, GraphQL, gRPC, OpenAPI, versioning
+- [06. Authentication & Authorization](06-authentication-authorization/) — OAuth2, OIDC, JWT, sessions, RBAC/ABAC
+- [07. Search](07-search/) — full-text, Elasticsearch, vector search
+- [08. Background Jobs](08-background-jobs/) — job queues, scheduled jobs, retries & dead-letter
+- [09. Observability](09-observability/) — logging, metrics, tracing, SLO/SLI/SLA
+- [10. Deployment Patterns](10-deployment-patterns/) — blue/green, canary, feature flags, rolling
+
+**Companion roadmaps:**
+- [Distributed Systems](../distributed-systems/) — CAP, consensus, replication, sharding, sagas
+- [Architecture / System Design](../../Architecture/system-design/) — capacity estimation, classic problems, real architectures
+- [Architecture / DDD](../../Architecture/ddd/) — bounded contexts, aggregates, anti-corruption layer
+
+---
+
 ## 1. Internet
 - How does the internet work?
 - What is HTTP?

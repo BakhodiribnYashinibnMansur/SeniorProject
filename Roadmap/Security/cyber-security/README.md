@@ -2,6 +2,20 @@
 
 - Roadmap: https://roadmap.sh/cyber-security
 
+## Deep-Dive Sections
+
+- [01. OWASP Top 10](01-owasp-top-10/) — injection, broken auth, sensitive data exposure, XXE, broken access control, security misconfiguration, XSS, insecure deserialization, known vulns, insufficient logging
+- [02. Cryptography](02-cryptography/) — symmetric, asymmetric, hashing, key management
+- [03. Authentication](03-authentication/) — passwords, MFA, SSO
+- [04. Threat Modeling](04-threat-modeling/) — STRIDE, PASTA, attack trees
+- [05. Secure SDLC](05-secure-sdlc/)
+- [06. Supply Chain Security](06-supply-chain/) — SBOM, dependency scanning, signing
+
+**Companion topics:**
+- [Backend / Authentication & Authorization](../../Backend/backend/06-authentication-authorization/) — OAuth2, OIDC, JWT, RBAC/ABAC
+
+---
+
 ## 1. Fundamental IT Skills
 - 1.1 Computer Hardware Components
 - 1.2 Connection Types and their function

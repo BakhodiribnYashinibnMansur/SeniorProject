@@ -2,6 +2,20 @@
 
 - Roadmap: https://roadmap.sh/computer-science
 
+## Deep-Dive Sections
+
+- [01. Operating Systems](01-operating-systems/) — processes/threads, memory management, scheduling, file systems, virtual memory, system calls
+- [02. Networking](02-networking/) — TCP/IP, HTTP, DNS, TLS/SSL, OSI model
+- [03. Database Internals](03-database-internals/) — B-tree storage, LSM trees, MVCC, WAL, query planning
+- [04. Compilers](04-compilers/) — lexer, parser, semantic analysis, optimizer, code generation
+- [05. Computer Architecture](05-computer-architecture/) — CPU, cache hierarchy, pipeline, NUMA, vectorization
+
+**Companion roadmaps:**
+- [Data Structures & Algorithms](../../Data/datastructures-and-algorithms/) — algorithmic foundations
+- [System Design](../system-design/) — applying CS at the architecture level
+
+---
+
 ## 1. Pick a Language
 - 1.1 Python
 - 1.2 Go

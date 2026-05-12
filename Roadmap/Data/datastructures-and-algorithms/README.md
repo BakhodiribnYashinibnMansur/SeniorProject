@@ -13,7 +13,11 @@
 - 1.7 Rust
 - 1.8 Ruby
 
-## [2. Programming Fundamentals](02-programming-fundamentals/01-language-syntax/junior.md)
+## [01. Introduction to DSA](01-introduction-to-dsa/)
+
+What DSA is, why it matters, how to study it, how problems map to data structures.
+
+## [02. Programming Fundamentals](02-programming-fundamentals/01-language-syntax/junior.md)
 
 - [2.1 Language Syntax](02-programming-fundamentals/01-language-syntax/junior.md)
 - [2.2 Pseudo Code](02-programming-fundamentals/02-pseudo-code/junior.md)
@@ -21,11 +25,11 @@
 - [2.4 Functions](02-programming-fundamentals/04-functions/junior.md)
 - [2.5 OOP Basics](02-programming-fundamentals/05-oop-basics/junior.md)
 
-## [3. What are Data Structures?](03-what-are-data-structures/junior.md)
+## [03. What are Data Structures?](03-what-are-data-structures/junior.md)
 
-## [4. Why are Data Structures Important?](04-why-are-data-structures-important/junior.md)
+## [04. Why are Data Structures Important?](04-why-are-data-structures-important/junior.md)
 
-## [5. Basic Data Structures](05-basic-data-structures/01-array/junior.md)
+## [05. Basic Data Structures](05-basic-data-structures/01-array/junior.md)
 
 - [5.1 Array](05-basic-data-structures/01-array/junior.md)
 - [5.2 Linked Lists](05-basic-data-structures/02-linked-lists/junior.md)
@@ -33,7 +37,7 @@
 - [5.4 Stacks](05-basic-data-structures/04-stacks/junior.md)
 - [5.5 Hash Tables](05-basic-data-structures/05-hash-tables/junior.md)
 
-## [6. Algorithmic Complexity](06-algorithmic-complexity/01-time-vs-space-complexity/junior.md)
+## [06. Algorithmic Complexity](06-algorithmic-complexity/01-time-vs-space-complexity/junior.md)
 
 ### [6.1 Time vs Space Complexity](06-algorithmic-complexity/01-time-vs-space-complexity/junior.md)
 
@@ -54,7 +58,7 @@
 - [6.4.2 Big-θ Notation](06-algorithmic-complexity/04-asymptotic-notation/02-big-theta-notation/junior.md)
 - [6.4.3 Big-Ω Notation](06-algorithmic-complexity/04-asymptotic-notation/03-big-omega-notation/junior.md)
 
-## [7. Sorting Algorithms](07-sorting-algorithms/01-bubble-sort/junior.md)
+## [07. Sorting Algorithms](07-sorting-algorithms/01-bubble-sort/junior.md)
 
 - [7.1 Bubble Sort](07-sorting-algorithms/01-bubble-sort/junior.md)
 - [7.2 Merge Sort](07-sorting-algorithms/02-merge-sort/junior.md)
@@ -63,94 +67,137 @@
 - [7.5 Selection Sort](07-sorting-algorithms/05-selection-sort/junior.md)
 - [7.6 Heap Sort](07-sorting-algorithms/06-heap-sort/junior.md)
 
-## [8. Search Algorithms](08-search-algorithms/01-linear-search/junior.md)
+## [08. Search Algorithms](08-search-algorithms/01-linear-search/junior.md)
 
 - [8.1 Linear Search](08-search-algorithms/01-linear-search/junior.md)
 - [8.2 Binary Search](08-search-algorithms/02-binary-search/junior.md)
 
-## 9. Tree Data Structures
+## [09. Trees](09-trees/)
 
-### 9.1 Tree Traversal
+- [9.1 Binary Tree](09-trees/01-binary-tree/)
+- [9.2 Binary Search Tree (BST)](09-trees/02-bst/)
+- [9.3 AVL Tree](09-trees/03-avl/)
+- [9.4 Red-Black Tree](09-trees/04-red-black/)
+- [9.5 Trie](09-trees/05-trie/)
+- [9.6 Segment Tree](09-trees/06-segment-tree/)
+- [9.7 Fenwick Tree (BIT)](09-trees/07-fenwick-tree/)
+- [9.8 B-Tree](09-trees/08-b-tree/)
 
-- 9.1.1 In-Order Traversal
-- 9.1.2 Pre-Order Traversal
-- 9.1.3 Post-Order Traversal
+## [10. Heaps & Priority Queues](10-heaps/)
 
-### 9.2 Search Algorithms
+- [10.1 Binary Heap](10-heaps/01-binary-heap/)
+- [10.2 Priority Queue](10-heaps/02-priority-queue/)
+- [10.3 Fibonacci Heap](10-heaps/03-fibonacci-heap/)
+- [10.4 D-Ary Heap](10-heaps/04-d-ary-heap/)
 
-- 9.2.1 Breadth First Search
-- 9.2.2 Depth First Search
+## [11. Graphs](11-graphs/)
 
-### 9.3 Binary Trees
+- [11.1 Representation (matrix, list)](11-graphs/01-representation/)
+- [11.2 BFS](11-graphs/02-bfs/)
+- [11.3 DFS](11-graphs/03-dfs/)
+- [11.4 Dijkstra](11-graphs/04-dijkstra/)
+- [11.5 Bellman-Ford](11-graphs/05-bellman-ford/)
+- [11.6 Floyd-Warshall](11-graphs/06-floyd-warshall/)
+- [11.7 Topological Sort](11-graphs/07-topological-sort/)
+- [11.8 Tarjan's SCC](11-graphs/08-tarjan-scc/)
+- [11.9 A* Search](11-graphs/09-a-star/)
+- [11.10 Minimum Spanning Tree (Kruskal, Prim)](11-graphs/10-mst-kruskal-prim/)
 
-- 9.3.1 Binary Search Trees
-- 9.3.2 AVL Trees
-- 9.3.3 B-Trees
-- 9.3.4 Heap
+## [12. Disjoint Set (Union-Find)](12-disjoint-set/)
 
-## 10. Graph Data Structures
+- [12.1 Union-Find](12-disjoint-set/01-union-find/)
+- [12.2 Path Compression](12-disjoint-set/02-path-compression/)
+- [12.3 Union by Rank](12-disjoint-set/03-union-by-rank/)
+- [12.4 Offline LCA](12-disjoint-set/04-offline-lca/)
 
-### 10.1 Directed Graph
+## [13. Dynamic Programming](13-dynamic-programming/)
 
-### 10.2 Undirected Graph
+- [13.1 Memoization vs Tabulation](13-dynamic-programming/01-memoization-vs-tabulation/)
+- [13.2 Knapsack (0/1, unbounded)](13-dynamic-programming/02-knapsack/)
+- [13.3 LCS / LIS](13-dynamic-programming/03-lcs-lis/)
+- [13.4 Edit Distance](13-dynamic-programming/04-edit-distance/)
+- [13.5 Interval DP](13-dynamic-programming/05-interval-dp/)
+- [13.6 Bitmask DP](13-dynamic-programming/06-bitmask-dp/)
+- [13.7 Tree DP](13-dynamic-programming/07-tree-dp/)
+- [13.8 Digit DP](13-dynamic-programming/08-digit-dp/)
 
-### 10.3 Search Algorithms
+## [14. Greedy Algorithms](14-greedy-algorithms/)
 
-- 10.3.1 Breadth First Search
-- 10.3.2 Depth First Search
+- [14.1 Activity Selection](14-greedy-algorithms/01-activity-selection/)
+- [14.2 Huffman Coding](14-greedy-algorithms/02-huffman/)
+- [14.3 Fractional Knapsack](14-greedy-algorithms/03-fractional-knapsack/)
+- [14.4 Job Scheduling](14-greedy-algorithms/04-job-scheduling/)
+- [14.5 Exchange Argument](14-greedy-algorithms/05-exchange-argument/)
 
-### 10.4 Shortest Path Algorithms
+## [15. Divide & Conquer](15-divide-and-conquer/)
 
-- 10.4.1 Dijkstra's Algorithm
-- 10.4.2 Bellman-Ford Algorithm
-- 10.4.3 A* Algorithm
+- [15.1 Merge Sort](15-divide-and-conquer/01-merge-sort/)
+- [15.2 Quicksort](15-divide-and-conquer/02-quicksort/)
+- [15.3 Master Theorem](15-divide-and-conquer/03-master-theorem/)
+- [15.4 Karatsuba Multiplication](15-divide-and-conquer/04-karatsuba/)
+- [15.5 FFT](15-divide-and-conquer/05-fft/)
 
-### 10.5 Minimum Spanning Tree
+## [16. Backtracking](16-backtracking/)
 
-- 10.5.1 Prim's Algorithm
-- 10.5.2 Kruskal's Algorithm
+- [16.1 N-Queens](16-backtracking/01-n-queens/)
+- [16.2 Sudoku Solver](16-backtracking/02-sudoku/)
+- [16.3 Permutations & Subsets](16-backtracking/03-permutations-subsets/)
+- [16.4 Constraint Satisfaction](16-backtracking/04-constraint-satisfaction/)
 
-## 11. Advanced Data Structures
+## [17. String Algorithms](17-string-algorithms/)
 
-- 11.1 Trie
-- 11.2 Segment Trees
-- 11.3 Fenwick Trees
-- 11.4 Disjoint Set (Union-Find)
-- 11.5 Suffix Trees and Arrays
+- [17.1 KMP](17-string-algorithms/01-kmp/)
+- [17.2 Z-Function](17-string-algorithms/02-z-function/)
+- [17.3 Rabin-Karp](17-string-algorithms/03-rabin-karp/)
+- [17.4 Suffix Arrays](17-string-algorithms/04-suffix-arrays/)
+- [17.5 Aho-Corasick](17-string-algorithms/05-aho-corasick/)
+- [17.6 Edit Distance](17-string-algorithms/06-edit-distance/)
+- [17.7 Tries (string-focused)](17-string-algorithms/07-tries/)
 
-## 12. Complex Data Structures
+## [18. Bit Manipulation](18-bit-manipulation/)
 
-- 12.1 B/B+ Trees
-- 12.2 Skip List
-- 12.3 ISAM
-- 12.4 2-3 Trees
+- [18.1 Bit Tricks](18-bit-manipulation/01-bit-tricks/)
+- [18.2 XOR Pairing](18-bit-manipulation/02-xor-pairing/)
+- [18.3 Bitmask Enumeration](18-bit-manipulation/03-bitmask-enumeration/)
+- [18.4 Bit-Parallel Algorithms](18-bit-manipulation/04-bit-parallel/)
 
-### 12.5 Indexing
+## [19. Number Theory](19-number-theory/)
 
-- 12.5.1 Linear
-- 12.5.2 Tree-Based
+- [19.1 GCD / LCM](19-number-theory/01-gcd-lcm/)
+- [19.2 Modular Arithmetic](19-number-theory/02-modular-arithmetic/)
+- [19.3 Prime Sieves](19-number-theory/03-prime-sieves/)
+- [19.4 Fermat's Little Theorem / Euler's Totient](19-number-theory/04-fermat-euler/)
+- [19.5 Chinese Remainder Theorem (CRT)](19-number-theory/05-crt/)
 
-## 13. Problem Solving Techniques
+## [20. Computational Geometry](20-computational-geometry/)
 
-- 13.1 Brute Force
-- 13.2 Backtracking
-- 13.3 Greedy Algorithms
-- 13.4 Randomised Algorithms
-- 13.5 Divide and Conquer
-- 13.6 Recursion
-- 13.7 Dynamic Programming
-- 13.8 Two Pointer Technique
-- 13.9 Sliding Window Technique
-- 13.10 Fast and Slow Pointers
-- 13.11 Cyclic Sort
-- 13.12 Merge Intervals
-- 13.13 Two Heaps
-- 13.14 Kth Element
-- 13.15 Multi-threaded
-- 13.16 Island Traversal
+- [20.1 Convex Hull](20-computational-geometry/01-convex-hull/)
+- [20.2 Line Intersection](20-computational-geometry/02-line-intersection/)
+- [20.3 Point in Polygon](20-computational-geometry/03-point-in-polygon/)
+- [20.4 KD-Tree](20-computational-geometry/04-kd-tree/)
+- [20.5 Sweep Line](20-computational-geometry/05-sweep-line/)
 
-## 14. Platforms to Practice
+## [21. Advanced Data Structures](21-advanced-structures/)
 
-- 14.1 Leetcode
-- 14.2 Edabit
-# Test - Thu Mar 26 01:42:30 PM +05 2026
+- [21.1 LRU Cache](21-advanced-structures/01-lru-cache/)
+- [21.2 Bloom Filter](21-advanced-structures/02-bloom-filter/)
+- [21.3 Skip List](21-advanced-structures/03-skip-list/)
+- [21.4 LSM Tree](21-advanced-structures/04-lsm-tree/)
+- [21.5 Merkle Tree](21-advanced-structures/05-merkle-tree/)
+- [21.6 Rope](21-advanced-structures/06-rope/)
+
+## [22. Randomized Algorithms](22-randomized-algorithms/)
+
+- [22.1 Reservoir Sampling](22-randomized-algorithms/01-reservoir-sampling/)
+- [22.2 MinHash](22-randomized-algorithms/02-minhash/)
+- [22.3 Monte Carlo vs Las Vegas](22-randomized-algorithms/03-monte-carlo-las-vegas/)
+- [22.4 Treap](22-randomized-algorithms/04-treap/)
+- [22.5 Randomized Quicksort](22-randomized-algorithms/05-randomized-quicksort/)
+
+## 23. Platforms to Practice
+
+- 23.1 Leetcode
+- 23.2 Edabit
+- 23.3 Codeforces
+- 23.4 HackerRank
+- 23.5 AtCoder
