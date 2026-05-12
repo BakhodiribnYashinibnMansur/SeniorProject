@@ -14,6 +14,7 @@
 | [Refactoring Techniques](02-refactoring-techniques/README.md) | ~70 techniques in 6 categories | 48 |
 
 > Looking for design patterns? They live in their own roadmap: [Design Patterns](../design-patterns/README.md).
+> Looking for the larger structural mistakes? See: [Coding Anti-Patterns](../anti-patterns/README.md) for code- and design-level shapes, or [Architecture Anti-Patterns](../../../Architecture/anti-patterns/README.md) for system-level ones.
 
 ---
 

@@ -1,0 +1,15 @@
+# Generics & Types
+
+Status: ⏳ PENDING
+
+The inverse of this chapter's rules — practices to **recognize and avoid**. Each will get a junior-level definition, a real example of the harm it causes, and the clean alternative.
+
+## Anti-Patterns to Cover
+
+- Using `any`/`Object`/`interface{}` to escape the type system
+- Unbounded generics where a constraint would help (`<T>` where `<T extends Comparable<T>>` is meant)
+- TypeScript: `as` casts that lie about runtime types
+- Overloading instead of separate well-named functions
+- Stringly-typed APIs (`fetch('GET', '/foo')`) instead of typed parameters
+
+See the [chapter README](../README.md) for the positive rules.
