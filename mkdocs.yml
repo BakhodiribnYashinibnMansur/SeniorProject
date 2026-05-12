@@ -68,6 +68,7 @@ theme:
       toggle:
         icon: material/book-open-page-variant
         name: Switch to dark mode
+  logo: assets/images/logo.svg
   icon:
     repo: fontawesome/brands/github
     edit: material/pencil

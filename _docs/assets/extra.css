@@ -112,6 +112,16 @@ body,
   font-family: "Intel One Mono", monospace;
 }
 .md-header__title { color: var(--md-default-fg-color); font-weight: 500; }
+.md-header__button.md-logo {
+  color: var(--md-primary-fg-color) !important;
+  padding: 0.4rem 0.6rem 0.4rem 0.4rem;
+}
+.md-header__button.md-logo svg,
+.md-header__button.md-logo img {
+  width: 1.4rem;
+  height: 1.4rem;
+  fill: currentColor;
+}
 .md-header__topic > .md-header__button + span::before {
   content: "$ ";
   color: var(--md-primary-fg-color);
