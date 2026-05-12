@@ -1,31 +1,24 @@
 /* ================================================================
-   Senior Stack — e-ink detection & toggle
-   Strategy (3 layers, cheapest first):
-     1. URL param: ?eink=1 / ?eink=0  → force, persisted to storage
-     2. localStorage: einkMode = "on" | "off" | "auto" (default)
-     3. Auto-detect when "auto":
-        a. CSS media queries: (monochrome) or (update: slow)
-        b. User-Agent sniff: Kindle / Kobo / Onyx (Boox) / reMarkable
-        c. Runtime FPS probe (deferred 1.5s after load): < 20 FPS → e-ink
-   Also injects a small floating toggle button. Survives Material's
-   instant navigation by re-running on document$ subscription if
-   available, otherwise on DOMContentLoaded.
+   Senior Stack — e-ink toggle (manual only)
+   Activation paths:
+     1. Floating "eink mode" button (bottom-right)
+     2. Keyboard shortcut: Shift+E
+     3. URL param: ?eink=1 / ?eink=0  → force, persisted to storage
+   Persisted in localStorage; defaults to OFF until the user opts in.
+   Survives Material's instant navigation via document$ subscription.
    ================================================================ */
 (function () {
   "use strict";
 
   const STORAGE_KEY = "sp-eink-mode";
-  const FPS_THRESHOLD = 20;
-  const FPS_SAMPLE_MS = 1000;
-  const FPS_DELAY_MS = 1500;
 
   // ---------- Mode resolution ------------------------------------
   function readStoredMode() {
     try {
       const v = localStorage.getItem(STORAGE_KEY);
-      if (v === "on" || v === "off" || v === "auto") return v;
+      if (v === "on" || v === "off") return v;
     } catch (e) {}
-    return "auto";
+    return "off";
   }
 
   function writeStoredMode(mode) {
@@ -40,54 +33,6 @@
       if (v === "0" || v === "off" || v === "false") return "off";
     } catch (e) {}
     return null;
-  }
-
-  // ---------- Auto-detection signals -----------------------------
-  function mediaQuerySignal() {
-    try {
-      if (window.matchMedia("(monochrome)").matches) return true;
-      if (window.matchMedia("(update: slow)").matches) return true;
-    } catch (e) {}
-    return false;
-  }
-
-  function userAgentSignal() {
-    const ua = (navigator.userAgent || "").toLowerCase();
-    // Kindle: "Kindle", "Silk" (Amazon Silk on Kindle Fire is NOT e-ink, skip Silk)
-    if (/kindle/.test(ua)) return true;
-    // Kobo
-    if (/kobo/.test(ua)) return true;
-    // Onyx Boox (Android-based, but ships "Onyx" in UA on some firmwares)
-    if (/onyx|boox/.test(ua)) return true;
-    // reMarkable browser (qutebrowser / Surf based)
-    if (/remarkable/.test(ua)) return true;
-    // PocketBook
-    if (/pocketbook/.test(ua)) return true;
-    return false;
-  }
-
-  function fpsProbe(callback) {
-    if (typeof requestAnimationFrame !== "function") {
-      callback(false);
-      return;
-    }
-    if (document.visibilityState && document.visibilityState !== "visible") {
-      // Background tabs throttle rAF to ~1 FPS — would false-positive.
-      callback(false);
-      return;
-    }
-    let frames = 0;
-    const start = performance.now();
-    function tick(now) {
-      frames++;
-      if (now - start >= FPS_SAMPLE_MS) {
-        const fps = (frames * 1000) / (now - start);
-        callback(fps < FPS_THRESHOLD);
-        return;
-      }
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
   }
 
   // ---------- Apply / remove ------------------------------------
@@ -130,46 +75,14 @@
   }
 
   // ---------- Init flow -----------------------------------------
-  function decideInitialMode() {
-    // URL override wins and is persisted
-    const url = readUrlOverride();
-    if (url) {
-      writeStoredMode(url);
-      return { mode: url, allowAuto: false };
-    }
-    const stored = readStoredMode();
-    if (stored === "on" || stored === "off") {
-      return { mode: stored, allowAuto: false };
-    }
-    return { mode: "auto", allowAuto: true };
-  }
-
-  function runAutoDetect() {
-    if (mediaQuerySignal() || userAgentSignal()) {
-      setEink(true);
-      return;
-    }
-    // Defer FPS probe so it doesn't race with initial paint
-    setTimeout(function () {
-      fpsProbe(function (slow) {
-        if (slow && !isEinkOn()) setEink(true);
-      });
-    }, FPS_DELAY_MS);
-  }
-
   function init() {
     if (!document.body) return; // wait for body
     ensureToggle();
-    const decision = decideInitialMode();
-    if (decision.mode === "on") {
-      setEink(true);
-    } else if (decision.mode === "off") {
-      setEink(false);
-    } else {
-      // auto
-      runAutoDetect();
-      updateToggleLabel();
-    }
+    // URL param overrides storage and is persisted
+    const url = readUrlOverride();
+    if (url) writeStoredMode(url);
+    const mode = url || readStoredMode();
+    setEink(mode === "on");
   }
 
   // Keyboard shortcut: Shift+E
