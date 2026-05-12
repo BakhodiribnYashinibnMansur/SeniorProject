@@ -87,9 +87,9 @@ hide:
 
     ---
 
-    - [Go](Roadmap/Programming-Languages/golang/README.md)
-    - [Java](Roadmap/Programming-Languages/java/README.md)
-    - [Python](Roadmap/Programming-Languages/python/README.md)
+    - [Go](Roadmap/Programming-Languages/languages/golang/README.md)
+    - [Java](Roadmap/Programming-Languages/languages/java/README.md)
+    - [Python](Roadmap/Programming-Languages/languages/python/README.md)
     - Rust · soon
     - SQL · soon
 
