@@ -61,6 +61,12 @@ theme:
       accent: custom
       toggle:
         icon: material/weather-sunny
+        name: Switch to sepia mode
+    - scheme: senior-sepia
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/book-open-page-variant
         name: Switch to dark mode
   icon:
     repo: fontawesome/brands/github
@@ -91,10 +97,12 @@ plugins:
         - assets/extra.js
         - assets/eink.js
         - assets/fontsize.js
+        - assets/reading.js
       css_files:
         - assets/extra.css
         - assets/eink.css
         - assets/fontsize.css
+        - assets/reading.css
         - assets/fonts/intel-one-mono.css
 
 markdown_extensions:
@@ -168,8 +176,10 @@ extra_css:
   - assets/extra.css
   - assets/eink.css
   - assets/fontsize.css
+  - assets/reading.css
 
 extra_javascript:
   - assets/extra.js
   - assets/eink.js
   - assets/fontsize.js
+  - assets/reading.js

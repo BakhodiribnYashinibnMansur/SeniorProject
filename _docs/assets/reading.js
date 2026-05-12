@@ -1,0 +1,536 @@
+/* ================================================================
+   Senior Stack — Reading-Comfort Pack
+   Nine features in one IIFE:
+     F1 progress bar (top)       F6 bionic reading
+     F2 read-time (per-article)  F7 scroll-position save
+     F3 focus mode (F key)       F8 reading-width toggle
+     F4 sepia palette (CSS only) F9 auto-hide header
+     F5 mark-as-read
+
+   Conventions reused: window.document$.subscribe, sp- localStorage
+   prefix, .sp-* BEM classes, INPUT/TEXTAREA keyboard guard.
+   ================================================================ */
+(function () {
+  "use strict";
+
+  // ---------- Storage helpers -----------------------------------
+  const K = {
+    focus:     "sp-focus-mode",
+    bionic:    "sp-bionic",
+    autohide:  "sp-autohide",
+    readSet:   "sp-read-set",
+    readWidth: "sp-read-width",
+    scroll:    "sp-scroll:",   // prefix
+  };
+
+  function lsGet(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function lsSet(key, value) {
+    try { localStorage.setItem(key, value); } catch (e) {}
+  }
+  function readJSON(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      return JSON.parse(raw);
+    } catch (e) { return fallback; }
+  }
+  function writeJSON(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+  function isHome() {
+    return !!document.querySelector("[data-home]");
+  }
+
+  // ---------- F1: Reading progress bar --------------------------
+  let progressBar = null;
+  let progressTicking = false;
+
+  function ensureProgressBar() {
+    if (progressBar && document.body.contains(progressBar)) return progressBar;
+    progressBar = document.createElement("div");
+    progressBar.className = "sp-progress";
+    progressBar.setAttribute("role", "progressbar");
+    progressBar.setAttribute("aria-label", "Reading progress");
+    progressBar.setAttribute("aria-valuemin", "0");
+    progressBar.setAttribute("aria-valuemax", "100");
+    document.body.appendChild(progressBar);
+    return progressBar;
+  }
+
+  function updateProgress() {
+    progressTicking = false;
+    if (!progressBar) return;
+    const h = document.documentElement;
+    const max = h.scrollHeight - window.innerHeight;
+    if (max <= 0) { progressBar.style.transform = "scaleX(0)"; return; }
+    const pct = Math.max(0, Math.min(1, h.scrollTop / max));
+    progressBar.style.transform = "scaleX(" + pct + ")";
+    progressBar.setAttribute("aria-valuenow", String(Math.round(pct * 100)));
+  }
+
+  function onProgressScroll() {
+    if (progressTicking) return;
+    progressTicking = true;
+    requestAnimationFrame(updateProgress);
+  }
+
+  function initProgressBar() {
+    if (isHome()) {
+      if (progressBar) progressBar.style.display = "none";
+      return;
+    }
+    ensureProgressBar();
+    progressBar.style.display = "";
+    updateProgress();
+  }
+
+  // ---------- F2: Estimated read time ---------------------------
+  const READ_TIME_CLASS = "sp-readtime";
+  const WPM = 200;
+
+  function countWords(root) {
+    const SKIP = new Set(["PRE", "CODE", "SCRIPT", "STYLE"]);
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (node) {
+        let p = node.parentNode;
+        while (p && p !== root) {
+          if (SKIP.has(p.nodeName)) return NodeFilter.FILTER_REJECT;
+          if (p.classList && (p.classList.contains("mermaid") ||
+                              p.classList.contains("sp-report") ||
+                              p.classList.contains("sp-readtime"))) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          p = p.parentNode;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+    let n = 0;
+    while (walker.nextNode()) {
+      const txt = walker.currentNode.nodeValue;
+      if (!txt) continue;
+      const parts = txt.split(/\s+/);
+      for (let i = 0; i < parts.length; i++) if (parts[i]) n++;
+    }
+    return n;
+  }
+
+  function injectReadTime() {
+    if (isHome()) return;
+    const content = document.querySelector(".md-content__inner");
+    if (!content) return;
+    if (content.querySelector("." + READ_TIME_CLASS)) return;
+    const typeset = content.querySelector(".md-typeset") || content;
+    const words = countWords(typeset);
+    if (words < 100) return;
+    const mins = Math.max(1, Math.ceil(words / WPM));
+    const p = document.createElement("p");
+    p.className = READ_TIME_CLASS;
+    p.textContent =
+      "≈ " + mins + " min read · " +
+      words.toLocaleString("en-US") + " words";
+    const h1 = typeset.querySelector("h1");
+    if (h1 && h1.parentNode === typeset) {
+      h1.insertAdjacentElement("afterend", p);
+    } else {
+      typeset.insertBefore(p, typeset.firstChild);
+    }
+  }
+
+  // ---------- F3: Focus mode ------------------------------------
+  function applyFocus(on) {
+    if (on) document.documentElement.setAttribute("data-focus", "1");
+    else document.documentElement.removeAttribute("data-focus");
+    const cb = document.querySelector('.sp-reader-panel input[data-toggle="focus"]');
+    if (cb) cb.checked = !!on;
+  }
+  function isFocusOn() {
+    return document.documentElement.getAttribute("data-focus") === "1";
+  }
+  function toggleFocus() {
+    const next = !isFocusOn();
+    lsSet(K.focus, next ? "on" : "off");
+    applyFocus(next);
+  }
+
+  // ---------- F5: Mark-as-read ----------------------------------
+  function readSet() {
+    const arr = readJSON(K.readSet, []);
+    return new Set(Array.isArray(arr) ? arr : []);
+  }
+  function writeReadSet(set) {
+    writeJSON(K.readSet, Array.from(set));
+  }
+  function currentPath() {
+    return location.pathname.replace(/\/+$/, "/") || "/";
+  }
+  function isPageRead(set) {
+    return set.has(currentPath());
+  }
+  function setPageRead(on) {
+    const set = readSet();
+    const path = currentPath();
+    if (on) set.add(path); else set.delete(path);
+    writeReadSet(set);
+    markSidebar();
+    const cb = document.querySelector('.sp-reader-panel input[data-toggle="read"]');
+    if (cb) cb.checked = on;
+  }
+  function markSidebar() {
+    const set = readSet();
+    const links = document.querySelectorAll(".md-sidebar--primary .md-nav__link[href]");
+    for (let i = 0; i < links.length; i++) {
+      const a = links[i];
+      let pathname;
+      try {
+        pathname = new URL(a.getAttribute("href"), location.href).pathname.replace(/\/+$/, "/") || "/";
+      } catch (e) { continue; }
+      if (set.has(pathname)) a.classList.add("sp-read");
+      else a.classList.remove("sp-read");
+    }
+  }
+
+  // ---------- F6: Bionic reading --------------------------------
+  const BIONIC_CLASS = "sp-bionic-fix";
+  const BIONIC_CHAR_LIMIT = 50000;
+
+  function applyBionicAttr(on) {
+    if (on) document.documentElement.setAttribute("data-bionic", "1");
+    else document.documentElement.removeAttribute("data-bionic");
+    const cb = document.querySelector('.sp-reader-panel input[data-toggle="bionic"]');
+    if (cb) cb.checked = !!on;
+  }
+  function isBionicOn() {
+    return document.documentElement.getAttribute("data-bionic") === "1";
+  }
+  function bionicifyWord(word) {
+    if (!word || word.length < 2) return null;
+    const n = Math.min(4, Math.ceil(word.length / 2));
+    return { head: word.slice(0, n), tail: word.slice(n) };
+  }
+  function bionicifyTextNode(node) {
+    const txt = node.nodeValue;
+    if (!txt || !/\S/.test(txt)) return;
+    const frag = document.createDocumentFragment();
+    const parts = txt.split(/(\s+)/);
+    let changed = false;
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (!part) continue;
+      if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); continue; }
+      const split = bionicifyWord(part);
+      if (split) {
+        const b = document.createElement("b");
+        b.className = BIONIC_CLASS;
+        b.textContent = split.head;
+        frag.appendChild(b);
+        if (split.tail) frag.appendChild(document.createTextNode(split.tail));
+        changed = true;
+      } else {
+        frag.appendChild(document.createTextNode(part));
+      }
+    }
+    if (changed && node.parentNode) node.parentNode.replaceChild(frag, node);
+  }
+  function bionicifyContent() {
+    const root = document.querySelector(".md-content__inner .md-typeset");
+    if (!root) return;
+    if (root.textContent.length > BIONIC_CHAR_LIMIT) return;
+    const SKIP = new Set(["PRE", "CODE", "SCRIPT", "STYLE", "A", "B", "STRONG", "H1"]);
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (node) {
+        let p = node.parentNode;
+        while (p && p !== root) {
+          if (SKIP.has(p.nodeName)) return NodeFilter.FILTER_REJECT;
+          if (p.classList && (p.classList.contains("mermaid") ||
+                              p.classList.contains("sp-report") ||
+                              p.classList.contains("sp-readtime") ||
+                              p.classList.contains(BIONIC_CLASS))) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          p = p.parentNode;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+    const targets = [];
+    while (walker.nextNode()) targets.push(walker.currentNode);
+    for (let i = 0; i < targets.length; i++) bionicifyTextNode(targets[i]);
+  }
+  function unbionicifyContent() {
+    const fixes = document.querySelectorAll("." + BIONIC_CLASS);
+    for (let i = 0; i < fixes.length; i++) {
+      const b = fixes[i];
+      const parent = b.parentNode;
+      if (!parent) continue;
+      parent.replaceChild(document.createTextNode(b.textContent), b);
+      parent.normalize();
+    }
+  }
+  function refreshBionic() {
+    unbionicifyContent();
+    if (isBionicOn()) bionicifyContent();
+  }
+  function toggleBionic() {
+    const next = !isBionicOn();
+    lsSet(K.bionic, next ? "on" : "off");
+    applyBionicAttr(next);
+    refreshBionic();
+  }
+
+  // ---------- F7: Scroll position save --------------------------
+  const SCROLL_THRESHOLD = 200;
+  let scrollSaveTimer = null;
+  const restoredPaths = new Set();
+  let lastSavedPath = null;
+  let lastSavedScroll = 0;
+
+  function scrollKey() { return K.scroll + currentPath(); }
+
+  function saveScroll() {
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    if (y < SCROLL_THRESHOLD) {
+      lsSet(scrollKey(), "");
+      return;
+    }
+    lsSet(scrollKey(), String(Math.round(y)));
+  }
+
+  function onScrollSave() {
+    if (scrollSaveTimer) return;
+    scrollSaveTimer = setTimeout(function () {
+      scrollSaveTimer = null;
+      saveScroll();
+    }, 400);
+  }
+
+  function maybeRestoreScroll() {
+    if (isHome()) return;
+    const path = currentPath();
+    if (restoredPaths.has(path)) return;
+    restoredPaths.add(path);
+    if (location.hash) return;
+    const raw = lsGet(scrollKey());
+    if (!raw) return;
+    const y = parseInt(raw, 10);
+    if (isNaN(y) || y < SCROLL_THRESHOLD) return;
+    setTimeout(function () {
+      window.scrollTo({ top: y, behavior: "auto" });
+    }, 50);
+  }
+
+  // ---------- F8: Reading width ---------------------------------
+  function applyReadWidth(value) {
+    const v = (value === "60ch" || value === "75ch" || value === "90ch") ? value : "none";
+    document.documentElement.style.setProperty("--sp-read-width", v);
+    const btns = document.querySelectorAll(".sp-reader-panel__btns button[data-width]");
+    for (let i = 0; i < btns.length; i++) {
+      btns[i].setAttribute("aria-pressed", btns[i].getAttribute("data-width") === v ? "true" : "false");
+    }
+  }
+  function setReadWidth(v) {
+    lsSet(K.readWidth, v);
+    applyReadWidth(v);
+  }
+
+  // ---------- F9: Auto-hide header ------------------------------
+  let lastScrollY = 0;
+  let autoHideAttached = false;
+
+  function applyAutoHideAttr(on) {
+    if (on) document.documentElement.setAttribute("data-autohide", "1");
+    else {
+      document.documentElement.removeAttribute("data-autohide");
+      document.documentElement.classList.remove("sp-nav-hidden");
+    }
+    const cb = document.querySelector('.sp-reader-panel input[data-toggle="autohide"]');
+    if (cb) cb.checked = !!on;
+  }
+  function isAutoHideOn() {
+    return document.documentElement.getAttribute("data-autohide") === "1";
+  }
+  function onAutoHideScroll() {
+    if (!isAutoHideOn()) return;
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    const html = document.documentElement;
+    if (y > lastScrollY + 8 && y > 60) {
+      html.classList.add("sp-nav-hidden");
+    } else if (y < lastScrollY - 4) {
+      html.classList.remove("sp-nav-hidden");
+    }
+    lastScrollY = y;
+  }
+  function toggleAutoHide() {
+    const next = !isAutoHideOn();
+    lsSet(K.autohide, next ? "on" : "off");
+    applyAutoHideAttr(next);
+  }
+
+  // ---------- Reader-settings panel -----------------------------
+  let panelEl = null;
+  let panelToggleEl = null;
+
+  function buildReaderPanel() {
+    if (panelToggleEl && document.body.contains(panelToggleEl)) return;
+    panelToggleEl = document.createElement("button");
+    panelToggleEl.type = "button";
+    panelToggleEl.className = "sp-reader-panel__toggle";
+    panelToggleEl.setAttribute("aria-label", "Reader settings");
+    panelToggleEl.setAttribute("aria-expanded", "false");
+    panelToggleEl.setAttribute("title", "Reader settings");
+    panelToggleEl.textContent = "⚙";
+
+    panelEl = document.createElement("div");
+    panelEl.className = "sp-reader-panel";
+    panelEl.hidden = true;
+    panelEl.innerHTML =
+      '<h4>Reader settings</h4>' +
+      '<section>' +
+        '<span>Reading width</span>' +
+        '<div class="sp-reader-panel__btns">' +
+          '<button type="button" data-width="60ch" aria-pressed="false">60</button>' +
+          '<button type="button" data-width="75ch" aria-pressed="false">75</button>' +
+          '<button type="button" data-width="90ch" aria-pressed="false">90</button>' +
+          '<button type="button" data-width="none" aria-pressed="false">∞</button>' +
+        '</div>' +
+      '</section>' +
+      '<label><input type="checkbox" data-toggle="focus"> Focus mode (F)</label>' +
+      '<label><input type="checkbox" data-toggle="bionic"> Bionic reading</label>' +
+      '<label><input type="checkbox" data-toggle="autohide"> Auto-hide header</label>' +
+      '<hr>' +
+      '<label><input type="checkbox" data-toggle="read"> Mark this page as read</label>';
+
+    document.body.appendChild(panelToggleEl);
+    document.body.appendChild(panelEl);
+
+    panelToggleEl.addEventListener("click", function (e) {
+      e.stopPropagation();
+      const open = panelEl.hidden;
+      panelEl.hidden = !open;
+      panelToggleEl.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+
+    panelEl.addEventListener("click", function (e) { e.stopPropagation(); });
+
+    document.addEventListener("click", function (e) {
+      if (panelEl.hidden) return;
+      if (e.target === panelToggleEl) return;
+      if (panelEl.contains(e.target)) return;
+      panelEl.hidden = true;
+      panelToggleEl.setAttribute("aria-expanded", "false");
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !panelEl.hidden) {
+        panelEl.hidden = true;
+        panelToggleEl.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    const widthBtns = panelEl.querySelectorAll(".sp-reader-panel__btns button[data-width]");
+    for (let i = 0; i < widthBtns.length; i++) {
+      widthBtns[i].addEventListener("click", function () {
+        setReadWidth(this.getAttribute("data-width"));
+      });
+    }
+
+    panelEl.querySelector('input[data-toggle="focus"]').addEventListener("change", function () {
+      lsSet(K.focus, this.checked ? "on" : "off");
+      applyFocus(this.checked);
+    });
+    panelEl.querySelector('input[data-toggle="bionic"]').addEventListener("change", function () {
+      lsSet(K.bionic, this.checked ? "on" : "off");
+      applyBionicAttr(this.checked);
+      refreshBionic();
+    });
+    panelEl.querySelector('input[data-toggle="autohide"]').addEventListener("change", function () {
+      lsSet(K.autohide, this.checked ? "on" : "off");
+      applyAutoHideAttr(this.checked);
+    });
+    panelEl.querySelector('input[data-toggle="read"]').addEventListener("change", function () {
+      setPageRead(this.checked);
+    });
+  }
+
+  function syncPanelState() {
+    if (!panelEl) return;
+    const focusCb    = panelEl.querySelector('input[data-toggle="focus"]');
+    const bionicCb   = panelEl.querySelector('input[data-toggle="bionic"]');
+    const autohideCb = panelEl.querySelector('input[data-toggle="autohide"]');
+    const readCb     = panelEl.querySelector('input[data-toggle="read"]');
+    if (focusCb)    focusCb.checked    = (lsGet(K.focus) === "on");
+    if (bionicCb)   bionicCb.checked   = (lsGet(K.bionic) === "on");
+    if (autohideCb) autohideCb.checked = (lsGet(K.autohide) === "on");
+    if (readCb)     readCb.checked     = isPageRead(readSet());
+  }
+
+  // ---------- Body-level listeners (attach once) -----------------
+  function attachBodyListeners() {
+    window.addEventListener("scroll", onProgressScroll, { passive: true });
+    window.addEventListener("scroll", onScrollSave, { passive: true });
+    window.addEventListener("scroll", onAutoHideScroll, { passive: true });
+    window.addEventListener("resize", onProgressScroll, { passive: true });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key !== "f" && e.key !== "F") return;
+      const t = e.target;
+      const tag = (t && t.tagName) || "";
+      if (/^(INPUT|TEXTAREA|SELECT)$/.test(tag)) return;
+      if (t && t.isContentEditable) return;
+      toggleFocus();
+      e.preventDefault();
+    });
+
+    autoHideAttached = true;
+  }
+
+  // ---------- Per-page init (re-runs on instant nav) ------------
+  function initAll() {
+    if (!document.body) return;
+
+    buildReaderPanel();
+
+    // F8 — reading width (load + apply before anything else, prevents flicker)
+    const storedWidth = lsGet(K.readWidth);
+    applyReadWidth(storedWidth || "none");
+
+    // F3 — focus
+    applyFocus(lsGet(K.focus) === "on");
+
+    // F9 — auto-hide
+    applyAutoHideAttr(lsGet(K.autohide) === "on");
+
+    // F1 — progress bar
+    initProgressBar();
+
+    // F2 — read-time (per page)
+    injectReadTime();
+
+    // F5 — mark-as-read sidebar + checkbox
+    markSidebar();
+
+    // F6 — bionic (reapply on each page swap if on)
+    applyBionicAttr(lsGet(K.bionic) === "on");
+    if (isBionicOn()) bionicifyContent();
+
+    // Panel checkbox sync per-page (the "read" one depends on path)
+    syncPanelState();
+
+    // F7 — scroll restore for this path (once per session)
+    maybeRestoreScroll();
+
+    if (!autoHideAttached) attachBodyListeners();
+  }
+
+  // ---------- Boot ----------------------------------------------
+  if (typeof window.document$ !== "undefined" && window.document$.subscribe) {
+    window.document$.subscribe(initAll);
+  } else if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAll);
+  } else {
+    initAll();
+  }
+})();
