@@ -240,7 +240,7 @@
     if (changed && node.parentNode) node.parentNode.replaceChild(frag, node);
   }
   function bionicifyContent() {
-    const root = document.querySelector(".md-content__inner .md-typeset");
+    const root = document.querySelector(".md-content .md-typeset");
     if (!root) return;
     if (root.textContent.length > BIONIC_CHAR_LIMIT) return;
     const SKIP = new Set(["PRE", "CODE", "SCRIPT", "STYLE", "A", "B", "STRONG", "H1"]);
@@ -465,7 +465,7 @@
       span.className = "sp-sec-stat";
       span.textContent = st.read + "/" + st.total + " · " + st.pct + "%";
       const icon = lbl.querySelector(".md-nav__icon");
-      if (icon) lbl.insertBefore(span, icon);
+      if (icon && icon.parentNode === lbl) lbl.insertBefore(span, icon);
       else lbl.appendChild(span);
     }
   }
