@@ -18,7 +18,7 @@ hide:
 
     ??? note "[AI Agents](Roadmap/AI/ai-agents/README.md)"
 
-        - Learn The Pre Requisites
+        - Learn the Pre Requisites
         - LLM Fundamentals
         - AI Agents 101
         - Prompt Engineering
@@ -27,8 +27,8 @@ hide:
         - Agent Memory
         - Agent Architectures
         - Building Agents
-        - Evaluation And Testing
-        - Debugging And Monitoring
+        - Evaluation and Testing
+        - Debugging and Monitoring
         - Security Ethics
 
     ??? note "[AI Engineer](Roadmap/AI/ai-engineer/README.md)"
@@ -36,7 +36,7 @@ hide:
         - Introduction
         - Using Pre Trained Models
         - Open AI Platform
-        - AI Safety And Ethics
+        - AI Safety and Ethics
         - Opensource AI
         - Embeddings Vector Databases
         - RAG Implementation
@@ -48,7 +48,7 @@ hide:
     ??? note "[Claude Code](Roadmap/AI/claude-code/README.md)"
 
         - Introduction
-        - Understand The Basics
+        - Understand the Basics
         - Using Claude Code
         - Claude Workflow
         - Usage Best Practices
@@ -69,7 +69,7 @@ hide:
         - Machine Learning
         - Model Evaluation
         - Deep Learning
-        - Advanced Concepts In Ml
+        - Advanced Concepts in Ml
 
     ??? note "[Prompt Engineering](Roadmap/AI/prompt-engineering/README.md)"
 
@@ -86,7 +86,7 @@ hide:
         - What Is Vibe Coding
         - AI Assisted Coding Tools
         - Plan Before You Code
-        - Tech Stack And Coding
+        - Tech Stack and Coding
         - Prompting Best Practices
         - Context
         - Debugging
@@ -101,8 +101,8 @@ hide:
     ??? note "[Anti Patterns](Roadmap/Architecture/anti-patterns/README.md)"
 
         - System Shape
-        - Coupling At Boundaries
-        - Process And Trends
+        - Coupling at Boundaries
+        - Process and Trends
 
     ??? note "[Blockchain](Roadmap/Architecture/blockchain/README.md)"
 
@@ -115,12 +115,12 @@ hide:
         - Management Platforms
         - Version Control Systems
         - DApps Decentralized Applications
-        - Building For Scale
+        - Building for Scale
 
     ??? note "[Computer Science](Roadmap/Architecture/computer-science/README.md)"
 
         - Operating Systems
-        - Pick A Language
+        - Pick a Language
         - Data Structures
         - Networking
         - Asymptotic Notation
@@ -137,7 +137,7 @@ hide:
         - Networking
         - Security
         - How Computers Work
-        - Processes And Threads
+        - Processes and Threads
         - System Design
 
     ??? note "[DDD](Roadmap/Architecture/ddd/README.md)"
@@ -150,9 +150,9 @@ hide:
 
     ??? note "[Software Architect](Roadmap/Architecture/software-architect/README.md)"
 
-        - Understand The Basics
+        - Understand the Basics
         - Responsibilities
-        - Important Skills To Learn
+        - Important Skills to Learn
         - Programming Languages
         - Technical Skills
         - Operations Knowledge
@@ -182,7 +182,7 @@ hide:
         - Classic Problems
         - Domain Name System
         - Real Architectures
-        - Back Of Envelope
+        - Back of Envelope
         - Content Delivery Networks
         - Load Balancers
         - Application Layer
@@ -201,10 +201,10 @@ hide:
 
     ??? note "[API Design](Roadmap/Backend/api-design/README.md)"
 
-        - Learn The Basics
+        - Learn the Basics
         - Different API Styles
         - Building JSON Restful APIs
-        - API Authentication And Authorization
+        - API Authentication and Authorization
         - API Documentation Tools
         - API Security
         - API Performance
@@ -212,14 +212,14 @@ hide:
         - API Testing
         - Real Time APIs
         - API Lifecycle Management
-        - Standards And Compliance
+        - Standards and Compliance
 
     ??? note "[Backend](Roadmap/Backend/backend/README.md)"
 
         - Databases
         - Internet
         - Caching
-        - Pick A Language
+        - Pick a Language
         - Message Queues
         - Version Control Systems
         - Rate Limiting
@@ -238,12 +238,12 @@ hide:
         - Testing
         - CI CD
         - Software Design Architecture
-        - Containerization Vs Virtualization
+        - Containerization vs Virtualization
         - Web Servers
         - Search Engines
         - Message Brokers
         - Real Time Data
-        - Building For Scale
+        - Building for Scale
         - Observability
         - Basic Infrastructure Knowledge
 
@@ -298,7 +298,7 @@ hide:
     ??? note "[PostgreSQL (DBA)](Roadmap/Backend/postgresql-dba/README.md)"
 
         - Introduction
-        - Installation And Setup
+        - Installation and Setup
         - Learn SQL
         - Configuring
         - Security
@@ -308,15 +308,15 @@ hide:
         - Advanced SQL
         - Troubleshooting Techniques
         - SQL Optimization Techniques
-        - Get Involved In Development
+        - Get Involved in Development
 
     ??? note "[Redis](Roadmap/Backend/redis/README.md)"
 
-        - Overview Of Redis What Is It
-        - Getting Started With Redis
+        - Overview of Redis What Is It
+        - Getting Started with Redis
         - First Steps
         - Core Data Structures
-        - Working With Redis
+        - Working with Redis
         - Advanced Data Structures
         - Pub Sub
         - Transactions
@@ -326,7 +326,7 @@ hide:
         - Security
         - Monitoring Optimization
         - Redis Modules
-        - Managing Redis In Production
+        - Managing Redis in Production
         - Redis Enterprise
 
 -   :material-chart-line:{ .lg .middle } **Data**
@@ -362,7 +362,7 @@ hide:
     ??? note "[Data Analyst](Roadmap/Data/data-analyst/README.md)"
 
         - Introduction
-        - Building A Strong Foundation
+        - Building a Strong Foundation
         - Gain Programming Skills
         - Mastering Data Handling
         - Data Analysis Techniques
@@ -371,8 +371,8 @@ hide:
 
     ??? note "[Data Structures & Algorithms](Roadmap/Data/datastructures-and-algorithms/README.md)"
 
-        - Introduction To DSA
-        - Pick A Language
+        - Introduction to DSA
+        - Pick a Language
         - [Programming Fundamentals](Roadmap/Data/datastructures-and-algorithms/02-programming-fundamentals/01-language-syntax/junior.md)
         - [What Are Data Structures](Roadmap/Data/datastructures-and-algorithms/03-what-are-data-structures/junior.md)
         - [Why Are Data Structures Important](Roadmap/Data/datastructures-and-algorithms/04-why-are-data-structures-important/junior.md)
@@ -388,7 +388,7 @@ hide:
         - Disjoint Set Union Find
         - Dynamic Programming
         - Greedy Algorithms
-        - Divide And Conquer
+        - Divide and Conquer
         - Divide Conquer
         - Backtracking
         - String Algorithms
@@ -398,7 +398,7 @@ hide:
         - Advanced Data Structures
         - Advanced Structures
         - Randomized Algorithms
-        - Platforms To Practice
+        - Platforms to Practice
 
 -   :material-cloud-cog:{ .lg .middle } **DevOps**
 
@@ -429,7 +429,7 @@ hide:
         - Prerequisites
         - Core Development Skills
         - Workers Core Concepts
-        - Frameworks And Tools
+        - Frameworks and Tools
         - Storage Solutions
         - Durable Execution
         - Advanced Features
@@ -439,7 +439,7 @@ hide:
 
     ??? note "[DevOps](Roadmap/DevOps/devops/README.md)"
 
-        - Learn A Programming Language
+        - Learn a Programming Language
         - Operating System
         - Terminal Knowledge
         - Version Control Systems
@@ -465,9 +465,9 @@ hide:
         - Introduction
         - Underlying Technologies
         - Installation Setup
-        - Basics Of Docker
+        - Basics of Docker
         - Data Persistence
-        - Using 3Rd Party Container Images
+        - Using 3rd Party Container Images
         - Runtime Configuration Options
         - Building Container Images
         - Container Registries
@@ -483,11 +483,11 @@ hide:
         - Setting Up Kubernetes
         - Running Applications
         - Configuration Management
-        - Services And Networking
+        - Services and Networking
         - Security
         - Resource Management
-        - Monitoring And Logging
-        - Storage And Volumes
+        - Monitoring and Logging
+        - Storage and Volumes
         - Scheduling
         - Autoscaling
         - Deployment Patterns
@@ -497,15 +497,15 @@ hide:
 
         - Navigation Basics
         - Editing Files
-        - Shell And Other Basics
+        - Shell and Other Basics
         - Text Processing
-        - Working With Files
+        - Working with Files
         - User Management
         - Process Management
         - Server Review
         - Service Management Systemd
         - Package Management
-        - Disks And Filesystems
+        - Disks and Filesystems
         - Booting Linux
         - Networking
         - Shell Programming
@@ -522,7 +522,7 @@ hide:
         - Data Engineering Fundamentals
         - MLOps Principles
         - MLOps Components
-        - Infrastructure As Code
+        - Infrastructure as Code
 
     ??? note "[Terraform](Roadmap/DevOps/terraform/README.md)"
 
@@ -553,9 +553,9 @@ hide:
 
     ??? note "[Design System](Roadmap/Frontend/design-system/README.md)"
 
-        - Understand The Basics
+        - Understand the Basics
         - Terminology
-        - Making A Design System
+        - Making a Design System
         - Existing Design Analysis
         - Creating Design Language
         - Defining Design Tokens
@@ -571,7 +571,7 @@ hide:
         - Javascript
         - Version Control Systems
         - Package Managers
-        - Pick A Framework
+        - Pick a Framework
         - Writing CSS
         - Build Tools
         - Testing
@@ -622,7 +622,7 @@ hide:
 
     ??? note "[TypeScript](Roadmap/Frontend/typescript/README.md)"
 
-        - Introduction To Typescript
+        - Introduction to Typescript
         - Typescript Types
         - Combining Types
         - Type Guards Narrowing
@@ -642,7 +642,7 @@ hide:
 
     ??? note "[Android](Roadmap/Mobile/android/README.md)"
 
-        - Pick A Language
+        - Pick a Language
         - The Fundamentals
         - Version Control
         - App Components
@@ -659,18 +659,18 @@ hide:
 
     ??? note "[iOS](Roadmap/Mobile/ios/README.md)"
 
-        - Pick A Language
+        - Pick a Language
         - The Fundamentals
         - Version Control
         - Xcode App Components
         - UI Kit Basics
         - Swiftui
-        - Interfaces And Navigation
+        - Interfaces and Navigation
         - Design Architecture
         - Storage Data Persistence
         - JSON Xml
         - Networking
-        - Concurrency And Multithreading Asynchronism
+        - Concurrency and Multithreading Asynchronism
         - Dependency Manager
         - Frameworks Library
         - Accessibility
@@ -681,7 +681,7 @@ hide:
         - App Distribution
         - CI CD
         - App Store Optimization Aso
-        - Continuous Learning Keeping Updated With Wwdc
+        - Continuous Learning Keeping Updated with Wwdc
 
 -   :material-code-tags:{ .lg .middle } **Programming Languages**
 
@@ -691,48 +691,28 @@ hide:
 
     ??? note "[Go](Roadmap/Programming-Languages/languages/golang/README.md)"
 
-        - [Introduction To Go](Roadmap/Programming-Languages/languages/golang/01-introduction-to-go/index.md)
+        - [Introduction to Go](Roadmap/Programming-Languages/languages/golang/01-introduction-to-go/index.md)
         - [Language Basics](Roadmap/Programming-Languages/languages/golang/02-language-basics/index.md)
-        - [Methods And Interfaces](Roadmap/Programming-Languages/languages/golang/03-methods-and-interfaces/01-methods-vs-functions/junior.md)
+        - [Methods and Interfaces](Roadmap/Programming-Languages/languages/golang/03-methods-and-interfaces/01-methods-vs-functions/junior.md)
         - [Generics](Roadmap/Programming-Languages/languages/golang/04-generics/01-why-generics/junior.md)
         - [Error Handling](Roadmap/Programming-Languages/languages/golang/05-error-handling/01-error-handling-basics/junior.md)
         - [Code Organization](Roadmap/Programming-Languages/languages/golang/06-code-organization/01-modules-and-dependencies/01-go-mod-init/junior.md)
         - [Concurrency](Roadmap/Programming-Languages/languages/golang/07-concurrency/00-introduction/01-what-is-concurrency/junior.md)
         - [Standard Library](Roadmap/Programming-Languages/languages/golang/08-standard-library/01-io-and-file-handling/junior.md)
-        - Testing And Benchmarking
-        - Testing Benchmarking
-        - Ecosystem And Libraries
-        - Ecosystem Popular Libraries
+        - Testing and Benchmarking
+        - Ecosystem and Libraries
         - Go Toolchain
-        - Go Toolchain And Tools
         - Advanced Topics
         - Performance Engineering
-        - Production And Operations
-        - Production Operations
-        - Observability
-        - Security In Go
-        - Design Patterns In Go
-        - Architecture Patterns
-        - OOP Design Principles
-        - Architecture Patterns
-        - Microservices
-        - Database Patterns
-        - Microservices
-        - API Design
-        - Database Patterns
-        - API Design
-        - Distributed Systems
+        - Security in Go
+        - Design Patterns in Go
         - Cloud Native Go
-        - Distributed Systems
-        - Cloud Native Go
-        - Runtime Internals
-        - Go Source Reading
-        - Runtime And Internals
+        - Runtime and Internals
         - Go Source Reading
 
     ??? note "[Java](Roadmap/Programming-Languages/languages/java/README.md)"
 
-        - [Learn The Basics](Roadmap/Programming-Languages/languages/java/01-learn-the-basics/01-basic-syntax/junior.md)
+        - [Learn the Basics](Roadmap/Programming-Languages/languages/java/01-learn-the-basics/01-basic-syntax/junior.md)
         - [Object Oriented Programming](Roadmap/Programming-Languages/languages/java/02-object-oriented-programming/01-basics-of-oop/01-classes-and-objects/junior.md)
         - Exception Handling
         - Lambda Expressions
@@ -743,7 +723,7 @@ hide:
         - Dependency Injection
         - Concurrency
         - Cryptography
-        - Date And Time
+        - Date and Time
         - Networking
         - Regular Expressions
         - I O Operations
@@ -756,7 +736,7 @@ hide:
 
     ??? note "[Python](Roadmap/Programming-Languages/languages/python/README.md)"
 
-        - [Learn The Basics](Roadmap/Programming-Languages/languages/python/01-learn-the-basics/index.md)
+        - [Learn the Basics](Roadmap/Programming-Languages/languages/python/01-learn-the-basics/index.md)
         - Data Structures Algorithms
         - Modules
         - Lambdas
@@ -775,7 +755,7 @@ hide:
         - Code Formatting
         - Documentation
         - Concurrency
-        - Learn A Framework
+        - Learn a Framework
         - Testing
 
     ??? note "[Rust](Roadmap/Programming-Languages/languages/rust/README.md)"
@@ -791,13 +771,13 @@ hide:
         - Traits Generics
         - Lifetimes Borrow Checker
         - Macros Metaprogramming
-        - Ecosystem And Libraries
+        - Ecosystem and Libraries
         - Debugging
-        - Performance And Profiling
+        - Performance and Profiling
 
     ??? note "[SQL](Roadmap/Programming-Languages/languages/sql/README.md)"
 
-        - Learn The Basics
+        - Learn the Basics
         - Basic SQL Syntax
         - Data Definition Language Ddl
         - Data Manipulation Language Dml
@@ -832,7 +812,7 @@ hide:
 
     ??? note "[Language Internals](Roadmap/Programming-Languages/language-internals/README.md)"
 
-        - [Compilers And Interpreters](Roadmap/Programming-Languages/language-internals/compilers-and-interpreters/README.md)
+        - [Compilers and Interpreters](Roadmap/Programming-Languages/language-internals/compilers-and-interpreters/README.md)
         - [Concurrency](Roadmap/Programming-Languages/language-internals/concurrency/README.md)
         - [Memory Management](Roadmap/Programming-Languages/language-internals/memory-management/README.md)
         - [Metaprogramming](Roadmap/Programming-Languages/language-internals/metaprogramming/README.md)
@@ -856,7 +836,7 @@ hide:
         - Model Vulnerabilities
         - System Security
         - Testing Methodologies
-        - Tools And Frameworks
+        - Tools and Frameworks
         - Professional Development
         - Real World Applications
         - Future Directions
@@ -868,18 +848,18 @@ hide:
         - Certifications
         - Cryptography
         - Authentication
-        - Ctfs Capture The Flag
+        - Ctfs Capture the Flag
         - Operating Systems
         - Threat Modeling
         - Networking Knowledge
         - Secure SDLC
-        - Basics Of Virtualization
+        - Basics of Virtualization
         - Supply Chain
         - Troubleshooting Tools
         - Authentication Methodologies
-        - Security Skills And Knowledge
-        - Attack Types And Differences
-        - Cloud Skills And Knowledge
+        - Security Skills and Knowledge
+        - Attack Types and Differences
+        - Cloud Skills and Knowledge
         - Programming Skills
 
 -   :material-account-group:{ .lg .middle } **Soft Skills**
@@ -901,12 +881,12 @@ hide:
         - Review Etiquette
         - Asking Questions
         - Tests
-        - Blocking Vs Nit
+        - Blocking vs Nit
         - Documentation
         - Async Review
         - Implementation Semantics
         - API Semantics
-        - When To Approve
+        - When to Approve
 
     ??? note "[DevRel](Roadmap/Soft-Skills/devrel/README.md)"
 
@@ -936,11 +916,11 @@ hide:
 
         - Introduction
         - Product Identification
-        - Market And User Research
+        - Market and User Research
         - Product Strategy
         - Product Planning
         - Product Design
-        - Development And Launch
+        - Development and Launch
         - Product Metrics
         - Stakeholder Management
         - Product Management Tools
@@ -949,7 +929,7 @@ hide:
 
     ??? note "[QA](Roadmap/Soft-Skills/qa/README.md)"
 
-        - Learn The Fundamentals
+        - Learn the Fundamentals
         - Testing Techniques
         - SDLC Delivery Model
         - Manual Testing
@@ -974,7 +954,7 @@ hide:
         - API Docs
         - Content Research
         - Tutorials
-        - Types Of Technical Content
+        - Types of Technical Content
         - Technical Content Marketing
         - Content Optimization
         - Content Analysis
@@ -987,7 +967,7 @@ hide:
     ??? note "[AWS](Roadmap/Tools-and-Platforms/aws/README.md)"
 
         - Introduction
-        - Start With Essential Services
+        - Start with Essential Services
         - Auto Scaling
         - S3
         - Ses
@@ -1003,9 +983,9 @@ hide:
 
     ??? note "[Git & GitHub](Roadmap/Tools-and-Platforms/git-github/README.md)"
 
-        - Learn The Basics
+        - Learn the Basics
         - Basic Collaboration
-        - Working In A Team
+        - Working in a Team
         - Intermediate Git Topics
         - Github Workflow
         - Advanced Git Topics
