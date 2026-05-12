@@ -1,0 +1,324 @@
+/* ================================================================
+   Senior Stack — e-ink reading mode
+   Activated by `html[data-eink="1"]` (set by eink.js).
+   Goals:
+     - Pure black-on-white, no glow/shadow/gradient
+     - Zero animations / transitions (e-ink refresh is slow)
+     - Larger, calmer typography for long reading
+     - Static layout: no sticky headers, no hover effects
+   ================================================================ */
+
+html[data-eink="1"] {
+  --md-primary-fg-color:           #000000;
+  --md-primary-fg-color--light:    #000000;
+  --md-primary-fg-color--dark:     #000000;
+  --md-primary-bg-color:           #ffffff;
+  --md-primary-bg-color--light:    #ffffff;
+
+  --md-accent-fg-color:            #000000;
+  --md-accent-fg-color--transparent: rgba(0, 0, 0, 0.06);
+  --md-accent-bg-color:            #ffffff;
+  --md-accent-bg-color--light:     #ffffff;
+
+  --md-default-bg-color:           #ffffff;
+  --md-default-fg-color:           #000000;
+  --md-default-fg-color--light:    #1a1a1a;
+  --md-default-fg-color--lighter:  #3a3a3a;
+  --md-default-fg-color--lightest: #c8c8c8;
+
+  --md-typeset-a-color:            #000000;
+  --md-code-bg-color:              #f4f4f4;
+  --md-code-fg-color:              #000000;
+
+  --md-footer-bg-color:            #ffffff;
+  --md-footer-bg-color--dark:      #ffffff;
+  --md-footer-fg-color:            #1a1a1a;
+}
+
+/* -------- Kill every animation, transition, transform --------- */
+html[data-eink="1"],
+html[data-eink="1"] *,
+html[data-eink="1"] *::before,
+html[data-eink="1"] *::after {
+  animation: none !important;
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  transition: none !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+  scroll-behavior: auto !important;
+}
+
+html[data-eink="1"] * {
+  text-shadow: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* -------- Typography: bigger, serif-friendly, high contrast --- */
+html[data-eink="1"] body,
+html[data-eink="1"] .md-typeset {
+  font-family: "Intel One Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color: #000;
+  background: #fff;
+}
+
+html[data-eink="1"] .md-typeset {
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+html[data-eink="1"] .md-typeset h1,
+html[data-eink="1"] .md-typeset h2,
+html[data-eink="1"] .md-typeset h3,
+html[data-eink="1"] .md-typeset h4,
+html[data-eink="1"] .md-typeset h5,
+html[data-eink="1"] .md-typeset h6 {
+  color: #000;
+  border-left: 3px solid #000;
+  padding-left: 0.55rem;
+  background: transparent;
+}
+
+html[data-eink="1"] .md-typeset a,
+html[data-eink="1"] .md-typeset a:visited {
+  color: #000;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+html[data-eink="1"] .md-typeset a:hover {
+  color: #000;
+  background: transparent;
+}
+
+/* -------- Header / nav: static, flat, no sticky --------------- */
+html[data-eink="1"] .md-header,
+html[data-eink="1"] .md-tabs {
+  position: static !important;
+  background: #fff !important;
+  color: #000 !important;
+  border-bottom: 1px solid #000;
+}
+
+html[data-eink="1"] .md-header__title,
+html[data-eink="1"] .md-tabs__link {
+  color: #000 !important;
+  opacity: 1 !important;
+}
+
+html[data-eink="1"] .md-sidebar,
+html[data-eink="1"] .md-sidebar--secondary {
+  position: static !important;
+  height: auto !important;
+  background: #fff !important;
+}
+
+html[data-eink="1"] .md-sidebar__scrollwrap {
+  overflow: visible !important;
+  height: auto !important;
+}
+
+html[data-eink="1"] .md-nav__title,
+html[data-eink="1"] .md-nav__link {
+  color: #000 !important;
+  background: transparent !important;
+}
+
+html[data-eink="1"] .md-nav__link--active,
+html[data-eink="1"] .md-nav__link[aria-current="page"] {
+  color: #000 !important;
+  font-weight: 600;
+}
+
+/* -------- Code blocks: white bg, thin border, no syntax color - */
+html[data-eink="1"] .md-typeset pre,
+html[data-eink="1"] .md-typeset code,
+html[data-eink="1"] .md-typeset .highlight {
+  background: #f4f4f4 !important;
+  color: #000 !important;
+  border: 1px solid #000;
+  border-radius: 0;
+}
+
+html[data-eink="1"] .md-typeset .highlight .filename,
+html[data-eink="1"] .md-typeset .highlight .linenos {
+  background: #ebebeb !important;
+  color: #000 !important;
+  border-color: #000 !important;
+}
+
+html[data-eink="1"] .md-typeset code {
+  border: none;
+  padding: 0 0.25em;
+}
+
+/* Strip Pygments syntax highlighting colors */
+html[data-eink="1"] .md-typeset .highlight .k,
+html[data-eink="1"] .md-typeset .highlight .kc,
+html[data-eink="1"] .md-typeset .highlight .kd,
+html[data-eink="1"] .md-typeset .highlight .kn,
+html[data-eink="1"] .md-typeset .highlight .kp,
+html[data-eink="1"] .md-typeset .highlight .kr,
+html[data-eink="1"] .md-typeset .highlight .kt,
+html[data-eink="1"] .md-typeset .highlight .n,
+html[data-eink="1"] .md-typeset .highlight .na,
+html[data-eink="1"] .md-typeset .highlight .nb,
+html[data-eink="1"] .md-typeset .highlight .nc,
+html[data-eink="1"] .md-typeset .highlight .nd,
+html[data-eink="1"] .md-typeset .highlight .nf,
+html[data-eink="1"] .md-typeset .highlight .ni,
+html[data-eink="1"] .md-typeset .highlight .nl,
+html[data-eink="1"] .md-typeset .highlight .nn,
+html[data-eink="1"] .md-typeset .highlight .no,
+html[data-eink="1"] .md-typeset .highlight .nt,
+html[data-eink="1"] .md-typeset .highlight .nv,
+html[data-eink="1"] .md-typeset .highlight .s,
+html[data-eink="1"] .md-typeset .highlight .s1,
+html[data-eink="1"] .md-typeset .highlight .s2,
+html[data-eink="1"] .md-typeset .highlight .sb,
+html[data-eink="1"] .md-typeset .highlight .sc,
+html[data-eink="1"] .md-typeset .highlight .sd,
+html[data-eink="1"] .md-typeset .highlight .se,
+html[data-eink="1"] .md-typeset .highlight .sh,
+html[data-eink="1"] .md-typeset .highlight .si,
+html[data-eink="1"] .md-typeset .highlight .sr,
+html[data-eink="1"] .md-typeset .highlight .ss,
+html[data-eink="1"] .md-typeset .highlight .sx,
+html[data-eink="1"] .md-typeset .highlight .m,
+html[data-eink="1"] .md-typeset .highlight .mb,
+html[data-eink="1"] .md-typeset .highlight .mf,
+html[data-eink="1"] .md-typeset .highlight .mh,
+html[data-eink="1"] .md-typeset .highlight .mi,
+html[data-eink="1"] .md-typeset .highlight .mo,
+html[data-eink="1"] .md-typeset .highlight .o,
+html[data-eink="1"] .md-typeset .highlight .ow,
+html[data-eink="1"] .md-typeset .highlight .p,
+html[data-eink="1"] .md-typeset .highlight .c,
+html[data-eink="1"] .md-typeset .highlight .c1,
+html[data-eink="1"] .md-typeset .highlight .cm,
+html[data-eink="1"] .md-typeset .highlight .cp,
+html[data-eink="1"] .md-typeset .highlight .cs {
+  color: #000 !important;
+  background: transparent !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+}
+
+/* Comments stay subtly muted */
+html[data-eink="1"] .md-typeset .highlight .c,
+html[data-eink="1"] .md-typeset .highlight .c1,
+html[data-eink="1"] .md-typeset .highlight .cm,
+html[data-eink="1"] .md-typeset .highlight .cp,
+html[data-eink="1"] .md-typeset .highlight .cs {
+  color: #555 !important;
+  font-style: italic !important;
+}
+
+/* -------- Tables: black borders, white cells ------------------ */
+html[data-eink="1"] .md-typeset table:not([class]),
+html[data-eink="1"] .md-typeset table:not([class]) th,
+html[data-eink="1"] .md-typeset table:not([class]) td {
+  background: #fff !important;
+  color: #000 !important;
+  border: 1px solid #000 !important;
+}
+
+html[data-eink="1"] .md-typeset table:not([class]) th {
+  background: #ebebeb !important;
+  font-weight: 600;
+}
+
+html[data-eink="1"] .md-typeset table:not([class]) tr:hover {
+  background: #fff !important;
+}
+
+/* -------- Admonitions: black-bordered, no color fill ---------- */
+html[data-eink="1"] .md-typeset .admonition,
+html[data-eink="1"] .md-typeset details {
+  background: #fff !important;
+  border: 1px solid #000 !important;
+  border-left: 4px solid #000 !important;
+  border-radius: 0 !important;
+  color: #000 !important;
+}
+
+html[data-eink="1"] .md-typeset .admonition-title,
+html[data-eink="1"] .md-typeset summary {
+  background: #ebebeb !important;
+  color: #000 !important;
+  border-radius: 0 !important;
+}
+
+html[data-eink="1"] .md-typeset .admonition-title::before,
+html[data-eink="1"] .md-typeset summary::before {
+  background: #000 !important;
+}
+
+/* -------- Search / form elements ------------------------------ */
+html[data-eink="1"] .md-search__form,
+html[data-eink="1"] .md-search__input {
+  background: #fff !important;
+  color: #000 !important;
+  border: 1px solid #000 !important;
+  border-radius: 0 !important;
+}
+
+html[data-eink="1"] .md-search__input::placeholder {
+  color: #555 !important;
+}
+
+/* -------- Footer ---------------------------------------------- */
+html[data-eink="1"] .md-footer,
+html[data-eink="1"] .md-footer-meta {
+  background: #fff !important;
+  color: #000 !important;
+  border-top: 1px solid #000;
+}
+
+/* -------- Hide noisy widgets on e-ink ------------------------- */
+html[data-eink="1"] .md-feedback,
+html[data-eink="1"] .md-consent,
+html[data-eink="1"] .md-source,
+html[data-eink="1"] .md-search-result__teaser mark {
+  /* Keep search highlight readable but not noisy */
+  background: transparent !important;
+  color: #000 !important;
+  text-decoration: underline;
+}
+
+/* -------- Mermaid: force B&W ---------------------------------- */
+html[data-eink="1"] .mermaid svg {
+  filter: grayscale(100%) contrast(1.2) !important;
+  background: #fff !important;
+}
+
+/* -------- Eink toggle button (always visible) ----------------- */
+.sp-eink-toggle {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 9999;
+  font: 12px/1.2 ui-monospace, "SF Mono", Menlo, monospace;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  opacity: 0.45;
+}
+
+.sp-eink-toggle:hover {
+  opacity: 1;
+}
+
+html[data-eink="1"] .sp-eink-toggle {
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  opacity: 1;
+  border-radius: 0;
+}

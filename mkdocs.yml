@@ -78,8 +78,10 @@ plugins:
         remove_comments: true
       js_files:
         - assets/extra.js
+        - assets/eink.js
       css_files:
         - assets/extra.css
+        - assets/eink.css
         - assets/fonts/intel-one-mono.css
 
 markdown_extensions:
@@ -151,6 +153,8 @@ extra:
 extra_css:
   - assets/fonts/intel-one-mono.css
   - assets/extra.css
+  - assets/eink.css
 
 extra_javascript:
   - assets/extra.js
+  - assets/eink.js
