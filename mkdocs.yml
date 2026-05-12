@@ -9,8 +9,8 @@ copyright: >
   &nbsp;·&nbsp; © 2026 senior-project
   &nbsp;·&nbsp; <a href="#__consent">Change cookie settings</a>
 
-repo_url: https://github.com/BakhodiribnYashinibnMansur/SeniorProject
-repo_name: BakhodiribnYashinibnMansur/SeniorProject
+repo_url: https://github.com/bakhod1r/SeniorProject
+repo_name: bakhod1r/SeniorProject
 edit_uri: edit/main/
 
 docs_dir: _docs
@@ -119,7 +119,7 @@ extra:
     deprecated: Deprecated
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/BakhodiribnYashinibnMansur
+      link: https://github.com/bakhod1r
   analytics:
     provider: google
     property: G-9M5F0VDHK4
@@ -136,7 +136,7 @@ extra:
           data: 0
           note: >-
             Thanks for your feedback! Help us improve by
-            <a href="https://github.com/BakhodiribnYashinibnMansur/SeniorProject/issues/new/?title=[Feedback]+{title}+-+{url}" target="_blank" rel="noopener">opening an issue</a>.
+            <a href="https://github.com/bakhod1r/SeniorProject/issues/new/?title=[Feedback]+{title}+-+{url}" target="_blank" rel="noopener">opening an issue</a>.
   consent:
     title: Cookie consent
     description: >-

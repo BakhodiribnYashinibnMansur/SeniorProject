@@ -6,7 +6,7 @@
    - Re-runs on Material's instant navigation (document$)
    ================================================================ */
 (function () {
-  const REPO = "BakhodiribnYashinibnMansur/SeniorProject";
+  const REPO = "bakhod1r/SeniorProject";
   const REPORT_CLASS = "sp-report";
 
   // ---- Mermaid bootstrap ------------------------------------------------

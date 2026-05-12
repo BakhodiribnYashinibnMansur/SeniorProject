@@ -80,5 +80,5 @@ files referenced from nav, etc).
 Use **Discussions** for general questions. Use **Issues** for concrete bugs
 or content corrections (templates are provided).
 
-- Discussions: https://github.com/BakhodiribnYashinibnMansur/SeniorProject/discussions
-- Issues: https://github.com/BakhodiribnYashinibnMansur/SeniorProject/issues
+- Discussions: https://github.com/bakhod1r/SeniorProject/discussions
+- Issues: https://github.com/bakhod1r/SeniorProject/issues
