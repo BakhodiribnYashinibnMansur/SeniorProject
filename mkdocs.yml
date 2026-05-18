@@ -29,9 +29,9 @@ theme:
   custom_dir: mkdocs/theme
   language: en
   features:
-    - navigation.instant
-    - navigation.instant.progress
-    - navigation.instant.prefetch
+    # - navigation.instant
+    # - navigation.instant.progress
+    # - navigation.instant.prefetch
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.sections
