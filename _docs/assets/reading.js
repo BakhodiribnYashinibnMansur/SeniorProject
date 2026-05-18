@@ -406,30 +406,6 @@
     };
   }
 
-  let progressStatEl = null;
-  function ensureProgressStatEl() {
-    if (progressStatEl && document.body.contains(progressStatEl)) return progressStatEl;
-    progressStatEl = document.createElement("div");
-    progressStatEl.className = "sp-progress-stat";
-    progressStatEl.setAttribute("aria-live", "polite");
-    document.body.appendChild(progressStatEl);
-    return progressStatEl;
-  }
-  function renderTopBarStat(stats) {
-    if (!stats || isHome()) {
-      if (progressStatEl) progressStatEl.style.display = "none";
-      return;
-    }
-    const o = stats.overall;
-    if (!o.total) {
-      if (progressStatEl) progressStatEl.style.display = "none";
-      return;
-    }
-    const el = ensureProgressStatEl();
-    el.style.display = "";
-    el.textContent = "READ " + o.pct + "% · " + o.read + "/" + o.total;
-  }
-
   function sidebarLabelText(link) {
     const ellipsis = link.querySelector(".md-ellipsis");
     return ((ellipsis ? ellipsis.textContent : link.textContent) || "").trim();
@@ -513,7 +489,6 @@
   function refreshAllStats() {
     const stats = computeStats(readSet());
     if (!stats) return;
-    renderTopBarStat(stats);
     renderSidebarSectionStats(stats);
     renderHomeStatsCard(stats);
   }

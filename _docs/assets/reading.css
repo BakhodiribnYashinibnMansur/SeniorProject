@@ -496,39 +496,6 @@ html[data-eink="1"] .sp-reader-panel hr { border-top-color: #000; }
    Three surfaces: top-right pill · sidebar inline counts · home card
    ================================================================ */
 
-/* --- Top-right pill (overall read %) --- */
-.sp-progress-stat {
-  position: fixed;
-  top: 8px;
-  right: 12px;
-  z-index: 10001;
-  padding: 2px 8px;
-  font: 10px/1.4 "Intel One Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  letter-spacing: 0.06em;
-  background: rgba(10, 10, 10, 0.65);
-  color: #d4d4d4;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 3px;
-  pointer-events: none;
-  user-select: none;
-}
-[data-md-color-scheme="default"] .sp-progress-stat {
-  background: rgba(255, 255, 255, 0.85);
-  color: #4a4a4a;
-  border-color: #d8d8d2;
-}
-[data-md-color-scheme="senior-sepia"] .sp-progress-stat {
-  background: rgba(245, 236, 217, 0.92);
-  color: #5a3413;
-  border-color: #d8cdb2;
-}
-html[data-eink="1"] .sp-progress-stat {
-  background: #fff;
-  color: #000;
-  border: 1px solid #000;
-  border-radius: 0;
-}
-
 /* --- Sidebar inline section counts --- */
 .sp-sec-stat {
   margin-left: auto;
