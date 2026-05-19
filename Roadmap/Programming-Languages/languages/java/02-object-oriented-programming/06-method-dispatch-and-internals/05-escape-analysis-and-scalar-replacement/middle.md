@@ -1,0 +1,290 @@
+# Escape Analysis and Scalar Replacement — Middle
+
+> **What?** Practical reading of EA diagnostics, refactor patterns that turn an escaping object into a non-escaping one, the interaction between records, `final` classes, lambdas, and the JIT's inlining budget, and the benchmark anti-patterns that defeat EA without you noticing.
+> **How?** Each section pairs a concrete code shape with the diagnostic output you'd see, then shows the smallest change that flips an escaping allocation into a scalar-replaced one. By the end you should be able to look at a method and predict, with high confidence, whether the JIT will succeed.
+
+---
+
+## 1. Reading `-XX:+PrintEliminateAllocations`
+
+The flag prints one line per allocation site that the JIT considered for elimination. The output looks like this:
+
+```
+++++ Eliminated: 156 Allocate
+  --- 156 Allocate === 154 153 12 1 ( 145 138 144 36 36 36 )
+  Type:      Point
+  In method: com/acme/Geometry::sumDistances
+  Bytecode:  bci 17
+```
+
+What to look for:
+
+- `++++ Eliminated` means the allocation was removed. Good news.
+- `Type:` tells you which class the eliminated allocation was for.
+- `In method:` is the *compiling* method (the one being JIT-compiled), not necessarily the method containing the `new` if inlining moved it.
+- `Bytecode: bci N` is the bytecode index of the `new` instruction inside the compiling method.
+
+If you see the line you expected, EA succeeded. If you don't, EA failed — and HotSpot offers a second flag, `-XX:+PrintEscapeAnalysis`, that prints the *reason* (`GlobalEscape`, `ArgEscape`, etc.) for sites that didn't get eliminated.
+
+```bash
+java -XX:+UnlockDiagnosticVMOptions \
+     -XX:+PrintEliminateAllocations \
+     -XX:+PrintEscapeAnalysis \
+     -XX:+PrintInlining \
+     -XX:CompileCommand='compileonly,com/acme/Geometry::*' \
+     -jar app.jar
+```
+
+`PrintInlining` is the third leg: EA depends on inlining, so when EA fails the inlining log usually tells you why ("callee too big", "not inlined", "megamorphic").
+
+---
+
+## 2. Refactor pattern — extract the field-store
+
+```java
+class Aggregator {
+    Point last;                                     // field — anything written here GlobalEscapes
+
+    double process(double[] xs, double[] ys) {
+        double sum = 0;
+        for (int i = 0; i < xs.length; i++) {
+            Point p = new Point(xs[i], ys[i]);
+            last = p;                                // <-- defeats EA. p escapes via field.
+            sum += p.distanceTo(Point.ORIGIN);
+        }
+        return sum;
+    }
+}
+```
+
+`p` is stored in `last`, so it escapes the method via a reachable field. EA gives up; you allocate `xs.length` Points on the heap.
+
+The fix is to ask whether you actually need `last` to be a `Point`, or whether you need the two doubles:
+
+```java
+class Aggregator {
+    double lastX, lastY;                            // scalars, not an object
+
+    double process(double[] xs, double[] ys) {
+        double sum = 0;
+        for (int i = 0; i < xs.length; i++) {
+            Point p = new Point(xs[i], ys[i]);
+            lastX = p.x; lastY = p.y;                // store scalars, p doesn't escape
+            sum += p.distanceTo(Point.ORIGIN);
+        }
+        return sum;
+    }
+}
+```
+
+Now `p`'s reference never reaches a field; only its values do. EA succeeds, the loop allocates zero `Point` objects, and you have the same observable behaviour. The key move is recognising that *the object* wasn't needed in `last` — only its contents.
+
+---
+
+## 3. `final` classes and records help EA succeed
+
+EA's reasoning depends on knowing what every method on the object does. For a non-final class, a subclass could override a method and capture `this`. The JIT can sometimes prove that no such subclass is loaded (Class Hierarchy Analysis, CHA), but the proof is more expensive and more fragile.
+
+Records are `final` by construction. `final` classes are explicit. Both narrow the JIT's reasoning to one shape:
+
+```java
+public final class ImmutablePair<A, B> {
+    private final A a;
+    private final B b;
+    public ImmutablePair(A a, B b) { this.a = a; this.b = b; }
+    public A first()  { return a; }
+    public B second() { return b; }
+}
+```
+
+vs.
+
+```java
+public class MutablePair<A, B> {                    // not final, fields not final
+    private A a;
+    private B b;
+    public MutablePair(A a, B b) { this.a = a; this.b = b; }
+    public A first()  { return a; }
+    public B second() { return b; }
+    public void setFirst(A a) { this.a = a; }
+}
+```
+
+C2 will scalar-replace the first form readily; the second form is harder because `setFirst` is a potential leak vector (it writes to a non-final field, which sometimes confuses EA, especially across inlining boundaries). The fix is the simplest possible: make value carriers `final` and immutable. `record` does this in one line.
+
+---
+
+## 4. Lambda captures — when they help and when they kill EA
+
+A lambda is, under the hood, an instance of a synthetic class generated by `invokedynamic`. If the lambda captures local state, the synthetic instance carries that state in fields. Whether EA can eliminate the lambda instance depends on what happens to it.
+
+```java
+// EA-friendly: lambda used immediately, doesn't escape
+double sumOfSquares(double[] xs) {
+    return DoubleStream.of(xs).map(x -> x * x).sum();
+}
+```
+
+The lambda `x -> x * x` is *non-capturing* (it doesn't reference any outer state), so it's a static singleton — no allocation per call to begin with. The `DoubleStream` machinery is inlined hard enough that the intermediate state often scalar-replaces too.
+
+```java
+// EA-hostile: lambda captures a mutable accumulator
+double process(double[] xs) {
+    double[] acc = { 0 };
+    Arrays.stream(xs).forEach(x -> acc[0] += x);    // captures acc; allocates a Consumer
+    return acc[0];
+}
+```
+
+Here the lambda *captures* `acc`, so each invocation of `process` allocates a new `Consumer` instance with `acc` as a field. The JIT often inlines through this and EA can still succeed — but the moment the stream is stored, returned, or used across method boundaries it can't inline through, you allocate a `Consumer` per call. The simpler form `for (double x : xs) sum += x;` makes the intent explicit and gives the JIT one less thing to prove.
+
+---
+
+## 5. Benchmark patterns that defeat EA accidentally
+
+JMH benchmarks are a common place where EA either over-succeeds (zero-allocation result for code that would allocate in real use) or under-succeeds (over-reports cost because the benchmark structure forces escape). The two patterns:
+
+**Pattern A — measuring EA-eliminated work as if it were real:**
+
+```java
+@Benchmark
+public double allocateAndConsume() {
+    Point p = new Point(1, 2);
+    return p.x + p.y;                                // EA eliminates the allocation
+}
+```
+
+JMH reports `0 B/op` and you conclude "allocations are free". They're not — EA happened to win on this synthetic case. The real call site might store the `Point` somewhere; re-measure that.
+
+**Pattern B — `@State` fields force escape:**
+
+```java
+@State(Scope.Benchmark)
+public class Bench {
+    Point latest;                                    // field — anything stored here escapes
+
+    @Benchmark
+    public void store() {
+        latest = new Point(1, 2);                    // GlobalEscape — heap allocation
+    }
+}
+```
+
+JMH reports `16 B/op`, the "real" allocation cost. Whether this is the right number depends on whether your production code also stores the result in a field. If production code consumes the result immediately and throws it away, you measured the wrong thing.
+
+**Pattern C — `Blackhole.consume` defeats EA on purpose:**
+
+```java
+@Benchmark
+public void measureAlloc(Blackhole bh) {
+    bh.consume(new Point(1, 2));                     // forces escape via the Blackhole API
+}
+```
+
+Use this when you want the raw allocation cost as a baseline. Don't use it when you want to measure end-to-end throughput — `Blackhole.consume` lies to the JIT in a useful direction for cost measurement, and a misleading one for throughput.
+
+---
+
+## 6. Inlining is the precondition
+
+EA across a call boundary requires that the called method be inlined. If `p.distanceTo(other)` is inlined into the loop body, the JIT sees the full body and can prove `p` doesn't escape. If `distanceTo` is *not* inlined — for instance, because it's too large, or because the call is polymorphic with three different observed receiver types — the JIT must conservatively assume `p` could escape inside the callee, and EA fails.
+
+```bash
+java -XX:+UnlockDiagnosticVMOptions -XX:+PrintInlining -XX:CompileCommand='print,com/acme/*' app.jar
+```
+
+Look for lines like:
+
+```
+@ 23   com.acme.Point::distanceTo (44 bytes)   inline (hot)
+@ 7    com.acme.PaymentMethod::charge          not inlined (callee is megamorphic)
+```
+
+`inline (hot)` is what you want. `not inlined (callee is megamorphic)` is a place where EA is also going to fail for any object passed through the call. Inlining limits are tunable (`-XX:MaxInlineSize=35`, `-XX:FreqInlineSize=325`, `-XX:MaxInlineLevel=15`) but the right move is almost always to make the methods smaller and the dispatch more monomorphic, not to tune the limits.
+
+---
+
+## 7. Records as EA's sweet spot
+
+```java
+public record Range(int from, int to) {
+    public int length()        { return to - from; }
+    public boolean contains(int x) { return x >= from && x < to; }
+    public Range shift(int by) { return new Range(from + by, to + by); }
+}
+```
+
+In a hot loop:
+
+```java
+int countContained(Range[] ranges, int x) {
+    int count = 0;
+    for (Range r : ranges) {
+        if (r.contains(x)) count++;
+    }
+    return count;
+}
+```
+
+No new `Range` is created here, so EA isn't needed for elimination — but the JIT still scalar-replaces the *iterator* state and inlines `contains`. Run with `-prof gc`:
+
+```
+countContained:gc.alloc.rate.norm    0.0 B/op
+```
+
+Now change the body to `r.shift(1).contains(x)`:
+
+```java
+int countShiftedContained(Range[] ranges, int x) {
+    int count = 0;
+    for (Range r : ranges) {
+        if (r.shift(1).contains(x)) count++;          // allocates new Range — or does it?
+    }
+    return count;
+}
+```
+
+The intermediate `r.shift(1)` is a textbook EA target: a fresh record consumed immediately by `contains` and never stored. C2 inlines `shift`, sees the result doesn't escape, and scalar-replaces it. `gc.alloc.rate.norm` stays at `0.0`. This is what "records + EA = allocation-free pipelines" means in practice.
+
+---
+
+## 8. When EA fails — the four common reasons
+
+1. **The object is stored in a field reachable from outside.** Even if you don't think the field escapes, the JIT can't prove it from the method body alone.
+2. **The object is returned.** Anything returned can be observed by the caller; GlobalEscape.
+3. **The object is passed to a method the JIT cannot inline.** Big methods, megamorphic calls, native methods. The JIT treats the call as a black box and assumes the object could escape inside it.
+4. **The object is captured by a long-lived lambda or anonymous class.** If the lambda is stored, returned, or otherwise outlives the method, the captures escape with it.
+
+Each of these has a textbook fix, covered in `find-bug.md`. The skill at the middle level is *recognising* the shape before benchmarking.
+
+---
+
+## 9. Quick rules
+
+- [ ] Use `-XX:+UnlockDiagnosticVMOptions -XX:+PrintEliminateAllocations` to confirm EA wins.
+- [ ] If EA fails, also turn on `-XX:+PrintEscapeAnalysis` and `-XX:+PrintInlining` to find the cause.
+- [ ] Keep value carriers `final` (or use `record`).
+- [ ] Don't store short-lived objects in fields if you only need their values — store the values.
+- [ ] Lambdas without captures are free; lambdas with captures depend on inlining.
+- [ ] JMH `-prof gc` is the ground truth: `0.0 B/op` means EA won, anything else is real heap allocation.
+- [ ] EA across a call needs inlining. Big methods and megamorphic dispatch kill both.
+
+---
+
+## 10. What's next
+
+| Topic                                                                | File                |
+| -------------------------------------------------------------------- | ------------------- |
+| Three escape levels, lock elision, Graal partial-escape analysis     | `senior.md`         |
+| Team policy, code review, mentoring on allocation-free hot paths     | `professional.md`   |
+| Where EA lives in HotSpot source; JEPs; Valhalla                     | `specification.md`  |
+| 10 silent-failure cases                                              | `find-bug.md`       |
+| Records + EA pipelines, Graal partial-escape, Valhalla future        | `optimize.md`       |
+| 8 hands-on exercises                                                 | `tasks.md`          |
+| 20 interview Q&A                                                     | `interview.md`      |
+
+See also: [../01-jvm-method-dispatch/](../01-jvm-method-dispatch/) for why monomorphic dispatch is the inlining precondition that EA depends on, and [../04-object-memory-layout/](../04-object-memory-layout/) for what the object *would* have looked like on the heap if EA hadn't eliminated it.
+
+---
+
+**Memorize this:** EA's success is a property of the *call site*, not the *type*. Records and `final` classes hint hard, but the deciding factor is whether the reference stays inside the method. Read `PrintEliminateAllocations` to confirm wins; read `PrintEscapeAnalysis` and `PrintInlining` to diagnose failures. Refactor patterns: replace field stores with scalar stores, prefer non-capturing lambdas, keep call chains monomorphic so they inline.
