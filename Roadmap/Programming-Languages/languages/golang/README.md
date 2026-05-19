@@ -195,6 +195,8 @@ comments: true
 - [7.5.4 Race Detection](07-concurrency/05-concurrency-patterns/04-race-detection/junior.md)
 - 7.5.5 Future / Promise
 - 7.5.6 Broadcast Pattern
+- 7.5.7 N-Barrier
+- 7.5.8 Push & Pull
 
 ### 7.6 Errgroup & `x/sync`
 - 7.6.1 `errgroup.Group`
@@ -231,6 +233,7 @@ comments: true
 - 7.11.3 bridge-channel
 - 7.11.4 Generator
 - 7.11.5 Rate Limiter
+- 7.11.6 Handshaking
 
 ### 7.12 Lock-Free Programming
 - 7.12.1 CAS-based Algorithms
@@ -280,6 +283,7 @@ comments: true
 - 7.18.3 Batching
 - 7.18.4 Graceful Shutdown
 - 7.18.5 Drain Pattern
+- 7.18.6 Steady-State
 
 ### 7.19 Pipeline Production Patterns
 - 7.19.1 Error Propagation
@@ -525,6 +529,17 @@ comments: true
 - 17.7 Observer Pattern
 - 17.8 Singleton Pattern
 - 17.9 Iterator Pattern
+- 17.10 Facade Pattern
+- 17.11 Proxy Pattern
+- 17.12 Chain of Responsibility Pattern
+- 17.13 Command Pattern
+- 17.14 State Pattern
+- 17.15 Object Pool Pattern
+- 17.16 Pub/Sub Pattern
+- 17.17 Futures & Promises Pattern
+- 17.18 Registry Pattern
+- 17.19 Composite Pattern
+- 17.20 Fail-Fast Pattern
 
 ## 18. Architecture Patterns
 - 18.1 Clean Architecture
