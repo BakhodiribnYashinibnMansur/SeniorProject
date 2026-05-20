@@ -1,187 +1,240 @@
 # Primitive Obsession — Optimize
 
-The honest cost of choosing typed value objects over raw primitives, what the JVM already does for you, and where (and only where) primitives are still the right answer.
+> **What?** The honest performance cost of typed wrappers on the JVM today (Java 17–21), what the JIT compensates for, where it doesn't, what changes when Project Valhalla (JEP 401, *Value Classes and Objects*) lands, autoboxing pitfalls, and the narrow set of cases where dropping back to primitives is the right answer.
+> **How?** Measure with JMH; reason about allocation with `-XX:+PrintEliminateAllocations`; trust the JIT for non-hot code; defer to Valhalla for hot paths. Don't pessimise wrapper-rich code based on speculation — pessimise based on profiles.
 
 ---
 
-## 1. The real overhead of a record
+## 1. The real cost of a record on HotSpot
 
-A Java record holds:
+A Java record has the same JVM-level shape as any other final class. A `record Money(long minorUnits, Currency currency)` consumes:
 
-- An object header (12 or 16 bytes depending on compressed oops).
-- The declared fields, aligned to 8 bytes.
-- A reference, when stored in another object or a collection.
+| Component        | Bytes (64-bit JVM, compressed OOPs) |
+|------------------|--------------------------------------|
+| Object header    | 12                                   |
+| `long minorUnits`| 8                                    |
+| `Currency` ref   | 4                                    |
+| Padding          | 8                                    |
+| **Total**        | **32 bytes per instance**            |
 
-`record UserId(long value) {}` therefore takes 24 bytes on the heap (16-byte header + 8-byte long), and an extra 4–8 bytes per *reference* to it. A primitive `long` is 8 bytes inline — no reference, no header.
+Compare to a bare `long`: 8 bytes, no header, no padding, no allocation. A `Money` is 4× the memory of a `long`, plus the cost of allocation, plus the cost of GC pressure when many are short-lived.
 
-In raw numbers, the typed version is 3–4x the memory cost. In practice, this cost vanishes in three ways:
-
-1. **Escape Analysis (EA) + scalar replacement** — the JIT eliminates the allocation entirely for non-escaping records.
-2. **GC throughput** — short-lived records die in the young generation; modern GCs (G1, ZGC, Shenandoah) handle them efficiently.
-3. **Cache locality of references** — irrelevant when the record holds one or two scalars; relevant in tight numeric loops.
+This is the headline number. Most of the time, the JIT erases it.
 
 ---
 
-## 2. Escape Analysis in detail
+## 2. Escape analysis and scalar replacement
 
-EA proves that an object's reference does not escape the method that allocates it. If the proof succeeds, the JIT performs **scalar replacement**: the object is decomposed into its fields, which live in registers or on the stack. There is no heap allocation, no GC pressure, no indirection.
+HotSpot's C2 compiler performs *escape analysis* on each compiled method. If it can prove that an allocated object does not escape the method (no field write, no return, no thread-shared reference), it is allowed to *scalar-replace* the object: instead of allocating on the heap, the object's fields live in registers or on the stack.
 
 ```java
-public Money totalWithTax(Money base, BigDecimal taxRate) {
-    Money tax = base.multiply(taxRate); // candidate for scalar replacement
-    return base.add(tax);
+public Money total(List<LineItem> items) {
+    Money sum = new Money(0L, USD);
+    for (LineItem i : items) {
+        sum = sum.plus(i.amount());      // allocates a new Money per iteration
+    }
+    return sum;
 }
 ```
 
-`tax` here is allocated, used once, and then absorbed into the return value. C2 detects this and scalar-replaces `tax`. The `multiply` and `add` calls inline, the `BigDecimal` work dominates the cost, and the record wrapper costs zero.
+C2 sees that each intermediate `Money` is *immediately* superseded by the next one — none of them escape. After scalar replacement, the loop looks (in machine code) like:
 
-### When EA fails
+```
+long sumMinor = 0;
+Currency sumCur = USD;
+for each item:
+    sumMinor += item.amountMinor;
+    // currency unchanged
+return new Money(sumMinor, sumCur);   // only this one allocates
+```
 
-EA fails (and the record allocates) when the record:
+One allocation, not N. The wrapper is free in the hot path.
 
-- Is stored in a field of another object.
-- Is returned from the method (unless the caller also inlines).
-- Is passed to a non-inlined method.
-- Is stored in a `List`, `Map`, or array.
-- Crosses a virtual call that the JIT cannot devirtualise.
+**Confirm.** Run with `-XX:+UnlockDiagnosticVMOptions -XX:+PrintEliminateAllocations`. The output names every allocation site that was scalar-replaced.
 
-Use `-XX:+UnlockDiagnosticVMOptions -XX:+PrintEscapeAnalysis` to see what EA discovered. JFR's `jdk.ObjectAllocationSample` event reveals which sites actually allocate at runtime.
+**When EA fails.** EA gives up when:
+
+- The object escapes through a method return, exception, or field assignment.
+- The compilation tier is C1 (interpreter / tier 1) — only C2 does scalar replacement reliably.
+- The method is too large to inline its callees, breaking the optimization chain.
+
+A `Money` returned from a public method *does* escape — at the API boundary. But the *intermediates* inside loops usually don't.
 
 ---
 
-## 3. Project Valhalla — the long-term answer
+## 3. Records and the JIT — why they're friendly to optimise
 
-JEP 401 (Value Classes and Objects, Preview) introduces **identity-less value classes**. A value class:
+Records cooperate with the JIT more than handwritten classes do:
 
-- Has no `==`-as-reference semantics.
-- Cannot be synchronised on.
-- Cannot be null in a `value`-typed field (with the strictest variant).
-- Can be flattened by the JVM into containers and method frames.
+- **Implicit `final` class and `final` fields.** No subclass can override `equals`, `hashCode`, or accessors. The JIT can inline aggressively without virtual-dispatch tax.
+- **Tiny accessors.** `value()` is a one-line getter. Inlined to a field load.
+- **No `this` leak.** No mutating method can publish `this` mid-construction.
+
+Records were designed (JEP 395) with both *programmer ergonomics* and *JIT friendliness* in mind. Treat them as the JIT-preferred form for value types.
+
+---
+
+## 4. Autoboxing — the silent enemy
+
+Generics in Java are erased; collections hold `Object`, which means primitives must be boxed.
 
 ```java
-public value class UserId {
-    private final long value;
-    public UserId(long value) { this.value = value; }
-    public long value() { return value; }
+List<Integer> counts = new ArrayList<>();
+counts.add(7);                  // autobox to Integer.valueOf(7)
+int first = counts.get(0);      // autounbox via intValue()
+```
+
+For `Integer.valueOf(n)` where `-128 <= n <= 127`, the JDK uses a cache — no allocation. Outside that range, every boxing allocates an `Integer`. In a hot loop with large numbers, this is real cost.
+
+**Pitfall:** wrapping a primitive in a typed `record` does *not* eliminate boxing if the type appears in a generic collection:
+
+```java
+record Cents(long value) {}
+List<Cents> cents = new ArrayList<>();
+cents.add(new Cents(100));      // still allocates Cents on the heap
+```
+
+The boxing is hidden, but the allocation is the same. For dense numerical data, prefer specialised primitive collections (`IntStream`, `LongStream`, `Eclipse Collections` `LongArrayList`).
+
+**Detection.** SpotBugs's `BX_BOXING_IMMEDIATELY_UNBOXED` catches the common case where you box a value and immediately unbox it — usually a sign of accidental conversion.
+
+---
+
+## 5. The `Optional` allocation question
+
+```java
+public Optional<Money> findBalance(AccountId id) { ... }
+```
+
+`Optional<Money>` is two allocations: the `Optional` wrapper plus the `Money`. In hot code (a query loop hitting a cache 10 million times a second), this can show in profiles.
+
+Two mitigations:
+
+- **Trust EA.** If the caller immediately unpacks (`balance.orElseThrow()`, `balance.map(...)`), the `Optional` often gets scalar-replaced.
+- **Return a sentinel.** `Money.zero(USD)` instead of `Optional.empty()` works if "absent" has a sensible default.
+
+The JDK itself uses `OptionalInt`, `OptionalLong`, `OptionalDouble` to avoid the boxing-in-Optional issue for primitives. There is no equivalent for user-defined value types — yet (Valhalla addresses this).
+
+---
+
+## 6. Project Valhalla — the inflection point
+
+**JEP 401: Value Classes and Objects (Preview).** A `value class` is a class that:
+
+- Has no identity (`==` is forbidden).
+- Has implicitly final fields and a final class declaration.
+- Can be *flattened* in containers — a `value class[]` array is a contiguous bit-pattern, not an array of pointers.
+
+The semantics that matter for Primitive Obsession:
+
+```java
+value record Money(long minorUnits, Currency currency) { ... }   // illustrative syntax
+
+class Account {
+    Money balance;     // *flattened* — 12 bytes inline, no header, no pointer
 }
 ```
 
-A `List<UserId>` backed by an array becomes a flat layout — no per-element header, no indirection. A `UserId` in a method parameter is passed in registers like a `long`. The runtime cost equals raw `long`; the only thing that survives is the type safety.
+When Valhalla ships in a final form, the cost of `Money` as a field approaches the cost of `long balance` + `Currency currency` directly inlined. The 32-byte-per-instance overhead from §1 disappears.
 
-Migration from `record` to `value record` is a one-keyword change. **Designing with records today is the migration path**.
+**Status check.** JEP 401 is *Preview* as of mid-2026. Syntax and semantics are stable enough to design around, but production deployment requires a feature flag and a benchmark gate. Watch the OpenJDK release notes for the *final* JEP.
+
+**Practical move now.** Write your wrappers as `record`s. When Valhalla finalises, the migration to `value class` is essentially a keyword change.
 
 ---
 
-## 4. Autoboxing — the silent allocator
+## 7. The narrow case for raw primitives
 
-Boxed primitives (`Long`, `Integer`, `Boolean`) appear "for free" via autoboxing:
+There is a small set of code where primitives remain the right answer even in a wrapper-friendly codebase:
+
+- **Tight numerical algorithms.** A FFT, a matrix multiplication, a Monte Carlo simulation — the entire algorithm consumes `double[]` arrays. Wrapping each cell as `record Sample(double value)` blows the cache and serialises memory access.
+- **Bit-twiddling.** Bloom filters, bitmasks, packed integer encoding — primitives *are* the domain.
+- **JNI boundaries.** Native calls take primitives. Wrappers must unwrap at the JNI layer regardless.
+- **Tiny private helpers.** A static method inside one class that takes `int n` and returns `int` doesn't benefit from `Count`.
+
+The rule is *not* "wrap everything regardless of context" — it's "wrap everywhere domain concepts cross a boundary; leave primitives where they're already the domain".
+
+---
+
+## 8. Measuring with JMH
+
+Speculation is the enemy. Measure.
 
 ```java
-Map<Long, User> usersById = ...;
-usersById.get(42L); // autoboxes to Long
-```
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.NANOSECONDS)
+@State(Scope.Benchmark)
+public class MoneyBench {
+    private List<Money> moneys;
+    private long[] cents;
 
-Each `42L` boxed is a `Long` allocation (16 bytes + 8 bytes payload). `Integer` caches values in `-128..127`; `Long` does the same — anything outside is a fresh allocation. In hot paths over wide ID ranges this is a measurable cost.
+    @Setup public void setup() {
+        moneys = new ArrayList<>();
+        cents = new long[1_000_000];
+        for (int i = 0; i < 1_000_000; i++) {
+            moneys.add(new Money(i, USD));
+            cents[i] = i;
+        }
+    }
 
-The pragmatic fix: typed IDs hide this from the caller. Inside `record UserId(long value) {}`, the field is a primitive `long`, not a boxed `Long`. Equality and hashing use the primitive directly. The boxing penalty disappears.
+    @Benchmark public long sumMoneys() {
+        long s = 0;
+        for (Money m : moneys) s += m.minorUnits();
+        return s;
+    }
 
-```java
-public record UserId(long value) {} // value is a primitive long, no boxing
-```
-
-If you need `Map<UserId, User>`, the *key* is the record (still a heap object), but the *long inside* it is unboxed. Eclipse Collections, Koloboke, or fastutil provide primitive-keyed maps for the tightest cases.
-
----
-
-## 5. The numbers — when it matters
-
-A JMH benchmark of "lookup by ID, 100 million iterations, no GC" gives a representative profile:
-
-| Variant | ns/op | Allocations/op |
-|---|---|---|
-| `long` primitive | 11.2 | 0 B |
-| `record UserId(long)` — EA scalar-replaces | 11.8 | 0 B |
-| `record UserId(long)` — EA fails (escapes) | 19.4 | 24 B |
-| `Long` boxed (autoboxing on `Map.get`) | 22.7 | 32 B |
-| Future Valhalla `value class UserId` | ~11.2 | 0 B |
-
-Takeaways:
-
-- When EA succeeds, records cost essentially nothing.
-- When EA fails, records cost about 2x the primitive — still cheaper than autoboxing.
-- Valhalla closes the gap entirely.
-
-For business logic running at thousands of QPS, the difference is invisible. For inner loops processing millions of elements per second, profile first.
-
----
-
-## 6. Where primitives still win
-
-There are three legitimate uses of raw primitives:
-
-### 6.1 Numerical kernels
-
-Image processing, FFT, matrix multiplication, ML inference. These loops cross hundreds of millions of elements per call; allocation and boxing penalties dominate. Use primitive arrays (`int[]`, `double[]`) and primitive locals. Wrap the kernel in a typed API and keep the typed/untyped boundary at the kernel entry.
-
-### 6.2 Low-level protocol parsing
-
-When parsing a wire protocol byte-by-byte, the loop body sees raw `byte` and `int`. Wrap the parser entry point with typed inputs (`ByteBuffer buf` → `ParsedMessage`); the loop interior stays primitive.
-
-### 6.3 Truly identity-free counters
-
-A loop index, an array length, an iteration count. These represent no domain concept and wrapping them in a type adds noise.
-
----
-
-## 7. Avoid these anti-optimisations
-
-- **Caching value-object instances in a static map** — adds memory pressure, hurts cache locality, and prevents EA. Just construct.
-- **`equals` short-circuit on `this == other`** — already done by the synthesised record `equals`. Don't override.
-- **Using `String.intern()` for value-object backing strings** — `intern` table is global, slow, and rarely worth it. Records compare by value; interning provides no algorithmic benefit.
-- **Custom `hashCode` with magic primes** — the synthesised record `hashCode` is sufficient. Diverging from it requires a benchmark to justify.
-
----
-
-## 8. Quick rules
-
-1. **Default to records.** Reach for primitives only with a profile in hand.
-2. **Trust escape analysis** for non-escaping records. Verify with JFR.
-3. **Keep typed APIs at boundaries**; primitives at inner loops only if measurement justifies it.
-4. **Plan for Valhalla** — write records, switch to value classes when JEP 401 ships.
-5. **Avoid autoboxing in hot maps** — use primitive-keyed maps from Eclipse Collections / fastutil.
-6. **Profile before optimising back.** The 2x cost is irrelevant at business-logic QPS; bug cost is permanent.
-7. **Single hot path, single optimisation.** Don't undo typed APIs across the whole codebase to "speed it up"; isolate.
-
----
-
-## 9. Measuring in production
-
-- **JFR allocation profiling:** `-XX:StartFlightRecording=settings=profile,filename=app.jfr`. Open in JDK Mission Control; sort by allocation size. Records that allocate frequently surface immediately.
-- **Async-profiler in `alloc` mode:** flame graphs of allocation hot paths. Pinpoints the call site, not just the type.
-- **`-XX:+PrintInlining`:** confirms whether the method holding the record was inlined. Inlined methods are where EA applies.
-- **`-XX:+TraceDeoptimization`:** if records suddenly become slower, a deopt may have undone scalar replacement; this surfaces it.
-
----
-
-## 10. Worked optimisation — when records *do* cost too much
-
-Profile shows that `record Pixel(int r, int g, int b)` allocates 200 million times per image render and dominates the CPU.
-
-**Wrong fix:** delete the record and pass three `int`s around — loses type safety across the whole rendering pipeline.
-
-**Right fix:** keep `Pixel` as the public API of the renderer; internally, the hot loop uses three `int[]` arrays (one per channel) and the `Pixel` is constructed only at the boundary (when reading from / writing to disk). The typed API is preserved; the inner loop is primitive.
-
-```java
-public final class Image {
-    private final int[] r, g, b;
-    public Pixel pixel(int x, int y) { return new Pixel(r[idx(x,y)], g[idx(x,y)], b[idx(x,y)]); }
-    public void setPixel(int x, int y, Pixel p) { r[idx] = p.r(); g[idx] = p.g(); b[idx] = p.b(); }
-    // hot inner loops operate on r/g/b arrays directly
+    @Benchmark public long sumPrimitives() {
+        long s = 0;
+        for (long c : cents) s += c;
+        return s;
+    }
 }
 ```
 
-This is the canonical pattern: **typed outside, primitive inside, conversion at the wall**. It is the same pattern as the controller/service boundary, scaled to nanoseconds.
+Expected: the primitive version is somewhat faster (cache-friendly array vs. pointer-chasing `ArrayList`). The wrapper version is often only 1.5–3× slower, not 10×. The cost is real but rarely catastrophic.
+
+**Run with profiles.** `-prof gc` shows allocation rate; `-prof perfasm` shows the actual machine code. Don't optimise without profiles.
 
 ---
 
-**Memorize this:** Records are almost always free. When they aren't, the JIT tells you, JFR proves it, and you can keep the typed API while flattening the hot loop. Optimising by removing types is a last resort; optimising by isolating the hot loop is the first move.
+## 9. Allocation pressure and GC
+
+Even when individual allocations are cheap, *rate* matters. A service that allocates 1 GB/sec of `Money` records puts heavy load on the young generation. The G1 collector handles it, but at the cost of more frequent young-gen collections and higher CPU.
+
+Mitigations, in order of preference:
+
+- **Reduce allocation rate.** Cache the wrappers when they're stable (e.g., `IsoCurrency.USD` as a static final).
+- **Trust EA.** Profile first — many allocations never actually reach the heap.
+- **Drop to primitives in the hot loop.** Re-wrap at the boundary.
+- **Wait for Valhalla.** Flattening eliminates the allocation entirely for fields and arrays.
+
+**Profile:** `-Xlog:gc*=info` shows young-gen collection frequency. If it's < 100ms apart, allocation pressure is the issue.
+
+---
+
+## 10. Quick rules
+
+- [ ] **Default to records.** They are JIT-friendly, escape-analysis-friendly, and the right design.
+- [ ] **Trust escape analysis.** Verify with `-XX:+PrintEliminateAllocations` before pessimising.
+- [ ] **Drop to primitives only inside hot loops** where JMH confirms a 2×+ gap. Re-wrap at the boundary.
+- [ ] **Watch autoboxing.** `List<Integer>` boxes; `IntStream` doesn't.
+- [ ] **Cache stable wrappers.** `IsoCurrency.USD` as a constant beats `new IsoCurrency("USD")` per call.
+- [ ] **Track Valhalla.** When JEP 401 finalises, the allocation argument against wrappers largely disappears.
+
+---
+
+## 11. What's next
+
+| Topic                                                            | File              |
+| ---------------------------------------------------------------- | ----------------- |
+| Hands-on exercises                                               | `tasks.md`         |
+| Interview Q&A                                                    | `interview.md`     |
+
+Related smells:
+
+- [Data Clumps](../08-data-clumps/) — same allocation considerations apply to parameter objects.
+- [Immutability](../../05-immutability/) — immutability and EA-friendliness reinforce each other.
+
+---
+
+**Memorize this:** Records are 32-byte allocations that the JIT often scalar-replaces away. The headline cost is rarely the actual cost. Measure with JMH, verify with `-XX:+PrintEliminateAllocations`, drop to primitives only in hot loops, watch for autoboxing in generic collections, and track Project Valhalla — when JEP 401 ships, the wrapper-vs-primitive trade-off mostly disappears.

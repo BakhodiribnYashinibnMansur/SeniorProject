@@ -1,248 +1,274 @@
 # Primitive Obsession — Specification
 
-This document defines the **measurable, enforceable contract** for detecting and preventing Primitive Obsession in a Java codebase. It is written so that an engineer, a linter, or a build pipeline can apply it without further interpretation.
+> The measurable, enforceable contract for detecting and preventing Primitive Obsession in a Java codebase. This file is written so an engineer, a linter, or a CI pipeline can apply it without further interpretation. Definitions tighten the vocabulary (what counts as "domain", what counts as "boundary"); the metric pins down a measurable threshold; the sample rules give you copy-pasteable ArchUnit and Checkstyle configurations.
 
 ---
 
-## 1. Definition
+## 1. Definitions
 
-A method or field in a domain-layer type exhibits **Primitive Obsession** when one or more of its declared parameter, return, or field types is:
+The following terms have a precise meaning throughout this section.
 
-- `String`, `CharSequence`
-- `int`, `long`, `short`, `byte` (or their boxed counterparts)
-- `float`, `double` (or their boxed counterparts)
-- `boolean` (or `Boolean`)
-- `java.util.UUID`
-- `java.math.BigDecimal`, `java.math.BigInteger`
-
-**and** the domain concept the value represents is named (e.g. *email*, *amount*, *user id*, *currency code*, *quantity*, *age in years*, *is active*) rather than truly primitive (e.g. *array length*, *loop counter*).
-
-A class is "in the domain layer" if it resides under a package configured as the domain package set (typically `..domain..`, `..model..`, `..core..`).
-
----
-
-## 2. The Primary Metric — Domain Primitive Ratio (DPR)
-
-For a given package set `P`:
-
-```
-DPR(P) = primitive_params_in_domain_methods(P) / total_params_in_domain_methods(P)
-```
-
-Where `primitive_params_in_domain_methods` counts parameters whose static type belongs to the list in §1 *and* whose declaring method is public or package-private on a class in `P`.
-
-### Target thresholds
-
-| Maturity | DPR (target) | Action |
-|---|---|---|
-| Green | ≤ 0.05 | Maintain. CI enforces zero net regressions. |
-| Yellow | 0.05 – 0.20 | Active migration. Each PR must not raise DPR. |
-| Orange | 0.20 – 0.50 | Backlog migration item per sprint. |
-| Red | > 0.50 | Strategic refactor required. Codebase is at high bug risk. |
-
-The metric is computed by a small AST scanner (JavaParser / Spoon) or, for a rough first estimate, regex. A reference Gradle task is shown in §7.
+| Term                  | Definition                                                                                                                       |
+|-----------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| **Primitive type**    | One of the eight Java language primitives (`boolean`, `byte`, `short`, `int`, `long`, `float`, `double`, `char`) and their boxed equivalents. |
+| **Quasi-primitive**   | `java.lang.String`, `java.util.UUID`, `java.math.BigInteger`, `java.math.BigDecimal` when used as a *standalone* parameter or field. |
+| **Domain layer**      | Any class in the `..domain..` package family, or any class annotated with `@DomainEntity` / `@ValueObject`.                      |
+| **Boundary layer**    | Classes in `..web..`, `..persistence..`, `..messaging..`, `..adapter..`, `..config..`. Test code (`src/test`) is also boundary.   |
+| **Domain method**     | A `public` or `protected` method declared in the domain layer.                                                                   |
+| **Confusable**        | Two or more parameters of the same primitive or quasi-primitive type in one method signature.                                    |
+| **Wrapped value**     | A user-defined `record`, `final class`, or future `value class` that has a single conceptual responsibility.                     |
 
 ---
 
-## 3. Secondary Metrics
+## 2. The smell, formally
 
-### 3.1 String-to-named-type ratio
+A *domain method* exhibits **Primitive Obsession** when **any** of the following conditions is true:
 
-Ratio of `String` parameters to total parameters in domain methods. Should approach zero.
+1. **Confusable parameters.** The method declares two or more parameters of the same primitive or quasi-primitive type, and those parameters represent *different domain concepts*.
+2. **Boolean mode parameter.** The method declares a `boolean` parameter whose name encodes a mode (`isDryRun`, `forceUpdate`, `silent`, `urgent`) rather than a true/false fact about the input.
+3. **Numeric with implicit unit.** The method declares a numeric parameter whose name encodes a unit suffix (`amountCents`, `delayMs`, `priceUsd`, `ratioBps`).
+4. **String with constrained format.** The method declares a `String` parameter whose Javadoc or name implies a constrained format (`email`, `iso2`, `phone`, `currency`).
 
-### 3.2 Long-id ratio
-
-Ratio of `long` parameters whose names match `.*[Ii]d$|.*[Ii]dentifier$` to total such parameters. Should approach zero.
-
-### 3.3 Boolean-flag count
-
-Number of `boolean` parameters across the domain layer. Should approach zero (booleans are best replaced by enums; see §6.4).
-
-### 3.4 Money-as-double count
-
-Number of `double`/`float` parameters whose names match `.*(amount|price|cost|fee|balance|total).*`. Must equal zero.
+A domain *field* exhibits Primitive Obsession under analogous rules applied to its declared type.
 
 ---
 
-## 4. Authoritative References
+## 3. Measurable metric — the PSR
 
-The following are the canonical references for typed-value modelling in modern Java. A code review may cite any of them as binding.
+Define the **Primitive Signature Ratio (PSR)** for a domain method:
 
-- **JEP 395: Records** — finalised in Java 16. Defines `record` declarations, accessor semantics, the canonical and compact constructors, and the implicit final / immutable contract. This is the present-day mechanism for value objects in Java.
-- **JEP 401: Value Classes and Objects (Preview)** — the upcoming Project Valhalla feature that introduces the `value` modifier, identity-less classes, and the runtime support for flattened layouts. The migration path from a `record` to a `value record` is a single keyword change.
-- **Project Valhalla design notes** — `https://openjdk.org/projects/valhalla/` — for the broader context of identity, value, primitive classes, and generic specialisation.
-- **DDD reference (Evans, Vernon):** the Value Object pattern as the design rationale for tiny types.
+> PSR(method) = (count of primitive + quasi-primitive parameters) / (total parameter count)
 
-JEPs are normative; this document references them rather than restating them.
+For a class:
 
----
+> PSR(class) = mean PSR over public domain methods
 
-## 5. Conformance Levels
+For a module:
 
-A codebase claims conformance at one of three levels:
+> PSR(module) = mean PSR over domain classes
 
-### Level 1 — Reactive
+**Thresholds.** A healthy domain module sits at PSR ≤ 0.20. The thresholds:
 
-- No automated enforcement; code review catches new violations.
-- Existing violations are tolerated.
-- DPR is not tracked.
+| Range          | Status      | Action                                                |
+|----------------|-------------|-------------------------------------------------------|
+| 0.00 – 0.20    | Green       | Maintain. Spot-check on new code.                     |
+| 0.21 – 0.50    | Yellow      | Add ArchUnit rules. Schedule refactor for top offenders. |
+| 0.51 – 0.80    | Orange      | Active migration plan required. Pair-program new APIs. |
+| 0.81 – 1.00    | Red         | Domain layer is effectively a bag of primitives. Apply playbook from `professional.md`. |
 
-### Level 2 — Tracked
-
-- DPR is computed in CI as an informational metric.
-- New code must not introduce new violations (PR-level diff check).
-- A migration backlog exists.
-
-### Level 3 — Enforced
-
-- ArchUnit (or equivalent) rules fail the build on any new primitive in a domain signature.
-- Custom Checkstyle/PMD rules cover naming-pattern leakage (e.g. parameters named `email`, `amount`).
-- DPR ≤ 0.05 globally; any exception is documented with a `@SuppressWarnings` justification and an ADR.
-
-A team-level coding standard MUST declare the target level and the date by which it will be reached.
+These are heuristics, not hard rules. A module that legitimately wraps low-information transport data may sit at higher PSR without bug risk; a module at low PSR that uses confusable primitives still has the smell.
 
 ---
 
-## 6. Enforcement Rule Samples
+## 4. "Primitive at the boundary vs inside the domain"
 
-### 6.1 ArchUnit — forbid `String` in domain signatures
+The same primitive type is acceptable in one place and a smell in another. The boundary rules:
+
+| Layer                 | Raw `String`/`int`/`long` acceptable? | Reason                                                    |
+|-----------------------|---------------------------------------|-----------------------------------------------------------|
+| Domain method param   | No                                    | Where the smell lives.                                    |
+| Domain method return  | No (except `boolean`, `int` count)    | Returned values cross boundaries; preserve typing.        |
+| Domain private helper | Sometimes                             | Internal to one class; if scoped, primitive is fine.      |
+| Repository interface  | No                                    | Repositories *are* domain ports.                          |
+| Repository impl       | Yes                                   | Persistence layer; JDBC takes primitives.                 |
+| HTTP controller       | Yes                                   | Wire contract; raw types in DTOs.                         |
+| DTO                   | Yes                                   | Wire shape; conversion happens in the controller body.    |
+| Message payload       | Yes                                   | Same rationale as DTO.                                    |
+| Configuration class   | Yes                                   | `@Value("${app.timeout}")` is naturally typed.            |
+| Test setup            | Yes (with caution)                    | Tests construct wrappers from primitives intentionally.   |
+
+The principle: a primitive is acceptable *where data enters or exits the JVM*; everywhere else it must be wrapped.
+
+---
+
+## 5. Sample ArchUnit rule — domain APIs reject confusable primitives
+
+Drop-in JUnit 5 + ArchUnit 1.x test:
 
 ```java
-@ArchTest
-static final ArchRule no_string_in_domain_methods = methods()
-    .that().arePublic()
-    .and().areDeclaredInClassesThat().resideInAPackage("..domain..")
-    .should().notHaveRawParameterTypes(String.class)
-    .andShould().notHaveRawReturnType(String.class)
-    .because("Domain layer must use value types instead of raw String (JEP 395 records)");
+package com.acme.arch;
+
+import com.tngtech.archunit.junit.*;
+import com.tngtech.archunit.lang.*;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
+
+@AnalyzeClasses(packages = "com.acme")
+class PrimitiveObsessionPolicy {
+
+    @ArchTest
+    static final ArchRule no_raw_string_in_domain =
+        methods()
+            .that().areDeclaredInClassesThat().resideInAPackage("..domain..")
+            .and().arePublic()
+            .should(haveNoMoreThanOneParameterOfType(String.class))
+            .because("Two String parameters in one domain method are confusable. " +
+                     "Wrap each in a typed record (Email, FullName, IsoCurrencyCode, etc.)");
+
+    @ArchTest
+    static final ArchRule no_long_for_id_in_domain =
+        fields()
+            .that().areDeclaredInClassesThat().resideInAPackage("..domain..")
+            .and().haveNameMatching(".*[Ii]d")
+            .should().haveRawType("com.acme.domain.id..")
+            .because("IDs are opaque domain types; raw long leaks the persistence detail.");
+
+    @ArchTest
+    static final ArchRule no_boolean_flag_in_domain =
+        methods()
+            .that().areDeclaredInClassesThat().resideInAPackage("..domain..")
+            .and().arePublic()
+            .should().notHaveRawParameterTypes(boolean.class)
+            .because("Boolean flags hide a mode. Replace with an enum.");
+}
 ```
 
-### 6.2 ArchUnit — forbid `long` IDs
+`haveNoMoreThanOneParameterOfType` is a custom predicate — implement it as:
 
 ```java
-@ArchTest
-static final ArchRule no_long_id_params = methods()
-    .that().areDeclaredInClassesThat().resideInAPackage("..domain..")
-    .and().haveNameMatching(".*[Bb]y[A-Z].*|.*[Ff]ind.*|.*[Gg]et.*|.*[Dd]elete.*")
-    .should(new ArchCondition<JavaMethod>("not accept long/UUID for entity identifiers") {
-        public void check(JavaMethod m, ConditionEvents events) {
-            for (var p : m.getParameters()) {
-                if ((p.getRawType().isAssignableTo(long.class) || p.getRawType().isAssignableTo(UUID.class))
-                        && p.getName().toLowerCase().endsWith("id")) {
-                    events.add(SimpleConditionEvent.violated(p,
-                        "Use typed ID (UserId, OrderId) instead of long/UUID: " + m.getFullName()));
-                }
+static ArchCondition<JavaMethod> haveNoMoreThanOneParameterOfType(Class<?> type) {
+    return new ArchCondition<>("have no more than one parameter of " + type) {
+        @Override public void check(JavaMethod method, ConditionEvents events) {
+            long count = method.getRawParameterTypes().stream()
+                .filter(p -> p.isAssignableTo(type)).count();
+            if (count > 1) {
+                events.add(SimpleConditionEvent.violated(method,
+                    method.getFullName() + " has " + count + " parameters of " + type.getName()));
             }
         }
-    });
-```
-
-### 6.3 Checkstyle — flag named-concept String parameters
-
-```xml
-<module name="RegexpSingleline">
-  <property name="format" value="\b(String|CharSequence)\s+(email|name|address|phone|sku|currency|country)\b"/>
-  <property name="message" value="Replace raw String with a value class for this domain concept"/>
-</module>
-```
-
-### 6.4 Checkstyle — boolean parameter flag
-
-```xml
-<module name="ParameterAssignment"/>
-<module name="RegexpSingleline">
-  <property name="format" value="\bboolean\s+\w+,"/>
-  <property name="message" value="Replace boolean flag with an enum or split the method"/>
-</module>
-```
-
-### 6.5 SpotBugs — money as double
-
-SpotBugs ships a `FE_FLOATING_POINT_EQUALITY` detector. Custom rule via `bcel`:
-
-```java
-// Pseudocode — detector reports any method param of type double whose name
-// matches MONEY_RX = Pattern.compile("(amount|price|cost|fee|balance|total)", CI)
-```
-
-### 6.6 Custom JavaParser scanner (DPR computation)
-
-```java
-public final class DprScanner {
-    static final Set<String> PRIMITIVES = Set.of(
-        "String", "int", "long", "short", "byte",
-        "double", "float", "boolean",
-        "UUID", "BigDecimal", "BigInteger");
-
-    public static double compute(Path src, Predicate<String> isDomainPackage) throws IOException {
-        var solver = new SymbolSolverCollectionStrategy()
-            .collect(src).getParserConfiguration();
-        long primitiveParams = 0, totalParams = 0;
-        try (var walk = Files.walk(src)) {
-            for (var file : (Iterable<Path>) walk.filter(p -> p.toString().endsWith(".java"))::iterator) {
-                CompilationUnit cu = StaticJavaParser.parse(file);
-                String pkg = cu.getPackageDeclaration().map(p -> p.getNameAsString()).orElse("");
-                if (!isDomainPackage.test(pkg)) continue;
-                for (MethodDeclaration m : cu.findAll(MethodDeclaration.class)) {
-                    for (Parameter p : m.getParameters()) {
-                        totalParams++;
-                        if (PRIMITIVES.contains(p.getType().asString())) primitiveParams++;
-                    }
-                }
-            }
-        }
-        return totalParams == 0 ? 0.0 : (double) primitiveParams / totalParams;
-    }
+    };
 }
 ```
 
 ---
 
-## 7. CI Integration
+## 6. Sample Checkstyle rule — parameter count + boolean
 
-```kotlin
-// build.gradle.kts
-tasks.register("dprCheck") {
-    doLast {
-        val dpr = DprScanner.compute(
-            file("src/main/java").toPath(),
-            { it.contains(".domain.") }
-        )
-        println("DPR = $dpr")
-        val threshold = (project.findProperty("dpr.threshold") as String? ?: "0.05").toDouble()
-        if (dpr > threshold) throw GradleException("DPR $dpr exceeds threshold $threshold")
-    }
-}
-tasks.named("check") { dependsOn("dprCheck") }
+Checkstyle does not directly understand "primitive obsession", but two of its built-in modules nudge developers toward typed parameters:
+
+```xml
+<module name="ParameterNumber">
+    <property name="max" value="4"/>
+    <property name="ignoreOverriddenMethods" value="true"/>
+</module>
+
+<module name="JavadocMethod">
+    <property name="validateThrows" value="true"/>
+</module>
 ```
 
-The threshold ratchets downward over time. A PR cannot raise it.
+A custom regression: a method with two or more `boolean` parameters fails review.
+
+```xml
+<module name="RegexpSinglelineJava">
+    <property name="format" value="\(.*\bboolean\b.*\bboolean\b.*\)"/>
+    <property name="message" value="Two booleans in one signature — replace with an enum."/>
+</module>
+```
+
+Crude but effective.
 
 ---
 
-## 8. Exemptions
+## 7. Sample SpotBugs filter
 
-A class may opt out of these rules by being annotated `@PrimitiveAdapter` (project-defined marker). The annotation is permitted only on:
+SpotBugs has primitive-smell-adjacent detectors. Enable them explicitly:
 
-- Controllers / REST adapters (where JSON arrives as strings).
-- JDBC / JPA repositories (where columns are primitives).
-- Mappers and assemblers (whose job is to convert primitives to value objects).
+```xml
+<!-- spotbugs-exclude.xml -->
+<FindBugsFilter>
+    <Match>
+        <Bug code="BX"/>   <!-- BX_BOXING_IMMEDIATELY_UNBOXED -->
+        <Confidence value="2"/>
+    </Match>
+    <Match>
+        <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+    </Match>
+</FindBugsFilter>
+```
 
-The annotation is forbidden on classes in the domain package. ArchUnit enforces this.
-
----
-
-## 9. Acceptance Criteria
-
-A codebase passes the Primitive Obsession specification when:
-
-1. DPR ≤ 0.05 over the domain package set.
-2. No `double`/`float` parameter names a monetary concept.
-3. No `boolean` parameter exists in a public domain method (use enums or method split).
-4. No `long`/`UUID` parameter ending in `id`/`identifier` exists in a domain method (use typed IDs).
-5. CI fails on any regression of (1)–(4).
-6. The team's coding standard cites JEP 395 and JEP 401 as the authoritative reference.
+`BX` flags accidental autoboxing — a hint that `Integer` is being used where `int` would do, or that a primitive was wrapped only to be immediately unwrapped. `FE_FLOATING_POINT_EQUALITY` catches `double == double` comparisons that often indicate `double` used for money.
 
 ---
 
-**Memorize this:** Primitive Obsession is measurable. DPR is the single number. ArchUnit, Checkstyle, and a small JavaParser scanner make the rule enforceable at build time. JEP 395 gives you the tool today (records); JEP 401 will make the tool free tomorrow (value classes). A specification you can run in CI is worth more than a coding-standards PDF nobody reads.
+## 8. CI integration — gating PRs
+
+The minimal CI gate:
+
+```yaml
+# .github/workflows/quality.yml
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { java-version: '21' }
+      - run: ./mvnw -B verify
+      - run: ./mvnw -B archunit:check
+      - run: ./mvnw -B checkstyle:check
+      - run: ./mvnw -B spotbugs:check
+```
+
+A failing ArchUnit test fails the PR check. The developer sees the violation in plain English ("`PaymentService.charge` has 2 parameters of `String`") and fixes it before requesting review.
+
+---
+
+## 9. Auditing an existing codebase — the one-command report
+
+For a brown-field audit, a self-contained shell pipeline that computes PSR by class:
+
+```bash
+# Domain methods with two or more String parameters
+javap -p -c target/classes/com/acme/domain/**/*.class \
+  | grep -E 'public.*\(.*Ljava/lang/String;.*Ljava/lang/String;'
+
+# Methods with boolean parameters
+javap -p -c target/classes/com/acme/domain/**/*.class \
+  | grep -E 'public.*\(.*Z.*\)'
+
+# Methods with two or more long parameters
+javap -p -c target/classes/com/acme/domain/**/*.class \
+  | grep -E 'public.*\(.*J.*J'
+```
+
+Pipe each through `sort | uniq -c | sort -rn` to find the worst offenders. A typical brown-field audit identifies 20-50 hotspots; address the top 10 first.
+
+---
+
+## 10. Exceptions and explicit waivers
+
+Not every primitive in a domain signature is a bug. Three legitimate exceptions:
+
+- **Single-parameter primitives** where there is no risk of confusion: `setMaxAttempts(int n)`, `setName(String name)` on a builder.
+- **Implementations of external interfaces**: `Comparable<T>.compareTo(T)` returns `int`; the interface dictates the type.
+- **Generic algorithm methods**: `MathUtils.gcd(long a, long b)` operates on numbers, not domain concepts.
+
+For each exception in the codebase, document the waiver inline:
+
+```java
+@SuppressWarnings("PrimitiveObsession") // single-parameter, no confusion risk
+public Builder withMaxAttempts(int n) { ... }
+```
+
+ArchUnit can be configured to honour the suppression.
+
+---
+
+## 11. Spec-version references
+
+Behaviour cited in this file maps to the following Java specifications and JEPs:
+
+| Reference                                  | Topic                                                    |
+|--------------------------------------------|----------------------------------------------------------|
+| JLS §4.2 — Primitive Types and Values      | What counts as a primitive                              |
+| JLS §8.10 — Record Classes                 | `record` semantics, compact constructor                  |
+| **JEP 395** (final, Java 16)               | Records                                                  |
+| **JEP 409** (final, Java 17)               | Sealed classes                                           |
+| **JEP 441** (final, Java 21)               | Pattern matching for `switch` (exhaustive sealed dispatch) |
+| **JEP 401** (preview)                      | Value Classes and Objects — the Valhalla preview         |
+
+The ArchUnit and Checkstyle configurations target their respective stable APIs (ArchUnit 1.x, Checkstyle 10.x as of writing). Version-pin in your `pom.xml` / `build.gradle`.
+
+---
+
+**Memorize this:** Primitive Obsession is measurable — define PSR per method, class, module; threshold at 0.20 green / 0.80 red. Domain methods must not accept confusable primitives; boundary layers may. Enforce with ArchUnit at PR time, audit with `javap` quarterly, waive explicitly with annotations. The metric, not the slogan, is what changes the codebase.

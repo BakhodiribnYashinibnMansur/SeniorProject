@@ -1,245 +1,331 @@
-# Primitive Obsession — Tasks
+# Primitive Obsession — Practice Tasks
 
-Eight exercises in increasing difficulty. Each has a validation checklist; one ends with a worked solution sketch.
+> Eight exercises in increasing difficulty. Each task gives the starting code, an objective, constraints, and acceptance criteria. The final task ends with a worked solution sketch so you can compare your refactor to a canonical one.
+
+Work each task in three passes: (1) read the snippet and name every primitive that should become a wrapper, (2) sketch the new signature on paper before touching the keyboard, (3) write the wrappers with validation, push them through the API, and add a small test that would have caught the original problem.
 
 ---
 
 ## Validation reference
 
-| Check | What to verify |
+| Check | What to verify after each refactor |
 |---|---|
-| Compiles | `mvn compile` / `./gradlew build` passes |
-| Validates | Invalid input throws in the canonical constructor |
-| Equals/hashCode | Two records with equal fields are equal; unequal fields are not |
-| No raw primitives | No `String`/`long`/`UUID`/`BigDecimal` in the public domain API |
-| ArchUnit | The `no_raw_strings_in_domain` rule passes |
-| Tests | Unit tests cover happy path, edge case, invalid input |
-| Currency-safe | `Money` never mixes currencies silently |
-| Immutable | No setters, all fields `final` |
+| Compile-time | Swapping any two parameters of the new signature causes a compile error. |
+| Validation | Constructing a wrapper from an invalid primitive throws at construction, not at use. |
+| Boundary | Adapter layer (controller, mapper) is the only place that constructs wrappers from raw primitives. |
+| Equality | Two wrappers with the same content are `equals`-equal and have the same `hashCode`. |
+| Immutability | No setter, no mutating method. Operations return new instances. |
+| Stable behaviour | Existing tests still pass after the refactor (you didn't change semantics, only types). |
 
 ---
 
-## Exercise 1 — Email value object
-
-Replace `String email` with a `record Email(String value)` across a `UserRegistration` service.
-
-**Requirements:**
-- Validate basic email shape (`<non-space>@<non-space>.<non-space>`).
-- Reject `null` and empty.
-- Provide a `domain()` accessor returning the part after `@`.
-
-**Validation:** Compiles, validates, equals/hashCode, immutable, tests.
-
----
-
-## Exercise 2 — Typed identifiers
-
-You have:
+## Task 1 — Wrap an email address
 
 ```java
-public void transfer(long fromAccountId, long toAccountId, long initiatorUserId) { ... }
+public class UserService {
+    public void register(String email, String fullName) {
+        if (email == null || !email.contains("@")) throw new IllegalArgumentException();
+        users.save(new User(email, fullName));
+    }
+}
 ```
 
-Replace each `long` with a dedicated record.
+**Objective.** Replace the two `String` parameters with typed wrappers.
 
-**Requirements:**
-- `AccountId`, `UserId` records each wrapping a `long`.
-- Reject zero and negative values in the constructor.
-- The method signature uses the typed IDs.
-- Two callers in the existing tests must be updated.
+**Constraints.**
+- `Email` must validate format (must contain `@`, must not be blank) and normalise to lowercase.
+- `FullName` must reject blank values, trim surrounding whitespace.
+- Both must be `record`s.
 
-**Validation:** Compiles, validates, no raw primitives, ArchUnit.
-
----
-
-## Exercise 3 — Money with currency
-
-Implement a `Money` record with:
-
-- `BigDecimal amount`, `Currency currency` fields.
-- `add(Money)`, `subtract(Money)`, `multiply(BigDecimal)` operations.
-- `add`/`subtract` throw `CurrencyMismatchException` on mismatch.
-- Constructor sets scale to `currency.getDefaultFractionDigits()` with `RoundingMode.HALF_EVEN`.
-- A `zero(Currency)` static factory.
-
-**Requirements:**
-- 100% unit-test coverage of the operations.
-- A test that proves `Money(0.1) + Money(0.2)` equals `Money(0.3)` exactly.
-
-**Validation:** All boxes above.
+**Acceptance criteria.**
+- `register(fullName, email)` (swapped order) fails to compile.
+- `new Email("not-an-email")` throws `IllegalArgumentException`.
+- `new Email("Alice@Example.com").value().equals("alice@example.com")` is true.
+- `User` stores the wrappers, not raw strings.
 
 ---
 
-## Exercise 4 — Phone number normalisation
-
-Build `record PhoneNumber(String e164)`:
-
-- Strips spaces, dashes, parentheses, leading zeros.
-- Adds `+` if missing.
-- Validates against `^\+\d{8,15}$`.
-- `new PhoneNumber("+998 90 123 45 67")` and `new PhoneNumber("998-90-123-4567")` produce equal instances.
-
-**Validation:** Compiles, validates, equals across normalised inputs, tests for at least 5 input variants.
-
----
-
-## Exercise 5 — Replace boolean flags with enums
-
-Refactor:
+## Task 2 — Replace `int amountCents` with `Money`
 
 ```java
-public Report build(User u, boolean monthly, boolean withCharts, boolean emailMe) { ... }
+public class WalletService {
+    public void deposit(long walletId, int amountCents) { ... }
+    public void withdraw(long walletId, int amountCents) { ... }
+    public int balanceCents(long walletId) { ... }
+}
 ```
 
-into a typed signature using three enums (or a single options record).
+**Objective.** Replace `int amountCents` with a `Money` value object that carries amount and currency, and replace `long walletId` with a `WalletId`.
 
-**Requirements:**
-- All four boolean call sites in the existing tests must compile against the new signature.
-- The default values must be expressible (use a builder if needed).
-- ArchUnit rule "no boolean in domain public methods" passes for this package.
+**Constraints.**
+- `Money` uses `long minorUnits` and `Currency` from `java.util.Currency`.
+- Addition and subtraction must use `Math.addExact` / `Math.subtractExact` to detect overflow.
+- Operations on `Money` of different currencies must throw.
+- `WalletId` rejects non-positive values.
 
-**Validation:** Compiles, no booleans in signature, tests cover all combinations.
-
----
-
-## Exercise 6 — Country and postal code
-
-Build `CountryCode` (ISO 3166-1 alpha-2) and `PostalCode` records:
-
-- `CountryCode` validates against `Locale.getISOCountries()`.
-- `PostalCode` carries a `CountryCode` because format differs per country (`5` digits for US, `SW1A 1AA` for UK, etc.). Validation is country-aware.
-- Implement validation for at least 5 countries; throw `UnsupportedPostalFormatException` for unknown ones.
-
-**Requirements:**
-- The `Address` record composes `CountryCode` and `PostalCode`.
-- A test ensures `new PostalCode("12345", "GB")` throws (UK postal codes are not 5 digits).
-
-**Validation:** Compiles, validates per-country, immutable, tests.
+**Acceptance criteria.**
+- `wallet.deposit(walletId, new Money(50_00, USD))` compiles; `wallet.deposit(USD, walletId)` does not.
+- `Money(100, USD).plus(Money(50, EUR))` throws `IllegalArgumentException`.
+- Overflowing addition throws `ArithmeticException`.
 
 ---
 
-## Exercise 7 — Time without zone bugs
-
-A legacy service exposes:
+## Task 3 — Replace boolean flags with an enum
 
 ```java
-public List<Event> eventsBetween(long fromMillis, long toMillis) { ... }
+public class NotificationService {
+    public void send(User u, String message,
+                     boolean urgent,
+                     boolean includeSms,
+                     boolean includeEmail,
+                     boolean dryRun) { ... }
+}
 ```
 
-Refactor to use `Instant` (or `ZonedDateTime` where the zone is part of the query).
+**Objective.** Remove all `boolean` parameters and replace them with a small set of typed options.
 
-**Requirements:**
-- Identify in the existing code where the conversion `epochMillis → ZonedDateTime` happens with `ZoneId.systemDefault()` — this is the bug.
-- The new signature must force the caller to make zone explicit.
-- All callers updated; tests pass under at least two different `TimeZone.setDefault(...)` values.
+**Constraints.**
+- One `Priority` enum (`URGENT`, `NORMAL`).
+- One `Channels` type that holds a `Set<Channel>` where `Channel = SMS | EMAIL | PUSH`.
+- One `ExecutionMode` enum (`LIVE`, `DRY_RUN`).
+- Final signature must have at most 4 parameters.
 
-**Validation:** Compiles, no raw `long` time in domain, tests across zones.
-
----
-
-## Exercise 8 — ArchUnit ratchet
-
-Add an ArchUnit test class `DomainPrimitiveRules` to a small (~30-class) module of your choice.
-
-**Requirements:**
-- Forbid `String` in domain method signatures.
-- Forbid `long`/`UUID` parameters whose name ends with `id` or `identifier`.
-- Forbid `boolean` parameters in domain public methods.
-- Forbid `double`/`float` parameters with monetary names (`amount`, `price`, `cost`).
-- The build initially fails (proves the rules work); then you migrate violations one at a time.
-- The final build passes.
-
-**Validation:** ArchUnit rules in place, build initially red, build finally green, at least 5 commits documenting the migration.
+**Acceptance criteria.**
+- The call `service.send(u, "Hello", Priority.URGENT, Channels.of(EMAIL), ExecutionMode.DRY_RUN)` reads as prose.
+- No `boolean` appears in the public method signature.
+- A new channel (e.g., `WEBHOOK`) can be added by extending the enum, without changing the signature.
 
 ---
 
-## Worked solution sketch — Exercise 3 (Money)
+## Task 4 — Wrap timestamps with `Instant` and `Duration`
 
 ```java
-public record Money(BigDecimal amount, Currency currency) {
+public class SessionService {
+    public Session create(long userId, long createdAtMillis, long expiresAfterSeconds) { ... }
+    public boolean isExpired(long sessionId, long currentTimeMillis) { ... }
+}
+```
 
+**Objective.** Replace all `long`-encoded times and durations with `Instant` and `Duration`, and wrap IDs.
+
+**Constraints.**
+- `UserId` and `SessionId` are opaque wrappers around `long` (or `UUID`).
+- `createdAtMillis` becomes `Instant`.
+- `expiresAfterSeconds` becomes `Duration`.
+- `isExpired` should not take `currentTimeMillis` — inject a `Clock` instead.
+
+**Acceptance criteria.**
+- Swapping `userId` and `sessionId` arguments fails to compile.
+- A unit test can advance time deterministically by constructing a fixed `Clock`.
+- The signature no longer contains any `long` that means "a moment" or "a duration".
+
+---
+
+## Task 5 — Convert a CSV row parser
+
+```java
+public class TransactionImporter {
+    public Transaction parse(String[] row) {
+        long id = Long.parseLong(row[0]);
+        long ts = Long.parseLong(row[1]);
+        String currency = row[2];
+        long amountCents = Long.parseLong(row[3]);
+        String accountIdFrom = row[4];
+        String accountIdTo = row[5];
+        return new Transaction(id, ts, currency, amountCents, accountIdFrom, accountIdTo);
+    }
+}
+```
+
+**Objective.** Replace the six raw values with typed wrappers, with all validation at construction.
+
+**Constraints.**
+- The parser is the *boundary* — it is the only legitimate place to construct wrappers from `String`.
+- Each wrapper validates at construction.
+- The resulting `Transaction` exposes only typed values.
+
+**Acceptance criteria.**
+- A malformed CSV row (e.g., 2-letter currency, blank account ID) throws at parse time, not at use time.
+- `Transaction` has no `String` or `long` accessors.
+- The signature `new Transaction(TransactionId, Instant, IsoCurrency, Money, AccountId, AccountId)` reads as prose.
+
+---
+
+## Task 6 — A sealed `Notification` hierarchy
+
+```java
+public class Notification {
+    private final String type;     // "EMAIL" | "SMS" | "PUSH"
+    private final String recipient;
+    private final String subject;        // only for EMAIL
+    private final String message;
+    private final String phoneNumber;    // only for SMS
+    private final String deviceToken;    // only for PUSH
+}
+```
+
+**Objective.** Convert the type-coded "fat" class into a `sealed interface` with one `record` per variant, each carrying only the fields that variant needs.
+
+**Constraints.**
+- `Notification` is a `sealed interface` with three permitted subtypes.
+- `EmailNotification`, `SmsNotification`, `PushNotification` are records.
+- Recipient is typed differently in each variant (`Email`, `PhoneNumber`, `DeviceToken`).
+- A consumer uses exhaustive pattern matching (JEP 441).
+
+**Acceptance criteria.**
+- It is impossible to construct an `EmailNotification` without a subject (compile-time).
+- Adding a new variant (`WebhookNotification`) forces the compiler to error out on every existing exhaustive switch.
+- No field is "valid only for some variants".
+
+---
+
+## Task 7 — Build a `Percentage` value object
+
+```java
+public class PricingService {
+    public BigDecimal applyDiscount(BigDecimal price, int discountPct) { ... }
+    public BigDecimal applyTax(BigDecimal price, int taxBps) { ... }
+    public BigDecimal applyFee(BigDecimal price, double feeRate) { ... }
+}
+```
+
+**Objective.** Unify three different percentage encodings into a single `Percentage` value object.
+
+**Constraints.**
+- `Percentage` holds a `BigDecimal` fraction in `[0, 1]`.
+- Three named factories: `ofPercent(int)`, `ofBasisPoints(int)`, `ofFraction(BigDecimal)`.
+- `applyTo(BigDecimal)` returns the discounted/taxed/fee-applied amount.
+- The service signature becomes `applyDiscount(BigDecimal, Percentage)` etc.
+
+**Acceptance criteria.**
+- `Percentage.ofPercent(20)` and `Percentage.ofBasisPoints(2000)` are `equals`-equal.
+- `Percentage.ofPercent(150)` throws (out of range).
+- The caller chooses the unit at the call site; the service implementation doesn't care.
+
+---
+
+## Task 8 — End-to-end: refactor an entire `OrderService`
+
+```java
+public class OrderService {
+    public long placeOrder(long userId, long productId, int quantity, int unitPriceCents,
+                           String currency, boolean express, String promoCode) {
+        if (userId <= 0 || productId <= 0) throw new IllegalArgumentException();
+        if (quantity <= 0 || quantity > 1000) throw new IllegalArgumentException();
+        if (unitPriceCents <= 0) throw new IllegalArgumentException();
+        if (currency.length() != 3) throw new IllegalArgumentException();
+        long total = (long) quantity * unitPriceCents;
+        if (promoCode != null && promoCode.startsWith("SAVE")) {
+            total = total * 90 / 100;
+        }
+        long orderId = nextId.incrementAndGet();
+        repo.save(new OrderRow(orderId, userId, productId, quantity, total, currency, express));
+        return orderId;
+    }
+}
+```
+
+**Objective.** Apply every refactor from this section in one go.
+
+**Constraints.**
+- Every primitive that represents a domain concept becomes a typed wrapper.
+- Validation moves to the wrapper compact constructors.
+- The `boolean express` becomes a `ShippingMode` enum.
+- The promo code logic becomes a small `PromoCode` value object with `applyTo(Money)`.
+- The method signature has at most 4 parameters; consider a `PlaceOrderCommand` parameter object.
+
+**Acceptance criteria.**
+- The new `placeOrder` signature reads as prose at the call site.
+- Each validation rule lives in exactly one place (the wrapper).
+- The compile-time guard against argument swapping holds.
+
+---
+
+## Worked solution sketch — Task 8
+
+A canonical solution (one of several valid shapes):
+
+```java
+public record UserId(long value)     { public UserId    { if (value <= 0) throw new IllegalArgumentException(); } }
+public record ProductId(long value)  { public ProductId { if (value <= 0) throw new IllegalArgumentException(); } }
+public record OrderId(long value)    { public OrderId   { if (value <= 0) throw new IllegalArgumentException(); } }
+
+public record Quantity(int value) {
+    public Quantity { if (value <= 0 || value > 1000) throw new IllegalArgumentException(); }
+}
+
+public record Money(long minorUnits, Currency currency) {
     public Money {
-        Objects.requireNonNull(amount, "amount");
-        Objects.requireNonNull(currency, "currency");
-        amount = amount.setScale(currency.getDefaultFractionDigits(), RoundingMode.HALF_EVEN);
+        Objects.requireNonNull(currency);
+        if (minorUnits < 0) throw new IllegalArgumentException();
     }
+    public Money times(int n)            { return new Money(Math.multiplyExact(minorUnits, n), currency); }
+    public Money applyPercentage(int pct) { return new Money(minorUnits * pct / 100, currency); }
+}
 
-    public static Money zero(Currency c) {
-        return new Money(BigDecimal.ZERO, c);
+public enum ShippingMode { STANDARD, EXPRESS }
+
+public record PromoCode(String value) {
+    public PromoCode {
+        Objects.requireNonNull(value);
+        if (!value.matches("[A-Z0-9]{4,16}")) throw new IllegalArgumentException();
     }
-
-    public Money add(Money other) {
-        requireSame(other);
-        return new Money(amount.add(other.amount), currency);
-    }
-
-    public Money subtract(Money other) {
-        requireSame(other);
-        return new Money(amount.subtract(other.amount), currency);
-    }
-
-    public Money multiply(BigDecimal factor) {
-        return new Money(amount.multiply(factor), currency);
-    }
-
-    private void requireSame(Money other) {
-        if (!currency.equals(other.currency))
-            throw new CurrencyMismatchException(currency, other.currency);
+    public Money applyTo(Money m) {
+        return value.startsWith("SAVE") ? m.applyPercentage(90) : m;
     }
 }
 
-public final class CurrencyMismatchException extends RuntimeException {
-    public CurrencyMismatchException(Currency a, Currency b) {
-        super("currency mismatch: " + a + " vs " + b);
+public record PlaceOrderCommand(UserId user, ProductId product, Quantity quantity,
+                                 Money unitPrice, ShippingMode shipping,
+                                 Optional<PromoCode> promo) {
+    public PlaceOrderCommand {
+        Objects.requireNonNull(user);
+        Objects.requireNonNull(product);
+        Objects.requireNonNull(quantity);
+        Objects.requireNonNull(unitPrice);
+        Objects.requireNonNull(shipping);
+        Objects.requireNonNull(promo);
     }
 }
-```
 
-**Test highlights:**
-
-```java
-@Test
-void exact_decimal_arithmetic() {
-    Money a = new Money(new BigDecimal("0.10"), Currency.getInstance("USD"));
-    Money b = new Money(new BigDecimal("0.20"), Currency.getInstance("USD"));
-    Money expected = new Money(new BigDecimal("0.30"), Currency.getInstance("USD"));
-    assertEquals(expected, a.add(b));
-}
-
-@Test
-void currency_mismatch_throws() {
-    Money usd = Money.zero(Currency.getInstance("USD"));
-    Money eur = Money.zero(Currency.getInstance("EUR"));
-    assertThrows(CurrencyMismatchException.class, () -> usd.add(eur));
-}
-
-@Test
-void scale_is_set_from_currency() {
-    Money jpy = new Money(new BigDecimal("100.456"), Currency.getInstance("JPY"));
-    assertEquals(0, jpy.amount().scale()); // JPY has 0 fractional digits
-}
-
-@Test
-void banker_rounding_applied() {
-    Money m = new Money(new BigDecimal("0.125"), Currency.getInstance("USD"));
-    assertEquals(new BigDecimal("0.12"), m.amount()); // HALF_EVEN rounds 0.125 to 0.12
+public class OrderService {
+    public OrderId placeOrder(PlaceOrderCommand cmd) {
+        Money base  = cmd.unitPrice().times(cmd.quantity().value());
+        Money total = cmd.promo().map(p -> p.applyTo(base)).orElse(base);
+        OrderId id  = new OrderId(nextId.incrementAndGet());
+        repo.save(new OrderRow(id, cmd.user(), cmd.product(), cmd.quantity(), total, cmd.shipping()));
+        return id;
+    }
 }
 ```
 
-**Self-review checklist after finishing:**
+Key wins:
 
-- Did the constructor reject `null`? Yes.
-- Did the constructor set scale from currency? Yes.
-- Does `add` reject currency mismatch? Yes.
-- Is the record immutable? Yes (records are implicitly so).
-- Is `equals` correct? Yes (synthesised, compares amount and currency).
-- Are exceptions descriptive? Yes (`CurrencyMismatchException` carries both currencies).
+- The original method's 13 lines of validation are spread across the wrappers, each runnable in isolation.
+- The `boolean express` became `ShippingMode`, self-documenting at the call site.
+- The promo logic moved to the type that owns it (`PromoCode.applyTo`).
+- Swapping `user` and `product` at the construction site is a compile error.
+- The service method shrank to four lines of orchestration.
 
 ---
 
-## After completing all eight
+## Self-grading rubric
 
-- Run the full `mvn verify` / `./gradlew check`.
-- Run the ArchUnit tests from Exercise 8 — they should pass on every package you migrated.
-- Compute DPR (Domain Primitive Ratio, see `specification.md`) before and after. Aim for a drop of at least 50%.
-- Document one bug-class that the new types now make unreachable. This is the durable value of the work.
+For each task, score yourself on:
+
+| Criterion                                                  | Points |
+|------------------------------------------------------------|--------|
+| Wrappers added for every confusable primitive              | 2      |
+| Compact constructor with validation in each wrapper        | 2      |
+| `record` (not handwritten class) where possible            | 1      |
+| Booleans replaced with enums                               | 1      |
+| Time/duration uses `Instant`/`Duration`                    | 1      |
+| Test that would have caught the original bug               | 2      |
+| Adapter layer is the only construction site for primitives | 1      |
+| **Total**                                                  | **10** |
+
+A score of 8+ means you've internalised the discipline. Below 6, revisit `middle.md`.
+
+---
+
+**Memorize this:** Eight exercises map onto eight wrapping moves — `Email`, `Money`, `WalletId`, time/duration, CSV-row parsing, sealed notification, `Percentage`, full-service refactor. Each move follows the same rhythm: wrapper → compact-constructor validation → push through the API → test. After three repetitions the move becomes muscle memory.
